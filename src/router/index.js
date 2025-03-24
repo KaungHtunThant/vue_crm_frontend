@@ -14,6 +14,7 @@ import Cookies from "js-cookie";
 import CrmTasks from "@/views/CrmTasks.vue";
 import CrmList from "@/views/CrmListView.vue";
 import TasksKanban from "@/views/CrmTasks.vue";
+import ContactsTable from "@/views/ContactsTable.vue";
 
 const routes = [
   {
@@ -154,6 +155,15 @@ const routes = [
   //     title: "غير موجود",
   //   },
   // },
+  {
+    path: "/test-contact-table",
+    name: "ContactsTable",
+    component: ContactsTable,
+    meta: {
+      requiresAuth: false,
+      title: "Contacts Table",
+    },
+  },
 ];
 
 const router = createRouter({
