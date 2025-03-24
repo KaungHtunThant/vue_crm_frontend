@@ -15,6 +15,7 @@ import CrmTasks from "@/views/CrmTasks.vue";
 import CrmList from "@/views/CrmListView.vue";
 import TasksKanban from "@/views/CrmTasks.vue";
 import ContactsTable from "@/views/ContactsTable.vue";
+import PrimeVueTest from "@/views/PrimeVueTest.vue";
 
 const routes = [
   {
@@ -156,12 +157,21 @@ const routes = [
   //   },
   // },
   {
-    path: "/test-contact-table",
+    path: "/test-datatable",
     name: "ContactsTable",
     component: ContactsTable,
     meta: {
       requiresAuth: false,
-      title: "Contacts Table",
+      title: "Datatable",
+    },
+  },
+  {
+    path: "/test-primevue",
+    name: "PrimeVueTest",
+    component: PrimeVueTest,
+    meta: {
+      requiresAuth: false,
+      title: "PrimeVue",
     },
   },
 ];

@@ -7,6 +7,8 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import Swal from "sweetalert2";
 import i18n, { initializeTranslations } from "./i18n";
+import PrimeVue from "primevue/config";
+import Aura from "@primeuix/themes/aura";
 
 // تعريف toastOptions
 const toastOptions = {
@@ -44,6 +46,11 @@ const app = createApp(App);
 // Create and use Pinia
 const pinia = createPinia();
 app.use(pinia);
+app.use(PrimeVue, {
+  theme: {
+    preset: Aura,
+  },
+});
 
 const locale = localStorage.getItem("locale") || "en";
 initializeTranslations(locale).then(() => {
