@@ -35,6 +35,14 @@ Swal.mixin({
   reverseButtons: true,
 });
 
+// Initialize Pusher and Echo
+// console.log({
+//   key: process.env.VUE_APP_PUSHER_KEY,
+//   host: process.env.VUE_APP_WEBSOCKET_HOST,
+//   port: process.env.VUE_APP_WEBSOCKET_PORT,
+//   tls: process.env.VUE_APP_WEBSOCKET_TLS,
+// });
+
 // Styles
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
