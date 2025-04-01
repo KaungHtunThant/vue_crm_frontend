@@ -1,7 +1,22 @@
 import Echo from "laravel-echo";
+import Pusher from "pusher-js";
+import Cookies from "js-cookie";
+
+console.log("WebSocket configuration:", {
+  VUE_APP_WEBSOCKET_BROADCASTER: process.env.VUE_APP_WEBSOCKET_BROADCASTER,
+  VUE_APP_WEBSOCKET_KEY: process.env.VUE_APP_WEBSOCKET_KEY,
+  VUE_APP_WEBSOCKET_CLUSTER: process.env.VUE_APP_WEBSOCKET_CLUSTER,
+  VUE_APP_WEBSOCKET_HOST: process.env.VUE_APP_WEBSOCKET_HOST,
+  VUE_APP_WEBSOCKET_PORT: process.env.VUE_APP_WEBSOCKET_PORT,
+  VUE_APP_WEBSOCKET_TLS: process.env.VUE_APP_WEBSOCKET_TLS,
+});
+
+// Initialize Pusher
+window.Pusher = Pusher;
 
 window.Echo = new Echo({
   broadcaster: process.env.VUE_APP_WEBSOCKET_BROADCASTER,
+  host: `http://${process.env.VUE_APP_WEBSOCKET_HOST}:${process.env.VUE_APP_WEBSOCKET_PORT}`,
   key: process.env.VUE_APP_WEBSOCKET_KEY,
   cluster: process.env.VUE_APP_WEBSOCKET_CLUSTER,
   wsHost: process.env.VUE_APP_WEBSOCKET_HOST, // Explicitly set wsHost
@@ -11,5 +26,11 @@ window.Echo = new Echo({
   disableStats: true,
   encrypted: false,
   enabledTransports: ["ws", "wss"], // Ensure only WebSocket transports are used
-  // client: Pusher, // Use the imported Pusher instance
+  authEndpoint: `${process.env.VUE_APP_BACKEND_URL}/broadcasting/auth`, // Set the correct backend URL
+  auth: {
+    headers: {
+      Authorization: `Bearer ${Cookies.get("authToken")}`,
+      Origin: window.location.origin, // Add the Origin header
+    },
+  },
 });

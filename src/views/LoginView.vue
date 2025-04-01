@@ -119,13 +119,14 @@ export default {
             path: "/",
             expires: 7,
           };
+          Cookies.set("id", response.data.user.id, cookieOptions);
           Cookies.set("authToken", response.data.token, cookieOptions);
           Cookies.set("name", response.data.user.name, cookieOptions);
           Cookies.set("email", response.data.user.email, cookieOptions);
           Cookies.set("image", response.data.user.image || "", cookieOptions);
 
           // تحميل الترجمات بعد تسجيل الدخول
-          const locale = localStorage.getItem("locale") || "en";
+          const locale = response.data.user.locale;
           await initializeTranslations(locale);
 
           this.email = "";
