@@ -16,8 +16,9 @@
             data-bs-dismiss="modal"
           ></button>
         </div>
-        <div class="modal-body">
-          <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleSubmit">
+          <div class="modal-body">
+            <!-- Folder Name Input -->
             <div class="mb-3">
               <label for="folderName" class="form-label">
                 {{ t("documents-modal-createfolder-label-name") }}
@@ -26,36 +27,32 @@
                 type="text"
                 class="form-control"
                 id="folderName"
-                v-model="folderName"
-                :placeholder="
-                  t('documents-modal-createfolder-placeholder-name')
-                "
+                v-model="folderData.name"
                 required
               />
             </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-          >
-            {{ t("documents-modal-createfolder-button-close") }}
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            @click="handleSubmit"
-            :disabled="!folderName"
-          >
-            {{
-              isEdit
-                ? t("documents-modal-createfolder-button-submit")
-                : t("documents-modal-createfolder-button-submit")
-            }}
-          </button>
-        </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              {{ t("documents-modal-createfolder-button-close") }}
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              :disabled="isSubmitting"
+            >
+              {{
+                isSubmitting
+                  ? t("loading")
+                  : t("documents-modal-createfolder-button-submit")
+              }}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -64,6 +61,7 @@
 <script>
 import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useToast } from "vue-toastification";
 
 export default {
   name: "FolderFormModal",
@@ -76,38 +74,46 @@ export default {
   emits: ["submit"],
   setup(props, { emit }) {
     const { t } = useI18n();
-    const folderName = ref("");
+    const toast = useToast();
+    const folderData = ref({ name: "", parent_id: 1 });
     const isEdit = ref(false);
+    const isSubmitting = ref(false);
 
     watch(
       () => props.folder,
       (newFolder) => {
-        if (newFolder) {
-          folderName.value = newFolder.name;
-          isEdit.value = true;
-        } else {
-          folderName.value = "";
-          isEdit.value = false;
-        }
+        folderData.value = newFolder
+          ? { ...newFolder, parent_id: newFolder.parent_id || 1 }
+          : { name: "", parent_id: 1 };
+        isEdit.value = !!newFolder;
       },
       { immediate: true }
     );
 
-    const handleSubmit = () => {
-      if (!folderName.value) return;
+    const handleSubmit = async () => {
+      if (!folderData.value.name.trim()) {
+        toast.error(t("error.emptyFolderName"), { timeout: 3000 });
+        return;
+      }
 
-      const folderData = {
-        name: folderName.value,
-        ...(isEdit.value && props.folder ? { id: props.folder.id } : {}),
-      };
-
-      emit("submit", folderData);
-      folderName.value = "";
+      isSubmitting.value = true;
+      try {
+        emit("submit", folderData.value);
+        toast.success(
+          isEdit.value ? t("success.updated") : t("success.saved"),
+          { timeout: 3000 }
+        );
+      } catch (error) {
+        toast.error(t("error.saveFailed"), { timeout: 3000 });
+      } finally {
+        isSubmitting.value = false;
+      }
     };
 
     return {
-      folderName,
+      folderData,
       isEdit,
+      isSubmitting,
       handleSubmit,
       t,
     };

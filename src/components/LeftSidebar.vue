@@ -80,7 +80,7 @@
       </router-link>
       <router-link
         v-if="permissionStore.hasPermission(PERMISSIONS.DOCUMENTS)"
-        to="/documents-folders"
+        to="/documents"
         class="text-decoration-none text-white"
       >
         <div

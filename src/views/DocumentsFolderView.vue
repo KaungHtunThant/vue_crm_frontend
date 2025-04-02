@@ -40,7 +40,7 @@
         <div class="text-muted">{{ item.created_at }}</div>
       </template>
       <template #item-files_count="item">
-        <div class="text-muted fs-6 ps-3">{{ item.files_count }}</div>
+        <div class="text-muted fs-6 ps-3">{{ item.count }}</div>
       </template>
 
       <!-- Actions Column -->
@@ -109,6 +109,13 @@ import Modal from "bootstrap/js/dist/modal";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 import { useI18n } from "vue-i18n";
+import {
+  getDocuments,
+  createDocuments,
+  updateDocuments,
+  deleteDocuments,
+} from "@/plugins/services/authService";
+
 export default {
   name: "DocumentsFolderView",
   components: {
@@ -132,28 +139,14 @@ export default {
       { text: t("documents-table-header-actions"), value: "actions" },
     ];
 
-    const mockFolders = [
-      {
-        id: 1,
-        name: "صور المنتجات",
-        created_at: "2024-03-20",
-        files_count: 4,
-      },
-      {
-        id: 2,
-        name: "فيديوهات المنتجات",
-        created_at: "2024-03-19",
-        files_count: 0,
-      },
-      {
-        id: 3,
-        name: "تقارير",
-        created_at: "2024-03-18",
-        files_count: 0,
-      },
-    ];
-
-    const filteredItems = computed(() => items.value);
+    const filteredItems = computed(() => {
+      return items.value.map((item) => {
+        const formattedDate = new Date(item.created_at).toLocaleDateString(
+          "ar-EG"
+        );
+        return { ...item, created_at: formattedDate };
+      });
+    });
 
     const openNewFolderModal = () => {
       selectedFolder.value = null;
@@ -165,38 +158,46 @@ export default {
     };
 
     const editFolder = (folder) => {
-      selectedFolder.value = folder;
+      selectedFolder.value = { ...folder };
       folderFormModal.value.show();
     };
-
     const handleFolderSubmit = async (folderData) => {
       try {
+        // console.log("📤 بيانات المجلد المرسلة:", folderData);
+
+        let response;
         if (folderData.id) {
+          response = await updateDocuments(folderData.id, {
+            name: folderData.name,
+            parent_id: folderData.parent_id || 1,
+          });
+
           const index = items.value.findIndex((f) => f.id === folderData.id);
           if (index !== -1) {
-            items.value[index] = { ...items.value[index], ...folderData };
-            toast.success(t("success.updated"), {
-              timeout: 3000,
-            });
+            items.value[index] = {
+              ...items.value[index],
+              ...response.data.result,
+            };
+            toast.success(t("success.updated"), { timeout: 3000 });
           }
         } else {
-          const newFolder = {
-            id: Date.now(),
+          response = await createDocuments({
             name: folderData.name,
-            created_at: new Date().toLocaleDateString("ar-EG"),
-            files_count: 0,
-          };
-          items.value.unshift(newFolder);
-          toast.success(t("success.saved"), {
-            timeout: 3000,
+            parent_id: folderData.parent_id || 1,
           });
+
+          if (response && response.data.result) {
+            items.value.push(response.data.result);
+            toast.success(t("success.saved"), { timeout: 3000 });
+          } else {
+            throw new Error("❌ استجابة غير صالحة من السيرفر");
+          }
         }
+
         folderFormModal.value.hide();
       } catch (error) {
-        toast.error(t("error.saveFailed"), {
-          timeout: 3000,
-        });
-        console.error("Error submitting folder:", error);
+        // console.error("❌ خطأ أثناء تعديل المجلد:", error);
+        toast.error(t("error.saveFailed"), { timeout: 3000 });
       }
     };
 
@@ -230,7 +231,7 @@ export default {
         });
 
         if (result.isConfirmed) {
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          await deleteDocuments(id);
           items.value = items.value.filter((folder) => folder.id !== id);
           toast.success(t("success.deleteSuccess"), {
             timeout: 3000,
@@ -262,11 +263,8 @@ export default {
     const fetchFolders = async () => {
       try {
         tableLoading.value = true;
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        items.value = mockFolders;
-        //toast.success("تم تحميل المجلدات بنجاح", {
-        //   timeout: 3000,
-        //});
+        const response = await getDocuments();
+        items.value = response.data.folders;
       } catch (error) {
         toast.error(t("error.fetchFailed"), {
           timeout: 3000,
@@ -276,14 +274,50 @@ export default {
         tableLoading.value = false;
       }
     };
-    const handleRowClick = (item, event) => {
+
+    const fetchFolderFiles = async () => {
+      // try {
+      //   const response = await axios.get(/documents/${folderId});
+      //   return response.data.files;
+      // } catch (error) {
+      //   toast.error(t("error.fetchFilesFailed"), {
+      //     timeout: 3000,
+      //   });
+      //   console.error("Error fetching folder files:", error);
+      //   return [];
+      // }
+    };
+
+    const handleRowClick = async (item, event) => {
       if (event?.target?.closest("button")) {
         return;
       }
-      router.push({
-        name: "FolderFiles",
-        params: { folderId: item.id },
-      });
+
+      try {
+        const response = await getDocuments();
+        const folders = response.data.folders;
+
+        const currentFolder = folders.find((folder) => folder.id === item.id);
+
+        if (currentFolder && currentFolder.full_path) {
+          const cleanPath = currentFolder.full_path.startsWith("/")
+            ? currentFolder.full_path.substring(1)
+            : currentFolder.full_path;
+
+          router.push({
+            path: `/documents/folders/${cleanPath}`,
+            state: {
+              folderId: currentFolder.id,
+              folderName: currentFolder.name,
+              folderPath: currentFolder.full_path,
+            },
+          });
+        } else {
+          toast.warning("invalidFolderPath");
+        }
+      } catch (error) {
+        toast.error("Error navigating to folder");
+      }
     };
 
     const handleRightClick = (event) => {
@@ -327,6 +361,7 @@ export default {
       handleFolderImport,
       handleRowClick,
       downloadFolder,
+      fetchFolderFiles,
       t,
     };
   },

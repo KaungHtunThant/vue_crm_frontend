@@ -120,7 +120,7 @@ const routes = [
     beforeEnter: requirePermission(PERMISSIONS.ROLES_SETTINGS),
   },
   {
-    path: "/documents-folders",
+    path: "/documents",
     name: "Documents",
     component: DocumentsFolder,
     meta: {
@@ -130,7 +130,7 @@ const routes = [
     beforeEnter: requirePermission(PERMISSIONS.DOCUMENTS),
   },
   {
-    path: "/folders/:folderId/files",
+    path: "/documents/folders/:path*",
     name: "FolderFiles",
     component: DocumentsFiles,
     meta: {
