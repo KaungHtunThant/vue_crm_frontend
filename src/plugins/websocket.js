@@ -16,7 +16,7 @@ window.Pusher = Pusher;
 
 window.Echo = new Echo({
   broadcaster: process.env.VUE_APP_WEBSOCKET_BROADCASTER,
-  host: `http://${process.env.VUE_APP_WEBSOCKET_HOST}:${process.env.VUE_APP_WEBSOCKET_PORT}`,
+  host: `ws://${process.env.VUE_APP_WEBSOCKET_HOST}:${process.env.VUE_APP_WEBSOCKET_PORT}`,
   key: process.env.VUE_APP_WEBSOCKET_KEY,
   cluster: process.env.VUE_APP_WEBSOCKET_CLUSTER,
   wsHost: process.env.VUE_APP_WEBSOCKET_HOST, // Explicitly set wsHost
