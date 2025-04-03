@@ -175,9 +175,30 @@ export const createDocuments = async (formData) => {
     throw error;
   }
 };
-// update contact
+// update Documents
 export const updateDocuments = (documentsId, formData) =>
   axios.put(`/documents/${documentsId}`, formData);
 
+// Delete documents
 export const deleteDocuments = (documentsId) =>
   axios.delete(`/documents/${documentsId}`);
+
+// update Files
+export const updateFiles = (filesId, formData) =>
+  axios.put(`/documents/files/${filesId}`, formData);
+
+// Delete Files
+export const deleteFiles = (filesId) =>
+  axios.delete(`/documents/files/${filesId}`);
+
+export const showDocuments = async (folderName) => {
+  return await axios.get(`/documents/${folderName}`);
+};
+
+export const uploadFiles = async (formData) => {
+  return await axios.post("/documents", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};

@@ -1,9 +1,27 @@
 <template>
   <div class="mt-4 pe-3 bg-white rounded-3 p-3 me-2">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <div class="d-flex align-items-center">
-        <i class="fas fa-folder text-warning me-2"></i>
-        <p class="fs-5 pt-1 mb-0">{{ folderName }}</p>
+      <div class="d-flex align-items-center pt-3">
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li
+              class="breadcrumb-item"
+              v-for="(crumb, index) in breadcrumbs"
+              :key="index"
+            >
+              <a
+                v-if="index < breadcrumbs.length - 1"
+                @click="navigateToCrumb(crumb.path)"
+              >
+                {{ crumb.name }}
+              </a>
+              <span v-else>{{ crumb.name }}</span>
+            </li>
+          </ol>
+        </nav>
+        <!-- <i class="fas fa-folder text-warning me-2"></i>
+        <p class="fs-5 pt-1 mb-0">{{ folderName }}</p> -->
       </div>
       <div class="d-flex gap-2">
         <button class="btn btn-primary" @click="openNewFolderModal">
@@ -19,24 +37,7 @@
         </button>
       </div>
     </div>
-    <!-- Breadcrumbs -->
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li
-          class="breadcrumb-item"
-          v-for="(crumb, index) in breadcrumbs"
-          :key="index"
-        >
-          <a
-            v-if="index < breadcrumbs.length - 1"
-            @click="navigateToCrumb(crumb.path)"
-          >
-            {{ crumb.name }}
-          </a>
-          <span v-else>{{ crumb.name }}</span>
-        </li>
-      </ol>
-    </nav>
+
     <!-- Upload Area -->
     <div class="upload-area mb-4 border rounded-3 p-4 text-center">
       <div
@@ -155,13 +156,22 @@
 </template>
 
 <script>
-import { ref, watch, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import FolderForm from "@/components/modals/FolderForm.vue";
 import Modal from "bootstrap/js/dist/modal";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 import { useI18n } from "vue-i18n";
+import {
+  // createDocuments,
+  deleteFiles,
+  showDocuments,
+  uploadFiles,
+  deleteDocuments,
+  getDocuments,
+} from "@/plugins/services/authService";
+
 export default {
   name: "FolderFilesView",
   components: {
@@ -178,7 +188,6 @@ export default {
     const fileInput = ref(null);
     const selectedFolder = ref(null);
     const folderFormModal = ref(null);
-
     const getFileIcon = (type) => {
       const icons = {
         pdf: "fas fa-file-pdf text-danger",
@@ -190,43 +199,88 @@ export default {
       return icons[type] || icons.default;
     };
 
+    const fetchFiles = async () => {
+      try {
+        const folderPath = route.params.folderName || route.params.fullPath;
+        if (!folderPath) {
+          throw new Error("المسار غير صالح");
+        }
+
+        const response = await showDocuments(folderPath);
+        if (response.data) {
+          folderName.value = response.data.parent.name;
+          folders.value = response.data.folders || [];
+          files.value = response.data.files || [];
+
+          const parentId = response.data.parent.id;
+          console.log("parent_id للمجلد المفتوح:", parentId);
+        }
+
+        // console.log("Fetched folder contents:", folders.value, files.value);
+      } catch (error) {
+        console.error("Error fetching folder contents:", error);
+        toast.error(t("error.fetchFailed"), { timeout: 3000 });
+      }
+    };
+
     const handleClick = (event) => {
       if (event.target.tagName !== "BUTTON") {
         fileInput.value.click();
       }
     };
+    const uploadFile = async (file) => {
+      const folderPath = route.params.folderName || route.params.fullPath;
+      const response = await showDocuments(folderPath);
+      const parentId = response.data.parent.id;
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("parent_id", parentId);
+
+      try {
+        console.log("Sending form data:", formData);
+        const response = await uploadFiles(formData);
+
+        console.log("API response:", response);
+
+        if (response.data && response.data.result) {
+          files.value.push({
+            id: response.data.result.id,
+            name: response.data.result.name || file.name,
+            type: file.type || "default",
+            size: file.size,
+            created_at: new Date(
+              response.data.result.created_at
+            ).toLocaleDateString("ar-EG"),
+            url: response.data.result.full_path,
+          });
+
+          toast.success(t("success.uploaded"), {
+            timeout: 3000,
+          });
+        } else {
+          throw new Error("❌ استجابة غير صالحة من السيرفر");
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        toast.error(t("error.uploadFailed"), {
+          timeout: 3000,
+        });
+      }
+    };
 
     const handleDrop = (event) => {
       const droppedFiles = Array.from(event.dataTransfer.files);
-      uploadFiles(droppedFiles);
+      droppedFiles.forEach((file) => {
+        uploadFile(file);
+      });
     };
 
     const handleFileSelect = (event) => {
       const selectedFiles = Array.from(event.target.files);
-      uploadFiles(selectedFiles);
-    };
-
-    const uploadFiles = async (newFiles) => {
-      try {
-        const uploadedFiles = newFiles.map((file, index) => ({
-          id: Date.now() + index,
-          name: file.name,
-          type: file.name.split(".").pop().toLowerCase(),
-          size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
-          created_at: new Date().toLocaleDateString("ar-EG"),
-          url: URL.createObjectURL(file),
-        }));
-
-        files.value = [...files.value, ...uploadedFiles];
-        toast.success(t("success.uploaded"), {
-          timeout: 3000,
-        });
-      } catch (error) {
-        toast.error(t("error.uploadFailed"), {
-          timeout: 3000,
-        });
-        console.error("Error uploading files:", error);
-      }
+      selectedFiles.forEach((file) => {
+        uploadFile(file);
+      });
     };
 
     const viewFile = (file) => {
@@ -281,6 +335,7 @@ export default {
         });
 
         if (result.isConfirmed) {
+          await deleteFiles(fileId);
           files.value = files.value.filter((file) => file.id !== fileId);
           toast.success(t("success.deleteSuccess"), {
             timeout: 3000,
@@ -294,102 +349,43 @@ export default {
       }
     };
 
-    const handleFolderSubmit = async (folderData) => {
-      if (!folderData.name?.trim()) {
-        toast.error(t("error.required"), {
-          timeout: 3000,
-        });
-        return;
-      }
-      try {
-        const currentFolderId = route.params.folderId;
+    // const handleFolderSubmit = async (folderData) => {
+    //   if (!folderData.name?.trim()) {
+    //     toast.error(t("error.required"), { timeout: 3000 });
+    //     return;
+    //   }
 
-        if (selectedFolder.value) {
-          const folderIndex = folders.value.findIndex(
-            (f) => f.id === selectedFolder.value.id
-          );
-          if (folderIndex !== -1) {
-            folders.value[folderIndex] = {
-              ...folders.value[folderIndex],
-              name: folderData.name,
-              updated_at: new Date().toLocaleDateString("ar-EG"),
-            };
-            toast.success(t("success.updated"), {
-              timeout: 3000,
-            });
-          }
-        } else {
-          const newFolder = {
-            id: Date.now(),
-            name: folderData.name,
-            parentId: currentFolderId,
-            created_at: new Date().toLocaleDateString("ar-EG"),
-            files: [],
-          };
-          folders.value.unshift(newFolder);
-          toast.success(t("success.saved"), {
-            timeout: 3000,
-          });
-        }
+    //   try {
+    //     const parentId = route.params.folderId || null;
+    //     const response = await createDocuments({
+    //       name: folderData.name,
+    //       parent_id: parentId,
+    //     });
 
-        folderFormModal.value.hide();
-        selectedFolder.value = null;
-      } catch (error) {
-        console.error("Error handling folder:", error);
-        toast.error(t("error.saveFailed"), {
-          timeout: 3000,
-        });
-      }
-    };
+    //     if (response && response.data.result) {
+    //       folders.value.unshift({
+    //         id: response.data.result.id,
+    //         name: response.data.result.name,
+    //         parentId: parentId,
+    //         created_at: new Date().toLocaleDateString("ar-EG"),
+    //       });
+    //       folderName.value = response.data.result.name;
+    //       toast.success(t("success.saved"), {
+    //         timeout: 3000,
+    //       });
+    //     } else {
+    //       throw new Error("❌ استجابة غير صالحة من السيرفر");
+    //     }
 
-    const fetchFolderContents = async () => {
-      try {
-        const currentFolderId = route.params.folderId;
-
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        const mockFoldersData = {
-          1: {
-            id: 1,
-            name: "First Folder",
-            files: [
-              { id: 1, name: "File 1.pdf", type: "pdf" },
-              { id: 2, name: "File 2.jpg", type: "image" },
-            ],
-            subFolders: [
-              { id: 11, name: "Sub Folder 1", parentId: 1 },
-              { id: 12, name: "Sub Folder 2", parentId: 1 },
-            ],
-          },
-          11: {
-            id: 11,
-            name: "Sub Folder 1-1",
-            files: [{ id: 3, name: "File 3.pdf", type: "pdf" }],
-            subFolders: [{ id: 13, name: "Sub Folder 1-1", parentId: 11 }],
-          },
-        };
-
-        const currentFolder = mockFoldersData[currentFolderId] || {
-          id: currentFolderId,
-          name: "New Folder",
-          files: [],
-          subFolders: [],
-        };
-
-        folderName.value = currentFolder.name;
-        files.value = currentFolder.files || [];
-        folders.value = currentFolder.subFolders || [];
-
-        // toast.success("تم تحميل محتويات المجلد بنجاح", {
-        //   timeout: 3000,
-        // });
-      } catch (error) {
-        console.error("Error fetching folder contents:", error);
-        toast.error(t("error.fetchFailed"), {
-          timeout: 3000,
-        });
-      }
-    };
+    //     folderFormModal.value.hide();
+    //     selectedFolder.value = null;
+    //   } catch (error) {
+    //     console.error("Error creating folder:", error);
+    //     toast.error(t("error.saveFailed"), {
+    //       timeout: 3000,
+    //     });
+    //   }
+    // };
 
     const openNewFolderModal = () => {
       selectedFolder.value = null;
@@ -427,7 +423,10 @@ export default {
         });
 
         if (result.isConfirmed) {
-          folders.value = folders.value.filter((f) => f.id !== folderId);
+          await deleteDocuments(folderId);
+          folders.value = folders.value.filter(
+            (folder) => folder.id !== folderId
+          );
           toast.success(t("success.deleteSuccess"), {
             timeout: 3000,
           });
@@ -436,18 +435,47 @@ export default {
         toast.error(t("error.deleteFailed"), {
           timeout: 3000,
         });
-        console.error("Error deleting folder:", error);
+        console.error("Error deleting file:", error);
       }
     };
 
-    const navigateToFolder = (folderId, event) => {
+    const navigateToFolder = async (folderId, event) => {
       if (event?.target?.closest("button")) {
         return;
       }
-      router.push({
-        name: "FolderFiles",
-        params: { folderId: folderId.toString() },
-      });
+
+      try {
+        const response = await getDocuments();
+        const foldersData = response.data.folders;
+
+        const currentFolder = foldersData.find(
+          (folder) => folder.id === folderId
+        );
+
+        if (currentFolder && currentFolder.full_path) {
+          const cleanPath = currentFolder.full_path
+            .replace(/,/g, "/")
+            .replace(/^\/+/, "");
+
+          router
+            .push({
+              path: `/documents/${cleanPath}`,
+              state: {
+                folderId: currentFolder.id,
+                folderName: currentFolder.name,
+                folderPath: currentFolder.full_path,
+              },
+            })
+            .then(() => {
+              fetchFiles();
+            });
+        } else {
+          toast.warning(t("error.invalidFolderPath"));
+        }
+      } catch (error) {
+        toast.error(t("error.fetchFailed"));
+        console.error("❌ Error navigating to folder:", error);
+      }
     };
 
     const breadcrumbs = computed(() => {
@@ -476,21 +504,12 @@ export default {
 
     // upload data
     onMounted(async () => {
+      fetchFiles();
       window.addEventListener("contextmenu", handleRightClick);
     });
     onUnmounted(() => {
       window.removeEventListener("contextmenu", handleRightClick);
     });
-
-    watch(
-      () => route.params.folderId,
-      (newFolderId) => {
-        if (newFolderId) {
-          fetchFolderContents();
-        }
-      },
-      { immediate: true }
-    );
 
     return {
       files,
@@ -499,7 +518,7 @@ export default {
       fileInput,
       selectedFolder,
       openNewFolderModal,
-      handleFolderSubmit,
+      // handleFolderSubmit,
       deleteFolder,
       getFileIcon,
       viewFile,
@@ -514,6 +533,7 @@ export default {
       breadcrumbs,
       navigateToCrumb,
       t,
+      fetchFiles,
     };
   },
 };

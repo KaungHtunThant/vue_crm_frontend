@@ -3,10 +3,10 @@
     <!-- Buttons Section -->
     <div class="row mb-3">
       <div class="col-12 text-end">
-        <button class="btn btn-primary me-2" @click="openImportModal">
+        <!-- <button class="btn btn-primary me-2" @click="openImportModal">
           {{ t("documents-modal-importdocument-heading") }}
           <i class="fas fa-file-import me-1"></i>
-        </button>
+        </button> -->
         <button class="btn btn-primary" @click="openNewFolderModal">
           {{ t("documents-button-createfolder") }}
           <i class="fas fa-folder-plus me-1"></i>
@@ -104,7 +104,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import EasyDataTable from "vue3-easy-data-table";
 import FolderForm from "@/components/modals/FolderForm.vue";
-import ImportFolder from "@/components/modals/ImportFolder.vue";
+// import ImportFolder from "@/components/modals/ImportFolder.vue";
 import Modal from "bootstrap/js/dist/modal";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
@@ -121,7 +121,7 @@ export default {
   components: {
     EasyDataTable,
     FolderForm,
-    ImportFolder,
+    // ImportFolder,
   },
   setup() {
     const toast = useToast();
@@ -153,9 +153,9 @@ export default {
       folderFormModal.value.show();
     };
 
-    const openImportModal = () => {
-      importFolderModal.value.show();
-    };
+    // const openImportModal = () => {
+    //   importFolderModal.value.show();
+    // };
 
     const editFolder = (folder) => {
       selectedFolder.value = { ...folder };
@@ -305,7 +305,7 @@ export default {
             : currentFolder.full_path;
 
           router.push({
-            path: `/documents/folders/${cleanPath}`,
+            path: `/documents/${cleanPath}`,
             state: {
               folderId: currentFolder.id,
               folderName: currentFolder.name,
@@ -342,9 +342,9 @@ export default {
       folderFormModal.value = new Modal(
         document.getElementById("folderFormModal")
       );
-      importFolderModal.value = new Modal(
-        document.getElementById("importFolderModal")
-      );
+      // importFolderModal.value = new Modal(
+      //   document.getElementById("importFolderModal")
+      // );
       window.addEventListener("contextmenu", handleRightClick);
     });
 
@@ -354,7 +354,7 @@ export default {
       tableLoading,
       selectedFolder,
       openNewFolderModal,
-      openImportModal,
+      // openImportModal,
       editFolder,
       deleteFolder,
       handleFolderSubmit,
