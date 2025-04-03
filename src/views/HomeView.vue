@@ -29,7 +29,7 @@ export default {
       // window.Echo.private("super-admin").notification((notification) => {
       //   console.log("Notification received:", notification);
       // });
-      window.Echo.private("private-super-admin").listen("CRUDEvent", (data) => {
+      window.Echo.channel("testing").listen("Testing", (data) => {
         console.log(data.message);
       });
     });
@@ -37,7 +37,7 @@ export default {
     onUnmounted(() => {
       // Clean up if necessary
       if (window.Echo) {
-        window.Echo.leave("private-super-admin");
+        window.Echo.leave("super-admin");
       }
     });
 
