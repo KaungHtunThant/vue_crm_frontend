@@ -26,27 +26,68 @@
             :placeholder="t('users-modal-add-placeholder-email')"
           />
         </div>
-        <div class="mb-3">
-          <label for="phone" class="form-label">{{
+        <div class="form-group mb-3">
+          <label for="phone1">{{ t("contacts-table-header-phone") }}</label>
+          <div class="d-flex align-items-center">
+            <input
+              type="text"
+              id="phone1"
+              class="form-control rounded-end-0"
+              v-model="localFormData.contact.phone1"
+              :placeholder="t('contacts-placeholder-phone')"
+            />
+            <button
+              type="button"
+              class="btn btn-primary add-phone-btn rounded-start-0"
+              @click="togglePhone2"
+            >
+              {{ showPhone2 ? "-" : "+" }}
+            </button>
+          </div>
+        </div>
+        <div class="form-group mb-3" v-if="showPhone2">
+          <label for="phone2">phone 2</label><br />
+          <input
+            type="text"
+            id="phone2"
+            class="form-control"
+            v-model="localFormData.contact.phone2"
+            :placeholder="t('contacts-placeholder-phone2')"
+          />
+        </div>
+        <!-- <div class="mb-3">
+          <label for="phone1" class="form-label">{{
             t("users-modal-add-label-phone")
           }}</label>
           <input
             type="text"
             class="form-control"
-            id="phone"
-            v-model="localFormData.contact.phones[0].phone"
+            id="phone1"
+            v-model="localFormData.contact.phone1"
             :placeholder="t('users-modal-add-placeholder-phone')"
           />
         </div>
         <div class="mb-3">
-          <label for="description" class="form-label">{{
+          <label for="phone2" class="form-label">{{
+            t("users-modal-add-label-phone")
+          }}</label>
+          <input
+            type="text"
+            class="form-control"
+            id="phone2"
+            v-model="localFormData.contact.phone2"
+            :placeholder="t('users-modal-add-placeholder-phone')"
+          />
+        </div> -->
+        <div class="mb-3">
+          <label for="note" class="form-label">{{
             t("kanban-modal-create-label-notes")
           }}</label>
           <input
             type="text"
             class="form-control"
-            id="description"
-            v-model="localFormData.description"
+            id="note"
+            v-model="localFormData.note"
             :placeholder="t('kanban-modal-create-placeholder-notes')"
           />
         </div>
@@ -57,7 +98,7 @@
           <select
             class="form-select"
             id="source"
-            v-model="localFormData.source"
+            v-model="localFormData.source_id"
           >
             <option value="" disabled selected>
               {{ t("kanban-modal-create-placeholder-source") }}
@@ -67,11 +108,11 @@
               :key="source.value"
               :value="source.value"
             >
-              {{ source.label }}
+              {{ source.name }}
             </option>
           </select>
         </div>
-        <!-- <div class="mb-3">
+        <div class="mb-3">
           <label for="stage" class="form-label">Stage</label>
           <select
             class="form-select"
@@ -84,10 +125,10 @@
               :key="stage.value"
               :value="stage.value"
             >
-              {{ stage.label }}
+              {{ stage.name }}
             </option>
           </select>
-        </div> -->
+        </div>
         <div class="mb-3">
           <label for="responsible" class="form-label">{{
             t("crmlist-table-header-responsible")
@@ -95,7 +136,7 @@
           <select
             class="form-select"
             id="responsible"
-            v-model="localFormData.responsible_id"
+            v-model="localFormData.responsible_user_id"
           >
             <option value="" disabled selected>
               {{ t("crmlist-table-header-responsible") }}
@@ -124,25 +165,31 @@ export default {
     RatingStars,
   },
   props: {
-    formData: {
-      type: Object,
-      required: true,
-    },
+    formData: Object,
   },
+  emit: ["update:formData"],
   setup(props, { emit }) {
     const { t } = useI18n();
-    // const users = ref([]);
     const localFormData = ref({
       ...props.formData,
       rating: props.formData.rating || 0,
+      contact: {
+        ...props.formData.contact,
+        phone1: props.formData.contact.phone1 || "",
+        phone2: props.formData.contact.phone2 || "",
+      },
     });
+    const showPhone2 = ref(false);
     const sources = ref([]);
     const stages = ref([]);
     const fetchSources = async () => {
       try {
         const response = await getSources();
         if (response.status === 200) {
-          sources.value = response.data.data;
+          sources.value = response.data.data.map((source) => ({
+            value: source.id,
+            name: source.name,
+          }));
         } else {
           // alert("Failed to fetch sources");
         }
@@ -151,19 +198,21 @@ export default {
         // alert("Failed to fetch sources");
       }
     };
-
     const fetchStages = async () => {
       try {
         const response = await getStages();
         if (response.status === 200) {
           stages.value = response.data.data.map((stage) => ({
             value: stage.id,
-            label: stage.name,
+            name: stage.name,
           }));
         }
       } catch (error) {
         console.error("Error fetching stages:", error);
       }
+    };
+    const togglePhone2 = () => {
+      showPhone2.value = !showPhone2.value;
     };
 
     onMounted(() => {
@@ -178,11 +227,12 @@ export default {
       { deep: true }
     );
     return {
-      // users,
       localFormData,
       sources,
       stages,
       t,
+      showPhone2,
+      togglePhone2,
     };
   },
 };

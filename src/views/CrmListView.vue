@@ -60,38 +60,69 @@
       </div>
     </div>
 
-    <EasyDataTable
-      v-model:items-selected="selectedRows"
-      :headers="headers"
-      :items="filteredItems"
-      :search-field="search"
-      :rows-per-page="itemsPerPage"
-      alternating
-      show-index
-      show-select
-      :loading="tableLoading"
-      selection-type="multiple"
-      :row-height="60"
-      :header-height="50"
-      class="custom-table"
-      @click-row="handleRowClick"
+    <DataTable
+      :value="filteredItems"
+      :paginator="true"
+      :rows="rowsPerPage"
+      :rowsPerPageOptions="[10, 25, 50]"
+      :total-records="totalRows"
+      :lazy="true"
+      :onLazyLoad="loadCarsLazy"
+      :loading="loading"
+      @page="onPageChange"
+      v-model:selection="selectedRows"
+      selectionMode="multiple"
     >
-      <template #item-actions="item">
-        <div class="btns d-flex justify-content-start align-items-center gap-3">
-          <button
-            @click="handleShowDeal(item.id)"
-            class="text-white bg-primary px-2 py-1 rounded-2 border-0"
-          >
-            <i class="fa-regular fa-eye"></i>
-          </button>
-          <button
-            @click="deleteItem(item.id)"
-            class="text-white bg-danger me-2 px-2 py-1 rounded-2 border-0"
-          >
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </div>
-      </template>
+      <Column selectionMode="multiple" headerStyle="width: 3rem;"></Column>
+      <Column :header="'#'">
+        <template #body="slotProps">
+          {{ slotProps.index + 1 + currentPage * rowsPerPage }}
+        </template>
+      </Column>
+      <Column
+        field="name"
+        :header="t('crmlist-table-header-fullname')"
+      ></Column>
+      <Column field="phone" :header="t('crmlist-table-header-phone')"></Column>
+      <!-- <Column :header="t('contacts-table-header-phone')">
+        <template #body="slotProps">
+          {{
+            slotProps.data.phones && slotProps.data.phones.length > 0
+              ? slotProps.data.phones.join(", ")
+              : "N/A"
+          }}
+        </template>
+      </Column> -->
+      <Column field="note" :header="t('crmlist-table-header-notes')"></Column>
+      <Column field="created_at" :header="t('created at')"></Column>
+      <Column
+        field="source"
+        :header="t('crmlist-table-header-source')"
+      ></Column>
+      <Column field="stage" :header="t('crmlist-table-header-stage')"></Column>
+      <Column
+        field="responsible"
+        :header="t('crmlist-table-header-responsible')"
+      ></Column>
+      <Column :header="t('crmlist-table-header-action')">
+        <template #body="slotProps">
+          <div class="d-flex gap-2">
+            <button
+              class="btn btn-sm btn-primary"
+              @click="handleShowDeal(slotProps.data.id)"
+            >
+              <i class="fas fa-eye"></i>
+            </button>
+            <button
+              class="btn btn-sm btn-danger"
+              @click="deleteItem(slotProps.data.id)"
+            >
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </template>
+      </Column>
+
       <template #loading>
         <div class="text-center loading-container">
           <div class="position-relative d-inline-block">
@@ -104,7 +135,7 @@
           <div class="mt-2 text-primary">{{ t("tables.loading") }}</div>
         </div>
       </template>
-    </EasyDataTable>
+    </DataTable>
 
     <ActionsDeal
       :selected-rows="selectedRows"
@@ -121,23 +152,17 @@
     @reset-filter="resetFilter"
     :selectedStatuses="selectedStatuses"
   />
-  <DealModal @add-deal="addNewDeal" />
+  <!-- @add-deal="addNewDeal" -->
+  <DealModal />
   <ImportModal />
   <ShowData :formData="dealData" ref="showDataModal" />
 </template>
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
-import EasyDataTable from "vue3-easy-data-table";
-import FilterCrmList from "@/components/modals/FilterCrmList.vue";
-import DealModal from "@/components/modals/CreateDeal.vue";
-import ImportModal from "@/components/modals/ImportModal.vue";
-import ShowData from "@/components/modals/ShowData.vue";
-import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
+import { ref, onMounted, computed, onUnmounted } from "vue";
 import { useToast } from "vue-toastification";
-import Swal from "sweetalert2";
 import { useI18n } from "vue-i18n";
-// import { useLoadingStore } from "@/plugins/loadingStore";
-
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
 import {
   getDeals,
   showDeal,
@@ -150,30 +175,26 @@ import {
   getStages,
 } from "@/plugins/services/authService";
 import ActionsDeal from "@/components/modals/ActionsDeal.vue";
-const { t } = useI18n();
+import FilterCrmList from "@/components/modals/FilterCrmList.vue";
+import DealModal from "@/components/modals/CreateDeal.vue";
+import ImportModal from "@/components/modals/ImportModal.vue";
+import ShowData from "@/components/modals/ShowData.vue";
+import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
+import Swal from "sweetalert2";
 
-// Items data
-const items = ref([]);
-// const loadingStore = useLoadingStore();
-const tableLoading = ref(false);
-// Table headers
-const headers = [
-  { text: t("crmlist-table-header-fullname"), value: "name" },
-  { text: t("crmlist-table-header-phone"), value: "phone" },
-  { text: t("crmlist-table-header-notes"), value: "description" },
-  { text: t("crmlist-table-header-created-at"), value: "created_at" },
-  { text: t("crmlist-table-header-source"), value: "source" },
-  { text: t("crmlist-table-header-stage"), value: "stage" },
-  { text: t("crmlist-table-header-responsible"), value: "responsible" },
-  { text: t("crmlist-table-header-action"), value: "actions", sortable: false },
-];
+const { t } = useI18n();
+const toast = useToast();
+
+// Table state
+const rows = ref([]);
+const loading = ref(false);
+const totalRows = ref(0);
+const currentPage = ref(0);
+const rowsPerPage = ref(10);
 const search = ref("");
 const selectedRows = ref([]);
-const itemsPerPage = ref(10);
 const selectedAction = ref("");
 const selectedStatuses = ref([]);
-const showDataModal = ref(null);
-const dealData = ref(null);
 const filters = ref({
   source: "",
   stage: "",
@@ -186,48 +207,15 @@ const filters = ref({
   modifiedEnd: "",
   status: [],
 });
+const dealData = ref(null);
+const showDataModal = ref(null);
 // Actions operations
 const actions = ref([
   { value: "changeStage", label: t("actions.changeStage") },
-  // { value: "assignSalesSupervisor", label: "Assign Sales Supervisor" },
   { value: "assignUser", label: t("actions.assignUser") },
   { value: "changeSource", label: t("actions.changeSource") },
   { value: "delete", label: t("actions.delete") },
 ]);
-const toast = useToast();
-
-const deleteItem = async (id) => {
-  try {
-    const result = await Swal.fire({
-      title: t("error.deleteTitle"),
-      text: t("error.deleteText"),
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: t("success.deleteConfirm"),
-      cancelButtonText: t("error.deleteCancel"),
-      reverseButtons: true,
-    });
-
-    if (result.isConfirmed) {
-      await deleteDeals([id]);
-      items.value = items.value.filter((item) => item.id !== id);
-      toast.success(t("success.deleteSuccess"), {
-        timeout: 3000,
-      });
-    }
-  } catch (error) {
-    toast.error(t("error.deleteFailed"), {
-      timeout: 3000,
-    });
-    console.error("Delete Error:", error);
-  }
-};
-const sources = ref([]);
-const stages = ref([]);
-
-// Action execution
 const executeAction = () => {
   if (!selectedAction.value || selectedRows.value.length === 0) {
     alert("Please select an action and at least one item.");
@@ -287,65 +275,291 @@ const executeAction = () => {
       break;
 
     case "delete":
-      if (
-        confirm(
-          `${t("error.deleteTitle")} ${selectedRows.value.length} ${t(
-            "error.deleteText"
-          )}`
-        )
-      ) {
-        handleDelete();
-      }
+      deleteItem();
+
+      // if (
+      //   confirm(
+      //     `${t("error.deleteTitle")} ${selectedRows.value.length} ${t(
+      //       "error.deleteText"
+      //     )}`
+      //   )
+      // ) {
+      //   deleteItem();
+      // }
       break;
   }
 };
-
+// Fetch data from the server
 const fetchData = async () => {
   try {
-    tableLoading.value = true;
-    const stagesRes = await getStages();
+    loading.value = true;
+
+    const [stagesRes, sourcesRes] = await Promise.all([
+      getStages(),
+      getSources(),
+    ]);
     stages.value = stagesRes.data.data;
-    // const sourcesRes = await getSources();
-    // stages.value = sourcesRes.data.data;
+    sources.value = sourcesRes.data.data;
 
-    const dealsRes = await getDeals();
+    const dealsRes = await getDeals({
+      page: currentPage.value + 1,
+      per_page: rowsPerPage.value,
+      sort_by: "created_at",
+      sort_order: "desc",
+    });
 
-    items.value = dealsRes.data.data.map((deal) => {
+    rows.value = dealsRes.data.data.map((deal) => {
       const matchedStage = stages.value.find(
         (stage) => stage.id === deal.stage_id
       );
-      // const matchedSource = sources.value.find(
-      //   (source) => source.id === deal.source_id
-      // );
+      const matchedSource = sources.value.find(
+        (source) => source.id === deal.source_id
+      );
+
       return {
         id: deal.id,
         name: deal.contact?.name || "unassigned",
-        phone: deal.contact?.phones?.[0]?.phone || "unassigned",
-        description: deal.description || "unassigned",
+        // phone1: deal.contact.phones?.[0] || "",
+        // phone2: deal.contact.phones?.[1] || "",
+        phone: deal.contact?.phone,
+        note: deal.note || "unassigned",
         created_at: deal.created_at.split("T")[0],
-        stage: matchedStage ? matchedStage.name : "unassigned",
-        responsible: "unassigned",
-        source: "null",
-        // source: matchedSource ? matchedSource.name : "unassigned",
+        stage: matchedStage ? matchedStage.name : "null",
+        responsible: "Null",
+        source: matchedSource ? matchedSource.name : "Null",
       };
     });
+
+    totalRows.value = dealsRes.data.meta.total;
   } catch (error) {
-    console.error("Error in fetchData:", error);
+    console.error("Error fetching data:", error);
+    toast.error(t("error.fetchFailed"));
+    rows.value = [];
+    totalRows.value = 0;
   } finally {
-    tableLoading.value = false;
+    loading.value = false;
+  }
+};
+
+// Handle page change event
+const onPageChange = (event) => {
+  currentPage.value = event.page;
+  rowsPerPage.value = event.rows;
+  fetchData();
+};
+const deleteItem = async (id) => {
+  try {
+    const result = await Swal.fire({
+      title: t("error.deleteTitle"),
+      text: t("error.deleteText"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: t("success.deleteConfirm"),
+      cancelButtonText: t("error.deleteCancel"),
+      reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
+      await deleteDeals([id]);
+      rows.value = rows.value.filter((item) => item.id !== id);
+      toast.success(t("success.deleteSuccess"), { timeout: 3000 });
+    }
+  } catch (error) {
+    toast.error(t("error.deleteFailed"), { timeout: 3000 });
+    console.error("Delete Error:", error);
+  }
+};
+const handleShowDeal = async (dealId) => {
+  try {
+    const response = await showDeal(dealId);
+    const deal = response.data.data;
+    const matchedStage = stages.value.find(
+      (stage) => stage.id === deal.stage_id
+    );
+    const matchedSource = sources.value.find(
+      (source) => source.id === deal.source_id
+    );
+    dealData.value = {
+      name: deal.contact?.name || "unassigned",
+      nickname: deal.contact?.nickname || "unassigned",
+      address: deal.contact?.address || "unassigned",
+      country: deal.contact?.country || "unassigned",
+      email: deal.contact?.email || "unassigned",
+      phone: deal.contact?.phone || "unassigned",
+      note: deal.note || "unassigned",
+      rating: deal.rating || "unassigned",
+      created_at: deal.created_at
+        ? new Date(deal.created_at).toISOString().split("T")[0]
+        : "",
+      updated_at: deal.updated_at
+        ? new Date(deal.updated_at).toISOString().split("T")[0]
+        : "",
+      stage_name: matchedStage?.name || "Unassigned",
+      source_name: matchedSource?.name || "Unassigned",
+      responsablePerson: deal.user || "unassigned",
+    };
+
+    showDataModal.value?.openShowData();
+  } catch (error) {
+    console.error("Error fetching deal data:", error);
+  }
+};
+
+const applyFilters = async (newFilters) => {
+  try {
+    filters.value = { ...newFilters };
+
+    const response = await getDeals(filters.value);
+    rows.value = response.data.data;
+  } catch (error) {
+    console.error("Filter Error:", error);
+  }
+};
+
+// create New Deal Modal
+const openDealModal = () => {
+  const modalElement = document.getElementById("dealModal");
+  const modal = new Modal(modalElement);
+  modal.show();
+};
+// const addNewDeal = (newDeal) => {
+//   try {
+//     const formattedDeal = {
+//       id: newDeal.id,
+//       name: newDeal.contact.name,
+//       phones: newDeal.contact.phones.join(", "),
+//       email: newDeal.contact.email,
+//       note: newDeal.note,
+//       created_at: new Date().toISOString().split("T")[0],
+//       source: newDeal.source_id,
+//       stage: newDeal.stage_id,
+//       responsible: newDeal.responsible_user_id,
+//     };
+
+//     rows.value = [...rows.value, formattedDeal];
+//     const modal = new Modal(document.getElementById("dealModal"));
+//     modal.hide();
+//   } catch (error) {
+//     console.error("Error fetching user data for new deal:", error);
+//   }
+// };
+
+const handleUpdateStage = async (newStage) => {
+  try {
+    const selectedIds = selectedRows.value.map((row) => row.id);
+    await updateDealsStage(selectedIds, newStage);
+
+    rows.value = rows.value.map((item) => {
+      if (selectedIds.includes(item.id)) {
+        return { ...item, stage: newStage };
+      }
+      return item;
+    });
+
+    selectedRows.value = [];
+    selectedAction.value = "";
+
+    toast.success(t("success.updated"), {
+      timeout: 3000,
+    });
+  } catch (error) {
+    toast.error(t("error.updateFailed"), {
+      timeout: 3000,
+    });
+    console.error("Error updating stage:", error);
+  }
+};
+
+const handleUpdateSupervisor = async (newSupervisor) => {
+  try {
+    const selectedIds = selectedRows.value.map((row) => row.id);
+    await updateDealsSupervisor(selectedIds, newSupervisor);
+
+    rows.value = rows.value.map((item) => {
+      if (selectedIds.includes(item.id)) {
+        return { ...item, supervisor: newSupervisor };
+      }
+      return item;
+    });
+
+    selectedRows.value = [];
+    selectedAction.value = "";
+
+    toast.success(t("success.updated"), {
+      timeout: 3000,
+    });
+  } catch (error) {
+    toast.error(t("error.updateFailed"), {
+      timeout: 3000,
+    });
+    console.error("Error assigning supervisor:", error);
+  }
+};
+
+const handleUpdateRepresentative = async (newRepresentative) => {
+  try {
+    const selectedIds = selectedRows.value.map((row) => row.id);
+    await updateDealsRepresentative(selectedIds, newRepresentative);
+
+    rows.value = rows.value.map((item) => {
+      if (selectedIds.includes(item.id)) {
+        return { ...item, representative: newRepresentative };
+      }
+      return item;
+    });
+
+    selectedRows.value = [];
+    selectedAction.value = "";
+
+    toast.success(t("success.updated"), {
+      timeout: 3000,
+    });
+  } catch (error) {
+    toast.error(t("error.updateFailed"), {
+      timeout: 3000,
+    });
+    console.error("Error assigning representative:", error);
+  }
+};
+
+const handleUpdateSource = async (newSource) => {
+  try {
+    const selectedIds = selectedRows.value.map((row) => row.id);
+    await updateDealsSource(selectedIds, newSource);
+
+    rows.value = rows.value.map((item) => {
+      if (selectedIds.includes(item.id)) {
+        return { ...item, source: newSource };
+      }
+      return item;
+    });
+
+    selectedRows.value = [];
+    selectedAction.value = "";
+
+    toast.success(t("success.updated"), {
+      timeout: 3000,
+    });
+  } catch (error) {
+    toast.error(t("error.updateFailed"), {
+      timeout: 3000,
+    });
+    console.error("Error updating source:", error);
   }
 };
 
 // Filtered items search and filters
 const filteredItems = computed(() => {
-  return items.value.filter((item) => {
+  return rows.value.filter((item) => {
     const searchLower = search.value.toLowerCase();
 
     const matchesSearch =
       !search.value ||
-      item.contact?.name?.toLowerCase().includes(searchLower) ||
+      item.name?.toLowerCase().includes(searchLower) ||
       item.phone?.includes(search.value) ||
-      item.description?.toLowerCase().includes(searchLower) ||
+      item.note?.toLowerCase().includes(searchLower) ||
       item.source?.toLowerCase().includes(searchLower) ||
       item.stage?.toLowerCase().includes(searchLower) ||
       item.responsible?.toLowerCase().includes(searchLower);
@@ -394,7 +608,6 @@ const filteredItems = computed(() => {
     );
   });
 });
-
 // Opening and closing modals
 const resetFilter = () => {
   filters.value = {
@@ -417,274 +630,72 @@ const openFilterModal = () => {
   const modal = new Modal(modalElement);
   modal.show();
 };
-
-const openDealModal = () => {
-  const modalElement = document.getElementById("dealModal");
-  const modal = new Modal(modalElement);
-  modal.show();
-};
 const openImportModal = () => {
   const modalElement = document.getElementById("importModal");
   const modal = new Modal(modalElement);
   modal.show();
 };
-const fetchStagesAndSources = async () => {
-  try {
-    // tableLoading.value = true;
-    const [stagesRes, sourcesRes] = await Promise.all([
-      getStages(),
-      getSources(),
-    ]);
-    stages.value = stagesRes.data.data;
-    sources.value = sourcesRes.data.data;
-  } catch (error) {
-    console.error("Error fetching stages and sources:", error);
-  } finally {
-    // tableLoading.value = false;
-  }
-};
-const handleShowDeal = async (dealId) => {
-  try {
-    // tableLoading.value = true;
-    const response = await showDeal(dealId);
-    const deal = response.data.data;
-    const matchedStage = stages.value.find(
-      (stage) => stage.id === deal.stage_id
-    );
-    const matchedSource = sources.value.find(
-      (source) => source.id === deal.source_id
-    );
-    dealData.value = {
-      name: deal.contact?.name || "unassigned",
-      nickname: deal.contact?.nickname || "unassigned",
-      address: deal.contact?.address || "unassigned",
-      country: deal.contact?.country || "unassigned",
-      email: deal.contact?.email || "unassigned",
-      phone: deal.contact?.phones?.[0]?.phone || "unassigned",
-      description: deal.description || "unassigned",
-      rating: deal.rating || "unassigned",
-      created_at: deal.created_at
-        ? new Date(deal.created_at).toISOString().split("T")[0]
-        : "",
-      updated_at: deal.updated_at
-        ? new Date(deal.updated_at).toISOString().split("T")[0]
-        : "",
-      stage_name: matchedStage?.name || "Unassigned",
-      source_name: matchedSource?.name || "Unassigned",
-      responsablePerson: deal.user || "unassigned",
-    };
+// const handleDelete = async () => {
+//   try {
+//     const selectedIds = selectedRows.value.map((row) => row.id);
 
-    showDataModal.value?.openShowData();
-  } catch (error) {
-    console.error("Error fetching deal data:", error);
-  } finally {
-    // tableLoading.value = false;
-  }
-};
+//     const result = await Swal.fire({
+//       title: t("error.deleteTitle"),
+//       text: t("error.deleteText"),
+//       icon: "warning",
+//       showCancelButton: true,
+//       confirmButtonColor: "#d33",
+//       cancelButtonColor: "#3085d6",
+//       confirmButtonText: t("success.deleteConfirm"),
+//       cancelButtonText: t("error.deleteCancel"),
+//       reverseButtons: true,
+//     });
 
-const applyFilters = async (newFilters) => {
-  try {
-    // tableLoading.value = true;
-    filters.value = { ...newFilters };
+//     if (result.isConfirmed) {
+//       const response = await deleteDeals(selectedIds);
 
-    const response = await getDeals(filters.value);
-    items.value = response.data.data;
-  } catch (error) {
-    console.error("Filter Error:", error);
-  } finally {
-    // tableLoading.value = false;
-  }
-};
+//       if (response.data.success) {
+//         rows.value = rows.value.filter(
+//           (item) => !selectedIds.includes(item.id)
+//         );
+//         selectedRows.value = [];
+//         selectedAction.value = "";
 
-const addNewDeal = async (newDeal) => {
-  try {
-    // const userResponse = await getUser({ id: newDeal.user_id });
-    // const user = userResponse.data.data;
+//         toast.success(t("success.deleteSuccess"), {
+//           timeout: 3000,
+//         });
+//       } else {
+//         throw new Error(response.data.message || t("error.deleteFailed"));
+//       }
+//     }
+//   } catch (error) {
+//     toast.error(error.response?.data?.message || t("error.deleteFailed"), {
+//       timeout: 3000,
+//     });
+//     console.error("Delete Error:", error);
+//   }
+// };
 
-    const formattedDeal = {
-      id: newDeal.id,
-      name: newDeal.user_id.name,
-      phone: newDeal.phone,
-      description: newDeal.description,
-      createdAt: newDeal.createdAt,
-      source: newDeal.source,
-      stage: newDeal.stage,
-      responsible: newDeal.responsible,
-    };
+// const handleRowClick = (item, event) => {
+//   if (event?.target?.closest("button")) {
+//     return;
+//   }
 
-    items.value = [...items.value, formattedDeal];
-  } catch (error) {
-    console.error("Error fetching user data for new deal:", error);
-  }
-};
+//   const checkbox = event.currentTarget.querySelector('input[type="checkbox"]');
+//   const isSelected = selectedRows.value.some((row) => row.id === item.id);
 
-// Handle updates from modals
-const handleUpdateStage = async (newStage) => {
-  try {
-    const selectedIds = selectedRows.value.map((row) => row.id);
-    await updateDealsStage(selectedIds, newStage);
-
-    items.value = items.value.map((item) => {
-      if (selectedIds.includes(item.id)) {
-        return { ...item, stage: newStage };
-      }
-      return item;
-    });
-
-    // Reset selection
-    selectedRows.value = [];
-    selectedAction.value = "";
-
-    toast.success(t("success.updated"), {
-      timeout: 3000,
-    });
-  } catch (error) {
-    toast.error(t("error.updateFailed"), {
-      timeout: 3000,
-    });
-    console.error("Error updating stage:", error);
-  }
-};
-
-const handleUpdateSupervisor = async (newSupervisor) => {
-  try {
-    const selectedIds = selectedRows.value.map((row) => row.id);
-    await updateDealsSupervisor(selectedIds, newSupervisor);
-
-    items.value = items.value.map((item) => {
-      if (selectedIds.includes(item.id)) {
-        return { ...item, supervisor: newSupervisor };
-      }
-      return item;
-    });
-
-    selectedRows.value = [];
-    selectedAction.value = "";
-
-    toast.success(t("success.updated"), {
-      timeout: 3000,
-    });
-  } catch (error) {
-    toast.error(t("error.updateFailed"), {
-      timeout: 3000,
-    });
-    console.error("Error assigning supervisor:", error);
-  }
-};
-
-const handleUpdateRepresentative = async (newRepresentative) => {
-  try {
-    const selectedIds = selectedRows.value.map((row) => row.id);
-    await updateDealsRepresentative(selectedIds, newRepresentative);
-
-    items.value = items.value.map((item) => {
-      if (selectedIds.includes(item.id)) {
-        return { ...item, representative: newRepresentative };
-      }
-      return item;
-    });
-
-    selectedRows.value = [];
-    selectedAction.value = "";
-
-    toast.success(t("success.updated"), {
-      timeout: 3000,
-    });
-  } catch (error) {
-    toast.error(t("error.updateFailed"), {
-      timeout: 3000,
-    });
-    console.error("Error assigning representative:", error);
-  }
-};
-
-const handleUpdateSource = async (newSource) => {
-  try {
-    const selectedIds = selectedRows.value.map((row) => row.id);
-    await updateDealsSource(selectedIds, newSource);
-
-    items.value = items.value.map((item) => {
-      if (selectedIds.includes(item.id)) {
-        return { ...item, source: newSource };
-      }
-      return item;
-    });
-
-    selectedRows.value = [];
-    selectedAction.value = "";
-
-    toast.success(t("success.updated"), {
-      timeout: 3000,
-    });
-  } catch (error) {
-    toast.error(t("error.updateFailed"), {
-      timeout: 3000,
-    });
-    console.error("Error updating source:", error);
-  }
-};
-
-const handleDelete = async () => {
-  try {
-    const selectedIds = selectedRows.value.map((row) => row.id);
-
-    const result = await Swal.fire({
-      title: t("error.deleteTitle"),
-      text: t("error.deleteText"),
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: t("success.deleteConfirm"),
-      cancelButtonText: t("error.deleteCancel"),
-      reverseButtons: true,
-    });
-
-    if (result.isConfirmed) {
-      const response = await deleteDeals(selectedIds);
-
-      if (response.data.success) {
-        items.value = items.value.filter(
-          (item) => !selectedIds.includes(item.id)
-        );
-        selectedRows.value = [];
-        selectedAction.value = "";
-
-        toast.success(t("success.deleteSuccess"), {
-          timeout: 3000,
-        });
-      } else {
-        throw new Error(response.data.message || t("error.deleteFailed"));
-      }
-    }
-  } catch (error) {
-    toast.error(error.response?.data?.message || t("error.deleteFailed"), {
-      timeout: 3000,
-    });
-    console.error("Delete Error:", error);
-  }
-};
-
-const handleRowClick = (item, event) => {
-  if (event?.target?.closest("button")) {
-    return;
-  }
-
-  const checkbox = event.currentTarget.querySelector('input[type="checkbox"]');
-  const isSelected = selectedRows.value.some((row) => row.id === item.id);
-
-  if (isSelected) {
-    selectedRows.value = selectedRows.value.filter((row) => row.id !== item.id);
-    if (checkbox) {
-      checkbox.checked = false;
-    }
-  } else {
-    selectedRows.value = [...selectedRows.value, item];
-    if (checkbox) {
-      checkbox.checked = true;
-    }
-  }
-};
+//   if (isSelected) {
+//     selectedRows.value = selectedRows.value.filter((row) => row.id !== item.id);
+//     if (checkbox) {
+//       checkbox.checked = false;
+//     }
+//   } else {
+//     selectedRows.value = [...selectedRows.value, item];
+//     if (checkbox) {
+//       checkbox.checked = true;
+//     }
+//   }
+// };
 const handleRightClick = (event) => {
   event.preventDefault();
   const modalElements = document.querySelectorAll(".modal");
@@ -698,12 +709,41 @@ const handleRightClick = (event) => {
   });
 };
 
-// upload data
+const sources = ref([]);
+const stages = ref([]);
+
+const fetchStagesAndSources = async () => {
+  try {
+    const [stagesRes, sourcesRes] = await Promise.all([
+      getStages(),
+      getSources(),
+    ]);
+    stages.value = stagesRes.data.data;
+    sources.value = sourcesRes.data.data;
+  } catch (error) {
+    console.error("Error fetching stages and sources:", error);
+  }
+};
+
+const loadCarsLazy = async (event) => {
+  try {
+    const response = await getDeals({
+      page: event.page + 1,
+      per_page: event.rows,
+      sort_by: "created_at",
+      sort_order: "desc",
+    });
+    rows.value = response.data.data;
+    totalRows.value = response.data.meta.total;
+  } catch (error) {
+    console.error("Error fetching lazy data:", error);
+    toast.error(t("error.fetchFailed"));
+  }
+};
+
 onMounted(async () => {
-  // loadingStore.startLoading();
   await fetchData();
   await fetchStagesAndSources();
-  // loadingStore.stopLoading();
   const modalElements = document.querySelectorAll(".modal");
   modalElements.forEach((element) => {
     new Modal(element, {
@@ -768,5 +808,44 @@ select:focus {
   to {
     transform: rotate(360deg);
   }
+}
+:deep(.sorted-asc),
+:deep(.sorted-desc) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+:deep(.sortable):hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+}
+
+:deep(.pagination-container) {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+:deep(.page-info) {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+:deep(.p-datatable) {
+  font-size: 14px;
+}
+
+:deep(.p-datatable th),
+:deep(.p-datatable td) {
+  padding: 8px;
+}
+
+:deep(.p-datatable thead th) {
+  font-weight: bold;
+  text-align: center;
+}
+
+:deep(.p-datatable tbody td) {
+  text-align: left;
 }
 </style>

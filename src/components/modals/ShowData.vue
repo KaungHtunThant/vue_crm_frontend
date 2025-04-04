@@ -10,9 +10,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="showDataModalLabel">
-            {{ $t("modals.showDataModalTitle") }}
-          </h5>
+          <h5 class="modal-title" id="showDataModalLabel">Show Deal Modal</h5>
           <button
             type="button"
             class="btn-close"
@@ -25,9 +23,9 @@
           <div class="row">
             <div class="col-12">
               <!-- Deal Information -->
-              <h6 class="mb-3">{{ $t("modals.dealInformation") }}</h6>
+              <h6 class="mb-3">Deal Information</h6>
               <div class="mb-3">
-                <label class="form-label">{{ $t("modals.stageName") }}</label>
+                <label class="form-label">Stage Name</label>
                 <input
                   type="text"
                   class="form-control"
@@ -36,7 +34,7 @@
                 />
               </div>
               <div class="mb-3">
-                <label class="form-label">{{ $t("modals.sourceName") }}</label>
+                <label class="form-label">Source Name</label>
                 <input
                   type="text"
                   class="form-control"
@@ -44,8 +42,17 @@
                   disabled
                 />
               </div>
+              <!-- <div class="mb-3">
+                <label class="form-label">owner</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  :value="dealData?.owner_id || 'No owner'"
+                  disabled
+                />
+              </div> -->
               <div class="mb-3">
-                <label class="form-label">{{ $t("modals.rating") }}</label>
+                <label class="form-label">Rating</label>
                 <input
                   type="text"
                   class="form-control"
@@ -54,16 +61,16 @@
                 />
               </div>
               <div class="mb-3">
-                <label class="form-label">{{ $t("modals.note") }}</label>
+                <label class="form-label">Note</label>
                 <input
                   type="text"
                   class="form-control"
-                  :value="dealData?.description || 'No description'"
+                  :value="dealData?.note || 'No description'"
                   disabled
                 />
               </div>
               <div class="mb-3">
-                <label class="form-label">{{ $t("modals.created_at") }}</label>
+                <label class="form-label">Create at</label>
                 <input
                   type="text"
                   class="form-control"
@@ -71,20 +78,11 @@
                   disabled
                 />
               </div>
-              <div class="mb-3">
-                <label class="form-label">{{ $t("modals.updated_at") }}</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  :value="formatDate(dealData?.updated_at)"
-                  disabled
-                />
-              </div>
 
               <!-- Contact Information -->
-              <h6 class="mb-3 mt-4">{{ $t("modals.contactInformation") }}</h6>
+              <h6 class="mb-3 mt-4">Contact Informations</h6>
               <div class="mb-3">
-                <label class="form-label">{{ $t("modals.name") }}</label>
+                <label class="form-label">Name</label>
                 <input
                   type="text"
                   class="form-control"
@@ -93,16 +91,7 @@
                 />
               </div>
               <div class="mb-3">
-                <label class="form-label">{{ $t("modals.nickname") }}</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  :value="dealData?.nickname || 'No nickname'"
-                  disabled
-                />
-              </div>
-              <div class="mb-3">
-                <label class="form-label">{{ $t("modals.email") }}</label>
+                <label class="form-label">Email</label>
                 <input
                   type="email"
                   class="form-control"
@@ -111,16 +100,7 @@
                 />
               </div>
               <div class="mb-3">
-                <label class="form-label">{{ $t("modals.address") }}</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  :value="dealData?.address || 'No address'"
-                  disabled
-                />
-              </div>
-              <div class="mb-3">
-                <label class="form-label">{{ $t("modals.country") }}</label>
+                <label class="form-label">Country</label>
                 <input
                   type="text"
                   class="form-control"
@@ -129,7 +109,7 @@
                 />
               </div>
               <div class="mb-3">
-                <label class="form-label">{{ $t("modals.phone") }}</label>
+                <label class="form-label">Phone</label>
                 <input
                   type="text"
                   class="form-control"
@@ -169,7 +149,7 @@ export default {
       (newData) => {
         if (newData) {
           dealData.value = newData;
-          toast.success(this.$t("success.showData"), {
+          toast.success(t("success.showData"), {
             timeout: 3000,
           });
         }
@@ -188,7 +168,7 @@ export default {
         const modal = new Modal(modalElement);
         modal.show();
       } catch (error) {
-        toast.error(this.$t("error.showData"), {
+        toast.error(t("error.showData"), {
           timeout: 3000,
         });
         console.error("Error opening modal:", error);
@@ -203,7 +183,7 @@ export default {
           modal.hide();
         }
       } catch (error) {
-        toast.error(this.$t("error.closeModal"), {
+        toast.error(t("error.closeModal"), {
           timeout: 3000,
         });
         console.error("Error closing modal:", error);

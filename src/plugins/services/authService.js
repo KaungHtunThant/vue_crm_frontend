@@ -39,7 +39,23 @@ export const deleteUser = (userId) => {
 // Get All Roles
 export const getRoles = () => axios.get("/roles");
 // Get All Deals
-export const getDeals = () => axios.get("/deals");
+export const getDeals = async (params = {}) => {
+  const token = Cookies.get("authToken");
+  console.log("Fetching getDeals with params:", params);
+
+  return axios.get("/deals", {
+    params: {
+      page: params.page || 1,
+      per_page: params.per_page || 10,
+      sort_by: params.sort_by || "id",
+      sort_type: params.sort_type || "asc",
+      ...params,
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 // Show Deal id
 export const showDeal = (dealId) => axios.get(`/deals/${dealId}`);
 // Create New Deal
@@ -49,35 +65,25 @@ export const createDeal = (formData) => {
 
 // Add these functions to your service file
 export const updateDealsStage = async (ids, stage) => {
-  return await axios.post("/api/deals/update-stage", { ids, stage });
+  return await axios.post("/deals/update-stage", { ids, stage });
 };
 
 export const updateDealsSupervisor = async (ids, supervisor) => {
-  return await axios.post("/api/deals/update-supervisor", { ids, supervisor });
+  return await axios.post("/deals/update-supervisor", { ids, supervisor });
 };
 
 export const updateDealsRepresentative = async (ids, representative) => {
-  return await axios.post("/api/deals/update-representative", {
+  return await axios.post("/deals/update-representative", {
     ids,
     representative,
   });
 };
 
 export const updateDealsSource = async (ids, source) => {
-  return await axios.post("/api/deals/update-source", { ids, source });
+  return await axios.post("/deals/update-source", { ids, source });
 };
 
-export const deleteDeals = async (ids) => {
-  try {
-    const response = await axios.delete("/api/deals/delete", {
-      data: { ids },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Delete API Error:", error);
-    throw error;
-  }
-};
+export const deleteDeals = (ids) => axios.delete(`/deals/${ids}`);
 
 // Get All Sources
 export const getSources = () => axios.get("/sources");

@@ -44,13 +44,12 @@
                   :key="source.value"
                   :value="source.value"
                 >
-                  {{ source.label }}
+                  {{ source.name }}
                 </option>
               </select>
             </div>
           </div>
         </div>
-
         <!-- Stage Filter -->
         <div class="row">
           <div class="col-3 pt-2">
@@ -67,7 +66,7 @@
                   :key="stage.value"
                   :value="stage.value"
                 >
-                  {{ stage.label }}
+                  {{ stage.name }}
                 </option>
               </select>
             </div>
@@ -190,8 +189,10 @@
 </template>
 
 <script>
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { getStages, getSources } from "@/plugins/services/authService";
+
 export default {
   name: "FilterCrmListFormVue",
   props: {
@@ -217,7 +218,37 @@ export default {
       status: [],
       ...props.filters,
     });
-
+    const stages = ref([]);
+    const sources = ref([]);
+    const fetchStages = async () => {
+      try {
+        const response = await getStages();
+        if (response.status === 200) {
+          stages.value = response.data.data.map((stage) => ({
+            value: stage.id,
+            name: stage.name,
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching stages:", error);
+      }
+    };
+    const fetchSources = async () => {
+      try {
+        const response = await getSources();
+        if (response.status === 200) {
+          sources.value = response.data.data.map((source) => ({
+            value: source.id,
+            name: source.name,
+          }));
+        } else {
+          // alert("Failed to fetch sources");
+        }
+      } catch (error) {
+        console.error("Error fetching sources:", error);
+        // alert("Failed to fetch sources");
+      }
+    };
     const statuses = ref([
       { value: "unassigned", label: "Unassigned" },
       { value: "no_comments", label: "No Comments" },
@@ -259,22 +290,29 @@ export default {
       { deep: true }
     );
 
+    onMounted(() => {
+      fetchStages();
+      fetchSources();
+    });
+
     return {
       localFilters,
       statuses,
+      stages,
+      sources,
       toggleStatus,
       t,
-      sources: [
-        { value: "facebook", label: "Facebook" },
-        { value: "twitter", label: "Twitter" },
-        { value: "instagram", label: "Instagram" },
-        { value: "linkedin", label: "LinkedIn" },
-      ],
-      stages: [
-        { value: "newDeal", label: "New Deal" },
-        { value: "oldData", label: "Old Data" },
-        { value: "medicines", label: "Medicines" },
-      ],
+      // sources: [
+      //   { value: "facebook", label: "Facebook" },
+      //   { value: "twitter", label: "Twitter" },
+      //   { value: "instagram", label: "Instagram" },
+      //   { value: "linkedin", label: "LinkedIn" },
+      // ],
+      // stages: [
+      //   { value: "newDeal", label: "New Deal" },
+      //   { value: "oldData", label: "Old Data" },
+      //   { value: "medicines", label: "Medicines" },
+      // ],
       supervisors: [
         { value: "any", label: "Any" },
         { value: "eurasia", label: "Eurasia Admin" },

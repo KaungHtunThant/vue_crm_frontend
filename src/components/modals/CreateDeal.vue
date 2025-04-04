@@ -22,7 +22,7 @@
           ></button>
         </div>
         <form @submit.prevent="submitForm">
-          <DealForm :formData="formData" />
+          <DealForm v-model:formData="formData" />
           <DealButtons @close-modal="closeDealModal" @submit="submitForm" />
         </form>
       </div>
@@ -49,17 +49,16 @@ export default {
   data() {
     return {
       formData: {
-        description: null,
-        stage_id: "",
+        note: null,
+        stage_id: null,
         source_id: null,
+        responsible_user_id: null,
+        rating: null,
         contact: {
           name: "",
           email: "",
-          phones: [
-            {
-              phone: "",
-            },
-          ],
+          phone1: "",
+          phone2: "",
         },
       },
     };
@@ -71,18 +70,31 @@ export default {
     },
     async submitForm() {
       try {
+        if (!this.formData.contact.name || !this.formData.contact.phone1) {
+          this.toast.error(this.t("error.requiredFields"), {
+            timeout: 3000,
+          });
+          return;
+        }
+
+        const phones = [];
+        if (this.formData.contact.phone1) {
+          phones.push(this.formData.contact.phone1);
+        }
+        if (this.formData.contact.phone2) {
+          phones.push(this.formData.contact.phone2);
+        }
+
         const dealData = {
-          description: this.formData.description,
+          note: this.formData.note,
           stage_id: this.formData.stage_id,
           source_id: this.formData.source_id,
+          responsible_user_id: this.formData.responsible_user_id,
+          rating: this.formData.rating,
           contact: {
             name: this.formData.contact.name,
             email: this.formData.contact.email,
-            phones: [
-              {
-                phone: this.formData.contact.phones[0].phone,
-              },
-            ],
+            phones: phones,
           },
         };
 
@@ -93,10 +105,8 @@ export default {
             timeout: 3000,
           });
           this.$emit("add-deal", response.data.data);
-          setTimeout(() => {
-            this.clearForm();
-            this.closeDealModal();
-          }, 1000);
+          this.clearForm();
+          this.closeDealModal();
         }
       } catch (error) {
         this.toast.error(
@@ -110,23 +120,24 @@ export default {
     },
     clearForm() {
       this.formData = {
-        description: null,
-        stage_id: "",
+        note: null,
+        stage_id: null,
         source_id: null,
+        responsible_user_id: null,
+        rating: null,
         contact: {
           name: "",
           email: "",
-          phones: [
-            {
-              phone: "",
-            },
-          ],
+          phone1: "",
+          phone2: "",
         },
       };
     },
     closeDealModal() {
-      const modal = Modal.getInstance(this.$refs.dealModal);
-      modal.hide();
+      const modal = new Modal(document.getElementById("dealModal"));
+      if (modal) {
+        modal.hide();
+      }
     },
   },
 };

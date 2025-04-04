@@ -164,7 +164,7 @@ import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 import { useI18n } from "vue-i18n";
 import {
-  // createDocuments,
+  createDocuments,
   deleteFiles,
   showDocuments,
   uploadFiles,
@@ -211,9 +211,6 @@ export default {
           folderName.value = response.data.parent.name;
           folders.value = response.data.folders || [];
           files.value = response.data.files || [];
-
-          const parentId = response.data.parent.id;
-          console.log("parent_id للمجلد المفتوح:", parentId);
         }
 
         // console.log("Fetched folder contents:", folders.value, files.value);
@@ -349,43 +346,48 @@ export default {
       }
     };
 
-    // const handleFolderSubmit = async (folderData) => {
-    //   if (!folderData.name?.trim()) {
-    //     toast.error(t("error.required"), { timeout: 3000 });
-    //     return;
-    //   }
+    const handleFolderSubmit = async (folderData) => {
+      if (!folderData.name?.trim()) {
+        toast.error(t("error.required"), { timeout: 3000 });
+        return;
+      }
 
-    //   try {
-    //     const parentId = route.params.folderId || null;
-    //     const response = await createDocuments({
-    //       name: folderData.name,
-    //       parent_id: parentId,
-    //     });
+      try {
+        const folderPath = route.params.folderName || route.params.fullPath;
+        const response = await showDocuments(folderPath);
 
-    //     if (response && response.data.result) {
-    //       folders.value.unshift({
-    //         id: response.data.result.id,
-    //         name: response.data.result.name,
-    //         parentId: parentId,
-    //         created_at: new Date().toLocaleDateString("ar-EG"),
-    //       });
-    //       folderName.value = response.data.result.name;
-    //       toast.success(t("success.saved"), {
-    //         timeout: 3000,
-    //       });
-    //     } else {
-    //       throw new Error("❌ استجابة غير صالحة من السيرفر");
-    //     }
+        if (!response.data || !response.data.parent) {
+          throw new Error("the Folder is Not Found");
+        }
 
-    //     folderFormModal.value.hide();
-    //     selectedFolder.value = null;
-    //   } catch (error) {
-    //     console.error("Error creating folder:", error);
-    //     toast.error(t("error.saveFailed"), {
-    //       timeout: 3000,
-    //     });
-    //   }
-    // };
+        const parentId = response.data.parent.id;
+
+        const createResponse = await createDocuments({
+          name: folderData.name,
+          parent_id: parentId,
+        });
+
+        if (createResponse && createResponse.data.result) {
+          folders.value.unshift({
+            id: createResponse.data.result.id,
+            name: createResponse.data.result.name,
+            parentId: parentId,
+            created_at: new Date().toLocaleDateString("ar-EG"),
+          });
+
+          folderName.value = createResponse.data.result.name;
+          toast.success(t("success.saved"), { timeout: 3000 });
+        } else {
+          throw new Error("error in server");
+        }
+
+        folderFormModal.value.hide();
+        selectedFolder.value = null;
+      } catch (error) {
+        console.error("Error creating folder:", error);
+        toast.error(t("error.saveFailed"), { timeout: 3000 });
+      }
+    };
 
     const openNewFolderModal = () => {
       selectedFolder.value = null;
@@ -518,7 +520,7 @@ export default {
       fileInput,
       selectedFolder,
       openNewFolderModal,
-      // handleFolderSubmit,
+      handleFolderSubmit,
       deleteFolder,
       getFileIcon,
       viewFile,

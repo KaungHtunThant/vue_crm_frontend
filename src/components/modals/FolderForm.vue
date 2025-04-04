@@ -75,16 +75,14 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
     const toast = useToast();
-    const folderData = ref({ name: "", parent_id: 1 });
+    const folderData = ref({ name: "" });
     const isEdit = ref(false);
     const isSubmitting = ref(false);
 
     watch(
       () => props.folder,
       (newFolder) => {
-        folderData.value = newFolder
-          ? { ...newFolder, parent_id: newFolder.parent_id || 1 }
-          : { name: "", parent_id: 1 };
+        folderData.value = newFolder ? { ...newFolder } : { name: "" };
         isEdit.value = !!newFolder;
       },
       { immediate: true }
