@@ -126,7 +126,7 @@ export default {
         // toast.success("تم تحميل لوحة كانبان بنجاح", {
         //   timeout: 3000,
         // });
-        window.Echo.channel("super-admin").listen("CRUDEvent", (data) => {
+        window.Echo.channel("super-admin").listen("DealEvent", (data) => {
           console.log(data.message);
         });
       } catch (error) {
