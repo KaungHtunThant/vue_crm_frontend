@@ -52,16 +52,13 @@
           @click="openChat(chat, index)"
           :class="{ active: chat.isActive }"
         >
-          <div class="imgBx position-relative overflow-hidden h-25 me-2 mb-4">
-            <img
-              :src="
-                chat.img ||
-                require('@/assets/whatsappImage/default-userImage.jpg')
-              "
-              alt="user image"
-              class="rounded-circle w-100 h-100"
-            />
-          </div>
+          <CountryFlagAvatar
+            :phone="chat.phone"
+            :defaultImage="
+              chat.img ||
+              require('@/assets/whatsappImage/default-userImage.jpg')
+            "
+          />
           <div class="details position-relative w-100">
             <div class="rating mb-1" style="font-size: 12px">
               <template v-for="index in 7" :key="index">
@@ -128,6 +125,7 @@
 <script>
 import { Modal } from "bootstrap";
 import FilterModalConv from "@/components/whatsapp/FilterModalConv.vue";
+import CountryFlagAvatar from "@/components/whatsapp/CountryFlagAvatar.vue";
 import {
   getconversations,
   getMessageConv,
@@ -137,6 +135,7 @@ export default {
   name: "SidebarLeft",
   components: {
     FilterModalConv,
+    CountryFlagAvatar,
   },
   data() {
     return {

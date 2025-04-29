@@ -21,6 +21,7 @@
     "dotenv": "^16.4.7",
     "js-cookie": "^3.0.5",
     "laravel-echo": "^2.0.2",
+    "libphonenumber-js": "^1.12.7",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
     "pinia": "^3.0.1",
