@@ -551,7 +551,11 @@
     </div>
   </div>
   <ViewReport ref="questionsModalRef" />
-  <TrashDeal ref="trashDealModalRef" />
+  <TrashDeal
+    ref="trashDealModalRef"
+    :deal="deal"
+    @stage-change="handleStageChange"
+  />
 </template>
 
 <script>
@@ -687,14 +691,19 @@ export default {
           modalInstance.hide();
         }
       });
-      const trashDealModal = new Modal(
-        document.getElementById("trashDealModal")
-      );
+      const trashDealModalElement = document.getElementById("trashDealModal");
+      if (!trashDealModalElement) {
+        console.error("Trash deal modal not found.");
+        return;
+      }
+      const trashDealModal = new Modal(trashDealModalElement);
       trashDealModal.show();
+
       const modalBackdrop = document.createElement("div");
       modalBackdrop.className = "modal-backdrop fade show";
       document.body.appendChild(modalBackdrop);
     };
+
     const handleStageHover = (stageId) => {
       hoveredStage.value = stageId;
     };
