@@ -30,7 +30,7 @@
             </h4>
             <textarea
               class="form-control"
-              placeholder="{{$t('kanban-trash-comments-placeholder')}}"
+              :placeholder="t('kanban-trash-comments-placeholder')"
               rows="4"
               v-model="comment"
             ></textarea>
@@ -45,7 +45,7 @@
                 @click="selectedStage = stage.id"
                 :class="{ active: selectedStage === stage.id }"
               >
-                {{ $t(stage.name) }}
+                {{ $t("kanban-trash-" + stage.name) }}
               </button>
             </div>
           </div>
@@ -109,10 +109,10 @@ export default {
       comment: "",
       selectedStage: null,
       trashStages: [
-        { id: 12, name: "Medicines" },
-        { id: 13, name: "Old Data" },
-        { id: 14, name: "No Response" },
-        { id: 16, name: "Trash" },
+        { id: 12, name: "medicines" },
+        { id: 13, name: "olddata" },
+        { id: 14, name: "noresponse" },
+        { id: 16, name: "trash" },
       ],
     };
   },
