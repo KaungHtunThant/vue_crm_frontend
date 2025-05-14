@@ -121,6 +121,13 @@
           </div>
           <div class="actions">
             <button
+              class="btn btn-sm text-bg-primary me-2"
+              @click="shareFile(file)"
+              title="Share"
+            >
+              <i class="fa-solid fa-share-nodes"></i>
+            </button>
+            <button
               v-if="permissionStore.hasPermission(PERMISSIONS.VIEW_FILE)"
               class="btn btn-sm text-bg-primary me-2"
               @click="viewFile(file)"
@@ -160,12 +167,14 @@
     </div>
   </div>
   <FolderForm :folder="selectedFolder" @submit="handleFolderSubmit" />
+  <WhatsappModal :file="selectedFile" @close="closeWhatsappModal" />
 </template>
 
 <script>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import FolderForm from "@/components/modals/FolderForm.vue";
+import WhatsappModal from "@/components/modals/WhatsappModal.vue";
 import Modal from "bootstrap/js/dist/modal";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
@@ -176,6 +185,7 @@ import {
   showDocuments,
   uploadFiles,
   deleteDocuments,
+  getconversations,
 } from "@/plugins/services/authService";
 import { usePermissionStore, PERMISSIONS } from "@/stores/permissionStore";
 
@@ -183,8 +193,9 @@ export default {
   name: "FolderFilesView",
   components: {
     FolderForm,
+    WhatsappModal,
   },
-  setup() {
+  setup(props, { emit }) {
     const { t } = useI18n();
     const toast = useToast();
     const route = useRoute();
@@ -207,7 +218,7 @@ export default {
       };
       return icons[type] || icons.default;
     };
-
+    const selectedFile = ref(null);
     const fetchFiles = async () => {
       try {
         console.log(
@@ -287,6 +298,22 @@ export default {
       window.open(file.url, "_blank");
     };
 
+    const shareFile = async (file) => {
+      selectedFile.value = file;
+      try {
+        const response = await getconversations();
+        console.log(response);
+        const conversations = response.data.data;
+        emit("load-conversations", conversations);
+        const modal = new Modal(document.getElementById("whatsappModal"));
+        modal.show();
+      } catch (error) {
+        console.error("Error loading conversations:", error);
+      }
+    };
+    const closeWhatsappModal = () => {
+      selectedFile.value = null;
+    };
     const downloadFile = async (file) => {
       try {
         const response = await fetch(file.url);
@@ -503,6 +530,9 @@ export default {
       deleteFolder,
       getFileIcon,
       viewFile,
+      selectedFile,
+      shareFile,
+      closeWhatsappModal,
       downloadFile,
       handleFileSelect,
       handleDrop,

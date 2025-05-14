@@ -41,7 +41,11 @@
             <i class="fa fa-close fs-5 py-1"></i>
           </button>
           <div class="row mx-0">
-            <SidebarLeft @select-chat="setSelectedChat" ref="leftSidebar" />
+            <SidebarLeft
+              @select-chat="setSelectedChat"
+              :file="file"
+              ref="leftSidebar"
+            />
             <SidebarRight
               :selectedChat="selectedChat"
               v-if="selectedChat"
@@ -91,7 +95,12 @@ export default {
       type: Object,
       default: null,
     },
+    file: {
+      type: Object,
+      default: null,
+    },
   },
+  emits: ["close"],
   data() {
     return {
       selectedChat: null,

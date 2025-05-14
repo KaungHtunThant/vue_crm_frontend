@@ -181,9 +181,11 @@ import {
   getconversations,
   getMessageConv,
   getMoreConversations,
+  sendMessage,
 } from "@/plugins/services/authService";
 export default {
   name: "SidebarLeft",
+  emits: ["selectChat"],
   components: {
     FilterModalConv,
     CountryFlagAvatar,
@@ -202,7 +204,14 @@ export default {
       locale: localStorage.getItem("locale") || "en",
     };
   },
+  props: {
+    file: {
+      type: Object,
+      required: false,
+    },
+  },
   methods: {
+    handleFilterByRating() {},
     async fetchConversations() {
       try {
         const searchText = this.searchQuery;
@@ -283,7 +292,6 @@ export default {
           this.chats.forEach((item) => {
             item.isActive = false;
           });
-
           this.chats[index].isActive = true;
           this.chats[index].unread_count = 0;
           console.log("opening chat:", chat);
@@ -293,9 +301,27 @@ export default {
             isActive: true,
             messages: [],
           });
+          await this.sendFileToChat(chat.id);
         }
       } catch (error) {
         console.error("Error opening chat:", error);
+      }
+    },
+    async sendFileToChat(conversationId) {
+      try {
+        if (this.file && this.file.download_url) {
+          const response = await fetch(this.file.download_url);
+          const blob = await response.blob();
+          const file = new File([blob], this.file.url, { type: blob.type });
+          await sendMessage({
+            file: file,
+            conversation_id: conversationId,
+          });
+        } else {
+          console.log("error no file ");
+        }
+      } catch (error) {
+        console.error("Error sending file:", error);
       }
     },
     markAsUnread(chat) {
