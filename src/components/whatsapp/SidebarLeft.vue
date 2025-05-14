@@ -46,7 +46,7 @@
         ref="chatList"
       >
         <div
-          class="chat d-flex justify-content-end align-items-center position-relative w-100 px-lg-3 pt-1 border-1 border-bottom border-secondary-subtle cursor-pointer"
+          class="chat d-flex justify-content-end align-items-end position-relative w-100 px-lg-3 pt-1 border-1 border-bottom border-secondary-subtle cursor-pointer"
           v-for="(chat, index) in chats"
           :key="index"
           @click="openChat(chat, index)"
@@ -58,17 +58,25 @@
               chat.img ||
               require('@/assets/whatsappImage/default-userImage.jpg')
             "
+            style="width: 45px; height: 45px !important"
           />
           <div class="details position-relative w-100">
-            <div class="rating mb-1" style="font-size: 12px">
-              <template v-for="index in 7" :key="index">
-                <i
-                  class="fa-solid fa-star"
-                  :class="
-                    index <= (chat.rating || 0) ? 'text-gold' : 'text-lightgray'
-                  "
-                ></i>
-              </template>
+            <div class="d-flex justify-content-between">
+              <div class="rating mb-1" style="font-size: 12px">
+                <template v-for="index in 7" :key="index">
+                  <i
+                    class="fa-solid fa-star"
+                    :class="
+                      index <= (chat.rating || 0)
+                        ? 'text-gold'
+                        : 'text-lightgray'
+                    "
+                  ></i>
+                </template>
+              </div>
+              <span style="font-size: 14px" class="time text-success">{{
+                chat.time
+              }}</span>
             </div>
             <div class="head pe-2 d-flex justify-content-between">
               <h4
@@ -78,9 +86,9 @@
                 {{ chat.name }}
                 <span class="text-muted ms-2">{{ chat.phone }}</span>
               </h4>
-              <span style="font-size: 14px" class="time text-success">{{
+              <!-- <span style="font-size: 14px" class="time text-success">{{
                 chat.time
-              }}</span>
+              }}</span> -->
             </div>
             <div
               class="msgs d-flex justify-content-between align-items-center text-secondary"

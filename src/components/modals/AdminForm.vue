@@ -118,17 +118,17 @@
                 :placeholder="t('users-modal-add-placeholder-reportto')"
                 :searchable="true"
               />
-              <div class="mb-3">
-                <label for="color" class="form-label">
-                  {{ t("users-modal-add-label-color") }}
-                </label>
-                <input
-                  type="color"
-                  class="form-control"
-                  id="color"
-                  v-model="formData.color"
-                />
-              </div>
+            </div>
+            <div class="mb-3">
+              <label for="color" class="form-label">
+                {{ t("users-modal-add-label-color") }}
+              </label>
+              <input
+                type="color"
+                class="form-control"
+                id="color"
+                v-model="formData.color"
+              />
             </div>
             <div class="mb-3">
               <label for="image" class="form-label">
@@ -206,10 +206,10 @@ export default {
         password: "",
         password_confirmation: "",
         role: "",
-        reportTo: "",
+        reportTo: null,
         phoneNumber: "",
         image: null,
-        color: "#292929",
+        color: null,
       },
       users: [],
       roles: [],
@@ -251,10 +251,10 @@ export default {
           username: user.name,
           email: user.email,
           role: user.role?.id || user.role,
-          reportTo: user.reportTo?.id || user.reportTo,
-          phoneNumber: user.phoneNumber,
+          reportTo: user.report_to_id,
+          phoneNumber: user.phones[0]?.phone,
           image: null,
-          color: user.color || "#292929",
+          color: user.color_code,
         };
       } else {
         this.isEditMode = false;
@@ -268,7 +268,7 @@ export default {
           reportTo: "",
           phoneNumber: "",
           image: null,
-          color: "#292929",
+          color: null,
         };
       }
 

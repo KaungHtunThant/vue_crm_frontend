@@ -119,7 +119,7 @@
               style="width: 50px; height: 50px"
             />
           </div>
-          <div class="mt-2 text-primary">{{ t("tables.loading") }}</div>
+          <div class="mt-2 text-primary">{{ t("tables-loading") }}</div>
         </div>
       </template>
     </DataTable>

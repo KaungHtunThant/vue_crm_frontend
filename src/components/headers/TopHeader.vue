@@ -80,16 +80,14 @@
           >
             <i class="fa-solid fa-rotate"></i>
             <span class="refresh-text" style="font-size: 14px">{{
-              $t("kanban-header-refresh")
+              $t("header-refresh-button")
             }}</span>
-            <!-- AR => تحديثات جديدة -->
           </button>
           <div class="lang">
             <button
               class="btnLang border-0 bg-transparent d-flex align-items-center justify-content-center gap-2 text-white position-relative rounded-2 mt-1"
               @click="toggleLanguage"
             >
-              <!-- <i class="fa-solid fa-globe"></i> -->
               <span
                 class=""
                 style="font-size: 14px; padding-top: 4px; padding-bottom: 3px"
@@ -182,18 +180,12 @@ export default {
     const updateTime = () => {
       const now = new Date();
 
-      const utcHours = now.getUTCHours();
-      const utcMinutes = now.getUTCMinutes();
-      const utcSeconds = now.getUTCSeconds();
-
-      const turkeyHours = (utcHours + 3) % 24;
-      const ampm = turkeyHours >= 12 ? "PM" : "AM";
-      const formattedHours = turkeyHours % 12 || 12;
-
-      currentTime.value = `${formattedHours}:${String(utcMinutes).padStart(
-        2,
-        "0"
-      )}:${String(utcSeconds).padStart(2, "0")} ${ampm}`;
+      currentTime.value = now.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      });
     };
 
     let interval;

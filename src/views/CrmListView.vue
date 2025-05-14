@@ -38,7 +38,7 @@
             </div>
           </div>
           <div class="col">
-            <div class="input-group position-relative">
+            <div class="input-group position-relative h-100">
               <input
                 type="search"
                 class="form-control"
@@ -80,7 +80,10 @@
               user_role == 'sales'
             "
           >
-            <topHeader2 :selected_conversation="selected_conversation" />
+            <topHeader2
+              :selected_conversation="selected_conversation"
+              :disableFilter="true"
+            />
           </div>
           <div
             class="col-auto mt-2 mt-lg-0 text-center d-flex align-items-center justify-content-end gap-2"
@@ -207,7 +210,7 @@
                 style="width: 50px; height: 50px"
               />
             </div>
-            <div class="mt-2 text-primary">{{ t("tables.loading") }}</div>
+            <div class="mt-2 text-primary">{{ t("tables-loading") }}</div>
           </div>
         </template>
       </DataTable>
@@ -244,7 +247,7 @@
   />
 </template>
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick } from "vue";
+import { ref, onMounted, onUnmounted, nextTick, computed } from "vue";
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 import DataTable from "primevue/datatable";
@@ -313,7 +316,13 @@ const comments = ref([]);
 const tasks = ref([]);
 const user_role = Cookies.get("user_role");
 const selected_conversation = ref(null);
-const isFilterActive = ref(false);
+const isFilterActive = computed(() => {
+  return Object.entries(filters.value).some(([key, val]) => {
+    if (key === "sort_by" || key === "sort_order") return false;
+    if (Array.isArray(val)) return val.length > 0;
+    return val !== null && val !== "";
+  });
+});
 // Actions operations
 const actions = ref([
   { value: "changeStage", label: t("crmlist-action-changestage") },
@@ -490,7 +499,7 @@ const deleteItem = async (id) => {
   try {
     const result = await Swal.fire({
       title: t("error.deleteTitle"),
-      text: t("error.deleteText"),
+      text: t("crmlist-modal-deal-delete-description"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -503,7 +512,7 @@ const deleteItem = async (id) => {
     if (result.isConfirmed) {
       const response = await deleteDeals([id]);
       if (response.status === 204 || response.status === 200) {
-        rows.value = rows.value.filter((item) => item.id !== id);
+        fetchData();
         toast.success(response.data.message, { timeout: 3000 });
       } else {
         throw new Error(response.data.message || t("error-default"));
@@ -544,10 +553,10 @@ const handleShowDealModal = async (dealId) => {
   }
 };
 const applyFilters = async (newFilters) => {
+  filters.value = { ...newFilters };
   try {
     loading.value = true;
     filters.value = { ...newFilters };
-    isFilterActive.value = true;
     // Build filters object in the correct format
     const apiFilters = {
       search: searchInput.value,
@@ -678,7 +687,6 @@ const resetFilter = () => {
   };
   selectedStatuses.value = [];
   searchInput.value = "";
-  isFilterActive.value = false;
   fetchData();
 };
 
@@ -897,7 +905,7 @@ const bulkDeleteItems = async () => {
 
     const result = await Swal.fire({
       title: t("error.deleteTitle"),
-      text: t("error.deleteText"),
+      text: t("crmlist-modal-deal-delete-description"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -912,11 +920,10 @@ const bulkDeleteItems = async () => {
       const response = await bulkDeleteDeals(ids);
       console.log("Delete response:", response);
 
-      if (response.status === 204 || response.data?.success) {
-        rows.value = rows.value.filter((item) => !ids.includes(item.id));
+      if (response.status === 200) {
         selectedRows.value = [];
         selectedAction.value = "";
-
+        fetchData();
         toast.success(t("success.deleteSuccess"), { timeout: 3000 });
       } else {
         throw new Error(response.data.message || t("error.deleteFailed"));
@@ -1000,6 +1007,13 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+}
+
 input:focus {
   box-shadow: none;
   border: 1px solid #333;

@@ -4,6 +4,10 @@
       :initial-filters="filters"
       @filter-applied="applyFilters"
       @reset-filter="resetFilter"
+      @search-deals="HandleSearch"
+      :selected_conversation="selected_conversation"
+      :new_message="new_message"
+      :update_message="update_message"
     />
   </div>
   <!-- <div class="watsappIcon position-absolute z-3">
@@ -17,6 +21,8 @@
     defaultColor="#333"
     @open-whatsapp-modal="openWhatsappModal"
     @receive-whatsapp-message="receiveWhatsappMessage"
+    @update-whatsapp-message="updateWhatsappMessage"
+    @change-deal-stage="changeDealStage"
   />
   <!-- <WhatsappModal ref="whatsappModalRef" /> -->
 </template>
@@ -52,6 +58,9 @@ export default {
       updated_at_end: "",
       status: [],
     });
+    const selected_conversation = ref(null);
+    const new_message = ref(null);
+    const update_message = ref(null);
 
     const applyFilters = async (newFilters) => {
       try {
@@ -87,9 +96,9 @@ export default {
         }
       });
     };
-    const fetchStages = async () => {
+    const fetchStages = async (params = null) => {
       try {
-        const response = await getTasksKanban();
+        const response = await getTasksKanban(params);
         if (Array.isArray(response.data.data)) {
           stages.value = response.data.data.map((stage) => ({
             id: stage.id,
@@ -109,10 +118,50 @@ export default {
         toast.error(t("error.loadKanban"));
       }
     };
-    // const openWhatsappModal = () => {
-    //   const modal = new Modal(document.getElementById("whatsappModal"));
-    //   modal.show();
-    // };
+    const openWhatsappModal = (conversation) => {
+      console.log(
+        "selected conversation in Crm kanban component",
+        conversation
+      );
+      selected_conversation.value = conversation;
+    };
+
+    const receiveWhatsappMessage = (message) => {
+      new_message.value = message;
+    };
+
+    const updateWhatsappMessage = (data) => {
+      update_message.value = data;
+    };
+
+    const HandleSearch = async (searchText) => {
+      await fetchStages({ search: searchText });
+    };
+
+    const changeDealStage = async (dealId, newStageIndex, oldStageId) => {
+      try {
+        const newStageId = stages.value[newStageIndex].id;
+        const oldStageIndex = stages.value.findIndex(
+          (stage) => stage.id == oldStageId
+        );
+        const oldDealIndex = stages.value[oldStageIndex].deals.findIndex(
+          (deal) => deal.id == dealId
+        );
+        if (oldDealIndex !== -1) {
+          stages.value[oldStageIndex].deals[oldDealIndex].stage_id = newStageId;
+          const deal = stages.value[oldStageIndex].deals[oldDealIndex];
+          stages.value[newStageIndex].deals.unshift(deal);
+          stages.value[oldStageIndex].deals.splice(oldDealIndex, 1);
+          stages.value[oldStageIndex].deal_count -= 1;
+          stages.value[newStageIndex].deal_count += 1;
+          toast.success(t("success.dealMoved"));
+        } else {
+          console.error("Deal not found in the old stage");
+        }
+      } catch (error) {
+        console.error("Error updating deal stage:", error.response?.data);
+      }
+    };
 
     // upload data
     onMounted(async () => {
@@ -129,7 +178,14 @@ export default {
       applyFilters,
       resetFilter,
       fetchStages,
-      // openWhatsappModal,
+      openWhatsappModal,
+      receiveWhatsappMessage,
+      updateWhatsappMessage,
+      HandleSearch,
+      changeDealStage,
+      selected_conversation,
+      new_message,
+      update_message,
     };
   },
 };

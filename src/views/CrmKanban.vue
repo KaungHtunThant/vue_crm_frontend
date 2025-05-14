@@ -1,7 +1,7 @@
 <template>
   <div class="mt-2">
     <TopHeader2
-      :initial-filters="filters"
+      :initialFilters="filters"
       @filter-applied="applyFilters"
       @reset-filter="resetFilter"
       @search-deals="HandleSearch"
@@ -80,16 +80,74 @@ export default {
       searching.value = false;
     };
     const applyFilters = async (newFilters) => {
+      filters.value = { ...newFilters };
       try {
-        filters.value = { ...newFilters };
-        // toast.success("تم تطبيق الفلتر بنجاح", {
-        //   timeout: 3000,
-        // });
+        const apiFilters = {
+          filters: { ...filters.value },
+        };
+
+        const formattedFilters = {};
+
+        if (apiFilters.filters.source_id) {
+          formattedFilters["filters[source_id]"] = apiFilters.filters.source_id;
+        }
+        if (apiFilters.filters.stage_id) {
+          formattedFilters["filters[stage_id]"] = apiFilters.filters.stage_id;
+        }
+        if (apiFilters.filters.user_id) {
+          formattedFilters["filters[user_id]"] = apiFilters.filters.user_id;
+        }
+        if (apiFilters.filters.created_at_start) {
+          formattedFilters["filters[created_at_start]"] =
+            apiFilters.filters.created_at_start;
+        }
+        if (apiFilters.filters.created_at_end) {
+          formattedFilters["filters[created_at_end]"] =
+            apiFilters.filters.created_at_end;
+        }
+        if (Array.isArray(apiFilters.filters.status)) {
+          if (apiFilters.filters.status.includes("unassigned")) {
+            formattedFilters["filters[unassigned]"] = 1;
+          }
+          if (apiFilters.filters.status.includes("no_comments")) {
+            formattedFilters["filters[uncommented]"] = 1;
+          }
+          if (apiFilters.filters.status.includes("no_task")) {
+            formattedFilters["filters[no_tasks]"] = 1;
+          }
+          if (apiFilters.filters.status.includes("overdue")) {
+            formattedFilters["filters[overdue]"] = 1;
+          }
+          if (apiFilters.filters.status.includes("new")) {
+            formattedFilters["filters[new]"] = 1;
+          }
+          if (apiFilters.filters.status.includes("reclaimed")) {
+            formattedFilters["filters[reclaimed]"] = 1;
+          }
+        }
+
+        const response = await getDealsKanban(formattedFilters);
+
+        if (!response?.data?.data) {
+          toast.info(t("noDealsFound"));
+          stages.value = [];
+          return;
+        }
+
+        stages.value = response.data.data.map((stage) => ({
+          id: stage.id,
+          name: stage.name,
+          description: stage.description || null,
+          color_code: stage.color_code,
+          deal_count: stage.deal_count,
+          deals: stage.deals || [],
+        }));
+
+        toast.success(t("success.applyFilters"), { timeout: 3000 });
       } catch (error) {
-        console.error("Error applying filters:", error);
-        toast.error(t("error.applyFilters"), {
-          timeout: 3000,
-        });
+        console.error("Filter Error:", error);
+        toast.error(t("error.applyFilters"), { timeout: 3000 });
+        stages.value = [];
       }
     };
 
@@ -107,6 +165,9 @@ export default {
           updated_at_end: "",
           status: [],
         };
+        await fetchStages();
+        // console.log("reset filter kanban");
+
         toast.success(t("success.resetFilters"), {
           timeout: 3000,
         });
@@ -147,9 +208,8 @@ export default {
       update_message.value = data;
     };
 
-    const HandleSearch = (search) => {
-      fetchStages(search);
-      // Handle search logic here
+    const HandleSearch = async (searchText) => {
+      await fetchStages({ search: searchText });
     };
 
     const changeDealStage = async (dealId, newStageIndex, oldStageId) => {

@@ -205,19 +205,26 @@ export default {
   watch: {
     selectedChat: {
       immediate: true,
-      handler(newChat) {
-        if (newChat) {
-          console.log("Selected chat in SidebarRight:", newChat);
-          console.log("Messages:", newChat.messages);
+      handler(newChat, oldChat) {
+        if (newChat && (!oldChat || newChat.id !== oldChat.id)) {
+          this.$nextTick(() => {
+            this.scrollToBottom();
+          });
         }
       },
     },
     "selectedChat.messages": {
       immediate: true,
-      handler() {
-        this.$nextTick(() => {
-          this.scrollToBottom();
-        });
+      handler(newMessages, oldMessages) {
+        if (
+          oldMessages &&
+          newMessages.length > oldMessages.length &&
+          newMessages[newMessages.length - 1]?.id !== oldMessages[0]?.id
+        ) {
+          this.$nextTick(() => {
+            this.scrollToBottom();
+          });
+        }
       },
     },
   },

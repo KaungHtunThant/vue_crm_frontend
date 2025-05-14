@@ -10,6 +10,7 @@
                 v-if="permissionStore.hasPermission(PERMISSIONS.CREATE_DEAL)"
                 class="btn btn-header text-white px-2 py-2 me-2 fs-7 btnAddKanban"
                 @click="openCreateDealModal"
+                style="padding: 0.6rem 0.6rem"
               >
                 <span class="textAddKanban">{{
                   t("kanban-button-add-deal")
@@ -17,26 +18,24 @@
                 <span class="iconAddKanban d-none">+</span>
               </button>
               <button
-                class="btn btn-header text-white px-3 py-2 me-2 fs-7 btnKanban"
+                class="btn btn-header text-white me-2 fs-7 btnKanban"
                 @click="openCrmKanban"
                 v-if="permissionStore.hasPermission(PERMISSIONS.DEALS_KANBAN)"
+                style="padding: 0.6rem 0.9rem"
               >
                 {{ t("header-subnav-item-kanban-crm") }}
               </button>
               <button
-                :class="`btn btn-header text-white px-3 py-2 fs-7 btnKanban ${
-                  permissionStore.hasPermission(PERMISSIONS.DEALS_LIST) &&
-                  user_role == 'sales'
-                    ? 'me-2'
-                    : ''
-                }`"
+                class="btn btn-header text-white me-2 fs-7 btnKanban"
                 @click="openCrmTasks"
                 v-if="permissionStore.hasPermission(PERMISSIONS.TASKS_KANBAN)"
+                style="padding: 0.6rem 0.8rem"
               >
                 {{ t("header-subnav-item-kanban-tasks") }}
               </button>
               <router-link
-                class="btn btn-header text-white px-1 py-2 me-2 fs-7 btnKanban"
+                class="btn btn-header text-white me-2 fs-7 btnKanban"
+                style="padding: 0.6rem 0.4rem"
                 v-if="
                   permissionStore.hasPermission(PERMISSIONS.DEALS_LIST) &&
                   user_role == 'sales'
@@ -182,8 +181,10 @@
         </div>
       </div>
     </nav>
-    <FilterCrmList
-      v-model="filterData"
+    <FilterHeader2
+      v-if="!disableFilter"
+      v-model="headerFilterData"
+      v-model:headerSelectedStatuses="headerSelectedStatuses"
       @apply-filters="handleFilters"
       @reset-filter="handleResetFilter"
     />
@@ -203,7 +204,7 @@
 <script>
 import { ref, watch, onMounted, onUnmounted, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import FilterCrmList from "@/components/modals/FilterCrmList.vue";
+import FilterHeader2 from "@/components/modals/FilterHeader2.vue";
 import ImportModal from "@/components/modals/ImportModal.vue";
 import ExportModal from "@/components/modals/ExportModal.vue";
 import { Modal } from "bootstrap";
@@ -221,7 +222,7 @@ import Cookies from "js-cookie";
 export default {
   name: "TopHeader2",
   components: {
-    FilterCrmList,
+    FilterHeader2,
     ImportModal,
     ExportModal,
     CreateDealModal,
@@ -244,7 +245,7 @@ export default {
         status: [],
       }),
     },
-
+    disableFilter: { type: Boolean, default: false },
     selected_conversation: {
       type: Object,
       default: null,
@@ -277,7 +278,8 @@ export default {
     const conversation = ref(null);
     const local_new_message = ref(null);
     const local_update_message = ref(null);
-    const filterData = ref({ ...props.initialFilters });
+    const headerFilterData = ref({ ...props.initialFilters });
+    const headerSelectedStatuses = ref([]);
     const permissionStore = usePermissionStore();
     const { t } = useI18n();
     const whatsappModalRef = ref(null);
@@ -291,14 +293,6 @@ export default {
       return route.name !== "CrmList";
     });
     const user_role = ref(Cookies.get("user_role"));
-    // const openWhatsappModal = () => {
-    //   try {
-    //     const modal = new Modal(document.getElementById("whatsappModal"));
-    //     modal.show();
-    //   } catch (error) {
-    //     console.error("Error opening WhatsApp modal:", error);
-    //   }
-    // };
 
     const openWhatsappModal = async () => {
       try {
@@ -316,7 +310,8 @@ export default {
     watch(
       () => props.initialFilters,
       (newFilters) => {
-        filterData.value = { ...newFilters };
+        if (!newFilters) return;
+        headerFilterData.value = { ...newFilters };
       },
       { deep: true }
     );
@@ -338,6 +333,7 @@ export default {
       modal.show();
     };
     const handleFilters = (filters) => {
+      console.log("TopHeader2 emits filter-applied", filters);
       emit("filter-applied", filters);
     };
 
@@ -410,7 +406,7 @@ export default {
       local_update_message.value = data;
     };
     return {
-      filterData,
+      headerFilterData,
       openFilterModal,
       handleFilters,
       handleResetFilter,
@@ -445,6 +441,7 @@ export default {
       computed_tomorrow_count,
       computed_notasks_count,
       showSearchInput,
+      headerSelectedStatuses,
     };
   },
 

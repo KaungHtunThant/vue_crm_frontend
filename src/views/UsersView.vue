@@ -82,7 +82,7 @@
               style="width: 50px; height: 50px"
             />
           </div>
-          <div class="mt-2 text-primary">{{ t("tables.loading") }}</div>
+          <div class="mt-2 text-primary">{{ t("tables-loading") }}</div>
         </div>
       </template>
     </EasyDataTable>
@@ -183,7 +183,10 @@ export default {
       try {
         tableLoading.value = true;
         const response = await getUser();
-        items.value = response.data.data;
+        items.value = response.data.data.map((user) => ({
+          ...user,
+          status: user.status === "active",
+        }));
       } catch (error) {
         console.error("Error fetching users:", error);
       } finally {
@@ -200,19 +203,22 @@ export default {
       }
     };
 
-    const toggleStatus = async (event, item) => {
+    const toggleStatus = async (event) => {
       try {
-        const newStatus = event.target.checked ? "active" : "inactive";
-        await updateUser(item.id, { status: newStatus });
-        item.status = newStatus;
-        toast.success(t("success.updated"), {
+        console.log("event target:", event);
+        const newStatus = event.status ? "active" : "inactive";
+        const response = await updateUser(event.id, { status: newStatus });
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
+        event.status = newStatus;
+        toast.success(response.data.message, {
           timeout: 3000,
         });
       } catch (error) {
-        toast.error(t("error.updateFailed"), {
+        toast.error(error.message, {
           timeout: 3000,
         });
-        console.error("Update Status Is Failed:", error);
       }
     };
     const openModal = () => {
@@ -238,8 +244,8 @@ export default {
     const removeUser = async (id) => {
       try {
         const result = await Swal.fire({
-          title: t("error.deleteTitle"),
-          text: t("error.deleteText"),
+          title: t("users-alert-delete-title"),
+          text: t("users-alert-delete-description"),
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#d33",
@@ -250,11 +256,17 @@ export default {
         });
 
         if (result.isConfirmed) {
-          await deleteUser(id);
-          items.value = items.value.filter((user) => user.id !== id);
-          toast.success(t("success.deleteSuccess"), {
-            timeout: 3000,
-          });
+          const response = await deleteUser(id);
+          if (response.status === 200) {
+            items.value = items.value.filter((user) => user.id !== id);
+            toast.success(response.data.message, {
+              timeout: 3000,
+            });
+          } else {
+            toast.error(response.data.message, {
+              timeout: 3000,
+            });
+          }
         }
       } catch (error) {
         toast.error(t("error.deleteFailed"), {

@@ -49,11 +49,11 @@
                 {{ t("kanban-modal-import-placeholder-source") }}
               </option>
               <option
-                v-for="source in sources"
-                :key="source.id"
-                :value="source.id"
+                v-for="option in options"
+                :key="option.value"
+                :value="option.value"
               >
-                {{ source.name }}
+                {{ option.label }}
               </option>
             </select>
           </div>
