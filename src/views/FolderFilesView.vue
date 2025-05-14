@@ -119,6 +119,13 @@
           <div class="actions">
             <button
               class="btn btn-sm text-bg-primary me-2"
+              @click="shareFile(file)"
+              title="Share"
+            >
+              <i class="fa-regular fa-share-nodes"></i>
+            </button>
+            <button
+              class="btn btn-sm text-bg-primary me-2"
               @click="viewFile(file)"
               title="View"
             >
@@ -224,6 +231,13 @@ export default {
       if (event.target.tagName !== "BUTTON") {
         fileInput.value.click();
       }
+    };
+
+    const shareFile = async (file) => {
+      const url = await fetch(file.url);
+      console.log(url);
+      const modal = new Modal(document.getElementById("whatsappModal"));
+      modal.show();
     };
     const uploadFile = async (file) => {
       const folderPath = route.params.folderName || route.params.fullPath;
@@ -524,6 +538,7 @@ export default {
       deleteFolder,
       getFileIcon,
       viewFile,
+      shareFile,
       downloadFile,
       handleFileSelect,
       handleDrop,

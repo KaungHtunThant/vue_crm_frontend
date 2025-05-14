@@ -286,7 +286,8 @@ export default {
         formData.append("role", this.formData.role);
         formData.append(
           "parent_id",
-          this.formData.reportTo?.id || this.formData.reportTo || "");
+          this.formData.reportTo?.id || this.formData.reportTo || ""
+        );
         formData.append("phone", this.formData.phoneNumber);
         formData.append("color_code", this.formData.color);
         if (!this.isEditMode) {
