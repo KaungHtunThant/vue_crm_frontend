@@ -180,7 +180,7 @@ import {
   uploadFiles,
   deleteDocuments,
 } from "@/plugins/services/authService";
-import { usePermissionStore, PERMISSIONS } from "@/stores/permissionStore";
+import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 
 export default {
   name: "FolderFilesView",

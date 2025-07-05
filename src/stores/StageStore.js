@@ -14,16 +14,19 @@ export const useStageStore = defineStore("stage", {
     getAllStages: (state) => {
       return state.stages;
     },
-    getAllParentStages: (state) => {
+    getParentStages: (state) => {
       return state.stages.filter(
         (stage) => stage.parent_id === null && stage.has_children
       );
     },
-    getAllChildStages: (state) => {
+    getChildStages: (state) => {
       return state.stages.filter((stage) => stage.parent_id !== null);
     },
     getNonParentStages: (state) => {
       return state.stages.filter((stage) => !stage.has_children);
+    },
+    getNonChildStages: (state) => {
+      return state.stages.filter((stage) => stage.parent_id === null);
     },
     getTrashStages: (state) => {
       return state.stages.filter((stage) => stage.is_trash);
@@ -38,6 +41,11 @@ export const useStageStore = defineStore("stage", {
     },
     getChildStagesByParentId(parent_id) {
       return this.stages.filter((stage) => stage.parent_id === parent_id);
+    },
+    getChildrenStageIdsByParentId(parent_id) {
+      return this.stages
+        .filter((stage) => stage.parent_id === parent_id)
+        .map((stage) => stage.id);
     },
   },
   actions: {
@@ -100,21 +108,25 @@ export const useStageStore = defineStore("stage", {
       }
     },
     async fetchStages() {
-      // Optimistically clear stages before fetching
-      const originalStages = [...this.stages];
-      this.stages = [];
-
-      try {
-        const response = await getAllStages();
-        if (response.status !== 200) {
-          throw new Error("Failed to fetch stages");
-        }
-        this.stages = response.data.data;
-      } catch (error) {
-        // Rollback optimistic update if API call fails
-        this.stages = originalStages;
-        throw error;
+      const response = await getAllStages();
+      if (response.status !== 200) {
+        throw new Error("Failed to fetch stages");
       }
+      this.stages = response.data.data;
+    },
+    _getChildrenTotalDealsCount(stage_id) {
+      const children = this.stages.filter(
+        (child) => child.parent_id === stage_id
+      );
+      if (children.length === 0) return 0;
+      let deals_count = 0;
+      children.forEach((childStage) => {
+        deals_count += childStage.deals_count;
+        if (childStage.has_children > 0) {
+          deals_count += this._getChildrenTotalDealsCount(childStage);
+        }
+      });
+      return deals_count;
     },
   },
 });

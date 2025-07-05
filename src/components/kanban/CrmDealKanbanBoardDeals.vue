@@ -309,7 +309,7 @@ import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";
 import FilterStageModal from "@/components/modals/CrmDealKanbanBoardDealsFilterStageModal.vue";
 import moveCardSound from "@/assets/move-card.wav";
 import { closeWebSocket, initializeWebSocket } from "@/plugins/websocket";
-import { usePermissionStore, PERMISSIONS } from "@/stores/permissionStore";
+import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import { useKanbanStore } from "@/stores/kanbanStore";
 export default {
   name: "CrmDealKanbanBoardDeals",

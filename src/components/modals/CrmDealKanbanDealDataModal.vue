@@ -1291,7 +1291,7 @@ import {
   getUser,
   getAvailableStages,
 } from "@/plugins/services/authService";
-import { PERMISSIONS, usePermissionStore } from "@/stores/permissionStore";
+import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import moveCardSound from "@/assets/move-card.wav";
 export default {
   name: "CrmDealKanbanDealDataModal",

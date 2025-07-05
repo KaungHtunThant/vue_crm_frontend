@@ -2,6 +2,7 @@ import {
   bulkDeleteDeals,
   createDeal,
   fetchAdditionalDealsByStageId,
+  showDeal,
   updateDeal,
 } from "@/plugins/services/authService";
 import { defineStore } from "pinia";
@@ -9,6 +10,7 @@ import { defineStore } from "pinia";
 export const useDealStore = defineStore("deal", {
   state: () => ({
     deals: [],
+    current_deal: {},
   }),
   getters: {
     getAllDeals: (state) => {
@@ -17,11 +19,14 @@ export const useDealStore = defineStore("deal", {
     getDealById: (state) => (deal_id) => {
       return state.deals.find((deal) => deal.id === deal_id);
     },
-    getDealsByStageId: (state) => (stage_id) => {
-      return state.deals.filter((deal) => deal.stage_id === stage_id);
+    getDealsByStageIds: (state) => (stage_ids) => {
+      return state.deals.filter((deal) => stage_ids.includes(deal.stage_id));
     },
     getDealsByUserId: (state) => (user_id) => {
       return state.deals.filter((deal) => deal.user_id === user_id);
+    },
+    getCurrentDeal: (state) => {
+      return state.current_deal;
     },
   },
   actions: {
@@ -103,6 +108,17 @@ export const useDealStore = defineStore("deal", {
         throw new Error(response.data.message);
       }
       this.deals = [...this.deals, ...response.data.data];
+    },
+    async changeCurrentDeal(deal_id) {
+      if (this.getCurrentDeal?.id === deal_id) {
+        return this.getCurrentDeal; // No change needed
+      }
+      const response = await showDeal(deal_id);
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
+      }
+      this.current_deal = response.data.data;
+      return this.current_deal;
     },
   },
 });
