@@ -12,18 +12,18 @@ export const useStageStore = defineStore("stage", {
   }),
   getters: {
     getAllStages: (state) => {
-      return state.stages;
+      return state.stages.filter((stage) => !stage.hidden);
     },
     getParentStages: (state) => {
       return state.stages.filter(
-        (stage) => stage.parent_id === null && stage.has_children
+        (stage) => stage.parent_id === null && stage.children_ids.length > 0
       );
     },
     getChildStages: (state) => {
       return state.stages.filter((stage) => stage.parent_id !== null);
     },
     getNonParentStages: (state) => {
-      return state.stages.filter((stage) => !stage.has_children);
+      return state.stages.filter((stage) => !stage.children_ids.length > 0);
     },
     getNonChildStages: (state) => {
       return state.stages.filter((stage) => stage.parent_id === null);
@@ -42,10 +42,8 @@ export const useStageStore = defineStore("stage", {
     getChildStagesByParentId(parent_id) {
       return this.stages.filter((stage) => stage.parent_id === parent_id);
     },
-    getChildrenStageIdsByParentId(parent_id) {
-      return this.stages
-        .filter((stage) => stage.parent_id === parent_id)
-        .map((stage) => stage.id);
+    getAllStagesWithHidden: (state) => {
+      return state.stages;
     },
   },
   actions: {
@@ -112,7 +110,12 @@ export const useStageStore = defineStore("stage", {
       if (response.status !== 200) {
         throw new Error("Failed to fetch stages");
       }
-      this.stages = response.data.data;
+      this.stages = response.data.data.map((stage) => ({
+        ...stage,
+        hidden: stage.parent_id !== null,
+        merge_view: false,
+        minimized: false,
+      }));
     },
     _getChildrenTotalDealsCount(stage_id) {
       const children = this.stages.filter(
@@ -122,11 +125,33 @@ export const useStageStore = defineStore("stage", {
       let deals_count = 0;
       children.forEach((childStage) => {
         deals_count += childStage.deals_count;
-        if (childStage.has_children > 0) {
+        if (childStage.children_ids.length > 0) {
           deals_count += this._getChildrenTotalDealsCount(childStage);
         }
       });
       return deals_count;
+    },
+    getChildrenStageIdsByParentId(parent_id) {
+      return this.stages
+        .filter((stage) => stage.parent_id === parent_id)
+        .map((stage) => stage.id);
+    },
+    toggleHiddenByParentId(parent_id) {
+      this.stages.forEach((stage) => {
+        if (stage.parent_id === parent_id) {
+          stage.hidden = !stage.hidden;
+        }
+      });
+      const parentStage = this.stages.find((stage) => stage.id === parent_id);
+      if (parentStage) {
+        parentStage.merge_view = !parentStage.merge_view;
+      }
+    },
+    toggleMinimizedById(stage_id) {
+      const stage = this.stages.find((stage) => stage.id === stage_id);
+      if (stage) {
+        stage.minimized = !stage.minimized;
+      }
     },
   },
 });

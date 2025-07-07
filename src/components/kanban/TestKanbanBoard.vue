@@ -10,7 +10,37 @@
         "
       >
         <template v-for="stage in stages" :key="stage.id">
-          <div class="kanban-stage">
+          <div
+            v-if="stage.minimized && !stage.parent_id"
+            class="kanban-stage position-relative"
+            style="
+              width: 30px;
+              min-width: 30px;
+              margin-right: 10px;
+              display: flex;
+              flex-direction: column;
+              /* border-right: 2px dashed #eee; */
+              height: 100%;
+              align-items: flex-start;
+              justify-content: flex-start;
+            "
+          >
+            <div class="linePluse"></div>
+            <button
+              class="btn btn-sm btn-light mt-2 d-flex justify-content-center align-items-center"
+              @click="stage_store.toggleMinimizedById(stage.id)"
+              style="
+                font-size: 14px;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                align-self: flex-start;
+              "
+            >
+              <span>+</span>
+            </button>
+          </div>
+          <div v-else class="kanban-stage">
             <div
               class="stage-header position-relative"
               :title="stage.name"
@@ -27,52 +57,29 @@
                 class="stageName p-0 d-flex justify-content-between align-items-center"
                 :style="{ borderBottom: '2px solid ' + stage.color_code }"
               >
-                <!-- <button
-                  v-if="permissionStore.hasPermission('edit-stage')"
-                  class="btnPlusStage border-0 bg-transparent text-white position-absolute d-none"
-                  style="right: -2%; top: -3%"
-                > -->
-                <!-- <span class="bg-primary px-2 py-2 fs-5">+</span> -->
-                <!-- <i
-                    class="fa-solid fa-filter bg-primary px-2 pe-3"
-                    style="
-                      font-size: 14px;
-                      width: 35px;
-                      height: 50px;
-                      padding-top: 10px;
-                    "
+                <button
+                  v-if="stage.parent_id"
+                  class="btn btn-sm h-100 rounded-0"
+                  style="background-color: #f4f4f4"
+                  @click="stage_store.toggleHiddenByParentId(stage.parent_id)"
+                >
+                  <i
+                    class="fa-regular fa-square-caret-left"
+                    style="font-size: 12px"
                   ></i>
-                </button> -->
-                <!-- <button
+                </button>
+                <button
+                  v-else
                   class="btn btn-sm h-100 rounded-0"
                   style="background-color: #cecfce"
+                  @click="stage_store.toggleMinimizedById(stage.id)"
                 >
                   <i
                     class="fa-solid fa-minus text-white"
                     style="font-size: 12px"
                   ></i>
                 </button>
-                <button
-                  class="btn btn-sm h-100 rounded-0"
-                  style="background-color: #f4f4f4"
-                >
-                  <i
-                    class="fa-regular fa-square-caret-left"
-                    style="font-size: 12px"
-                  ></i>
-                </button> -->
-                <button
-                  class="btn btn-sm h-100 rounded-0"
-                  style="background-color: #cecfce"
-                >
-                  <span v-if="stage.parent_id"
-                    ><i class="fa-solid fa-compress text-white"></i
-                  ></span>
-                  <span v-else
-                    ><i class="fa-solid fa-expand text-white"></i
-                  ></span>
-                </button>
-                <div class="">
+                <div>
                   <span>
                     <i
                       :class="`me-1 fa fa-soild fa-${stage.icon}`"
@@ -102,12 +109,20 @@
                   class="d-flex justify-content-end align-items-center gap-1"
                 >
                   <button
-                    v-if="!stage.parent_id && stage.has_children"
+                    v-if="stage.children_ids.length > 0"
                     class="btn btn-sm h-100 rounded-0 p-0"
+                    style=""
+                    @click="stage_store.toggleHiddenByParentId(stage.id)"
                   >
-                    <span
+                    <span v-if="stage.merge_view"
                       ><i
-                        class="fa-solid fa-compress d-none fs-6"
+                        class="fa-solid fa-compress fs-6"
+                        style="color: #6e6f70; padding: 4px"
+                      ></i
+                    ></span>
+                    <span v-else
+                      ><i
+                        class="fa-solid fa-expand fs-6"
                         style="color: #6e6f70; padding: 4px"
                       ></i
                     ></span>
@@ -137,9 +152,10 @@
               <div class="line"></div>
               <draggable
                 :list="
-                  deal_store.getDealsByStageIds(
-                    stage_store.getChildrenStageIdsByParentId(stage.id)
-                  )
+                  deal_store.getDealsByStageIds([
+                    stage.id,
+                    ...stage.children_ids,
+                  ])
                 "
                 :group="{ name: 'deals' }"
                 item-key="id"
@@ -208,7 +224,8 @@ export default {
   setup() {
     const moveSound = new Audio(moveCardSound);
     const stage_store = useStageStore();
-    const stages = computed(() => stage_store.getNonChildStages);
+    const stages = computed(() => stage_store.getAllStages);
+    const stagesWithHidden = computed(() => stage_store.getAllStagesWithHidden);
     const deal_store = useDealStore();
     const permissionStore = usePermissionStore();
     const toast = useToast();
@@ -217,7 +234,8 @@ export default {
       stage_store
         .fetchStages()
         .then(() => {
-          stages.value.forEach((element) => {
+          console.log("Stages with hidden:", stagesWithHidden.value);
+          stagesWithHidden.value.forEach((element) => {
             deal_store.fetchDealsByStageId(element.id).catch((error) => {
               toast.error(error.message || "Failed to fetch deals for stage");
             });

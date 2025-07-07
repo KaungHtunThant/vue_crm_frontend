@@ -19,9 +19,6 @@ export const useDealStore = defineStore("deal", {
     getDealById: (state) => (deal_id) => {
       return state.deals.find((deal) => deal.id === deal_id);
     },
-    getDealsByStageIds: (state) => (stage_ids) => {
-      return state.deals.filter((deal) => stage_ids.includes(deal.stage_id));
-    },
     getDealsByUserId: (state) => (user_id) => {
       return state.deals.filter((deal) => deal.user_id === user_id);
     },
@@ -97,17 +94,20 @@ export const useDealStore = defineStore("deal", {
         throw error;
       }
     },
-    async fetchDealsByStageId(stage_id, filters = {}) {
+    async fetchDealsByStageId(stage_id, limit = 10, offset = 0, filters = {}) {
       const response = await fetchAdditionalDealsByStageId(
         stage_id,
-        10,
-        this.deals.length,
+        limit,
+        offset,
         filters
       );
       if (response.status !== 200) {
         throw new Error(response.data.message);
       }
-      this.deals = [...this.deals, ...response.data.data];
+      const new_deals = response.data.data.filter(
+        (deal) => !this.deals.some((d) => d.id === deal.id)
+      );
+      this.deals = [...this.deals, ...new_deals];
     },
     async changeCurrentDeal(deal_id) {
       if (this.getCurrentDeal?.id === deal_id) {
@@ -119,6 +119,13 @@ export const useDealStore = defineStore("deal", {
       }
       this.current_deal = response.data.data;
       return this.current_deal;
+    },
+    getDealsByStageIds(stage_ids) {
+      return this.deals.filter((deal) => stage_ids.includes(deal.stage_id));
+    },
+    getCountByStageIds(stage_ids) {
+      return this.deals.filter((deal) => stage_ids.includes(deal.stage_id))
+        .length;
     },
   },
 });
