@@ -31,17 +31,6 @@ export const useStageStore = defineStore("stage", {
     getTrashStages: (state) => {
       return state.stages.filter((stage) => stage.is_trash);
     },
-    getStageDetailsById(stage_id) {
-      return this.stages.find((stage) => stage.id === stage_id);
-    },
-    getParentStageByChildId(stage_id) {
-      const child_stage = this.stages.find((stage) => stage.id === stage_id);
-      if (!child_stage) throw new Error("Stage not found");
-      return this.stages.find((stage) => stage.id === child_stage.id);
-    },
-    getChildStagesByParentId(parent_id) {
-      return this.stages.filter((stage) => stage.parent_id === parent_id);
-    },
     getAllStagesWithHidden: (state) => {
       return state.stages;
     },
@@ -152,6 +141,9 @@ export const useStageStore = defineStore("stage", {
       if (stage) {
         stage.minimized = !stage.minimized;
       }
+    },
+    getStageById(stage_id) {
+      return this.stages.find((stage) => stage.id === stage_id);
     },
   },
 });

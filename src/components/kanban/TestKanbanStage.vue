@@ -151,6 +151,7 @@
             : { minWidth: '309px', width: '309px' }
         "
         @start="drag = true"
+        @scroll="handleDealContainerScroll(local_stage.id, $event)"
       >
         <template #item="{ element: deal }">
           <ticket-card
@@ -209,7 +210,38 @@ export default {
     const permissionStore = usePermissionStore();
     const toast = useToast();
     const { t } = useI18n();
-
+    const reachedBottom = ref(false);
+    const handleDealContainerScroll = async (id, event) => {
+      if (reachedBottom.value) return;
+      const scrollTop = event.target.scrollTop;
+      const scrollHeight = event.target.scrollHeight;
+      const clientHeight = event.target.clientHeight;
+      const stage = stage_store.getStageById(id);
+      if (
+        deal_store.getCountByStageIds([id, ...stage.children_ids]) >=
+        stage.deals_count
+      )
+        return;
+      if (scrollTop + clientHeight >= scrollHeight - 1) {
+        reachedBottom.value = true;
+        console.log("Reached bottom of the container");
+        deal_store
+          .fetchDealsByStageId(
+            id,
+            10,
+            deal_store.getCountByStageIds([id, ...stage.children_ids]),
+            []
+          )
+          .then(() => {
+            reachedBottom.value = false;
+          })
+          .catch((error) => {
+            console.error("Error fetching deals:", error);
+            toast.error(t("error-fetching-deals"));
+            reachedBottom.value = false;
+          });
+      }
+    };
     return {
       stage_store,
       deal_store,
@@ -217,6 +249,7 @@ export default {
       permissionStore,
       toast,
       t,
+      handleDealContainerScroll,
     };
   },
 };
