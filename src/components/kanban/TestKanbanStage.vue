@@ -1,34 +1,8 @@
 <template>
-  <div
+  <minimized-stage
     v-if="local_stage.minimized && !local_stage.parent_id"
-    class="kanban-stage position-relative"
-    style="
-      width: 30px;
-      min-width: 30px;
-      margin-right: 10px;
-      display: flex;
-      flex-direction: column;
-      /* border-right: 2px dashed #eee; */
-      height: 100%;
-      align-items: flex-start;
-      justify-content: flex-start;
-    "
-  >
-    <div class="linePluse"></div>
-    <button
-      class="btn btn-sm btn-light mt-2 d-flex justify-content-center align-items-center"
-      @click="stage_store.toggleMinimizedById(local_stage.id)"
-      style="
-        font-size: 14px;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        align-self: flex-start;
-      "
-    >
-      <span>+</span>
-    </button>
-  </div>
+    :stage="local_stage"
+  />
   <div v-else class="kanban-stage">
     <div
       class="stage-header position-relative"
@@ -190,12 +164,13 @@ import { ref } from "vue";
 import { usePermissionStore } from "@/stores/PermissionStore";
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
-
+import MinimizedStage from "@/components/kanban/TestKanbanMinimizedStage.vue";
 export default {
   name: "TestKanbanStage",
   components: {
     draggable,
     TicketCard,
+    MinimizedStage,
   },
   props: {
     stage: {
@@ -224,7 +199,6 @@ export default {
         return;
       if (scrollTop + clientHeight >= scrollHeight - 1) {
         reachedBottom.value = true;
-        console.log("Reached bottom of the container");
         deal_store
           .fetchDealsByStageId(
             id,
@@ -324,7 +298,7 @@ export default {
   background-color: transparent;
   border-right: 2px dashed #eee;
 }
-.kanban-stage .linePluse {
+.kanban-stage .linePulse {
   position: absolute;
   right: 0px;
   bottom: 0;

@@ -1,14 +1,7 @@
 <template>
   <div class="position-relative">
     <div class="kanban-wrapper overflow-y-hidden mt-3" ref="dealsContainer">
-      <div
-        class="kanban-board d-flex"
-        :style="
-          permissionStore.hasPermission('edit-stage')
-            ? { minWidth: '350px', width: '350px' }
-            : { minWidth: '350px', width: '350px' }
-        "
-      >
+      <div class="kanban-board d-flex">
         <test-kanban-stage
           v-for="stage in stages"
           :key="stage.id"
@@ -16,28 +9,19 @@
         />
       </div>
     </div>
-    <div
-      class="arrowsBoar w-100 position-absolute top-50 end-0"
-      style="pointer-events: none"
-    >
-      <div
+    <div class="w-100 position-absolute top-50 end-0">
+      <scroll-button
+        :direction="1"
         v-show="showRight"
-        class="rigthArrow text-white position-absolute bg-primary p-2 opacity-25 z-3"
-        style="pointer-events: auto; width: fit-content"
         @mouseenter="scrollDeals(1)"
         @mouseleave="stopScrolling"
-      >
-        <i class="fa-solid fa-chevron-right fs-1 p-3"></i>
-      </div>
-      <div
+      />
+      <scroll-button
+        :direction="0"
         v-show="showLeft"
-        class="leftArrow text-white position-absolute bg-primary p-2 opacity-25 z-3"
-        style="pointer-events: auto; width: fit-content"
         @mouseenter="scrollDeals(-1)"
         @mouseleave="stopScrolling"
-      >
-        <i class="fa-solid fa-chevron-left fs-1 p-3"></i>
-      </div>
+      />
     </div>
   </div>
 </template>
@@ -49,11 +33,13 @@ import { useToast } from "vue-toastification";
 import moveCardSound from "@/assets/move-card.wav";
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import TestKanbanStage from "@/components/kanban/TestKanbanStage.vue";
+import ScrollButton from "@/components/kanban/TestScrollButton.vue";
 
 export default {
   name: "TestKanbanBoard",
   components: {
     TestKanbanStage,
+    ScrollButton,
   },
   setup() {
     const moveSound = new Audio(moveCardSound);
@@ -63,9 +49,7 @@ export default {
     const deal_store = useDealStore();
     const permissionStore = usePermissionStore();
     const toast = useToast();
-    const resizeObserver = new ResizeObserver(() => {
-      updateArrowVisibility();
-    });
+    const resizeObserver = new ResizeObserver(() => updateArrowVisibility());
     const dealsContainer = ref(null);
     const showLeft = ref(false);
     const showRight = ref(true);
@@ -112,7 +96,6 @@ export default {
       stage_store
         .fetchStages()
         .then(() => {
-          console.log("Stages with hidden:", stagesWithHidden.value);
           stagesWithHidden.value.forEach((element) => {
             deal_store.fetchDealsByStageId(element.id).catch((error) => {
               toast.error(error.message || "Failed to fetch deals for stage");
@@ -160,8 +143,8 @@ export default {
 .kanban-board {
   display: flex;
   flex-direction: row;
-  /* min-width: 350px;
-  width: 350px; */
+  min-width: 350px;
+  width: 350px;
   height: 100%;
 }
 /* Scrollbar Styling */
@@ -183,29 +166,6 @@ export default {
 .kanban-wrapper::-webkit-scrollbar-thumb:hover,
 .deal-list::-webkit-scrollbar-thumb:hover {
   background: #555;
-}
-.rigthArrow,
-.leftArrow {
-  transform: translateY(-50%);
-  cursor: pointer;
-  transition: all 0.5s;
-}
-.rigthArrow:hover,
-.leftArrow:hover {
-  cursor: pointer;
-  opacity: 0.8 !important;
-}
-.rigthArrow {
-  border-top-left-radius: 50%;
-  border-bottom-left-radius: 50%;
-  right: 0%;
-  z-index: 9999;
-}
-.leftArrow {
-  border-top-right-radius: 50%;
-  border-bottom-right-radius: 50%;
-  left: 0%;
-  z-index: 9999;
 }
 .fs-merge-icon {
   font-size: 5rem;
