@@ -160,6 +160,83 @@
       </div>
     </div>
   </div>
+
+  <!-- Multi Action Modal -->
+  <div class="modal fade" id="multiActionModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {{ t("crmlist-action-update") }} ({{ selectedRows.length }})
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <select v-model="newStage" class="form-select mb-2">
+            <option value="">
+              {{ t("crmlist-modal-filter-placeholder-stage") }}
+            </option>
+            <option
+              v-for="option in stageOptions"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.label }}
+            </option>
+          </select>
+          <select v-model="newUser" class="form-select mb-2">
+            <option value="">
+              {{ t("crmlist-modal-import-placeholder-representative") }}
+            </option>
+            <option
+              v-for="option in userOptions"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.name }}
+            </option>
+          </select>
+          <select v-model="newSource" class="form-select">
+            <option value="">
+              {{ t("crmlist-modal-import-placeholder-source") }}
+            </option>
+            <option
+              v-for="option in sourceOptions"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            {{ t("users-modal-add-button-cancel") }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="confirmMultiAction"
+            :disabled="isLoading"
+          >
+            <span
+              v-if="isLoading"
+              class="spinner-border spinner-border-sm me-2"
+            ></span>
+            {{ t("users-modal-add-button-submit") }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -171,6 +248,7 @@ import {
   getAllUsers,
 } from "@/plugins/services/authService";
 import { useI18n } from "vue-i18n";
+import { useToast } from "vue-toastification";
 const { t } = useI18n();
 const props = defineProps({
   selectedRows: {
@@ -178,6 +256,7 @@ const props = defineProps({
     required: true,
   },
 });
+const toast = useToast();
 
 // Define emits properly
 const emits = defineEmits([
@@ -313,6 +392,28 @@ const confirmChangeSource = async () => {
     newSource.value = "";
   } catch (error) {
     console.error("Error changing source:", error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const confirmMultiAction = async () => {
+  try {
+    isLoading.value = true;
+    const formVals = [newStage.value, newUser.value, newSource.value];
+    if (!(newStage.value || newUser.value || newSource.value)) {
+      throw new Error("Select at least one field.");
+    }
+    emits("update-multi", formVals);
+    closeModal("multiActionModal");
+    newStage.value = "";
+    newUser.value = "";
+    newSource.value = "";
+  } catch (error) {
+    console.error(error.message);
+    toast.error(error.message, {
+      timeout: 3000,
+    });
   } finally {
     isLoading.value = false;
   }

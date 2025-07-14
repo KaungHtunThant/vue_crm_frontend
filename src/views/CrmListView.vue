@@ -4,7 +4,7 @@
       <div class="controls mb-3">
         <div class="row">
           <div
-            class="col-sm-6 col-lg"
+            class="col-sm-6 col-m-4 col-lg-4 col-xl-3"
             v-if="
               permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)
             "
@@ -123,7 +123,7 @@
         :value="rows"
         :paginator="true"
         :rows="rowsPerPage"
-        :rowsPerPageOptions="[10, 25, 50]"
+        :rowsPerPageOptions="[10, 25, 50, 100, 250]"
         :total-records="totalRows"
         :lazy="true"
         :loading="loading"
@@ -227,6 +227,7 @@
         @update-stage="(value) => handleBulkUpdate('stage_id', value)"
         @update-user="(value) => handleBulkUpdate('user_id', value)"
         @update-source="(value) => handleBulkUpdate('source_id', value)"
+        @update-multi="(value) => handleBulkUpdate('multi', value)"
       />
     </div>
   </div>
@@ -337,10 +338,11 @@ const isFilterActive = computed(() => {
 });
 // Actions operations
 const actions = ref([
-  { value: "changeStage", label: t("crmlist-action-changestage") },
-  { value: "assignUser", label: t("crmlist-action-assignto") },
-  { value: "changeSource", label: t("crmlist-action-changesource") },
+  // { value: "changeStage", label: t("crmlist-action-changestage") },
+  // { value: "assignUser", label: t("crmlist-action-assignto") },
+  // { value: "changeSource", label: t("crmlist-action-changesource") },
   { value: "delete", label: t("crmlist-action-delete") },
+  { value: "multi", label: t("crmlist-action-update") },
 ]);
 
 const executeAction = () => {
@@ -389,6 +391,17 @@ const executeAction = () => {
       }
       break;
 
+    case "multi":
+      modalElement = document.getElementById("multiActionModal");
+      if (modalElement) {
+        modal = new Modal(modalElement, {
+          backdrop: true,
+          keyboard: true,
+          focus: true,
+        });
+        modal.show();
+      }
+      break;
     case "delete":
       bulkDeleteItems();
       break;
@@ -784,11 +797,9 @@ const handleBulkUpdate = async (key, value) => {
       return;
     }
 
-    const response = await bulkUpdateDeals(
-      selectedIds,
-      String(key),
-      String(value)
-    );
+    console.log("key, value:", key, value);
+
+    const response = await bulkUpdateDeals(selectedIds, String(key), value);
 
     if (
       response.data.success ||
@@ -811,6 +822,9 @@ const handleBulkUpdate = async (key, value) => {
         case "source_id":
           modalElement = document.getElementById("changeSourceModal");
           break;
+        case "multi":
+          modalElement = document.getElementById("multiActionModal");
+          break;
       }
 
       if (modalElement) {
@@ -820,7 +834,7 @@ const handleBulkUpdate = async (key, value) => {
         }
       }
 
-      toast.success(t("success.bulkUpdateSuccess"), { timeout: 3000 });
+      toast.success(response.data.message, { timeout: 3000 });
     } else {
       console.error(
         "Error updating stage:",
@@ -828,7 +842,7 @@ const handleBulkUpdate = async (key, value) => {
       );
     }
   } catch (error) {
-    toast.error(error.response?.data?.message || t("error.bulkUpdateFailed"), {
+    toast.error(error.response?.data?.message || error.message, {
       timeout: 3000,
     });
     console.error("Bulk Update Error:", error);

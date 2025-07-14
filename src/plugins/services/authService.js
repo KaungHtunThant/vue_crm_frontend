@@ -114,7 +114,7 @@ export const bulkUpdateDeals = async (ids, key, value) => {
   return await axios.patch("/deals/bulk-update", {
     ids,
     key: String(key),
-    value: String(value),
+    value: value,
   });
 };
 export const bulkDeleteDeals = async (ids) => {
