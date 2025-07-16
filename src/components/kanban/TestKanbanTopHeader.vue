@@ -48,22 +48,22 @@
     </div>
     <test-kanban-topheader-task-count-button
       :text="'kanban-task-status-overdue'"
-      :count="0"
+      :count="overdue_count"
       :color="'text-danger'"
     />
     <test-kanban-topheader-task-count-button
       :text="'kanban-task-status-today'"
-      :count="0"
+      :count="today_count"
       :color="'text-warning'"
     />
     <test-kanban-topheader-task-count-button
       :text="'kanban-task-status-tomorrow'"
-      :count="0"
+      :count="tomorrow_count"
       :color="'text-info'"
     />
     <test-kanban-topheader-task-count-button
       :text="'kanban-task-status-notasks'"
-      :count="0"
+      :count="notasks_count"
       :color="'text-secondary'"
     />
     <test-whatsapp-button />
@@ -103,10 +103,12 @@
 </template>
 <script>
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
+import { useTaskStore } from "@/stores/TaskStore";
 import { useI18n } from "vue-i18n";
 import TestKanbanTopHeaderButton from "@/components/kanban/TestKanbanTopHeaderButton.vue";
 import TestKanbanTopheaderTaskCountButton from "@/components/kanban/TestKanbanTopheaderTaskCountButton.vue";
 import TestWhatsappButton from "./TestWhatsappButton.vue";
+import { computed, onMounted } from "vue";
 export default {
   name: "TestKanbanTopHeader",
   components: {
@@ -136,12 +138,23 @@ export default {
   },
   setup() {
     const permissionStore = usePermissionStore();
+    const taskStore = useTaskStore();
     const { t } = useI18n();
-
+    const overdue_count = computed(() => taskStore.overdue_count);
+    const today_count = computed(() => taskStore.today_count);
+    const tomorrow_count = computed(() => taskStore.tomorrow_count);
+    const notasks_count = computed(() => taskStore.notasks_count);
+    onMounted(() => {
+      taskStore.fetchTaskCounts();
+    });
     return {
       permissionStore,
       t,
       PERMISSIONS,
+      overdue_count,
+      today_count,
+      tomorrow_count,
+      notasks_count,
     };
   },
 };

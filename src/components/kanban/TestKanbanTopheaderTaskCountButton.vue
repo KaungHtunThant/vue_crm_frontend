@@ -8,7 +8,7 @@
 </template>
 <script>
 import { useI18n } from "vue-i18n";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 export default {
   name: "TestKanbanTopheaderTaskCountButton",
@@ -29,7 +29,9 @@ export default {
   setup(props) {
     const { t } = useI18n();
     const local_text = ref(props.text);
-    const local_count = ref(props.count);
+    const local_count = computed(() =>
+      props.count > 99 ? "99+" : props.count
+    );
     const local_color = ref(props.color);
     return {
       t,
