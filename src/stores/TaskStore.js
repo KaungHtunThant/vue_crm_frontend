@@ -2,6 +2,7 @@ import {
   createTask,
   fetchTasksCountByStageName,
   getTasksByDealId,
+  updateTask,
 } from "@/plugins/services/authService";
 import { defineStore } from "pinia";
 
@@ -11,14 +12,15 @@ export const useTaskStore = defineStore("task", {
     today_count: 0,
     tomorrow_count: 0,
     idle_count: 0,
-    task: [],
+    tasks: [],
   }),
   getters: {
     getOverdueCount: (state) => state.overdue_count,
     getTodayCount: (state) => state.today_count,
     getTomorrowCount: (state) => state.tomorrow_count,
     getIdleCount: (state) => state.idle_count,
-    getCurrentTasks: (state) => state.task,
+    getCurrentTasks: (state) =>
+      state.tasks.filter((task) => task.tatus !== "completed"),
   },
   actions: {
     async fetchTaskCounts() {
@@ -98,7 +100,7 @@ export const useTaskStore = defineStore("task", {
           if (res.status !== 200) {
             throw new Error(res.data.message);
           }
-          this.task = res.data.data || [];
+          this.tasks = res.data.data || [];
         });
       } catch (error) {
         console.error("Error fetching current tasks:", error);
@@ -114,7 +116,7 @@ export const useTaskStore = defineStore("task", {
         duetime: duetime,
         deal_id: deal_id,
       };
-      this.task.push(optimisticTask);
+      this.tasks.push(optimisticTask);
       try {
         const formData = new FormData();
         formData.append("description", description);
@@ -125,9 +127,9 @@ export const useTaskStore = defineStore("task", {
         if (response.status !== 201 && response.status !== 200) {
           throw new Error(response.data.message);
         }
-        const index = this.task.findIndex((task) => task.id === tempId);
+        const index = this.tasks.findIndex((task) => task.id === tempId);
         if (index !== -1) {
-          this.task[index] = { ...response.data.data };
+          this.tasks[index] = { ...response.data.data };
         }
         const duedate_stage = this._determineDuedate(duedate);
         if (duedate_stage) {
@@ -137,21 +139,54 @@ export const useTaskStore = defineStore("task", {
         }
       } catch (error) {
         // Rollback optimistic update if API call fails
-        this.task = this.task.filter((task) => task.id !== tempId);
+        this.tasks = this.tasks.filter((task) => task.id !== tempId);
         throw error;
       }
     },
     removeTaskFromCurrentTasks(task_id) {
-      this.task = this.task.filter((task) => task.id !== task_id);
-    },
-    updateTaskInCurrentTasks(updated_task) {
-      const index = this.task.findIndex((task) => task.id === updated_task.id);
-      if (index !== -1) {
-        this.task[index] = updated_task;
+      const index = this.tasks.findIndex((task) => task.id === task_id);
+      if (index === -1) {
+        console.warn(`Task with ID ${task_id} not found in current tasks`);
+        return;
+      }
+      const removedTask = this.tasks[index];
+      this.tasks.splice(index, 1);
+      const duedate_stage = this._determineDuedate(removedTask.duedate);
+      if (duedate_stage) {
+        this.removeCount(duedate_stage);
       } else {
-        console.warn(
-          `Task with ID ${updated_task.id} not found in current tasks`
-        );
+        console.warn("Invalid due date for removed task");
+      }
+    },
+    updateTaskInCurrentTasks(task_id, duedate, duetime, description, status) {
+      const index = this.tasks.findIndex((task) => task.id === task_id);
+      const backup_task = this.tasks[index];
+      const formData = new FormData();
+      formData.append("duedate", duedate ?? backup_task.duedate);
+      formData.append("duetime", duetime ?? backup_task.duetime);
+      formData.append("description", description ?? backup_task.description);
+      formData.append("status", status ?? backup_task.status);
+      const optimisticTask = {
+        decription: description ?? backup_task.description,
+        duedate: duedate ?? backup_task.duedate,
+        duetime: duetime ?? backup_task.duetime,
+      };
+      if (index === -1) {
+        console.warn(`Task with ID ${task_id} not found in current tasks`);
+        return;
+      }
+      this.tasks[index] = { ...backup_task, ...optimisticTask };
+      try {
+        updateTask(formData).then((res) => {
+          if (res.status !== 200) {
+            throw new Error(res.data.message);
+          }
+          this.tasks[index] = { ...res.data.data };
+        });
+      } catch (error) {
+        console.error("Error updating task:", error);
+        this.tasks[index] = backup_task;
+        throw error;
       }
     },
     _determineDuedate(duedate) {
