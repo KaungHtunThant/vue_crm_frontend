@@ -494,3 +494,7 @@ export const getActiveClients = async () => {
 export const getAllPackages = async () => {
   return await axios.get("/packages");
 };
+
+export const getTasksByDealId = async (dealId) => {
+  return await axios.get(`/tasks/${dealId}`);
+};
