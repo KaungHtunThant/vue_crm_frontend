@@ -320,10 +320,16 @@ const fetchUsers = async () => {
   try {
     const response = await getAllUsers();
     if (response.status === 200) {
-      userOptions.value = response.data.data.map((user) => ({
-        value: user.id,
-        name: user.name,
-      }));
+      userOptions.value = [
+        {
+          value: 0,
+          name: t("crmlist-action-unassign"),
+        },
+        ...response.data.data.map((user) => ({
+          value: user.id,
+          name: user.name,
+        })),
+      ];
     }
   } catch (error) {
     console.error("Error fetching sources:", error);
@@ -401,7 +407,7 @@ const confirmMultiAction = async () => {
   try {
     isLoading.value = true;
     const formVals = [newStage.value, newUser.value, newSource.value];
-    if (!(newStage.value || newUser.value || newSource.value)) {
+    if (!(newStage.value || newUser.value !== null || newSource.value)) {
       throw new Error("Select at least one field.");
     }
     emits("update-multi", formVals);

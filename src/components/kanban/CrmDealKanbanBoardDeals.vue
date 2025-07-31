@@ -249,13 +249,13 @@
       >
         <i class="fa-solid fa-chevron-left fs-1 p-3"></i>
       </div>
-      <button
+      <!-- <button
         v-show="!allDealsCount"
         class="btn text-white position-absolute top-50 start-50 translate-middle bg-primary p-2 z-3 btn-request"
         @click="handleRequestDeal"
       >
         {{ t("kanban-btn-request-deal") }}
-      </button>
+      </button> -->
     </div>
   </div>
   <!-- :key="selectedDeal?.id" -->
