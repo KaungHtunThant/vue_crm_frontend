@@ -1427,7 +1427,7 @@ export default {
           id: comment.id,
           text_body: comment.text_body || "No text",
           created_at: comment.created_at || "No date",
-          username: comment.user.name || "No user",
+          username: comment.user?.name || "No user",
           isAdmin:
             comment.user && comment.user.role === "super-admin" ? true : false,
           isPinned: comment.isPinned || false,
