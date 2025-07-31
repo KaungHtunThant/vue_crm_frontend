@@ -72,6 +72,22 @@
                 </div>
               </router-link>
               <router-link
+                v-if="permissionStore.hasPermission(PERMISSIONS.USERS)"
+                to="/approvals"
+                class="text-decoration-none text-black mb-2"
+                @click="closeDropdown"
+              >
+                <div class="dropdown-link">
+                  <div
+                    class="sidebar-item d-flex align-items-center"
+                    :title="$t('sidebar-nav-item-approvals')"
+                  >
+                    <i class="fa-solid fa-stamp fs-5 me-2"></i>
+                    <span>{{ $t("sidebar-nav-item-approvals") }}</span>
+                  </div>
+                </div>
+              </router-link>
+              <router-link
                 v-if="permissionStore.hasPermission(PERMISSIONS.CONTACTS)"
                 to="/contacts"
                 class="text-decoration-none text-black mb-2"

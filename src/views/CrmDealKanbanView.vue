@@ -12,6 +12,7 @@
   </div>
   <crm-kanban-kanban-board
     :stages="stages"
+    :searchVal="searchVal"
     defaultColor="#333"
     @open-whatsapp-modal="openWhatsappModal"
     @receive-whatsapp-message="receiveWhatsappMessage"
@@ -40,7 +41,7 @@ export default {
     const toast = useToast();
     const stages = ref([]);
     const selected_conversation = ref(null);
-
+    const searchVal = ref("");
     const filters = ref({
       source_id: "",
       stage_id: "",
@@ -64,6 +65,7 @@ export default {
       if (searching.value) return;
       try {
         searching.value = true;
+        searchVal.value = searchText || "";
         const response = await getDealsKanban(searchText);
         if (Array.isArray(response.data.data)) {
           stages.value = response.data.data.map((stage) => ({
@@ -281,6 +283,7 @@ export default {
       fetchStages,
       searching,
       changeDealStage,
+      searchVal,
     };
   },
 };

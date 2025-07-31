@@ -18,6 +18,7 @@ import BroadcastSettingsView from "@/views/BroadcastSettingsView.vue";
 import StagingSettingView from "@/views/StagingSettingView.vue";
 import WebWhatsapp from "@/views/WebWhatsapp.vue";
 import PatientRegistrationView from "@/views/PatientRegistrationView.vue";
+import ApprovalsView from "@/views/ApprovalsView.vue";
 import TestKanbanView from "@/views/TestKanbanView.vue";
 
 const routes = [
@@ -64,6 +65,16 @@ const routes = [
       title: "CRM Kanban",
     },
     beforeEnter: requirePermission(PERMISSIONS.DEALS_KANBAN),
+  },
+  {
+    path: "/approvals",
+    name: "ApprovalsView",
+    component: ApprovalsView,
+    meta: {
+      requiresAuth: true,
+      title: "Approvals",
+    },
+    // beforeEnter: requirePermission(PERMISSIONS.DEALS_KANBAN),
   },
   {
     path: "/crm-tasks",

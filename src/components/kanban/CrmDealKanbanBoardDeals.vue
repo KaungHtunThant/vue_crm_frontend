@@ -41,10 +41,6 @@
             </button>
           </div>
           <div v-else class="kanban-stage">
-            <!-- @click="
-                permissionStore.hasPermission('edit-stage') &&
-                  openFilterStage(stage)
-              " -->
             <div
               class="stage-header position-relative"
               :title="stage.name"
@@ -253,6 +249,13 @@
       >
         <i class="fa-solid fa-chevron-left fs-1 p-3"></i>
       </div>
+      <button
+        v-show="!allDealsCount"
+        class="btn text-white position-absolute top-50 start-50 translate-middle bg-primary p-2 z-3 btn-request"
+        @click="handleRequestDeal"
+      >
+        {{ t("kanban-btn-request-deal") }}
+      </button>
     </div>
   </div>
   <!-- :key="selectedDeal?.id" -->
@@ -301,6 +304,7 @@ import {
   getStagesChildren,
   getAllPackages,
   getAvailableStages,
+  createApproval,
 } from "@/plugins/services/authService";
 import { useI18n } from "vue-i18n";
 import Cookies from "js-cookie";
@@ -332,6 +336,10 @@ export default {
     viewType: {
       type: String,
       default: "deal",
+    },
+    searchVal: {
+      type: String,
+      default: "",
     },
   },
   setup(props, { emit }) {
@@ -373,6 +381,12 @@ export default {
       },
       { immediate: true }
     );
+
+    const allDealsCount = computed(() => {
+      return displayStages.value.reduce((count, stage) => {
+        return count + (stage.deal_count || 0);
+      }, 0);
+    });
 
     const fetchPackages = async () => {
       try {
@@ -1175,6 +1189,19 @@ export default {
       return filteredDeals.value[stageId] || stage.deals;
     });
 
+    const handleRequestDeal = async () => {
+      try {
+        const response = await createApproval(props.searchVal);
+        if (response.status === 200 || response.status === 201) {
+          toast.success(response.data.message);
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        toast.error(error.response?.data?.message);
+      }
+    };
+
     onMounted(async () => {
       if (dealsContainer.value) {
         dealsContainer.value.addEventListener("scroll", updateArrowVisibility);
@@ -1326,6 +1353,8 @@ export default {
       getStageDeals,
       allStages,
       selectedStageId,
+      allDealsCount,
+      handleRequestDeal,
     };
   },
 };
@@ -1486,5 +1515,11 @@ export default {
   .kanban-wrapper {
     height: calc(100vh - 130px);
   }
+}
+.btn-request {
+  cursor: pointer;
+  transition: all 0.5s;
+  pointer-events: auto;
+  width: fit-content;
 }
 </style>

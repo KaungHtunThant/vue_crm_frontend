@@ -5,8 +5,35 @@
       <option value="" disabled selected>
         {{ $t("forms.select_language") }}
       </option>
-      <option value="ar">العربية</option>
-      <option value="en">English</option>
+      <option value="ar">🇸🇦 العربية</option>
+      <option value="en">
+        <country-flag-avatar
+          :phone="'+12025550173'"
+          style="width: 25px; height: 20px !important"
+        />
+        English
+      </option>
+      <option value="ur">
+        <country-flag-avatar
+          :phone="'+92515550173'"
+          style="width: 25px; height: 20px !important"
+        />
+        اردو
+      </option>
+      <option value="tr">
+        <country-flag-avatar
+          :phone="'+902125550173'"
+          style="width: 25px; height: 20px !important"
+        />
+        Türkçe
+      </option>
+      <option value="ru">
+        <country-flag-avatar
+          :phone="'+74955550173'"
+          style="width: 25px; height: 20px !important"
+        />
+        Русский
+      </option>
     </select>
   </div>
 
@@ -20,9 +47,13 @@
 
 <script>
 import { ref } from "vue";
+import CountryFlagAvatar from "@/components/whatsapp/WhatsAppModalSidebarLeftCountryFlagAvatar.vue";
 
 export default {
   name: "TheTopHeaderDropDownMenuProfileEditProfileModalChangeLangModalFormItems",
+  components: {
+    CountryFlagAvatar,
+  },
   props: {
     modelValue: {
       type: String,

@@ -96,7 +96,7 @@
 
       <div
         class="d-flex gap-1 align-items-center p-0 flex-wrap"
-        v-if="deal.tags && deal.tags.length"
+        v-if="deal.tags && deal.tags.length && userRole !== 'sales'"
       >
         <span
           v-for="tag in deal.tags"
@@ -165,6 +165,7 @@
 import { useI18n } from "vue-i18n";
 import { useToast } from "vue-toastification";
 import CountryFlagAvatar from "@/components/whatsapp/WhatsAppModalSidebarLeftCountryFlagAvatar.vue";
+import Cookies from "js-cookie";
 
 export default {
   name: "CrmDealKanbanBoardDealsTicketCard",
@@ -178,6 +179,7 @@ export default {
     CountryFlagAvatar,
   },
   setup(props, { emit }) {
+    const userRole = Cookies.get("user_role");
     const { t } = useI18n();
     const toast = useToast();
 
@@ -298,6 +300,7 @@ export default {
       copyPhoneNumber,
       formatDateUpdate,
       getPersuasionColorClass,
+      userRole,
     };
   },
   methods: {},

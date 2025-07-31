@@ -234,10 +234,13 @@ export default {
     const local_packages = ref([]);
 
     const statuses = ref([
-      { value: "no_comments", label: "No Comments" },
-      { value: "no_task", label: "No Task" },
-      { value: "overdue", label: "Overdue" },
-      { value: "new", label: "New" },
+      {
+        value: "no_comments",
+        label: t("kanban-modal-filter-status-nocomments"),
+      },
+      { value: "no_task", label: t("kanban-modal-filter-status-notasks") },
+      { value: "overdue", label: t("kanban-modal-filter-status-overdue") },
+      { value: "new", label: t("kanban-modal-filter-status-new") },
     ]);
 
     const updateLocalFilters = (newFilters) => {
@@ -318,11 +321,11 @@ export default {
       if (permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)) {
         statuses.value.push({
           value: "unassigned",
-          label: "Unassigned",
+          label: t("kanban-modal-filter-status-unassigned"),
         });
         statuses.value.push({
           value: "reclaimed",
-          label: "Reclaimed",
+          label: t("kanban-modal-filter-status-reclaimed"),
         });
       }
     });
