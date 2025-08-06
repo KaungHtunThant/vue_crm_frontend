@@ -84,6 +84,7 @@
             <crm-kanban-header
               :selected_conversation="selected_conversation"
               :disableFilter="true"
+              currentPage="crm-list"
             />
           </div>
           <div
@@ -1098,6 +1099,6 @@ select:focus {
   background: red;
 }
 .btn-header {
-  background-color: rgba(128, 128, 128, 0.8) !important;
+  background-color: #555555 !important;
 }
 </style>
