@@ -1225,9 +1225,23 @@
                       />
                     </div>
                     <div class="col-2">
+                      <button
+                        v-show="taskDataModified"
+                        class="btn btn-sm btn-primary text-light align-middle me-2"
+                        @click="
+                          handleTaskUpdate(
+                            task.id,
+                            task.description,
+                            task.duedate,
+                            task.duetime
+                          )
+                        "
+                      >
+                        <i class="fa-solid fa-check"></i>
+                      </button>
                       <input
                         type="checkbox"
-                        class="custom-checkbox"
+                        class="custom-checkbox align-middle"
                         v-model="task.status"
                         @change="() => handleTaskCompletion(task.id)"
                       />
@@ -1348,6 +1362,8 @@ export default {
     const commentTextWidths = reactive({});
     const originalDataValue = ref({});
     const dataDealCopy = (obj) => JSON.parse(JSON.stringify(obj));
+
+    const taskDataModified = ref(false);
 
     const resizeDisplayedCommentWidth = (commentId) => {
       nextTick(() => {
@@ -2889,11 +2905,24 @@ export default {
         toast.error(t("error.updatingComment"));
       }
     };
-    const togglePin = (comment) => {
+    const togglePin = async (comment) => {
       comment.isPinned = !comment.isPinned;
-      toast.success(
-        comment.isPinned ? t("تم تثبيت التعليق") : t("تم إلغاء التثبيت")
-      );
+      try {
+        const formData = {
+          is_pinned: comment.isPinned,
+        };
+        const response = await updateComments(comment.id, formData);
+        if (response.status === 200) {
+          toast.success(response.data.message, {
+            timeout: 3000,
+          });
+        } else {
+          throw new Error(t("error.updatingCommentPin"));
+        }
+      } catch (error) {
+        console.error("Error updating comment pin status:", error);
+        comment.isPinned = !comment.isPinned;
+      }
     };
     const sortedComments = computed(() => {
       return customerData.comments.slice().sort((a, b) => {
@@ -3005,6 +3034,31 @@ export default {
       }
       emit("suggest-user", props.deal.id);
     };
+    const handleTaskUpdate = async (description, duedate, duetime, taskId) => {
+      try {
+        const formData = {
+          description,
+          duedate,
+          duetime,
+        };
+        const response = await updateTask(taskId, formData);
+        if (response.status === 200 || response.status === 201) {
+          toast.success(response.data.message, {
+            timeout: 3000,
+          });
+        } else {
+          toast.error(response.data.message, {
+            timeout: 3000,
+          });
+        }
+      } catch (error) {
+        console.error("Error updating task:", error);
+        toast.error(t("error.updatingTask"), {
+          timeout: 3000,
+        });
+      }
+    };
+
     return {
       handleDealSuggestion,
       allStages,
@@ -3083,6 +3137,8 @@ export default {
       nationalities,
       languages,
       openSuggestApprovalModal,
+      taskDataModified,
+      handleTaskUpdate,
     };
   },
 };
