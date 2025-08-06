@@ -1214,6 +1214,7 @@
                         v-model="task.duedate"
                         :placeholder="t('modals.selectDate')"
                         @mousedown="dateTaskClick"
+                        @change="taskDataModified = true"
                       />
                     </div>
                     <div class="col-3">
@@ -1222,6 +1223,7 @@
                         class="form-control bg-secondary-subtle text-secondary py-2 me-1"
                         v-model="task.duetime"
                         :placeholder="t('modals.selectTime')"
+                        @change="taskDataModified = true"
                       />
                     </div>
                     <div class="col-2">
@@ -3036,6 +3038,7 @@ export default {
     };
     const handleTaskUpdate = async (description, duedate, duetime, taskId) => {
       try {
+        taskDataModified.value = false;
         const formData = {
           description,
           duedate,
