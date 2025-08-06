@@ -183,6 +183,10 @@
           :header="t('crmlist-table-header-createdat')"
         ></Column>
         <Column
+          field="updated_at"
+          :header="t('crmlist-table-header-updatedat')"
+        ></Column>
+        <Column
           field="source"
           :header="t('crmlist-table-header-source')"
           v-if="permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)"
@@ -201,6 +205,7 @@
                 <i class="fas fa-eye"></i>
               </button>
               <button
+                v-if="permissionStore.hasPermission(PERMISSIONS.DELETE_DEAL)"
                 class="btn btn-sm btn-danger"
                 @click="deleteItem(slotProps.data.id)"
               >
@@ -498,6 +503,7 @@ const fetchData = async () => {
         phone: deal.phone,
         note: deal.note || "Empty",
         created_at: deal.created_at.split("T")[0],
+        updated_at: deal.updated_at.split("T")[0],
         stage: matchedStage ? matchedStage.name : "Not set",
         responsible: deal.responsible_user?.name || "Not Assigned",
         source: matchedSource ? matchedSource.name : "Not set",
@@ -665,6 +671,7 @@ const applyFilters = async (newFilters) => {
         phone: deal.phone,
         note: deal.note || "Empty",
         created_at: deal.created_at.split("T")[0],
+        updated_at: deal.updated_at.split("T")[0],
         stage: matchedStage ? matchedStage.name : "Not set",
         responsible: deal.responsible_user?.name || "Not Assigned",
         source: matchedSource ? matchedSource.name : "Not set",

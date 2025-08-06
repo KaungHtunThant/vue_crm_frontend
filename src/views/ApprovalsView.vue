@@ -41,6 +41,19 @@
           {{ t("approvals-tab-label-new-deal-creation") }}
         </button>
       </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link text-secondary-emphasis"
+          id="suggest-user-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#suggest_user"
+          type="button"
+          role="tab"
+          aria-controls="suggest_user"
+        >
+          {{ t("approvals-tab-label-suggest-user") }}
+        </button>
+      </li>
     </ul>
     <div class="tab-content mt-3" id="myTabContent">
       <div
@@ -67,6 +80,14 @@
       >
         <approval-new-deal-creation-table />
       </div>
+      <div
+        class="tab-pane fade"
+        id="suggest_user"
+        role="tabpanel"
+        aria-labelledby="suggest_user_tab"
+      >
+        <approval-suggest-user-table />
+      </div>
     </div>
   </div>
   <deal-data-card
@@ -84,6 +105,7 @@ import { useI18n } from "vue-i18n";
 import ApprovalDealReassignmentTable from "@/components/ApprovalDealReassignmentTable.vue";
 import ApprovalIdleDealAssignTable from "@/components/ApprovalIdleDealAssignTable.vue";
 import ApprovalNewDealCreationTable from "@/components/ApprovalNewDealCreationTable.vue";
+import ApprovalSuggestUserTable from "@/components/ApprovalSuggestUserTable.vue";
 import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";
 import { useApprovalStore } from "@/stores/approvalStore";
 import { onMounted } from "vue";
@@ -93,6 +115,7 @@ export default {
     ApprovalDealReassignmentTable,
     ApprovalIdleDealAssignTable,
     ApprovalNewDealCreationTable,
+    ApprovalSuggestUserTable,
     DealDataCard,
   },
   setup() {

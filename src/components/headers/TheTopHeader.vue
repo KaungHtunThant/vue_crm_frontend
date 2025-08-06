@@ -12,7 +12,7 @@
         <span
           class="rounded-1 btnHeaderBg d-flex justify-content-center align-items-center me-2"
           style="font-size: 14px; padding: 0 45px"
-          >{{ $route.meta.title || "القائمة الرئيسية" }}</span
+          >{{ $t($route.meta.titleKey || "sidebar-heading") }}</span
         >
 
         <div class="toggleMenuBar position-relative">
@@ -37,6 +37,16 @@
                 <div class="dropdown-link">
                   <i class="fa-solid fa-chart-column fs-5 me-2"></i>
                   <span>{{ $t("sidebar-nav-item-kanban") }}</span>
+                </div>
+              </router-link>
+              <router-link
+                to="/crm-tasks"
+                class="text-decoration-none text-black mb-2"
+                @click="closeDropdown"
+              >
+                <div class="dropdown-link">
+                  <i class="fa-solid fa-chart-column fs-5 me-2"></i>
+                  <span>{{ $t("header-subnav-item-kanban-tasks") }}</span>
                 </div>
               </router-link>
               <router-link
@@ -293,6 +303,7 @@ import {
 } from "vue";
 import { useRoute } from "vue-router";
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
+import { useI18n } from "vue-i18n";
 
 export default {
   name: "TheTopHeader",
@@ -319,6 +330,7 @@ export default {
     const user_role = Cookies.get("user_role");
     const loadingStore = useLoadingStore();
     const currentTime = ref("");
+    const { t, locale } = useI18n();
     const updateTime = () => {
       const now = new Date();
 
@@ -390,6 +402,8 @@ export default {
       user_role,
       refreshPage,
       hasNewChanges,
+      t,
+      locale,
     };
   },
   methods: {

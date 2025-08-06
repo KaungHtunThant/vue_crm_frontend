@@ -517,8 +517,8 @@ export const getApprovals = async (params = {}) => {
   });
 };
 
-export const createApproval = async (phone) => {
-  return await axios.post("/approvals", { phone: phone });
+export const createApproval = async (phone, user_id = null) => {
+  return await axios.post("/approvals", { phone: phone, user_id: user_id });
 };
 
 export const updateApproval = async (approvalId, status) => {

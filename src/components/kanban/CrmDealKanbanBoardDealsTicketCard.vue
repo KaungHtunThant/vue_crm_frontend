@@ -61,7 +61,9 @@
         class="col-12 fs-8 mb-1 p-0 d-flex justify-content-between align-items-center"
       >
         <div class="">
-          <span class="ms-2 text-secondary">Rating: </span>
+          <span class="ms-2 text-secondary"
+            >{{ t("kanban-deal-label-rating") }}:
+          </span>
           <template v-for="index in 7" :key="index">
             <i
               class="fa-solid fa-star"
@@ -156,7 +158,7 @@
       :title="t('kanban-deal-alert-attention')"
     >
       <i class="mx-1 fa-solid fa-comment-dots fs-6 text-warning"></i>
-      <span class="fs-7">Attention Required</span>
+      <span class="fs-7">{{ t("kanban-deal-alert-attention") }}</span>
     </div>
   </div>
 </template>

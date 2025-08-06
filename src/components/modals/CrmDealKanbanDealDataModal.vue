@@ -638,7 +638,7 @@
                         :disabled="!isEditMode"
                       >
                         <i class="fa-solid fa-file"></i>
-                        Remove File
+                        {{ t("kanban-modal-edit-button-remove-ticket") }}
                       </button>
                     </div>
                     <div class="col-4">
@@ -648,7 +648,7 @@
                         target="_blank"
                       >
                         <i class="fa-solid fa-file"></i>
-                        View File
+                        {{ t("kanban-modal-edit-button-view-ticket") }}
                       </a>
                     </div>
                     <div class="col-4">
@@ -659,7 +659,7 @@
                         download
                       >
                         <i class="fa-solid fa-file"></i>
-                        Download File
+                        {{ t("kanban-modal-edit-button-download-ticket") }}
                       </a>
                     </div>
                   </div>
@@ -985,7 +985,7 @@
                           'rounded-3 p-2',
                           comment.isAdmin
                             ? 'adminComment'
-                            : 'bg-primary text-white',
+                            : 'bg-light text-dark',
                         ]"
                         style="
                           word-break: break-word;
@@ -1077,18 +1077,15 @@
                                   ? 'text-warning'
                                   : comment.isAdmin
                                   ? ''
-                                  : 'text-white',
+                                  : 'text-dark',
                               ]"
                               style="transform: rotate(-30deg); font-size: 12px"
                             ></i>
                           </button>
                           <button
                             v-if="editingCommentId !== comment.id"
-                            class="btn btn-sm p-0"
+                            class="btn btn-sm p-0 text-dark"
                             @click="editComment(comment)"
-                            :class="[
-                              comment.isAdmin ? 'text-dark' : 'text-white',
-                            ]"
                           >
                             <i
                               class="fa-solid fa-pencil"
@@ -1096,11 +1093,8 @@
                             ></i>
                           </button>
                           <button
-                            class="btn btn-sm p-0"
+                            class="btn btn-sm p-0 text-dark"
                             @click.prevent="copyComment(comment.text_body)"
-                            :class="[
-                              comment.isAdmin ? 'text-dark' : 'text-white',
-                            ]"
                           >
                             <i
                               class="fa-solid fa-copy"
@@ -1245,6 +1239,12 @@
           </div>
         </div>
         <button
+          class="btn ApprovalCustm position-fixed bg-warning py-2 px-3 rounded-3"
+          @click="openSuggestApprovalModal"
+        >
+          <i class="fa-solid fa-user text-white"></i>
+        </button>
+        <button
           class="btn trashCustm position-fixed bg-danger py-2 px-3 rounded-3"
           @click="openTrashDealModal"
         >
@@ -1254,6 +1254,13 @@
     </div>
   </div>
   <view-report ref="questionsModalRef" :deal_id="deal?.id" />
+  <suggest-user-modal
+    ref="suggestUserModalRef"
+    :users="users"
+    :phone="customerData?.phone"
+    :dealId="deal?.id"
+    @deal-suggested="handleDealSuggestion"
+  />
   <trash-deal
     ref="trashDealModalRef"
     :dealId="deal?.id"
@@ -1277,6 +1284,7 @@ import { Modal } from "bootstrap";
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 import TrashDeal from "@/components/modals/CrmDealKanbanDealDataModalTrashDealModal.vue";
+import SuggestUserModal from "@/components/modals/SuggestUserModal.vue";
 import {
   fetchConversationByDealId,
   getSources,
@@ -1295,7 +1303,7 @@ import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import moveCardSound from "@/assets/move-card.wav";
 export default {
   name: "CrmDealKanbanDealDataModal",
-  components: { RatingStars, ViewReport, TrashDeal },
+  components: { RatingStars, ViewReport, TrashDeal, SuggestUserModal },
   props: {
     deal: {
       type: Object,
@@ -2340,6 +2348,35 @@ export default {
         });
       }
     };
+    const openSuggestApprovalModal = () => {
+      if (!props.deal?.id) {
+        toast.error(t("error.dealNotFound"), {
+          timeout: 3000,
+        });
+        return;
+      }
+      try {
+        const openModals = document.querySelectorAll(".modal.show");
+        openModals.forEach((modal) => {
+          const modalInstance = Modal.getInstance(modal);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+        });
+        const suggestUserModal = new Modal(
+          document.getElementById("suggestUserModal")
+        );
+        suggestUserModal.show();
+        const modalBackdrop = document.createElement("div");
+        modalBackdrop.className = "modal-backdrop fade show";
+        document.body.appendChild(modalBackdrop);
+      } catch (error) {
+        console.error("Error opening suggest user modal:", error);
+        toast.error(t("error.openSuggestUserModal"), {
+          timeout: 3000,
+        });
+      }
+    };
     const handleStageHover = (stageId) => {
       hoveredStage.value = stageId;
     };
@@ -2484,6 +2521,7 @@ export default {
             timeout: 3000,
           });
           isEditMode.value = false;
+          emit("update-deal", formData);
         } else {
           toast.error(response.data.message, {
             timeout: 3000,
@@ -2958,7 +2996,17 @@ export default {
         timeout: 3000,
       });
     };
+    const handleDealSuggestion = () => {
+      if (!props.deal?.id) {
+        toast.error(t("error.dealNotFound"), {
+          timeout: 3000,
+        });
+        return;
+      }
+      emit("suggest-user", props.deal.id);
+    };
     return {
+      handleDealSuggestion,
       allStages,
       currentStage,
       customerData,
@@ -3034,6 +3082,7 @@ export default {
       removeFile,
       nationalities,
       languages,
+      openSuggestApprovalModal,
     };
   },
 };
@@ -3264,6 +3313,11 @@ label {
 }
 .trashCustm {
   right: 2%;
+  bottom: 3%;
+  z-index: 9999;
+}
+.ApprovalCustm {
+  right: 5%;
   bottom: 3%;
   z-index: 9999;
 }

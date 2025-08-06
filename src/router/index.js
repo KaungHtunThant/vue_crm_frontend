@@ -53,6 +53,7 @@ const routes = [
     meta: {
       requiresAuth: true,
       title: "Dashboard",
+      titleKey: "sidebar-nav-item-dashboard",
     },
     beforeEnter: requirePermission(PERMISSIONS.DASHBOARD),
   },
@@ -63,6 +64,7 @@ const routes = [
     meta: {
       requiresAuth: true,
       title: "CRM Kanban",
+      titleKey: "sidebar-nav-item-kanban",
     },
     beforeEnter: requirePermission(PERMISSIONS.DEALS_KANBAN),
   },
@@ -73,6 +75,7 @@ const routes = [
     meta: {
       requiresAuth: true,
       title: "Approvals",
+      titleKey: "sidebar-nav-item-approvals",
     },
     // beforeEnter: requirePermission(PERMISSIONS.DEALS_KANBAN),
   },
@@ -83,6 +86,7 @@ const routes = [
     meta: {
       requiresAuth: true,
       title: "CRM Tasks",
+      titleKey: "header-subnav-item-kanban-tasks",
     },
     beforeEnter: requirePermission(PERMISSIONS.TASKS_KANBAN),
   },
@@ -93,6 +97,7 @@ const routes = [
     meta: {
       requiresAuth: true,
       title: "Users",
+      titleKey: "sidebar-nav-item-users",
     },
     beforeEnter: requirePermission(PERMISSIONS.USERS),
   },
@@ -103,6 +108,7 @@ const routes = [
     meta: {
       requiresAuth: true,
       title: "CRM List",
+      titleKey: "sidebar-nav-item-crmlist",
     },
     beforeEnter: requirePermission(PERMISSIONS.DEALS_LIST),
   },
@@ -113,6 +119,7 @@ const routes = [
     meta: {
       requiresAuth: true,
       title: "Contacts",
+      titleKey: "sidebar-nav-item-contacts",
     },
     beforeEnter: requirePermission(PERMISSIONS.CONTACTS),
   },
@@ -123,6 +130,7 @@ const routes = [
     meta: {
       requiresAuth: true,
       title: "General Settings",
+      titleKey: "sidebar-nav-item-settings",
     },
     beforeEnter: requirePermission(PERMISSIONS.GENERAL_SETTINGS),
   },
@@ -133,6 +141,7 @@ const routes = [
     meta: {
       requiresAuth: true,
       title: "Stage Settings",
+      titleKey: "sidebar-nav-item-stage-settings",
     },
     beforeEnter: requirePermission(PERMISSIONS.GENERAL_SETTINGS),
   },
@@ -172,7 +181,8 @@ const routes = [
     component: DocumentsFolderView,
     meta: {
       requiresAuth: true,
-      title: "Documents Folders",
+      title: "Documents",
+      titleKey: "sidebar-nav-item-documents",
     },
     beforeEnter: requirePermission(PERMISSIONS.DOCUMENTS),
   },
