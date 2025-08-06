@@ -875,6 +875,61 @@
                   </div>
                 </div>
               </div>
+              <!-- Deal ticket upload -->
+              <div class="row mb-3">
+                <div class="col-2">
+                  <label class="form-label"
+                    ><i class="fa-solid fa-list"></i>
+                    {{ t("kanban-modal-edit-label-passport") }}</label
+                  >
+                </div>
+                <div class="col-10">
+                  <input
+                    v-if="!customerData.passport"
+                    type="file"
+                    :class="[
+                      'form-control',
+                      isEditMode ? 'bg-input-edit' : 'bg-input',
+                    ]"
+                    @change="handleFileUpload"
+                    @dblclick="handleDoubleClick"
+                    :disabled="!isEditMode"
+                  />
+                  <div class="row" v-else>
+                    <div class="col-4">
+                      <button
+                        class="btn btn-primary w-100"
+                        @click="removeFile"
+                        :disabled="!isEditMode"
+                      >
+                        <i class="fa-solid fa-file"></i>
+                        {{ t("kanban-modal-edit-button-remove-passport") }}
+                      </button>
+                    </div>
+                    <div class="col-4">
+                      <a
+                        class="btn btn-primary w-100"
+                        :href="customerData.passport"
+                        target="_blank"
+                      >
+                        <i class="fa-solid fa-file"></i>
+                        {{ t("kanban-modal-edit-button-view-passport") }}
+                      </a>
+                    </div>
+                    <div class="col-4">
+                      <a
+                        class="btn btn-primary w-100"
+                        :href="customerData.passport"
+                        target="_blank"
+                        download
+                      >
+                        <i class="fa-solid fa-file"></i>
+                        {{ t("kanban-modal-edit-button-download-passport") }}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <!-- History -->
               <div class="row">
                 <div class="col-6 pt-2">
@@ -1214,6 +1269,7 @@
                         v-model="task.duedate"
                         :placeholder="t('modals.selectDate')"
                         @mousedown="dateTaskClick"
+                        @change="taskDataModified = true"
                       />
                     </div>
                     <div class="col-3">
@@ -1222,6 +1278,7 @@
                         class="form-control bg-secondary-subtle text-secondary py-2 me-1"
                         v-model="task.duetime"
                         :placeholder="t('modals.selectTime')"
+                        @change="taskDataModified = true"
                       />
                     </div>
                     <div class="col-2">
@@ -1229,12 +1286,7 @@
                         v-show="taskDataModified"
                         class="btn btn-sm btn-primary text-light align-middle me-2"
                         @click="
-                          handleTaskUpdate(
-                            task.id,
-                            task.description,
-                            task.duedate,
-                            task.duetime
-                          )
+                          handleTaskUpdate(task.id, task.duedate, task.duetime)
                         "
                       >
                         <i class="fa-solid fa-check"></i>
@@ -3034,10 +3086,10 @@ export default {
       }
       emit("suggest-user", props.deal.id);
     };
-    const handleTaskUpdate = async (description, duedate, duetime, taskId) => {
+    const handleTaskUpdate = async (taskId, duedate, duetime) => {
       try {
+        taskDataModified.value = false;
         const formData = {
-          description,
           duedate,
           duetime,
         };
