@@ -7,6 +7,9 @@
         deal.responsible_user && getUserColor(deal.responsible_user?.id)
           ? `3px solid ${getUserColor(deal.responsible_user?.id)}`
           : '',
+      background: deal.highlighted
+        ? 'linear-gradient(to right, gold, rgb(231, 227, 227))'
+        : '#fff',
     }"
   >
     <div
@@ -17,7 +20,11 @@
     </div>
     <div
       class="row"
-      style="background: linear-gradient(to left, white, rgb(231, 227, 227))"
+      :style="{
+        background: deal.highlighted
+          ? 'linear-gradient(to right, gold, rgb(231, 227, 227))'
+          : 'linear-gradient(to left, white, rgb(231, 227, 227))',
+      }"
     >
       <!-- العنوان -->
       <div
@@ -311,7 +318,7 @@ export default {
 
 <style scoped>
 .deal-card {
-  background: white;
+  /* background: white; */
   border-radius: 8px;
   padding: 0.75rem;
   margin-bottom: 0.3rem;

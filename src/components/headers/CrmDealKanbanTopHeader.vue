@@ -1,5 +1,5 @@
 <template>
-  <header class="me-2">
+  <header class="me-2" :class="{ 'crm-list-page': currentPage === 'crm-list' }">
     <nav class="container-fluid p-0">
       <div class="row">
         <div class="col-12">
@@ -268,6 +268,10 @@ export default {
       default: null,
       required: true,
     },
+    currentPage: {
+      type: String,
+      default: null,
+    },
   },
   emits: ["filter-applied", "reset-filter"],
   setup(props, { emit }) {
@@ -513,6 +517,12 @@ input:focus {
   background-color: #ffffff !important;
   color: #25d365 !important;
   transition: 0.3s ease-in-out;
+}
+.crm-list-page .btn-hover {
+  background-color: #555555 !important;
+}
+.crm-list-page .btn-header {
+  background-color: #555555 !important;
 }
 @media (max-width: 1200px) {
   .removeIpad {

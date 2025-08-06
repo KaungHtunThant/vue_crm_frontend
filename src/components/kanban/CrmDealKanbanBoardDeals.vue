@@ -199,7 +199,7 @@
               >
                 <template #item="{ element: deal }">
                   <ticket-card
-                    :deal="deal"
+                    :deal="{ ...deal, highlighted: deal.id === 68050 }"
                     @open-deal-data-card="openDealDataCard(deal.id, stage.id)"
                   />
                 </template>
