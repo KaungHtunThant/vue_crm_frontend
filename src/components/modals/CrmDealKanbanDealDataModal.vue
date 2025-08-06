@@ -1231,12 +1231,7 @@
                         v-show="taskDataModified"
                         class="btn btn-sm btn-primary text-light align-middle me-2"
                         @click="
-                          handleTaskUpdate(
-                            task.id,
-                            task.description,
-                            task.duedate,
-                            task.duetime
-                          )
+                          handleTaskUpdate(task.id, task.duedate, task.duetime)
                         "
                       >
                         <i class="fa-solid fa-check"></i>
@@ -3036,11 +3031,10 @@ export default {
       }
       emit("suggest-user", props.deal.id);
     };
-    const handleTaskUpdate = async (description, duedate, duetime, taskId) => {
+    const handleTaskUpdate = async (taskId, duedate, duetime) => {
       try {
         taskDataModified.value = false;
         const formData = {
-          description,
           duedate,
           duetime,
         };
