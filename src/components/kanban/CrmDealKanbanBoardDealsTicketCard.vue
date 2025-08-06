@@ -8,7 +8,7 @@
           ? `3px solid ${getUserColor(deal.responsible_user?.id)}`
           : '',
       background: deal.highlighted
-        ? 'linear-gradient(to right, gold, rgb(231, 227, 227))'
+        ? 'linear-gradient(to left,  #D1A821,#D2A61D,#D3A31A,#D4A116,#D59E12,#D79C0F,#D8990B,#D99707,#DA9404,#DB9200)'
         : '#fff',
     }"
   >
@@ -22,7 +22,7 @@
       class="row"
       :style="{
         background: deal.highlighted
-          ? 'linear-gradient(to right, gold, rgb(231, 227, 227))'
+          ? 'linear-gradient(to left,  #D1A821,#D2A61D,#D3A31A,#D4A116,#D59E12,#D79C0F,#D8990B,#D99707,#DA9404,#DB9200)'
           : 'linear-gradient(to left, white, rgb(231, 227, 227))',
       }"
     >
@@ -75,10 +75,13 @@
             <i
               class="fa-solid fa-star"
               :class="
-                index <= (deal.rating || 0) ? 'text-gold' : 'text-lightgray'
+                index <= (deal.rating || 0) ? 'text-gold' : 'text-secondary'
               "
             ></i>
           </template>
+        </div>
+        <div v-if="deal.highlighted" class="d-flex align-items-center">
+          <i class="fa-solid fa-star text-warning"></i>
         </div>
       </div>
 
