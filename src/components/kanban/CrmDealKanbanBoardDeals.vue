@@ -194,6 +194,7 @@
                     : { minWidth: '309px', width: '309px' }
                 "
                 @start="drag = true"
+                :disabled="$route.path === '/crm-task' ? true : false"
                 @change="handleDragChange($event, stage.id)"
                 @scroll="handleDealContainerScroll($event, stage.id)"
               >

@@ -626,7 +626,7 @@
                       'form-control',
                       isEditMode ? 'bg-input-edit' : 'bg-input',
                     ]"
-                    @change="handleFileUpload"
+                    @change="handleTicketUpload"
                     @dblclick="handleDoubleClick"
                     :disabled="!isEditMode"
                   />
@@ -891,7 +891,7 @@
                       'form-control',
                       isEditMode ? 'bg-input-edit' : 'bg-input',
                     ]"
-                    @change="handleFileUpload"
+                    @change="handlePassportUpload"
                     @dblclick="handleDoubleClick"
                     :disabled="!isEditMode"
                   />
@@ -1523,6 +1523,7 @@ export default {
       time: props.deal?.time || "",
       kanban_total_cost: props.deal?.kanban_total_cost || null,
       hospital_total_cost: props.deal?.hospital_total_cost || null,
+      passport: props.deal?.passport || null,
     });
     const nationalities_options = {
       afghan: {
@@ -2581,6 +2582,7 @@ export default {
           time: customerData.time || "",
           kanban_total_cost: customerData.kanban_total_cost || null,
           hospital_total_cost: customerData.hospital_total_cost || null,
+          passport: customerData.passport || null,
         };
 
         const response = await updateDeal(props.deal.id, formData);
@@ -3054,12 +3056,23 @@ export default {
         activeMenu.value = null;
       }
     };
-    const handleFileUpload = (event) => {
+    const handleTicketUpload = (event) => {
       console.log("File upload event start");
       const file = event.target.files[0];
       if (file) {
         console.log("Selected file:", file);
         customerData.ticket = file;
+        toast.success(t("success.fileUploaded"), {
+          timeout: 3000,
+        });
+      }
+    };
+    const handlePassportUpload = (event) => {
+      console.log("File upload event start");
+      const passport = event.target.files[0];
+      if (passport) {
+        console.log("Selected file:", passport);
+        customerData.passport = passport;
         toast.success(t("success.fileUploaded"), {
           timeout: 3000,
         });
@@ -3179,7 +3192,7 @@ export default {
       resizeDisplayedCommentWidth,
       getCommentTextWidth,
       commentTextWidths,
-      handleFileUpload,
+      handleTicketUpload,
       local_packages,
       originalDataValue,
       dataDealCopy,
@@ -3191,6 +3204,7 @@ export default {
       openSuggestApprovalModal,
       taskDataModified,
       handleTaskUpdate,
+      handlePassportUpload,
     };
   },
 };
