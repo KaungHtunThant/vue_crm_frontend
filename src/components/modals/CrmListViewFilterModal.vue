@@ -141,6 +141,7 @@ export default {
           source_id: null,
           stage_id: null,
           user_id: null,
+          country: null,
           created_at_start: null,
           created_at_end: null,
           status: [],

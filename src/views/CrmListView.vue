@@ -321,6 +321,7 @@ const filters = ref({
   supervisor: "",
   representative: "",
   package: "",
+  country: "",
   updated_at_start: null,
   updated_at_end: null,
   source_id: null,
@@ -454,6 +455,10 @@ const fetchData = async () => {
 
     if (apiFilters.filters.user_id) {
       formattedFilters["filters[user_id]"] = apiFilters.filters.user_id;
+    }
+
+    if (apiFilters.filters.country) {
+      formattedFilters["filters[country]"] = apiFilters.filters.country;
     }
 
     if (apiFilters.filters.created_at_start) {
