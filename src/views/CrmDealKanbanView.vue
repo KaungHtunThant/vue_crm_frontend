@@ -93,6 +93,7 @@ export default {
     };
 
     const applyFilters = async (newFilters) => {
+      console.log("applyFilters called with:", newFilters);
       filters.value = { ...newFilters };
       try {
         const formattedFilters = {};

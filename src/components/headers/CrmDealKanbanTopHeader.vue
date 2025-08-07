@@ -343,7 +343,7 @@ export default {
       modal.show();
     };
     const handleFilters = (filters) => {
-      // console.log("TopHeader2 emits filter-applied", filters);
+      console.log("TopHeader2 emits filter-applied", filters);
       emit("filter-applied", filters);
     };
 

@@ -208,7 +208,11 @@
 import { onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePermissionStore, PERMISSIONS } from "@/stores/permissionStore";
-import { getStages, getSources, getUser } from "@/plugins/services/authService";
+import {
+  getSources,
+  getUser,
+  getAvailableStages,
+} from "@/plugins/services/authService";
 
 export default {
   name: "CrmDealKanbanViewTopHeaderFilterModalFormItems",
@@ -336,7 +340,7 @@ export default {
 
     async function handleFetchStages() {
       try {
-        const response = await getStages();
+        const response = await getAvailableStages();
         stages.value = response.data.data || response;
       } catch (e) {
         stages.value = [];

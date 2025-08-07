@@ -70,6 +70,76 @@ export default {
     const applyFilters = async (newFilters) => {
       try {
         filters.value = { ...newFilters };
+        try {
+          const formattedFilters = {};
+
+          if (filters.value.source_id) {
+            formattedFilters["filters[source_id]"] = filters.value.source_id;
+          }
+          if (filters.value.stage_id) {
+            formattedFilters["filters[stage_id]"] = filters.value.stage_id;
+          }
+          if (filters.value.user_id) {
+            formattedFilters["filters[assigned_to_id]"] = filters.value.user_id;
+          }
+          if (filters.value.created_at_start) {
+            formattedFilters["filters[created_date_start]"] =
+              filters.value.created_at_start;
+          }
+          if (filters.value.created_at_end) {
+            formattedFilters["filters[created_date_end]"] =
+              filters.value.created_at_end;
+          }
+          if (filters.value.updated_at_start) {
+            formattedFilters["filters[updated_date_start]"] =
+              filters.value.updated_at_start;
+          }
+          if (filters.value.updated_at_end) {
+            formattedFilters["filters[updated_date_end]"] =
+              filters.value.updated_at_end;
+          }
+          if (Array.isArray(filters.value.status)) {
+            if (filters.value.status.includes("unassigned")) {
+              formattedFilters["filters[unassigned]"] = 1;
+            }
+            if (filters.value.status.includes("no_comments")) {
+              formattedFilters["filters[uncommented]"] = 1;
+            }
+            if (filters.value.status.includes("no_task")) {
+              formattedFilters["filters[no_tasks]"] = 1;
+            }
+            if (filters.value.status.includes("overdue")) {
+              formattedFilters["filters[overdue]"] = 1;
+            }
+            if (filters.value.status.includes("new")) {
+              formattedFilters["filters[new]"] = 1;
+            }
+            if (filters.value.status.includes("reclaimed")) {
+              formattedFilters["filters[reclaimed]"] = 1;
+            }
+          }
+          if (filters.value.sort_by) {
+            formattedFilters["sort_by"] = filters.value.sort_by;
+          }
+          if (filters.value.sort_order) {
+            formattedFilters["sort_order"] = filters.value.sort_order;
+          }
+
+          const response = await getTasksKanban(formattedFilters);
+
+          if (!response?.data?.data) {
+            toast.info(t("noDealsFound"));
+            stages.value = [];
+            return;
+          }
+          stages.value = response.data.data;
+
+          toast.success(t("success.applyFilters"), { timeout: 3000 });
+        } catch (error) {
+          console.error("Filter Error:", error);
+          toast.error(t("error.applyFilters"), { timeout: 3000 });
+          stages.value = [];
+        }
       } catch (error) {
         console.error("Error applying filters:", error);
       }

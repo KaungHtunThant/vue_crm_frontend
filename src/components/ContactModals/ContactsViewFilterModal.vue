@@ -78,7 +78,7 @@ export default {
           created_at_from: filterData.value.created_at_from,
           created_at_to: filterData.value.created_at_to,
         };
-
+        console.log("Applying filters:", filters);
         emit("apply-filters", filters);
         modalInstance.value.hide();
       } catch (error) {
