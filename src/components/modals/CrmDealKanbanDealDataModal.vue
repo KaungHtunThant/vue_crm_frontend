@@ -3172,7 +3172,11 @@ export default {
       }
     };
     const handleTaskUpdate = async (taskId, duedate, duetime) => {
-      if (!/^\d{2}:\d{2}$/.test(duetime)) {
+      if (
+        !/^\d{2}:\d{2}$/.test(duetime) &&
+        duetime !== "" &&
+        duetime !== null
+      ) {
         console.error("Invalid time format. Expected HH:MM.");
         const [hours, minutes] = duetime.split(":");
         duetime = `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
