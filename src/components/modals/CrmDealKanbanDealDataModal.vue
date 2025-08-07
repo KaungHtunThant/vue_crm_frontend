@@ -634,7 +634,7 @@
                     <div class="col-4">
                       <button
                         class="btn btn-primary w-100"
-                        @click="removeFile"
+                        @click="removeTicket"
                         :disabled="!isEditMode"
                       >
                         <i class="fa-solid fa-file"></i>
@@ -875,7 +875,7 @@
                   </div>
                 </div>
               </div>
-              <!-- Deal ticket upload -->
+              <!-- Deal passport upload -->
               <div class="row mb-3">
                 <div class="col-2">
                   <label class="form-label"
@@ -885,7 +885,7 @@
                 </div>
                 <div class="col-10">
                   <input
-                    v-if="!customerData.passport"
+                    v-if="customerData.passports.length === 0"
                     type="file"
                     :class="[
                       'form-control',
@@ -895,37 +895,42 @@
                     @dblclick="handleDoubleClick"
                     :disabled="!isEditMode"
                   />
-                  <div class="row" v-else>
-                    <div class="col-4">
-                      <button
-                        class="btn btn-primary w-100"
-                        @click="removeFile"
-                        :disabled="!isEditMode"
-                      >
-                        <i class="fa-solid fa-file"></i>
-                        {{ t("kanban-modal-edit-button-remove-passport") }}
-                      </button>
-                    </div>
-                    <div class="col-4">
-                      <a
-                        class="btn btn-primary w-100"
-                        :href="customerData.passport"
-                        target="_blank"
-                      >
-                        <i class="fa-solid fa-file"></i>
-                        {{ t("kanban-modal-edit-button-view-passport") }}
-                      </a>
-                    </div>
-                    <div class="col-4">
-                      <a
-                        class="btn btn-primary w-100"
-                        :href="customerData.passport"
-                        target="_blank"
-                        download
-                      >
-                        <i class="fa-solid fa-file"></i>
-                        {{ t("kanban-modal-edit-button-download-passport") }}
-                      </a>
+                  <div
+                    v-for="(passport, index) in customerData.passports"
+                    :key="index"
+                  >
+                    <div class="row">
+                      <div class="col-4">
+                        <button
+                          class="btn btn-primary w-100"
+                          @click="removePassport(index)"
+                          :disabled="!isEditMode"
+                        >
+                          <i class="fa-solid fa-file"></i>
+                          {{ t("kanban-modal-edit-button-remove-passport") }}
+                        </button>
+                      </div>
+                      <div class="col-4">
+                        <a
+                          class="btn btn-primary w-100"
+                          :href="passport"
+                          target="_blank"
+                        >
+                          <i class="fa-solid fa-file"></i>
+                          {{ t("kanban-modal-edit-button-view-passport") }}
+                        </a>
+                      </div>
+                      <div class="col-4">
+                        <a
+                          class="btn btn-primary w-100"
+                          :href="passport"
+                          target="_blank"
+                          download
+                        >
+                          <i class="fa-solid fa-file"></i>
+                          {{ t("kanban-modal-edit-button-download-passport") }}
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1523,7 +1528,7 @@ export default {
       time: props.deal?.time || "",
       kanban_total_cost: props.deal?.kanban_total_cost || null,
       hospital_total_cost: props.deal?.hospital_total_cost || null,
-      passport: props.deal?.passport || null,
+      passports: props.deal?.passports || [],
     });
     const nationalities_options = {
       afghan: {
@@ -2582,7 +2587,7 @@ export default {
           time: customerData.time || "",
           kanban_total_cost: customerData.kanban_total_cost || null,
           hospital_total_cost: customerData.hospital_total_cost || null,
-          passport: customerData.passport || null,
+          passports: [customerData.passport || null],
         };
 
         const response = await updateDeal(props.deal.id, formData);
@@ -3084,8 +3089,14 @@ export default {
         event.target.showPicker();
       }
     };
-    const removeFile = () => {
+    const removeTicket = () => {
       customerData.ticket = null;
+      toast.success(t("success.fileRemoved"), {
+        timeout: 3000,
+      });
+    };
+    const removePassport = (index) => {
+      customerData.passports.splice(index, 1);
       toast.success(t("success.fileRemoved"), {
         timeout: 3000,
       });
@@ -3125,6 +3136,7 @@ export default {
     };
 
     return {
+      removePassport,
       handleDealSuggestion,
       allStages,
       currentStage,
@@ -3198,7 +3210,7 @@ export default {
       dataDealCopy,
       dateTaskClick,
       currentStageIdLocal,
-      removeFile,
+      removeTicket,
       nationalities,
       languages,
       openSuggestApprovalModal,
