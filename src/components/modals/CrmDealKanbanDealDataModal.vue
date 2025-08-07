@@ -1370,6 +1370,7 @@ import {
   watch,
   onBeforeUnmount,
 } from "vue";
+import { useRoute } from "vue-router";
 import RatingStars from "@/components/CreateDealElements/CrmDealKanbanDealDataModalRatingStars.vue";
 import ViewReport from "@/components/kanban/CrmDealKanbanDealDataModalReportModal.vue";
 import { Modal } from "bootstrap";
@@ -1424,6 +1425,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const route = useRoute();
     const permissionStore = usePermissionStore();
     const selected_conversation = ref(null);
     const { t, locale } = useI18n();
@@ -2863,13 +2865,13 @@ export default {
     };
     const handleAddTask = async () => {
       try {
+        const deal_id = props.deal?.id;
         const formData = {
           description: customerData.task,
           duedate: customerData.date,
           duetime: customerData.time,
           deal_id: props.deal?.id,
         };
-        console.log(formData);
         const response = await createTask(formData);
         if (response.status === 200 || response.status === 201) {
           customerData.tasks.unshift({
@@ -2882,6 +2884,13 @@ export default {
           toast.success(response.data.message, {
             timeout: 3000,
           });
+          if (route.path === "/crm-tasks") {
+            emit("task-added", {
+              deal_id: deal_id,
+              duedate: customerData.date,
+              duetime: customerData.time,
+            });
+          }
           customerData.task = "";
           customerData.date = "";
           customerData.time = "";
@@ -3151,6 +3160,15 @@ export default {
       }
       emit("suggest-user", props.deal.id);
     };
+    const old_tasks = customerData.tasks;
+    const current_old_task = ref(null);
+    const handleTaskChanges = (task_id) => {
+      taskDataModified.value = true;
+      const task = old_tasks.find((t) => t.id === task_id);
+      if (task) {
+        current_old_task.value = task;
+      }
+    };
     const handleTaskUpdate = async (taskId, duedate, duetime) => {
       try {
         taskDataModified.value = false;
@@ -3163,6 +3181,12 @@ export default {
           toast.success(response.data.message, {
             timeout: 3000,
           });
+          if (route.path === "/crm-tasks") {
+            emit("task-updated", {
+              new_duedate: duedate,
+              old_duedate: current_old_task.value?.duedate,
+            });
+          }
         } else {
           toast.error(response.data.message, {
             timeout: 3000,
@@ -3177,6 +3201,7 @@ export default {
     };
 
     return {
+      handleTaskChanges,
       removePassport,
       handleDealSuggestion,
       allStages,

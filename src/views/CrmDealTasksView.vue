@@ -110,6 +110,7 @@ export default {
           stages.value = response.data.data.map((stage) => ({
             id: stage.id,
             name: stage.name,
+            name_key: stage.name_key || null,
             description: stage.description || null,
             color_code: stage.color_code,
             deals: stage.deals || [],
