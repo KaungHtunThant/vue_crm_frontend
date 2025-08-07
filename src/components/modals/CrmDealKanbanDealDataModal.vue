@@ -624,8 +624,44 @@
                   </div>
                 </div>
               </div>
-              <!-- Deal ticket upload -->
               <div class="row mb-3">
+                <div class="col-2">
+                  <label class="form-label"
+                    ><i class="fa-solid fa-list"></i>
+                    {{ t("kanban-modal-edit-label-islocal") }}</label
+                  >
+                </div>
+                <div class="col-10">
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="col-6">
+                        <button
+                          :class="`btn btn-${
+                            customerData.is_local
+                              ? 'success'
+                              : 'outline-success'
+                          } w-100`"
+                          @click="toggleIsLocal(1)"
+                        >
+                          {{ t("kanban-modal-edit-button-islocal-true") }}
+                        </button>
+                      </div>
+                      <div class="col-6">
+                        <button
+                          :class="`btn btn-${
+                            customerData.is_local ? 'outline-danger' : 'danger'
+                          } w-100`"
+                          @click="toggleIsLocal(0)"
+                        >
+                          {{ t("kanban-modal-edit-button-islocal-false") }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Deal ticket upload -->
+              <div class="row mb-3" v-show="!customerData.is_local">
                 <div class="col-2">
                   <label class="form-label"
                     ><i class="fa-solid fa-list"></i>
@@ -681,7 +717,7 @@
               </div>
               <div
                 class="row mb-3"
-                v-if="customerData.ticket"
+                v-if="customerData.ticket && !customerData.is_local"
                 @dblclick="handleDoubleClick"
               >
                 <div class="col-2">
@@ -895,7 +931,7 @@
                 </div>
               </div>
               <!-- Deal passport upload -->
-              <div class="row mb-3">
+              <div class="row mb-3" v-show="!customerData.is_local">
                 <div class="col-2">
                   <label class="form-label"
                     ><i class="fa-solid fa-list"></i>
@@ -1539,6 +1575,7 @@ export default {
           isPinned: comment.pinned || false,
         })) || [],
       assigned_to: props.deal?.assigned_to_id || "",
+      is_local: props.deal?.is_local || 0,
       ticket: props.deal?.ticket || null,
       kanban_packages: props.deal?.kanban_packages || [],
       hospital_packages: props.deal?.hospital_packages || [],
@@ -2598,6 +2635,7 @@ export default {
           note: customerData.note || "",
           rating: customerData.rating || 0,
           user_id: customerData.assigned_to || "",
+          is_local: customerData.is_local || 0,
           ticket: customerData.ticket || null,
           kanban_packages: customerData.kanban_packages || null,
           hospital_packages: customerData.hospital_packages || null,
@@ -3211,7 +3249,16 @@ export default {
       }
     };
 
+    const toggleIsLocal = (value) => {
+      if (value) {
+        customerData.is_local = true;
+      } else {
+        customerData.is_local = false;
+      }
+    };
+
     return {
+      toggleIsLocal,
       storeOldValue,
       removePassport,
       handleDealSuggestion,
