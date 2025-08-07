@@ -476,7 +476,15 @@
                 </div>
               </div>
               <!-- Hospital Packages -->
-              <div class="row mb-3" @dblclick="handleDoubleClick">
+              <div
+                v-if="
+                  permissionStore.hasPermission(
+                    PERMISSIONS.VIEW_HOSPITAL_PACKAGE
+                  )
+                "
+                class="row mb-3"
+                @dblclick="handleDoubleClick"
+              >
                 <div class="col-2 pt-2">
                   <label class="form-label"
                     ><i class="fa-solid fa-cubes"></i>
@@ -1382,6 +1390,7 @@ import {
   getLogsByDealId,
   getUser,
   getAvailableStages,
+  toggleCommentPin,
 } from "@/plugins/services/authService";
 import { PERMISSIONS, usePermissionStore } from "@/stores/permissionStore";
 import moveCardSound from "@/assets/move-card.wav";
@@ -1524,7 +1533,7 @@ export default {
           username: comment.user?.name || "No user",
           isAdmin:
             comment.user && comment.user.role === "super-admin" ? true : false,
-          isPinned: comment.isPinned || false,
+          isPinned: comment.pinned || false,
         })) || [],
       assigned_to: props.deal?.assigned_to_id || "",
       ticket: props.deal?.ticket || null,
@@ -2808,7 +2817,7 @@ export default {
         const response = await createComment(formData);
         if (response.data) {
           const newComment = {
-            id: response.data.id,
+            id: response.data.data.id,
             text_body: customerData.comment,
             created_at: new Date().toISOString(),
             username: response.data.data.user?.name || "No user",
@@ -2980,11 +2989,15 @@ export default {
     const togglePin = async (comment) => {
       comment.isPinned = !comment.isPinned;
       try {
-        const formData = {
-          is_pinned: comment.isPinned,
-        };
-        const response = await updateComments(comment.id, formData);
+        const response = await toggleCommentPin(comment.id);
         if (response.status === 200) {
+          const idx = customerData.comments.findIndex(
+            (c) => c.id === comment.id
+          );
+          if (idx !== -1) {
+            const [pinnedComment] = customerData.comments.splice(idx, 1);
+            customerData.comments.unshift(pinnedComment);
+          }
           toast.success(response.data.message, {
             timeout: 3000,
           });
@@ -2994,6 +3007,9 @@ export default {
       } catch (error) {
         console.error("Error updating comment pin status:", error);
         comment.isPinned = !comment.isPinned;
+        toast.error(error.message, {
+          timeout: 3000,
+        });
       }
     };
     const sortedComments = computed(() => {

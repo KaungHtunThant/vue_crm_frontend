@@ -32,6 +32,7 @@ export const PERMISSIONS = {
   ADD_ASSIGN_BY_DEAL: "add-assign-by-deal",
   ADD_ASSIGNED_TO_DEAL: "add-assigned-to-deal",
   ADD_OWNER_DEAL: "add-owner-deal",
+  VIEW_HOSPITAL_PACKAGE: "view-hospital-packages",
 };
 
 export const usePermissionStore = defineStore("permissions", {

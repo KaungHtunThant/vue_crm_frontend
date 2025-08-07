@@ -357,6 +357,9 @@ export const createComment = (formData) => {
 export const updateComments = async (id, formData) => {
   return await axios.patch(`/comments/${id}`, formData);
 };
+export const toggleCommentPin = async (id) => {
+  return await axios.post(`/comments/${id}/toggle-pin`);
+};
 // create new task
 export const createTask = (formData) => {
   return axios.post("/tasks", formData);
