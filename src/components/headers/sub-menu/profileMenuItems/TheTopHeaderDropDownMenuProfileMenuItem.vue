@@ -1,11 +1,16 @@
 <template>
   <li>
-    <button type="button" class="btn dropdown-item" @click="$emit('click')">
+    <button
+      type="button"
+      class="btn dropdown-item"
+      @click="$emit('click')"
+      :title="title"
+    >
       <span class="dropdown-icon me-2 text-secondary">
         <i :class="`fa-solid ${icon}`"></i>
       </span>
       <span style="font-size: 15px"
-        ><slot>{{ title }}</slot></span
+        ><slot>{{ label }}</slot></span
       >
     </button>
   </li>
@@ -20,6 +25,10 @@ export default {
       required: true,
     },
     icon: {
+      type: String,
+      required: true,
+    },
+    label: {
       type: String,
       required: true,
     },

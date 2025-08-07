@@ -43,7 +43,7 @@
           <div v-else class="kanban-stage">
             <div
               class="stage-header position-relative"
-              :title="stage.name"
+              :title="stage.description"
               :style="
                 permissionStore.hasPermission('edit-stage')
                   ? { minWidth: '301px', width: '301px' }
@@ -109,7 +109,7 @@
                     ><i class="fa-solid fa-expand text-white"></i
                   ></span>
                 </button>
-                <div class="">
+                <div class="" :title="stage.description">
                   <span>
                     <i
                       :class="`me-1 fa fa-soild fa-${stage.icon}`"

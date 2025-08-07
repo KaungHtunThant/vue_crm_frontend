@@ -20,6 +20,7 @@
             ref="menuButton"
             class="btnShowMenu px-3 rounded-1 text-white d-flex justify-content-center align-items-center gap-1 btnHeaderBg"
             @click="showMainMenu"
+            :title="$t('sidebar-nav-menu')"
           >
             <i :class="currentPageIcon"></i>
           </div>
@@ -48,7 +49,7 @@
                 <div class="dropdown-link">
                   <div
                     class="sidebar-item d-flex align-items-center"
-                    :title="$t('sidebar-nav-item-crmlist')"
+                    :title="$t('sidebar-nav-item-crmlist-title')"
                   >
                     <i class="fa-solid fa-table-list fs-5 me-2"></i>
                     <span>{{ $t("sidebar-nav-item-crmlist") }}</span>
@@ -64,7 +65,7 @@
                 <div class="dropdown-link">
                   <div
                     class="sidebar-item d-flex align-items-center"
-                    :title="$t('sidebar-nav-item-users')"
+                    :title="$t('sidebar-nav-item-users-title')"
                   >
                     <i class="fa-solid fa-users fs-5 me-2"></i>
                     <span>{{ $t("sidebar-nav-item-users") }}</span>
@@ -80,7 +81,7 @@
                 <div class="dropdown-link">
                   <div
                     class="sidebar-item d-flex align-items-center"
-                    :title="$t('sidebar-nav-item-approvals')"
+                    :title="$t('sidebar-nav-item-approvals-title')"
                   >
                     <i class="fa-solid fa-stamp fs-5 me-2"></i>
                     <span>{{ $t("sidebar-nav-item-approvals") }}</span>
@@ -96,7 +97,7 @@
                 <div class="dropdown-link">
                   <div
                     class="sidebar-item d-flex align-items-center"
-                    :title="$t('sidebar-nav-item-contacts')"
+                    :title="$t('sidebar-nav-item-contacts-title')"
                   >
                     <i class="fa-regular fa-address-book fs-5 me-2"></i>
                     <span>{{ $t("sidebar-nav-item-contacts") }}</span>
@@ -112,7 +113,7 @@
                 <div class="dropdown-link">
                   <div
                     class="sidebar-item d-flex align-items-center"
-                    :title="$t('sidebar-nav-item-documents')"
+                    :title="$t('sidebar-nav-item-documents-title')"
                   >
                     <i class="fa-regular fa-folder-open fs-5 me-2"></i>
                     <span>{{ $t("sidebar-nav-item-documents") }}</span>
@@ -128,7 +129,7 @@
                 <div class="dropdown-link">
                   <div
                     class="sidebar-item d-flex align-items-center"
-                    :title="$t('sidebar-nav-item-dashboard')"
+                    :title="$t('sidebar-nav-item-dashboard-title')"
                   >
                     <i class="fa-solid fa-chart-pie fs-5 me-2"></i>
 
@@ -147,7 +148,7 @@
                 <div class="dropdown-link">
                   <div
                     class="sidebar-item d-flex align-items-center"
-                    :title="$t('sidebar-nav-item-settings')"
+                    :title="$t('sidebar-nav-item-settings-title')"
                   >
                     <i class="fa-solid fa-cog fs-5 me-2"></i>
                     <span>{{ $t("sidebar-nav-item-settings") }}</span>
@@ -165,7 +166,7 @@
                 <div class="dropdown-link">
                   <div
                     class="sidebar-item d-flex align-items-center"
-                    :title="$t('sidebar-nav-item-settings')"
+                    :title="$t('sidebar-nav-item-settings-title')"
                   >
                     <i class="fa-solid fa-sliders fs-5 me-2"></i>
                     <span>{{ $t("sidebar-nav-item-settings") }}</span>
@@ -183,10 +184,10 @@
                 <div class="dropdown-link">
                   <div
                     class="sidebar-item d-flex align-items-center"
-                    :title="$t('sidebar-nav-item-settings')"
+                    :title="$t('sidebar-nav-item-patient-reg-title')"
                   >
                     <i class="fa-solid fa-user-group fs-5 me-2"></i>
-                    <span>Patient Reg...</span>
+                    <span>{{ $t("sidebar-nav-item-patient-reg") }}</span>
                   </div>
                 </div>
               </router-link>
@@ -199,6 +200,7 @@
       >
         <button
           class="border-0 btnHeaderBg position-relative rounded-1 px-3 me-2"
+          :title="$t('header-notifications-title')"
           ref="notifiButton"
           @click="toggleMenu('notifications', $refs.notifiButton)"
         >
@@ -214,6 +216,7 @@
           v-if="hasNewChanges"
           class="refresh border-0 d-flex align-items-center gap-2 text-white rounded-1 me-2 h-100 px-2"
           style="font-size: 14px"
+          :title="$t('header-refresh-button-title')"
           @click="refreshPage"
         >
           <i class="fa-solid fa-rotate"></i>
@@ -226,6 +229,7 @@
         >
         <div
           class="btnHeaderBg px-3 text-white d-flex justify-content-center align-items-center rounded-1"
+          :title="$t('header-calendar-title')"
         >
           <i class="fa-solid fa-calendar-days"></i>
         </div>

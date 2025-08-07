@@ -33,37 +33,44 @@
     <ul class="list-unstyled mb-0 lh-lg">
       <profile-menu-item
         icon="fa-user"
-        :title="t('header-user-menu-item-profile')"
+        :label="t('header-user-menu-item-profile')"
+        :title="t('header-user-menu-item-profile-title')"
         @click="openEditProfileModal"
       />
       <profile-menu-item
         icon="fa-calendar-days"
-        :title="t('header-user-menu-item-calendar')"
+        :title="t('header-user-menu-item-calendar-title')"
+        :label="t('header-user-menu-item-calendar')"
         @click="openCalenderModal"
       />
       <profile-menu-item
         icon="fa-image"
-        :title="t('header-user-menu-item-background')"
+        :title="t('header-user-menu-item-background-title')"
+        :label="t('header-user-menu-item-background')"
         @click="changeBackground"
       />
       <profile-menu-item
         icon="fa-rotate"
-        :title="t('header-user-menu-item-refresh')"
+        :title="t('header-user-menu-item-refresh-title')"
+        :label="t('header-user-menu-item-refresh')"
         @click="reloadPage"
       />
       <profile-menu-item
         icon="fa-lock"
-        :title="t('header-user-menu-item-password')"
+        :title="t('header-user-menu-item-password-title')"
+        :label="t('header-user-menu-item-password')"
         @click="openChangePasswordModal"
       />
       <profile-menu-item
         icon="fa-globe"
-        :title="t('header-user-menu-item-language')"
+        :title="t('header-user-menu-item-language-title')"
+        :label="t('header-user-menu-item-language')"
         @click="openChangeLangModal"
       />
       <profile-menu-item
         icon="fa-right-from-bracket"
-        :title="t('header-user-menu-item-logout')"
+        :title="t('header-user-menu-item-logout-title')"
+        :label="t('header-user-menu-item-logout')"
         @click="handleLogout"
       />
     </ul>

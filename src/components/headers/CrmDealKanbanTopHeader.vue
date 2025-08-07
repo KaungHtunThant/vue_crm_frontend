@@ -9,6 +9,7 @@
               <button
                 v-if="permissionStore.hasPermission(PERMISSIONS.CREATE_DEAL)"
                 class="btn text-white me-2 fs-7 btnAddKanban btn-hover"
+                :title="$t('kanban-button-add-deal-title')"
                 @click="openCreateDealModal"
                 style="padding: 0.5rem 1.3rem"
               >
@@ -19,6 +20,7 @@
               </button>
               <button
                 class="btn text-white me-2 fs-7 btnKanban btn-hover"
+                :title="$t('header-subnav-item-kanban-crm-title')"
                 @click="openCrmKanban"
                 v-if="permissionStore.hasPermission(PERMISSIONS.DEALS_KANBAN)"
                 style="padding: 0.5rem 2rem"
@@ -27,6 +29,7 @@
               </button>
               <button
                 class="btn text-white me-2 fs-7 btnKanban btn-hover"
+                :title="$t('header-subnav-item-kanban-tasks-title')"
                 @click="openCrmTasks"
                 v-if="permissionStore.hasPermission(PERMISSIONS.TASKS_KANBAN)"
                 style="padding: 0.5rem 2rem"
@@ -35,6 +38,7 @@
               </button>
               <router-link
                 class="btn text-white me-2 fs-7 btnKanban btn-hover"
+                :title="$t('sidebar-nav-item-crmlist-title')"
                 style="padding: 0.6rem 1.2rem"
                 to="/crmlist"
                 v-if="
@@ -51,6 +55,7 @@
               <div class="input-group px-1">
                 <button
                   class="btn btn-hover btnSearchIpad text-white"
+                  :title="$t('header-subnav-search-button-title')"
                   @click="openSearchModalIpad"
                 >
                   <i class="fa-solid fa-magnifying-glass"></i>
@@ -58,6 +63,7 @@
                 <input
                   type="search"
                   class="form-control bg-light border-light py-2 inputSearchIpad"
+                  :title="$t('header-subnav-search-bar-title')"
                   :placeholder="t('crmlist-placeholder-search')"
                   @search="handleSearch"
                   v-model="searchText"
@@ -80,6 +86,7 @@
               <div class="btn-group w-100">
                 <div
                   class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0 rounded-start"
+                  :title="$t('kanban-task-status-overdue-title')"
                   style="padding-top: 0.4rem; padding-bottom: 0.4rem"
                 >
                   <span
@@ -92,6 +99,7 @@
                 </div>
                 <div
                   class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0"
+                  :title="$t('kanban-task-status-today-title')"
                   style="padding-top: 0.4rem; padding-bottom: 0.4rem"
                 >
                   <span
@@ -104,6 +112,7 @@
                 </div>
                 <div
                   class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0"
+                  :title="$t('kanban-task-status-tomorrow-title')"
                   style="padding-top: 0.4rem; padding-bottom: 0.4rem"
                 >
                   <span
@@ -116,6 +125,7 @@
                 </div>
                 <div
                   class="btn btn-header px-1 px-lg-2 d-flex align-items-center"
+                  :title="$t('kanban-task-status-notasks-title')"
                   style="padding-top: 0.4rem; padding-bottom: 0.4rem"
                 >
                   <span
@@ -130,6 +140,7 @@
               <div class="watsappIcon me-2">
                 <button
                   class="rounded-2 d-flex align-items-center justify-content-center gap-1 border-0 fs-7 ms-2 whatsappIpad btn-whatsapp py-2 px-4"
+                  :title="$t('kanban-modal-edit-whatsapp-title')"
                   @click="openWhatsappModal"
                 >
                   <i class="fa-brands fa-whatsapp fs-5"></i>
@@ -146,7 +157,7 @@
                 >
                   <div
                     class="d-flex align-items-center fs-7 justify-content-center gap-2 documentsIpad"
-                    :title="$t('sidebar-nav-item-documents')"
+                    :title="$t('header-subnav-item-documents')"
                   >
                     <i class="fa-regular fa-folder-open fs-6"></i>
                     <span class="fs-7 removeIpad">{{
@@ -163,6 +174,7 @@
             >
               <button
                 class="btn btn-hover flex-fill btnImport text-white"
+                :title="$t('header-subnav-item-import-title')"
                 @click="openImportModal"
                 style="padding: 0.5rem 1.7rem"
               >
@@ -173,6 +185,7 @@
               </button>
               <button
                 class="btn btn-hover flex-fill btnExport text-white"
+                :title="$t('header-subnav-item-export-title')"
                 @click="openExportModal"
                 style="padding: 0.5rem 1.7rem"
               >
