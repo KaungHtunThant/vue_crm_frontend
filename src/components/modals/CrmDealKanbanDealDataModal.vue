@@ -2815,7 +2815,7 @@ export default {
         };
         console.log(formData);
         const response = await createComment(formData);
-        if (response.status === 200) {
+        if (response.status === 200 || response.status === 201) {
           const newComment = {
             id: response.data.data.id,
             text_body: customerData.comment,

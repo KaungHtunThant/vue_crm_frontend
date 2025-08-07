@@ -864,17 +864,18 @@ export default {
     };
 
     const handleTaskCreate = (event) => {
-      const task = event.data;
-      if (task.stage_id) {
-        const stageIndex = displayStages.value.findIndex(
-          (stage) => stage.id === task.stage_id
-        );
-        if (stageIndex !== -1) {
-          displayStages.value[stageIndex].deals.push(task);
-          displayStages.value[stageIndex].deal_count =
-            (displayStages.value[stageIndex].deal_count || 0) + 1;
-        }
-      }
+      console.log("handleTaskCreate", event);
+      // const task = event.data;
+      // if (task.stage_id) {
+      //   const stageIndex = displayStages.value.findIndex(
+      //     (stage) => stage.id === task.stage_id
+      //   );
+      //   if (stageIndex !== -1) {
+      //     displayStages.value[stageIndex].deals.push(task);
+      //     displayStages.value[stageIndex].deal_count =
+      //       (displayStages.value[stageIndex].deal_count || 0) + 1;
+      //   }
+      // }
     };
 
     const handleCommentEvent = (event) => {
