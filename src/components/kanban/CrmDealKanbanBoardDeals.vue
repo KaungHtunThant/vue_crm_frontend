@@ -43,7 +43,7 @@
           <div v-else class="kanban-stage">
             <div
               class="stage-header position-relative"
-              :title="stage.name"
+              :title="stage.description"
               :style="
                 permissionStore.hasPermission('edit-stage')
                   ? { minWidth: '301px', width: '301px' }
