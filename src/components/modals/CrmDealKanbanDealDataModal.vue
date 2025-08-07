@@ -1295,7 +1295,8 @@
                         v-model="task.duedate"
                         :placeholder="t('modals.selectDate')"
                         @mousedown="dateTaskClick"
-                        @change="handleTaskChanges(task.id)"
+                        @click="storeOldValue(task.id, task.duedate)"
+                        @change="taskDataModified = true"
                       />
                     </div>
                     <div class="col-3">
@@ -1304,7 +1305,7 @@
                         class="form-control bg-secondary-subtle text-secondary py-2 me-1"
                         v-model="task.duetime"
                         :placeholder="t('modals.selectTime')"
-                        @change="handleTaskChanges(task.id)"
+                        @change="taskDataModified = true"
                       />
                     </div>
                     <div class="col-2">
@@ -2717,6 +2718,7 @@ export default {
           toast.success(t("success.taskCompleted"), {
             timeout: 3000,
           });
+          emit("task-finish", task.duedate);
         } else {
           toast.error(t("error.completingTask"), {
             timeout: 3000,
@@ -3160,16 +3162,21 @@ export default {
       }
       emit("suggest-user", props.deal.id);
     };
-    const old_tasks = customerData.tasks;
-    const current_old_task = ref(null);
-    const handleTaskChanges = (task_id) => {
-      taskDataModified.value = true;
-      const task = old_tasks.find((t) => t.id === task_id);
-      if (task) {
-        current_old_task.value = task;
+    const old_duedate = ref("");
+    const old_task_id = ref("");
+    const storeOldValue = (task_id, duedate) => {
+      if (old_task_id.value !== task_id) {
+        old_duedate.value = duedate;
+        old_task_id.value = task_id;
+        console.log("storing old duedate", old_duedate.value);
       }
     };
     const handleTaskUpdate = async (taskId, duedate, duetime) => {
+      if (!/^\d{2}:\d{2}$/.test(duetime)) {
+        console.error("Invalid time format. Expected HH:MM.");
+        const [hours, minutes] = duetime.split(":");
+        duetime = `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
+      }
       try {
         taskDataModified.value = false;
         const formData = {
@@ -3184,7 +3191,7 @@ export default {
           if (route.path === "/crm-tasks") {
             emit("task-updated", {
               new_duedate: duedate,
-              old_duedate: current_old_task.value?.duedate,
+              old_duedate: old_duedate.value,
             });
           }
         } else {
@@ -3201,7 +3208,7 @@ export default {
     };
 
     return {
-      handleTaskChanges,
+      storeOldValue,
       removePassport,
       handleDealSuggestion,
       allStages,

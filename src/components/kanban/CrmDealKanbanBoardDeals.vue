@@ -275,6 +275,7 @@
     @update-deal="updateDeal"
     @task-added="handleTaskViewTaskAdd"
     @task-updated="handleTaskViewTaskUpdate"
+    @task-finish="handleTaskViewTaskFinish"
   />
   <!-- selectedDeal -->
   <div v-if="permissionStore.hasPermission('edit-stage')">
@@ -1434,30 +1435,48 @@ export default {
       console.log("handleTaskViewTaskUpdate in kanban comp", data);
       const deal_id = selectedDeal.value.id;
       const stageId = getTaskStageId(data.new_duedate);
-      console.log("Stage ID for updated task:", stageId);
+      console.log("new stage ID for updated task:", stageId);
       const stage = ref(displayStages.value.find((s) => s.id === stageId));
       const oldStageId = getTaskStageId(data.old_duedate);
       const old_stage = ref(
         displayStages.value.find((s) => s.id === oldStageId)
       );
+      console.log("old stage ID for updated task:", oldStageId);
       if (stage.value && old_stage.value) {
         const deal = displayStages.value
           .flatMap((s) => s.deals)
           .find((d) => d.id === deal_id);
         if (deal) {
-          const index = stage.value.deals.findIndex((d) => d.id === deal_id);
+          const index = old_stage.value.deals.findIndex(
+            (d) => d.id === deal_id
+          );
           if (index !== -1) {
-            stage.value.deals.unshift(deal);
-            stage.value.deal_count += 1;
             old_stage.value.deals.splice(index, 1);
             old_stage.value.deal_count -= 1;
+            stage.value.deals.unshift(deal);
+            stage.value.deal_count += 1;
             toast.success("Task updated successfully");
           }
         }
       }
     };
 
+    const handleTaskViewTaskFinish = (duedate) => {
+      const oldStageId = getTaskStageId(duedate);
+      const old_stage = ref(
+        displayStages.value.find((s) => s.id === oldStageId)
+      );
+      if (old_stage.value) {
+        const index = old_stage.value.deals.findIndex(
+          (d) => d.id === selectedDeal.value.id
+        );
+        old_stage.value.deal_count -= 1;
+        old_stage.value.deals.splice(index, 1);
+      }
+    };
+
     return {
+      handleTaskViewTaskFinish,
       handleTaskViewTaskAdd,
       handleTaskViewTaskUpdate,
       handleDealSuggestion,
