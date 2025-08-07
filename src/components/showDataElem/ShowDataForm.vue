@@ -44,6 +44,7 @@
           }}</label>
           <input
             type="date"
+            lang="en"
             class="form-control"
             id="created_at"
             v-model="localFormData.created_at"

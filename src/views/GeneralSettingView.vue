@@ -78,6 +78,7 @@
                 </label>
                 <input
                   type="number"
+                  lang="en"
                   class="form-control"
                   v-model="settings.planExpireDays"
                   placeholder="6"

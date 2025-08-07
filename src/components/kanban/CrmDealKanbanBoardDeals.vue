@@ -846,7 +846,11 @@ export default {
     const handleTaskEvent = (event) => {
       const { action, data } = event;
       if (action === "create") {
-        tasks.value.push(data);
+        if (route.path === "/crm-tasks") {
+          handleTaskCreate(event);
+        } else {
+          tasks.value.push(data);
+        }
       } else if (action === "update") {
         const index = tasks.value.findIndex((t) => t.id === data.id);
         if (index !== -1) {
@@ -856,6 +860,20 @@ export default {
         }
       } else if (action === "delete") {
         tasks.value = tasks.value.filter((t) => t.id !== data.id);
+      }
+    };
+
+    const handleTaskCreate = (event) => {
+      const task = event.data;
+      if (task.stage_id) {
+        const stageIndex = displayStages.value.findIndex(
+          (stage) => stage.id === task.stage_id
+        );
+        if (stageIndex !== -1) {
+          displayStages.value[stageIndex].deals.push(task);
+          displayStages.value[stageIndex].deal_count =
+            (displayStages.value[stageIndex].deal_count || 0) + 1;
+        }
       }
     };
 

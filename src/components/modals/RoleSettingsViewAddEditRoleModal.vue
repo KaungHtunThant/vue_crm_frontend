@@ -33,7 +33,12 @@
             <label class="form-label">{{
               $t("settings-role-table-header-created-at")
             }}</label>
-            <input type="date" class="form-control" v-model="role.create_at" />
+            <input
+              type="date"
+              lang="en"
+              class="form-control"
+              v-model="role.create_at"
+            />
           </div>
           <div class="mb-3">
             <label class="form-label">{{

@@ -15,6 +15,7 @@
             <label class="form-label">Date From</label>
             <input
               type="date"
+              lang="en"
               class="form-control"
               v-model="filterData.created_at_from"
             />
@@ -24,6 +25,7 @@
             <label class="form-label">Date To</label>
             <input
               type="date"
+              lang="en"
               class="form-control"
               v-model="filterData.created_at_to"
             />

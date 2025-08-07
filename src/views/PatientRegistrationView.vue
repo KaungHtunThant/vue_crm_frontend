@@ -107,7 +107,7 @@
                       >
                     </div>
                     <div class="col">
-                      <input type="date" class="form-control" />
+                      <input type="date" lang="en" class="form-control" />
                     </div>
                   </div>
                   <div class="row mb-3 align-items-center ps-2">
@@ -222,7 +222,7 @@
                       <label class="form-label">Date of Birth *</label>
                     </div>
                     <div class="col">
-                      <input type="date" class="form-control" />
+                      <input type="date" lang="en" class="form-control" />
                     </div>
                   </div>
                   <div class="row mb-3 align-items-center ps-2">
@@ -234,6 +234,7 @@
                     <div class="col">
                       <input
                         type="number"
+                        lang="en"
                         class="form-control"
                         placeholder="Years"
                       />
@@ -269,7 +270,7 @@
                       <label class="form-label">Emirates ID Expiry</label>
                     </div>
                     <div class="col">
-                      <input type="date" class="form-control" />
+                      <input type="date" lang="en" class="form-control" />
                     </div>
                   </div>
                   <div class="row mb-3 align-items-center ps-2">
@@ -289,7 +290,7 @@
                       <label class="form-label">Passport Expiry</label>
                     </div>
                     <div class="col">
-                      <input type="date" class="form-control" />
+                      <input type="date" lang="en" class="form-control" />
                     </div>
                   </div>
                   <div class="row mb-3 align-items-center ps-2">

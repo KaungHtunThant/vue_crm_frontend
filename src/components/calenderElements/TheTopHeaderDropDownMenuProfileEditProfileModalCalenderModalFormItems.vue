@@ -3,6 +3,7 @@
     <label for="calender" class="form-label">{{ t("modals.addDate") }}</label>
     <input
       type="date"
+      lang="en"
       class="form-control"
       placeholder="Date"
       id="calender"

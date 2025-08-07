@@ -383,6 +383,7 @@
                             <span class="input-group-text">Qty</span>
                             <input
                               type="number"
+                              lang="en"
                               :class="[
                                 'bg-input',
                                 isEditMode ? 'bg-input-edit' : 'bg-input',
@@ -406,6 +407,7 @@
                             <span class="input-group-text">$</span>
                             <input
                               type="number"
+                              lang="en"
                               :class="[
                                 'bg-input',
                                 isEditMode ? 'bg-input-edit' : 'bg-input',
@@ -454,6 +456,7 @@
                       }}</span>
                       <input
                         type="number"
+                        lang="en"
                         :class="[
                           'bg-input',
                           isEditMode ? 'bg-input-edit' : 'bg-input',
@@ -521,6 +524,7 @@
                             <span class="input-group-text">Qty</span>
                             <input
                               type="number"
+                              lang="en"
                               :class="[
                                 'bg-input',
                                 isEditMode ? 'bg-input-edit' : 'bg-input',
@@ -544,6 +548,7 @@
                             <span class="input-group-text">$</span>
                             <input
                               type="number"
+                              lang="en"
                               :class="[
                                 'bg-input',
                                 isEditMode ? 'bg-input-edit' : 'bg-input',
@@ -592,6 +597,7 @@
                       }}</span>
                       <input
                         type="number"
+                        lang="en"
                         :class="[
                           'bg-input',
                           isEditMode ? 'bg-input-edit' : 'bg-input',
@@ -704,6 +710,7 @@
                       </label>
                       <input
                         type="datetime-local"
+                        lang="en"
                         name="arrival_date"
                         v-model="customerData.arrival_date"
                         :class="[
@@ -721,6 +728,7 @@
                       </label>
                       <input
                         type="datetime-local"
+                        lang="en"
                         name="departure_date"
                         v-model="customerData.departure_date"
                         :class="[
@@ -758,6 +766,7 @@
                       </label>
                       <input
                         type="datetime-local"
+                        lang="en"
                         name="hotel_check_in"
                         v-model="hotel_check_in"
                         :class="[
@@ -775,6 +784,7 @@
                       </label>
                       <input
                         type="datetime-local"
+                        lang="en"
                         name="hotel_check_out"
                         v-model="customerData.hotel_check_out"
                         :class="[
@@ -861,6 +871,7 @@
                       </label>
                       <input
                         type="datetime-local"
+                        lang="en"
                         name="time"
                         v-model="customerData.time"
                         :class="[
@@ -1218,6 +1229,7 @@
                     />
                     <input
                       type="date"
+                      lang="en"
                       class="form-control bg-input text-secondary py-2 me-1"
                       v-model="customerData.date"
                       :placeholder="t('modals.selectDate')"
@@ -1270,6 +1282,7 @@
                     <div class="col-3">
                       <input
                         type="date"
+                        lang="en"
                         class="form-control bg-secondary-subtle text-secondary py-2 me-1"
                         v-model="task.duedate"
                         :placeholder="t('modals.selectDate')"

@@ -135,11 +135,13 @@
           >
             <input
               type="date"
+              lang="en"
               class="form-control text-secondary"
               v-model="localHeaderFilters.created_at_start"
             />
             <input
               type="date"
+              lang="en"
               class="form-control text-secondary"
               v-model="localHeaderFilters.created_at_end"
             />
@@ -156,11 +158,13 @@
           >
             <input
               type="date"
+              lang="en"
               class="form-control text-secondary"
               v-model="localHeaderFilters.updated_at_start"
             />
             <input
               type="date"
+              lang="en"
               class="form-control text-secondary"
               v-model="localHeaderFilters.updated_at_end"
             />

@@ -37,6 +37,7 @@
             <div class="col-4">
               <input
                 type="number"
+                lang="en"
                 v-model="stage.timer_allowed"
                 placeholder="Days Counts"
                 class="form-control"

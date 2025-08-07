@@ -20,6 +20,7 @@
         }}</label>
         <input
           type="date"
+          lang="en"
           class="form-control"
           id="createdAt"
           v-model="localCreatedAt"
