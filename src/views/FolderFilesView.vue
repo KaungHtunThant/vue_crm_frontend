@@ -25,7 +25,11 @@
         <p class="fs-5 pt-1 mb-0">{{ folderName }}</p> -->
       </div>
       <div class="d-flex gap-2">
-        <button class="btn btn-primary" @click="openNewFolderModal">
+        <button
+          v-if="permissionStore.hasPermission(PERMISSIONS.CREATE_FOLDER)"
+          class="btn btn-primary"
+          @click="openNewFolderModal"
+        >
           <i class="fas fa-folder-plus me-1"></i>
           {{ t("documents-button-createfolder") }}
         </button>
@@ -40,7 +44,10 @@
     </div>
 
     <!-- Upload Area -->
-    <div class="upload-area mb-4 border rounded-3 p-4 text-center">
+    <div
+      class="upload-area mb-4 border rounded-3 p-4 text-center"
+      v-if="permissionStore.hasPermission(PERMISSIONS.CREATE_FILE)"
+    >
       <div
         class="dropzone"
         @dragover.prevent
