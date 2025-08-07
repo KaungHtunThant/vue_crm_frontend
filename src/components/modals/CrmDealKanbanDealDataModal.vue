@@ -942,7 +942,7 @@
                     <textarea
                       ref="commentInput"
                       v-model="customerData.comment"
-                      placeholder="اكتب تعليقك هنا..."
+                      :placeholder="t('kanban-modal-edit-comment-placeholder')"
                       class="form-control comment-textarea bg-input text-secondary rounded-0 me-1"
                       rows="1"
                       style="

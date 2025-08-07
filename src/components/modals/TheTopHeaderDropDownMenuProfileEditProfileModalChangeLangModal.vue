@@ -26,6 +26,7 @@
               <option value="ur">🇵🇰 اردو</option>
               <option value="tr">🇹🇷 Türkçe</option>
               <option value="ru">🇷🇺 Русский</option>
+              <option value="fr">🇫🇷 Français</option>
             </select>
           </div>
           <div class="modal-footer">
