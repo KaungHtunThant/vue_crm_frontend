@@ -2635,7 +2635,7 @@ export default {
           note: customerData.note || "",
           rating: customerData.rating || 0,
           user_id: customerData.assigned_to || "",
-          is_local: customerData.is_local || 0,
+          is_local: customerData.is_local ? 1 : 0,
           ticket: customerData.ticket || null,
           kanban_packages: customerData.kanban_packages || null,
           hospital_packages: customerData.hospital_packages || null,
@@ -3250,6 +3250,7 @@ export default {
     };
 
     const toggleIsLocal = (value) => {
+      handleDoubleClick();
       if (value) {
         customerData.is_local = true;
       } else {
