@@ -2871,24 +2871,30 @@ export default {
         };
         console.log(formData);
         const response = await createTask(formData);
-        if (response.data) {
+        if (response.status === 200 || response.status === 201) {
           customerData.tasks.unshift({
-            id: response.data.id,
+            id: response.data.data.id,
             description: customerData.task,
             duedate: customerData.date,
             duetime: customerData.time,
             status: "active",
           });
-          toast.success(t("success.taskAdded"));
+          toast.success(response.data.message, {
+            timeout: 3000,
+          });
           customerData.task = "";
           customerData.date = "";
           customerData.time = "";
         } else {
-          toast.error(t("error.addingTask"));
+          toast.error(response.data.message, {
+            timeout: 3000,
+          });
         }
       } catch (error) {
         console.error("Error adding task:", error);
-        toast.error(t("error.addingTask"));
+        toast.error(error.message, {
+          timeout: 3000,
+        });
       }
     };
     const activeTasks = computed(() => {
