@@ -2815,7 +2815,7 @@ export default {
         };
         console.log(formData);
         const response = await createComment(formData);
-        if (response.data) {
+        if (response.status === 200) {
           const newComment = {
             id: response.data.data.id,
             text_body: customerData.comment,
@@ -2825,7 +2825,9 @@ export default {
           };
           customerData.comments.unshift(newComment);
 
-          toast.success(t("success.commentAdded"));
+          toast.success(response.data.message, {
+            timeout: 3000,
+          });
           customerData.comment = "";
           nextTick(() => {
             const textarea = document.querySelector(".comment-textarea");
@@ -2835,11 +2837,15 @@ export default {
             resizeDisplayedCommentWidth(newComment.id);
           });
         } else {
-          toast.error(t("error.addingComment"));
+          toast.error(response.data.message, {
+            timeout: 3000,
+          });
         }
       } catch (error) {
         console.error("Error adding comment:", error);
-        toast.error(t("error.addingComment"));
+        toast.error(error.message, {
+          timeout: 3000,
+        });
       }
     };
     const handleEnter = (event) => {
