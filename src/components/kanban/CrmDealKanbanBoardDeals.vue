@@ -82,7 +82,7 @@
                   @click.stop="hiddenStages[stage.id] = true"
                 >
                   <i
-                    class="fa-solid fa-minus text-white"
+                    class="fa-solid fa-minus text-dark"
                     style="font-size: 12px"
                   ></i>
                 </button>
@@ -202,6 +202,7 @@
                   <ticket-card
                     :deal="{ ...deal, highlighted: deal.id === 68050 }"
                     @open-deal-data-card="openDealDataCard(deal.id, stage.id)"
+                    @toggle-highlight="handleHighlight(deal.id)"
                   />
                 </template>
               </draggable>
@@ -311,6 +312,7 @@ import {
   getAllPackages,
   getAvailableStages,
   createApproval,
+  toggleHighlight,
 } from "@/plugins/services/authService";
 import { useI18n } from "vue-i18n";
 import Cookies from "js-cookie";
@@ -1473,7 +1475,28 @@ export default {
       }
     };
 
+    const handleHighlight = async (deal_id) => {
+      for (const stage of displayStages.value) {
+        const stageIndex = displayStages.value.findIndex(
+          (s) => s.id === stage.id
+        );
+        const index = stage.deals.findIndex((deal) => deal.id === deal_id);
+        if (index !== -1) {
+          displayStages.value[stageIndex].deals[index].highlighted =
+            !displayStages.value[stageIndex].deals[index].highlighted;
+          break;
+        }
+      }
+      const response = await toggleHighlight(deal_id);
+      if (response.status === 200) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    };
+
     return {
+      handleHighlight,
       handleTaskViewTaskFinish,
       handleTaskViewTaskAdd,
       handleTaskViewTaskUpdate,

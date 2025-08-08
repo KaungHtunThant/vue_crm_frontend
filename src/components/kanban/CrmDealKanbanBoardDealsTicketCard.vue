@@ -7,9 +7,7 @@
         deal.responsible_user && getUserColor(deal.responsible_user?.id)
           ? `3px solid ${getUserColor(deal.responsible_user?.id)}`
           : '',
-      background: deal.highlighted
-        ? 'linear-gradient(to left,  #D1A821,#D2A61D,#D3A31A,#D4A116,#D59E12,#D79C0F,#D8990B,#D99707,#DA9404,#DB9200)'
-        : '#fff',
+      background: deal.highlighted ? '#ffdc73' : '#fff',
     }"
   >
     <div
@@ -22,7 +20,7 @@
       class="row"
       :style="{
         background: deal.highlighted
-          ? 'linear-gradient(to left,  #D1A821,#D2A61D,#D3A31A,#D4A116,#D59E12,#D79C0F,#D8990B,#D99707,#DA9404,#DB9200)'
+          ? '#ffdc73'
           : 'linear-gradient(to left, white, rgb(231, 227, 227))',
       }"
     >
@@ -83,7 +81,7 @@
         <div class="d-flex align-items-center">
           <button
             class="btn btn-link fs-7 m-0 p-0"
-            @click.stop="toggleHighlight"
+            @click.stop="handleHighlight"
           >
             <i class="fa-solid fa-star text-warning"></i>
           </button>
@@ -179,7 +177,6 @@
 </template>
 
 <script>
-import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useToast } from "vue-toastification";
 import CountryFlagAvatar from "@/components/whatsapp/WhatsAppModalSidebarLeftCountryFlagAvatar.vue";
@@ -305,15 +302,8 @@ export default {
       if (status <= 75) return "bg-info";
       return "bg-success";
     };
-    const toggleHighlight = async () => {
-      const deal = ref(props.deal);
-      deal.value.highlighted = !deal.value.highlighted;
-      const response = await toggleHighlight(deal.value.id);
-      if (response.status === 200) {
-        toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
+    const handleHighlight = async () => {
+      emit("toggle-highlight", props.deal.id);
     };
     return {
       t,
@@ -328,7 +318,7 @@ export default {
       formatDateUpdate,
       getPersuasionColorClass,
       userRole,
-      toggleHighlight,
+      handleHighlight,
     };
   },
   methods: {},

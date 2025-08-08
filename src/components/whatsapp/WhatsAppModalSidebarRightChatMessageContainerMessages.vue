@@ -8,12 +8,6 @@
         : ''
     }`"
   >
-    <button
-      class="addNote border-0 position-absolute bottom-0 start-0 fs-6 rounded-2"
-    >
-      <i class="fa-solid fa-paste"></i>
-    </button>
-
     <component
       :is="messageComponent"
       :message="message"
@@ -259,14 +253,6 @@ export default {
 .right-side .chatBx .msg-me .addNote {
   background: #ffffff60;
   right: -31px !important;
-}
-
-.addNote i {
-  color: #8d8a8a90;
-  transition: 0.3s;
-}
-.addNote:hover i {
-  color: #636262;
 }
 .message-error {
   background-color: #d40000 !important;

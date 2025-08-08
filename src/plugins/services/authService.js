@@ -515,5 +515,5 @@ export const updateApproval = async (approvalId, status) => {
 };
 
 export const toggleHighlight = async (dealId) => {
-  return await axios.patch(`/deals/highlight/${dealId}`);
+  return await axios.post(`/deals/highlight/${dealId}`);
 };
