@@ -34,6 +34,13 @@
         />
         Русский
       </option>
+      <option value="fr">
+        <country-flag-avatar
+          :phone="'+74955550173'"
+          style="width: 25px; height: 20px !important"
+        />
+        Français
+      </option>
     </select>
   </div>
 
