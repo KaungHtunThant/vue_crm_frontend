@@ -128,6 +128,7 @@ export default {
       Cookies.remove("user_role");
       Cookies.remove("user_id");
       localStorage.removeItem("backgroundImage");
+      localStorage.removeItem("backgroundImage_id");
       localStorage.removeItem("locale");
       localStorage.removeItem("userPermissions");
       this.isLoggedIn = false;
