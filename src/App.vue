@@ -137,8 +137,9 @@ export default {
 
     async loadSavedBackground() {
       try {
-        if (Cookies.get("background_id")) {
-          let response = await getBackgroundId(Cookies.get("background_id"));
+        const bg_id = localStorage.getItem("backgroundImage_id");
+        if (bg_id) {
+          let response = await getBackgroundId(bg_id);
           if (!response) {
             console.log("No background image found");
             return;

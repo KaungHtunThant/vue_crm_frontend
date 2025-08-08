@@ -118,6 +118,7 @@ export default {
         document.body.style.backgroundPosition = "center";
 
         localStorage.setItem("backgroundImage", imageUrl);
+        localStorage.setItem("backgroundImage_id", response.data.data.id);
 
         console.log("API response:", response);
 
