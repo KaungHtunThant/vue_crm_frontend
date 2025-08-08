@@ -200,7 +200,7 @@
               >
                 <template #item="{ element: deal }">
                   <ticket-card
-                    :deal="{ ...deal, highlighted: deal.id === 68050 }"
+                    :deal="{ ...deal }"
                     @open-deal-data-card="openDealDataCard(deal.id, stage.id)"
                     @toggle-highlight="handleHighlight(deal.id)"
                   />
@@ -1482,8 +1482,13 @@ export default {
         );
         const index = stage.deals.findIndex((deal) => deal.id === deal_id);
         if (index !== -1) {
+          console.log("found index", index);
           displayStages.value[stageIndex].deals[index].highlighted =
             !displayStages.value[stageIndex].deals[index].highlighted;
+          console.log(
+            "highlighted",
+            displayStages.value[stageIndex].deals[index].highlighted
+          );
           break;
         }
       }
