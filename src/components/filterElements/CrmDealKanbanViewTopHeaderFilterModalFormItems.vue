@@ -249,6 +249,10 @@ export default {
       { value: "no_task", label: t("kanban-modal-filter-status-notasks") },
       { value: "overdue", label: t("kanban-modal-filter-status-overdue") },
       { value: "new", label: t("kanban-modal-filter-status-new") },
+      {
+        value: "admin_comments",
+        label: t("kanban-modal-filter-status-admincomments"),
+      },
     ]);
 
     const updateLocalFilters = (newFilters) => {

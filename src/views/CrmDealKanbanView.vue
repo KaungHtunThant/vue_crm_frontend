@@ -142,6 +142,9 @@ export default {
           if (filters.value.status.includes("reclaimed")) {
             formattedFilters["filters[reclaimed]"] = 1;
           }
+          if (filters.value.status.includes("admin_comments")) {
+            formattedFilters["filters[admin_comments]"] = 1;
+          }
         }
         if (filters.value.sort_by) {
           formattedFilters["sort_by"] = filters.value.sort_by;

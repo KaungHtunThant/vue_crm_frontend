@@ -5,23 +5,14 @@
       :loader-image="loaderImage"
       :loader-colors="loaderColors"
     />
-
     <div v-if="!isLoggedIn">
       <login-view @loginSuccess="handleLoginSuccess" />
     </div>
-
     <div v-else class="app overflow-hidden">
       <div
         v-if="!$route.meta.hideNavigation"
         class="row g-0 flex-nowrap app-layout"
       >
-        <!-- <div
-          :class="['sidebar', sidebarClass, isSidebarCollapsed]"
-          v-if="showSidebar"
-        >
-          <the-left-sidebar @toggle="handleSidebarToggle" />
-        </div> -->
-
         <div :class="headerClass" class="ms-2 main-content">
           <the-top-header @logout="handleLogout" />
           <div class="content">
@@ -29,11 +20,9 @@
           </div>
         </div>
       </div>
-
       <div v-else>
         <router-view />
       </div>
-
       <!-- News Bar -->
       <theNewsBar v-if="showNewsBar" />
     </div>
@@ -82,14 +71,6 @@ export default {
   },
 
   computed: {
-    sidebarClass() {
-      // return this.isSidebarCollapsed ? "col-1" : "col-2";
-      if (this.isSidebarCollapsed) {
-        return "col-auto";
-      }
-      return "col-sm-3 col-lg-auto";
-    },
-
     headerClass() {
       // return this.isSidebarCollapsed ? "col-11" : "col-10";
       if (this.isSidebarCollapsed) {
