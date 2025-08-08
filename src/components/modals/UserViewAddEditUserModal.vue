@@ -307,7 +307,6 @@ export default {
           "parent_id",
           this.formData.reportTo?.id || this.formData.reportTo || ""
         );
-        formData.append("phone", this.formData.phoneNumber);
         formData.append("color_code", this.formData.color);
         if (!this.isEditMode) {
           formData.append("password", this.formData.password);
@@ -322,11 +321,13 @@ export default {
 
         let response;
         if (this.isEditMode) {
+          formData.append("phones", [this.formData.phoneNumber]);
           response = await updateUser(this.formData.id, formData);
           this.toast.success(this.t("success.updateUser"), {
             timeout: 3000,
           });
         } else {
+          formData.append("phone", this.formData.phoneNumber);
           response = await createUser(formData);
           this.toast.success(this.t("success.createUser"), {
             timeout: 3000,
