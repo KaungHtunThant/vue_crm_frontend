@@ -80,8 +80,13 @@
             ></i>
           </template>
         </div>
-        <div v-if="deal.highlighted" class="d-flex align-items-center">
-          <i class="fa-solid fa-star text-warning"></i>
+        <div class="d-flex align-items-center">
+          <button
+            class="btn btn-link fs-7 m-0 p-0"
+            @click.stop="toggleHighlight"
+          >
+            <i class="fa-solid fa-star text-warning"></i>
+          </button>
         </div>
       </div>
 
@@ -174,6 +179,7 @@
 </template>
 
 <script>
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useToast } from "vue-toastification";
 import CountryFlagAvatar from "@/components/whatsapp/WhatsAppModalSidebarLeftCountryFlagAvatar.vue";
@@ -215,7 +221,6 @@ export default {
 
       const day = String(date.getDate()).padStart(2, "0");
       const month = String(date.getMonth() + 1).padStart(2, "0");
-      // const year = date.getFullYear();
 
       return `${day}/${month}`;
     };
@@ -300,6 +305,16 @@ export default {
       if (status <= 75) return "bg-info";
       return "bg-success";
     };
+    const toggleHighlight = async () => {
+      const deal = ref(props.deal);
+      deal.value.highlighted = !deal.value.highlighted;
+      const response = await toggleHighlight(deal.value.id);
+      if (response.status === 200) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    };
     return {
       t,
       formatDate,
@@ -313,6 +328,7 @@ export default {
       formatDateUpdate,
       getPersuasionColorClass,
       userRole,
+      toggleHighlight,
     };
   },
   methods: {},

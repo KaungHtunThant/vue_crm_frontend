@@ -513,3 +513,7 @@ export const updateApproval = async (approvalId, status) => {
   formData.append("status", status);
   return await axios.patch(`/approvals/${approvalId}`, formData);
 };
+
+export const toggleHighlight = async (dealId) => {
+  return await axios.patch(`/deals/highlight/${dealId}`);
+};

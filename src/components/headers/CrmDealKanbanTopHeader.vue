@@ -172,6 +172,7 @@
                 <i class="fa-solid fa-upload ms-1 fs-7"></i>
               </button>
               <button
+                v-if="permissionStore.hasPermission(PERMISSIONS.EXPORT_DEAL)"
                 class="btn btn-hover flex-fill btnExport text-white"
                 @click="openExportModal"
                 style="padding: 0.5rem 1.7rem"

@@ -578,20 +578,18 @@ export default {
         if (dealData.data) {
           const deal = dealData.data.data;
           selectedStageId.value = deal.stage_id;
-          const checkStageLoaded = () => {
-            if (isTasksView.value) {
-              return displayStages.value.find(
-                (stage) => stage.id === currentStageId
-              );
-            } else {
-              return displayStages.value.some(
-                (stage) => stage.id === deal.stage_id
-              );
-            }
-          };
+          const currentStage = displayStages.value.find(
+            (stage) => stage.id === (currentStageId || deal.stage_id)
+          );
+          const deal_index = currentStage.deals.findIndex(
+            (d) => d.id === dealId
+          );
+          if (deal_index !== -1) {
+            currentStage.deals[deal_index].view_count += 1;
+          }
           const waitForStage = () => {
             return new Promise((resolve) => {
-              if (checkStageLoaded()) {
+              if (currentStage) {
                 resolve();
               } else {
                 console.warn(
