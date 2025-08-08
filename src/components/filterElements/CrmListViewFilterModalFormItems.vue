@@ -69,8 +69,8 @@
                 <option value="" selected>All</option>
                 <option
                   v-for="stage in local_stages"
-                  :key="stage.value"
-                  :value="stage.value"
+                  :key="stage.id"
+                  :value="stage.id"
                 >
                   {{ stage.name }}
                 </option>

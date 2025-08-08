@@ -671,10 +671,10 @@ const applyFilters = async (newFilters) => {
 
     rows.value = response.data.data.map((deal) => {
       const matchedStage = stages.value.find(
-        (stage) => stage.value === deal.stage_id
+        (stage) => stage.id === deal.stage_id
       );
       const matchedSource = sources.value.find(
-        (source) => source.value === deal.source_id
+        (source) => source.id === deal.source_id
       );
 
       return {
@@ -716,6 +716,7 @@ const openDealModal = () => {
 // };
 
 const resetFilter = () => {
+  console.log("Resetting filters to default values");
   filters.value = {
     source: "",
     stage: "",

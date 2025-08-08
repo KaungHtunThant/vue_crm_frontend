@@ -128,6 +128,7 @@ export default {
     const updateFilters = (newFilters) => {
       if (newFilters) {
         filters.value = { ...newFilters };
+        console.log("Updated filters:", filters.value);
         emit("update:modelValue", { ...filters.value });
       }
     };
