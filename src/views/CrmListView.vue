@@ -489,6 +489,9 @@ const fetchData = async () => {
       if (apiFilters.filters.status.includes("reclaimed")) {
         formattedFilters["filters[reclaimed]"] = 1;
       }
+      if (apiFilters.filters.status.includes("admin_comments")) {
+        formattedFilters["filters[admin_comments]"] = 1;
+      }
     }
 
     const dealsRes = await getDeals({
@@ -654,6 +657,9 @@ const applyFilters = async (newFilters) => {
       }
       if (apiFilters.filters.status.includes("reclaimed")) {
         formattedFilters["filters[reclaimed]"] = 1;
+      }
+      if (apiFilters.filters.status.includes("admin_comments")) {
+        formattedFilters["filters[admin_comments]"] = 1;
       }
     }
 
