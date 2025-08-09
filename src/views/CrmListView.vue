@@ -783,10 +783,7 @@ const fetchStagesAndSources = async () => {
 
       sources.value = sourceRes.data.data;
 
-      packages.value = packageRes.data.data.map((pkg) => ({
-        value: pkg.id,
-        name: pkg.name,
-      }));
+      packages.value = packageRes.data.data;
 
       console.log("Fetched stages and sources:", {
         stages: stages.value,

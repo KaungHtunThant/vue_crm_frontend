@@ -13,6 +13,7 @@
   <crm-kanban-kanban-board
     :stages="stages"
     :searchVal="searchVal"
+    :search_result="search_result"
     defaultColor="#333"
     @open-whatsapp-modal="openWhatsappModal"
     @receive-whatsapp-message="receiveWhatsappMessage"
@@ -60,6 +61,7 @@ export default {
     const new_message = ref(null);
     const update_message = ref(null);
     const searching = ref(false);
+    const search_result = ref(null);
 
     const fetchStages = async (searchText) => {
       if (searching.value) return;
@@ -67,7 +69,7 @@ export default {
         searching.value = true;
         searchVal.value = searchText || "";
         const response = await getDealsKanban(searchText);
-        if (Array.isArray(response.data.data)) {
+        if (response.status == 200) {
           stages.value = response.data.data.map((stage) => ({
             id: stage.id,
             name: stage.name,
@@ -81,13 +83,14 @@ export default {
             parent_id: stage.parent_id || null,
             has_children: stage.has_children,
           }));
-          toast.success(t("success.loadKanban"));
+          toast.success(response.data.message);
+          search_result.value = response.data.search_result || null;
         } else {
-          toast.error(t("error.loadKanban"));
+          toast.error(response.data.message);
         }
       } catch (error) {
         console.error("Error fetching stages:", error);
-        toast.error(t("error.loadKanban"));
+        toast.error(error.message);
       }
       searching.value = false;
     };
@@ -158,9 +161,11 @@ export default {
         if (!response?.data?.data) {
           toast.info(t("noDealsFound"));
           stages.value = [];
+          search_result.value = response?.data?.search_result || null;
           return;
         }
         stages.value = response.data.data;
+        search_result.value = response.data.search_result || null;
 
         toast.success(t("success.applyFilters"), { timeout: 3000 });
       } catch (error) {
@@ -274,6 +279,7 @@ export default {
     });
 
     return {
+      search_result,
       stages,
       filters,
       applyFilters,

@@ -251,13 +251,13 @@
       >
         <i class="fa-solid fa-chevron-left fs-1 p-3"></i>
       </div>
-      <!-- <button
-        v-show="!allDealsCount"
+      <button
+        v-show="search_result"
         class="btn text-white position-absolute top-50 start-50 translate-middle bg-primary p-2 z-3 btn-request"
-        @click="handleRequestDeal"
+        @click="openRequestDealModal"
       >
         {{ t("kanban-btn-request-deal") }}
-      </button> -->
+      </button>
     </div>
   </div>
   <!-- :key="selectedDeal?.id" -->
@@ -286,6 +286,7 @@
       @filter-deals="handleFilterDeals"
     />
   </div>
+  <request-deal-modal />
 </template>
 
 <script>
@@ -323,6 +324,8 @@ import moveCardSound from "@/assets/move-card.wav";
 import { closeWebSocket, initializeWebSocket } from "@/plugins/websocket";
 import { usePermissionStore, PERMISSIONS } from "@/stores/permissionStore";
 import { useKanbanStore } from "@/stores/kanbanStore";
+import RequestDealModal from "../modals/RequestDealModal.vue";
+
 export default {
   name: "CrmDealKanbanBoardDeals",
   components: {
@@ -331,6 +334,7 @@ export default {
     DealDataCard,
     // UpdateStage,
     FilterStageModal,
+    RequestDealModal,
   },
   props: {
     stages: {
@@ -348,6 +352,10 @@ export default {
     searchVal: {
       type: String,
       default: "",
+    },
+    search_result: {
+      type: String,
+      default: null,
     },
   },
   setup(props, { emit }) {
@@ -1214,16 +1222,22 @@ export default {
       return filteredDeals.value[stageId] || stage.deals;
     });
 
+    const openRequestDealModal = () => {
+      const modal = new Modal(document.getElementById("requestDealModal"));
+      modal.show();
+    };
+
     const handleRequestDeal = async () => {
       try {
-        const response = await createApproval(props.searchVal);
+        const response = await createApproval(props.searchVal.search);
         if (response.status === 200 || response.status === 201) {
           toast.success(response.data.message);
         } else {
           toast.error(response.data.message);
         }
       } catch (error) {
-        toast.error(error.response?.data?.message);
+        console.log(error.message);
+        toast.error(error.message);
       }
     };
 
@@ -1501,6 +1515,7 @@ export default {
     };
 
     return {
+      openRequestDealModal,
       handleHighlight,
       handleTaskViewTaskFinish,
       handleTaskViewTaskAdd,
