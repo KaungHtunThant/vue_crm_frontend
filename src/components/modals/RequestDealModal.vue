@@ -60,14 +60,15 @@ export default {
   },
   setup(props) {
     const search_type_value = computed(() => {
-      if (props.search_type === "new_deal") {
-        return "kanban-modal-request-sub-heading-new-deal";
-      } else if (props.search_type === "reassign") {
-        return "kanban-modal-request-sub-heading-reassign";
-      } else if (props.search_type === "idle_assign") {
-        return "kanban-modal-request-sub-heading-idle-assign";
-      } else {
-        return "kanban-modal-request-sub-heading-default";
+      switch (props.search_type) {
+        case "new_deal":
+          return "kanban-modal-request-sub-heading-new-deal";
+        case "reassign":
+          return "kanban-modal-request-sub-heading-reassign";
+        case "idle_assign":
+          return "kanban-modal-request-sub-heading-idle-assign";
+        default:
+          return "kanban-modal-request-sub-heading-default";
       }
     });
     const toast = useToast();
