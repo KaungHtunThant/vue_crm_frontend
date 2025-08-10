@@ -7,7 +7,7 @@
     aria-hidden="true"
     v-on:="{'hidden.bs.modal': resetModal}"
   >
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content pt-3">
         <div class="modal-body text-center">
           <div>
@@ -15,17 +15,15 @@
               class="fa-solid fa-triangle-exclamation pb-4"
               style="font-size: 60px"
             ></i>
-            <h4>{{ $t("kanban-modal-request-heading") }}</h4>
-            <span style="font-size: 14px">{{
-              $t("kanban-modal-request-sub-heading-new-deal")
-            }}</span>
+            <h3>{{ $t("kanban-modal-request-heading") }}</h3>
+            <span class="fs-5">{{ $t(search_type_value) }}</span>
           </div>
         </div>
         <div class="modal-footer border-top-0 mt-5">
           <button
             type="button"
             class="btn btn-secondary"
-            @click="closeTrashDealModal"
+            @click="closeRequestDealModal"
           >
             {{ $t("kanban-modal-request-cancel-button") }}
           </button>
@@ -43,18 +41,35 @@
 </template>
 
 <script>
+import { createApproval } from "@/plugins/services/authService";
 import { Modal } from "bootstrap";
+import { computed } from "vue";
 import { useToast } from "vue-toastification";
 
 export default {
   name: "RequestDealModal",
   props: {
-    dealId: {
-      type: [String, Number],
-      required: true,
+    search_val: {
+      type: String,
+      required: false,
+    },
+    search_type: {
+      type: String,
+      required: false,
     },
   },
-  setup() {
+  setup(props) {
+    const search_type_value = computed(() => {
+      if (props.search_type === "new_deal") {
+        return "kanban-modal-request-sub-heading-new-deal";
+      } else if (props.search_type === "reassign") {
+        return "kanban-modal-request-sub-heading-reassign";
+      } else if (props.search_type === "idle_assign") {
+        return "kanban-modal-request-sub-heading-idle-assign";
+      } else {
+        return "kanban-modal-request-sub-heading-default";
+      }
+    });
     const toast = useToast();
     const getContrastColor = (color) => {
       const r = parseInt(color.slice(1, 3), 16);
@@ -63,7 +78,7 @@ export default {
       const brightness = (r * 299 + g * 587 + b * 114) / 1000;
       return brightness > 125 ? "#000000" : "#FFFFFF";
     };
-    return { toast, getContrastColor };
+    return { toast, getContrastColor, search_type_value };
   },
   data() {
     return {
@@ -80,7 +95,6 @@ export default {
       if (modalBackdrop) {
         modalBackdrop.remove();
       }
-      this.resetModal();
     });
   },
   methods: {
@@ -94,6 +108,20 @@ export default {
       const modalBackdrop = document.querySelector(".modal-backdrop");
       if (modalBackdrop) {
         modalBackdrop.remove();
+      }
+    },
+    async handleRequestDeal() {
+      try {
+        console.log(this.search_val);
+        const response = await createApproval(this.search_val);
+        if (response.status === 200 || response.status === 201) {
+          this.toast.success(response.data.message);
+        } else {
+          this.toast.error(response.data.message);
+        }
+        this.closeRequestDealModal();
+      } catch (error) {
+        this.toast.error(error.message);
       }
     },
   },

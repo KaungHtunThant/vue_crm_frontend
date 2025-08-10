@@ -8,7 +8,7 @@
     id="labelModal"
     aria-labelledby="labelModal"
   >
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="row pt-2 px-3">
           <div class="col-6">

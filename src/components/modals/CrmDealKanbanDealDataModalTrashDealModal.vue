@@ -7,7 +7,7 @@
     aria-hidden="true"
     v-on:="{'hidden.bs.modal': resetModal}"
   >
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content pt-3" style="background-color: red">
         <div class="modal-body text-center text-white">
           <div class="modal1" v-if="!showModal2">

@@ -1,7 +1,7 @@
 <template>
   <!-- Change Stage Modal -->
   <div class="modal fade" id="changeStageModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">
@@ -57,7 +57,7 @@
 
   <!-- Assign Representative Modal -->
   <div class="modal fade" id="assignUser" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">
@@ -110,7 +110,7 @@
 
   <!-- Change Source Modal -->
   <div class="modal fade" id="changeSourceModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">
@@ -163,7 +163,7 @@
 
   <!-- Multi Action Modal -->
   <div class="modal fade" id="multiActionModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">

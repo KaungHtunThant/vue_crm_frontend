@@ -286,7 +286,10 @@
       @filter-deals="handleFilterDeals"
     />
   </div>
-  <request-deal-modal />
+  <request-deal-modal
+    :search_val="searchVal.search"
+    :search_type="search_result"
+  />
 </template>
 
 <script>
@@ -312,7 +315,6 @@ import {
   getStagesChildren,
   getAllPackages,
   getAvailableStages,
-  createApproval,
   toggleHighlight,
 } from "@/plugins/services/authService";
 import { useI18n } from "vue-i18n";
@@ -1227,20 +1229,6 @@ export default {
       modal.show();
     };
 
-    const handleRequestDeal = async () => {
-      try {
-        const response = await createApproval(props.searchVal.search);
-        if (response.status === 200 || response.status === 201) {
-          toast.success(response.data.message);
-        } else {
-          toast.error(response.data.message);
-        }
-      } catch (error) {
-        console.log(error.message);
-        toast.error(error.message);
-      }
-    };
-
     onMounted(async () => {
       if (dealsContainer.value) {
         dealsContainer.value.addEventListener("scroll", updateArrowVisibility);
@@ -1569,7 +1557,6 @@ export default {
       allStages,
       selectedStageId,
       allDealsCount,
-      handleRequestDeal,
       updateDeal,
     };
   },
