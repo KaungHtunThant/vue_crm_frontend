@@ -319,7 +319,8 @@ export default {
       listProfileStyle: {},
       listNotifiStyle: {},
       name: Cookies.get("name") || "User",
-      userImage: Cookies.get("image") || "",
+      userImage:
+        `${process.env.VUE_APP_BACKEND_URL}${Cookies.get("image")}` || "",
       currentLanguage: localStorage.getItem("locale") || "en",
       showDropdown: false,
     };

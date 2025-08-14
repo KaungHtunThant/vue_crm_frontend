@@ -108,6 +108,7 @@ export default {
       Cookies.remove("email");
       Cookies.remove("user_role");
       Cookies.remove("user_id");
+      Cookies.remove("avatar");
       localStorage.removeItem("backgroundImage");
       localStorage.removeItem("backgroundImage_id");
       localStorage.removeItem("locale");

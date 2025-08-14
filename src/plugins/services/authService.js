@@ -55,8 +55,20 @@ export const deleteUser = (userId) => {
     },
   });
 };
+// update user profile
+export const updateProfileImage = (formData) => {
+  return axios.post("/users/profile-image", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+export const profileimage = async (id, config = {}) => {
+  return await axios.get(`/users/profileimage/${id}`, config);
+};
+
 // Get All Roles
 export const getRoles = () => axios.get("/roles");
+
 // Get All Deals
 export const getDeals = async (params = {}) => {
   const token = Cookies.get("authToken");

@@ -18,15 +18,21 @@
             class="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
-            @click="closeEditProfile"
+            @click="handleCancel"
           ></button>
         </div>
-        <form @submit.prevent="submitForm" ref="EditProfileForm">
-          <div class="modal-body">
-            <profile-form :userData="userData" />
-          </div>
-          <profile-buttons :loading="loading" @close="closeEditProfile" />
-        </form>
+        <div class="modal-body">
+          <profile-form
+            ref="profileForm"
+            :userData="userData"
+            @profile-updated="handleProfileUpdated"
+          />
+        </div>
+        <ProfileButtons
+          :loading="loading"
+          @cancel-image="handleCancel"
+          @updateimage="handleUpdateImage"
+        />
       </div>
     </div>
   </div>
@@ -34,15 +40,19 @@
 
 <script>
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
-import ProfileForm from "@/components/editProfileElements/TheTopHeaderDropDownMenuProfileEditProfileModalFormItems.vue";
+import profileForm from "@/components/editProfileElements/TheTopHeaderDropDownMenuProfileEditProfileModalFormItems.vue";
 import ProfileButtons from "@/components/editProfileElements/TheTopHeaderDropDownMenuProfileEditProfileModalButtonsItems.vue";
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
-import { getUserById, updateUser } from "@/plugins/services/authService";
+import { getUserById } from "@/plugins/services/authService";
 import Cookies from "js-cookie";
+
 export default {
   name: "TheTopHeaderDropDownMenuProfileEditProfileModal",
-  components: { ProfileForm, ProfileButtons },
+  components: {
+    ProfileButtons,
+    profileForm,
+  },
   setup() {
     const { t } = useI18n();
     const toast = useToast();
@@ -52,6 +62,7 @@ export default {
     return {
       modalInstance: null,
       loading: false,
+      userData: {},
     };
   },
   methods: {
@@ -75,7 +86,9 @@ export default {
         const modalInstance = Modal.getInstance(modal);
         if (modalInstance) {
           modalInstance.hide();
-          document.querySelector(".modal-backdrop")?.remove();
+          document
+            .querySelectorAll(".modal-backdrop")
+            .forEach((b) => b.remove());
           document.body.classList.remove("modal-open");
         }
       } catch (error) {
@@ -87,33 +100,55 @@ export default {
       }
     },
     async submitForm() {
+      console.log("🚀 submitForm called in Modal");
       try {
         this.loading = true;
-        const form = this.$refs.EditProfileForm;
-        const formData = new FormData(form);
-        const name_en = formData.get("name_en");
-        const name_ar = formData.get("name_ar");
-        const email = formData.get("email");
-        const image = formData.get("image");
 
-        const response = await updateUser({
-          name_en,
-          name_ar,
-          email,
-          image,
-        });
-        if (response.status !== 200) {
-          throw new Error(response.data.message);
+        // Check if profileForm ref exists
+        if (!this.$refs.profileForm) {
+          console.error("❌ Profile form reference not found");
+          throw new Error("Profile form reference not found");
         }
-        // هنا يتم إضافة المنطق الخاص بحفظ البيانات
-        this.toast.success(response.data.message, {
-          timeout: 3000,
-          id: "edit-profile-success",
-          singleton: true,
-        });
-        this.closeEditProfile();
+
+        console.log("✅ Profile form ref found");
+        console.log("📄 Selected file:", this.$refs.profileForm.selectedFile);
+
+        // Check if there's a selected file for image update
+        if (this.$refs.profileForm.selectedFile) {
+          console.log("🖼️ Updating profile image...");
+          await this.$refs.profileForm.updateProfileImage();
+          this.toast.success(
+            this.t("profile.imageUpdatedSuccess") ||
+              "Profile image updated successfully!",
+            {
+              timeout: 3000,
+              id: "edit-profile-success",
+              singleton: true,
+            }
+          );
+        } else {
+          // If no image selected, show message
+          console.log("⚠️ No image selected");
+          this.toast.info(
+            this.t("profile.noImageSelected") || "No image selected to update",
+            {
+              timeout: 3000,
+              id: "edit-profile-info",
+              singleton: true,
+            }
+          );
+        }
+
+        // Refresh user data after successful update
+        await this.fetchUserData();
+
+        // Close the modal after successful update (only if image was updated)
+        if (this.$refs.profileForm.selectedFile) {
+          this.closeEditProfile();
+        }
       } catch (error) {
-        this.toast.error(error.message, {
+        console.error("❌ Error in submitForm:", error);
+        this.toast.error(error.message || this.t("errors.updateFailed"), {
           timeout: 3000,
           id: "edit-profile-submit-error",
           singleton: true,
@@ -138,9 +173,32 @@ export default {
         });
       }
     },
+    handleUpdateImage() {
+      console.log("🔥 handleUpdateImage called in Modal component!");
+      console.log("🔥 About to call submitForm");
+      //this.$refs.profileForm.updateProfileImage();
+      this.submitForm();
+    },
+    handleCancel() {
+      console.log("🔄 handleCancel called");
+      // Call cancel method on profile form if it exists
+      if (this.$refs.profileForm && this.$refs.profileForm.cancelUpdate) {
+        this.$refs.profileForm.cancelUpdate();
+      }
+      this.closeEditProfile();
+    },
+    handleProfileUpdated(updatedData) {
+      // Handle when profile is updated
+      this.userData = { ...this.userData, ...updatedData };
+      console.log("Profile updated:", updatedData);
+    },
   },
   mounted() {
+    console.log("🎯 Modal component mounted");
     this.fetchUserData();
+  },
+  created() {
+    console.log("🎯 Modal component created");
   },
 };
 </script>
