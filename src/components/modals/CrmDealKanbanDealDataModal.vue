@@ -207,7 +207,7 @@
                       :readonly="!isEditMode"
                     />
                     <button
-                      class="btn btn-primary px-3 fs-5"
+                      :class="['btn px-3 fs-5 btn-primary']"
                       @click="togglePhone2"
                     >
                       {{ showPhone2 ? "-" : "+" }}
@@ -943,11 +943,14 @@
                   class="col-6 d-flex justify-content-end align-items-center gap-2"
                   v-if="isEditMode"
                 >
-                  <button class="btn btn-primary px-4 py-2" @click="confirm">
+                  <button
+                    class="btn btn-success text-white px-4 py-2"
+                    @click="confirm"
+                  >
                     {{ t("kanban-modal-edit-button-submit") }}
                   </button>
                   <button
-                    class="btn btn-secondary px-4 py-2"
+                    class="btn btn-danger text-white px-4 py-2"
                     @click="closeEditMode"
                   >
                     {{ t("kanban-modal-edit-button-cancel") }}
@@ -1027,21 +1030,17 @@
                   >
                     <div class="col-1 pe-0">
                       <img
-                        src="@/assets/default-user-image.jpg"
+                        src="@/assets/default-avatar-profile.webp"
+                        class="rounded-5"
                         alt="Seals Image"
                         width="45"
                         height="45"
                       />
                       <!-- <span class="ms-2">{{ comment.username }}</span> -->
                     </div>
-                    <div class="col-11 position-relative">
+                    <div class="col-11 position-relative ps-0">
                       <div
-                        :class="[
-                          'rounded-3 p-2',
-                          comment.isAdmin
-                            ? 'adminComment'
-                            : 'bg-light text-dark',
-                        ]"
+                        class="rounded-3 p-2"
                         style="
                           word-break: break-word;
                           overflow-wrap: break-word;
@@ -1056,63 +1055,74 @@
                         >
                           {{ comment.isAdmin ? "System" : comment.username }}
                         </h6>
-                        <div v-if="editingCommentId === comment.id">
-                          <textarea
-                            :id="`edit-textarea-${comment.id}`"
-                            v-model="editingCommentText"
-                            class="form-control rounded-2 bg-white text-dark ps-2"
-                            style="
-                              resize: none;
-                              overflow-y: hidden;
-                              min-height: 30px;
-                              height: fit-content !important;
-                              min-width: 50px;
-                              max-width: 100% !important;
-                              width: fit-content !important;
-                              font-size: 14px;
-                              box-sizing: border-box;
-                              display: inline-block;
-                              overflow-x: auto;
-                              width: auto !important;
-                            "
-                            @input="
-                              autoResize($event.target);
-                              autoResizeEditWidth($event.target);
-                            "
-                          ></textarea>
-                          <div class="d-flex justify-content-end gap-2 mt-1">
-                            <button
-                              class="btn btn-success btn-sm"
-                              @click="handleUpdateComment(comment)"
-                              style="font-size: 10px"
-                            >
-                              <i class="fa fa-check"></i>
-                            </button>
-                            <button
-                              class="btn btn-danger btn-sm"
-                              @click="cancelEditComment"
-                              style="font-size: 10px"
-                            >
-                              <i class="fa fa-times"></i>
-                            </button>
+                        <div
+                          :class="[
+                            'rounded-3 p-2',
+                            comment.isAdmin
+                              ? 'adminComment'
+                              : 'bg-light text-dark',
+                          ]"
+                        >
+                          <div v-if="editingCommentId === comment.id">
+                            <textarea
+                              :id="`edit-textarea-${comment.id}`"
+                              v-model="editingCommentText"
+                              class="form-control rounded-2 bg-white text-dark ps-2"
+                              style="
+                                resize: none;
+                                overflow-y: hidden;
+                                min-height: 30px;
+                                height: fit-content !important;
+                                min-width: 50px;
+                                max-width: 100% !important;
+                                width: fit-content !important;
+                                font-size: 14px;
+                                box-sizing: border-box;
+                                display: inline-block;
+                                overflow-x: auto;
+                                width: auto !important;
+                              "
+                              @input="
+                                autoResize($event.target);
+                                autoResizeEditWidth($event.target);
+                              "
+                            ></textarea>
+                            <div class="d-flex justify-content-end gap-2 mt-1">
+                              <button
+                                class="btn btn-success btn-sm"
+                                @click="handleUpdateComment(comment)"
+                                style="font-size: 10px"
+                              >
+                                <i class="fa fa-check"></i>
+                              </button>
+                              <button
+                                class="btn btn-danger btn-sm"
+                                @click="cancelEditComment"
+                                style="font-size: 10px"
+                              >
+                                <i class="fa fa-times"></i>
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                        <div v-else>
-                          <div
-                            :ref="`commentText-${comment.id}`"
-                            style="
-                              white-space: pre-line;
-                              min-width: 50px;
-                              word-break: break-word;
-                              overflow-wrap: break-word;
-                              display: inline-block;
-                              box-sizing: border-box;
-                              overflow-x: hidden;
-                              width: auto !important;
-                            "
-                            :style="{ width: getCommentTextWidth(comment.id) }"
-                            v-html="comment.text_body"
-                          />
+                          <div v-else>
+                            <div
+                              :ref="`commentText-${comment.id}`"
+                              style="
+                                white-space: pre-line;
+                                min-width: 50px;
+                                word-break: break-word;
+                                overflow-wrap: break-word;
+                                display: inline-block;
+                                box-sizing: border-box;
+                                overflow-x: hidden;
+                                width: auto !important;
+                              "
+                              :style="{
+                                width: getCommentTextWidth(comment.id),
+                              }"
+                              v-html="comment.text_body"
+                            />
+                          </div>
                         </div>
                         <div
                           class="d-flex justify-content-end align-items-center gap-2 mt-2"
@@ -1143,7 +1153,7 @@
                             @click="editComment(comment)"
                           >
                             <i
-                              class="fa-solid fa-pencil"
+                              class="fa-solid fa-pencil text-dark"
                               style="font-size: 12px"
                             ></i>
                           </button>
@@ -1152,42 +1162,15 @@
                             @click.prevent="copyComment(comment.text_body)"
                           >
                             <i
-                              class="fa-solid fa-copy"
+                              class="fa-solid fa-copy dark"
                               style="font-size: 12px"
                             ></i>
                           </button>
-                          <span style="font-size: 10px">{{
-                            formatDate(comment.created_at)
-                          }}</span>
-
-                          <!-- comment menu button -->
-                          <!-- <button
-                            class="btn btn-sm p-0 ms-2"
-                            @click="toggleMenu(comment.id)"
-                            style="z-index: 2"
+                          <span
+                            class="text-secondary"
+                            style="font-size: 10px"
+                            >{{ formatDate(comment.created_at) }}</span
                           >
-                            <i class="fa-solid fa-ellipsis-vertical text-white"></i>
-                          </button> -->
-                          <!-- comment menu -->
-                          <!-- <div
-                            v-if="activeMenu === comment.id"
-                            class="comment-menu bg-white border rounded shadow-sm d-flex ms-2"
-                            style="top: 30px; right: 0; z-index: 10"
-                          >
-                            <a
-                              href="#"
-                              class="dropdown-item text-dark"
-                              @click.prevent="copyComment(comment.text_body)"
-                              >Copy</a
-                            >
-                            |
-                            <a
-                              href="#"
-                              class="dropdown-item text-dark"
-                              @click.prevent="editComment(comment)"
-                              >Edit</a
-                            >
-                          </div> -->
                         </div>
                       </div>
                     </div>
@@ -2395,19 +2378,20 @@ export default {
         return;
       }
       try {
-        const openModals = document.querySelectorAll(".modal.show");
-        openModals.forEach((modal) => {
-          const modalInstance = Modal.getInstance(modal);
-          if (modalInstance) {
-            modalInstance.hide();
-          }
-        });
+        // const openModals = document.querySelectorAll(".modal.show");
+        // openModals.forEach((modal) => {
+        //   const modalInstance = Modal.getInstance(modal);
+        //   if (modalInstance) {
+        //     modalInstance.hide();
+        //   }
+        // });
         const trashDealModal = new Modal(
           document.getElementById("trashDealModal")
         );
         trashDealModal.show();
         const modalBackdrop = document.createElement("div");
         modalBackdrop.className = "modal-backdrop fade show";
+        modalBackdrop.style.zIndex = "9999";
         document.body.appendChild(modalBackdrop);
       } catch (error) {
         console.error("Error opening trash modal:", error);
@@ -2424,19 +2408,20 @@ export default {
         return;
       }
       try {
-        const openModals = document.querySelectorAll(".modal.show");
-        openModals.forEach((modal) => {
-          const modalInstance = Modal.getInstance(modal);
-          if (modalInstance) {
-            modalInstance.hide();
-          }
-        });
+        // const openModals = document.querySelectorAll(".modal.show");
+        // openModals.forEach((modal) => {
+        //   const modalInstance = Modal.getInstance(modal);
+        //   if (modalInstance) {
+        //     modalInstance.hide();
+        //   }
+        // });
         const suggestUserModal = new Modal(
           document.getElementById("suggestUserModal")
         );
         suggestUserModal.show();
         const modalBackdrop = document.createElement("div");
         modalBackdrop.className = "modal-backdrop fade show";
+        modalBackdrop.style.zIndex = "9999";
         document.body.appendChild(modalBackdrop);
       } catch (error) {
         console.error("Error opening suggest user modal:", error);
@@ -2866,6 +2851,16 @@ export default {
         });
         return;
       }
+
+      if (is_trash) {
+        const dealDataModal = Modal.getInstance(
+          document.getElementById("dealDataCard")
+        );
+        if (dealDataModal) {
+          dealDataModal.hide();
+        }
+      }
+
       emit(
         "stage-change",
         deal_id,

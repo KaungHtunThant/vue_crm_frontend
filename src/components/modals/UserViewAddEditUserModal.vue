@@ -167,7 +167,11 @@
           <div
             class="modal-footer btns d-flex justify-content-between align-items-center p-2"
           >
-            <button type="submit" class="btn btn-primary" :disabled="loading">
+            <button
+              type="submit"
+              class="btn btn-success text-white"
+              :disabled="loading"
+            >
               {{
                 loading
                   ? isEditMode
@@ -178,7 +182,11 @@
                   : t("users-modal-add-button-submit")
               }}
             </button>
-            <button type="button" class="btn btn-secondary" @click="closeModal">
+            <button
+              type="button"
+              class="btn btn-danger text-white"
+              @click="closeModal"
+            >
               {{ t("users-modal-add-button-cancel") }}
             </button>
           </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="tableCrmList me-2">
     <div class="crm-container mt-3 bg-white rounded-3 me-2 p-3 pb-0 w-100">
-      <div class="controls mb-3">
+      <div class="controls mb-2">
         <div class="row">
           <div
             class="col-sm-6 col-m-4 col-lg-4 col-xl-3"
@@ -137,7 +137,7 @@
         "
         responsive="true"
         scrollable
-        scrollHeight="calc(90vh - 110px)"
+        scrollHeight="calc(90vh - 135px)"
       >
         <Column
           :selectionMode="
@@ -228,6 +228,33 @@
           </div>
         </template>
       </DataTable>
+
+      <!-- Page Information Display -->
+      <div
+        class="d-flex justify-content-between align-items-center mt-3 pb-1 text-muted small"
+      >
+        <div class="d-flex align-items-center gap-3">
+          <span>
+            <i class="fas fa-info-circle me-1"></i>
+            {{ t("tables-total-rows") }}: <strong>{{ totalRows }}</strong>
+          </span>
+          <span>
+            <i class="fas fa-file-alt me-1"></i>
+            {{ t("tables-total-pages") }}: <strong>{{ totalPages }}</strong>
+          </span>
+          <span>
+            <i class="fas fa-list me-1"></i>
+            {{ t("tables-current-page") }}:
+            <strong>{{ currentPage + 1 }}</strong>
+          </span>
+        </div>
+        <div class="text-end">
+          <span class="badge bg-primary">
+            {{ t("tables-rows-per-page") }}: {{ rowsPerPage }}
+          </span>
+        </div>
+      </div>
+
       <crm-list-view-actions-deal-modal
         :selected-rows="selectedRows"
         @update-stage="(value) => handleBulkUpdate('stage_id', value)"
@@ -342,13 +369,17 @@ const isFilterActive = computed(() => {
     return val !== null && val !== "";
   });
 });
+
+const totalPages = computed(() => {
+  return Math.ceil(totalRows.value / rowsPerPage.value);
+});
 // Actions operations
 const actions = ref([
   // { value: "changeStage", label: t("crmlist-action-changestage") },
   // { value: "assignUser", label: t("crmlist-action-assignto") },
   // { value: "changeSource", label: t("crmlist-action-changesource") },
-  { value: "delete", label: t("crmlist-action-delete") },
   { value: "multi", label: t("crmlist-action-update") },
+  { value: "delete", label: t("crmlist-action-delete") },
 ]);
 
 const executeAction = () => {

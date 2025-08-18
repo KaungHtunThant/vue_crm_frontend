@@ -49,17 +49,25 @@
         <div
           class="modal-footer d-flex justify-content-between align-items-center"
         >
-          <button type="button" class="btn btn-primary" @click="filterStage">
+          <button
+            type="button"
+            class="btn btn-success text-white"
+            @click="filterStage"
+          >
             Apply Filter
           </button>
           <button
             type="button"
-            class="btn btn-secondary me-2"
+            class="btn btn-warning me-2"
             @click="resetFilter"
           >
             Reset
           </button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+          <button
+            type="button"
+            class="btn btn-danger text-white"
+            data-bs-dismiss="modal"
+          >
             Close
           </button>
         </div>

@@ -47,7 +47,7 @@
         <div class="modal-footer">
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-danger text-white"
             data-bs-dismiss="modal"
             @click="closeModal"
           >

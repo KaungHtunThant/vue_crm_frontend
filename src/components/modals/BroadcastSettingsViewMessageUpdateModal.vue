@@ -28,10 +28,18 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="closeModal">
+          <button
+            type="button"
+            class="btn btn-danger text-white"
+            @click="closeModal"
+          >
             Close
           </button>
-          <button type="button" class="btn btn-primary" @click="submit">
+          <button
+            type="button"
+            class="btn btn-success text-white"
+            @click="submit"
+          >
             Submit
           </button>
         </div>

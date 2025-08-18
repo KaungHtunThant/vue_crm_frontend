@@ -36,7 +36,7 @@
             <div class="modal-footer d-flex justify-content-between">
               <button
                 type="submit"
-                class="btn btn-primary"
+                class="btn btn-success text-white"
                 :disabled="!exportFormat"
               >
                 {{ t("kanban-modal-export-button-submit") }}
@@ -44,7 +44,7 @@
               </button>
               <button
                 type="button"
-                class="btn btn-secondary"
+                class="btn btn-danger text-white"
                 data-bs-dismiss="modal"
               >
                 {{ t("kanban-modal-export-button-close") }}

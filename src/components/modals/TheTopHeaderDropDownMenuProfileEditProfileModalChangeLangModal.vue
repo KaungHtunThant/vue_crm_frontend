@@ -31,7 +31,7 @@
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-primary"
+              class="btn btn-success text-white"
               data-bs-dismiss="modal"
               @click="changeLang"
             >

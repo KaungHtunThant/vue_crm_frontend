@@ -99,8 +99,11 @@ export default {
     const closeFilterModal = () => {
       try {
         const modal = filterModal.value;
-        const modalInstance = Modal.getInstance(modal);
-        if (modalInstance) modalInstance.hide();
+        let modalInstance = Modal.getInstance(modal);
+        if (!modalInstance) {
+          modalInstance = new Modal(modal);
+        }
+        modalInstance.hide();
         document.querySelector(".modal-backdrop")?.remove();
         document.body.classList.remove("modal-open");
       } catch (error) {
@@ -108,7 +111,6 @@ export default {
         console.error("Error closing modal:", error);
       }
     };
-
     const submitFilters = () => {
       try {
         if (Array.isArray(localSelectedStatuses.value)) {
@@ -119,7 +121,7 @@ export default {
         emit("apply-filters", { ...filters.value });
 
         toast.success(t("success.applyFilters"), { timeout: 3000 });
-        // closeFilterModal();
+        closeFilterModal();
       } catch (error) {
         toast.error(t("error.applyFilters"), { timeout: 3000 });
       }
@@ -150,6 +152,7 @@ export default {
         emit("update:modelValue", emptyFilters);
         emit("reset-filter");
         toast.success(t("success.resetFilters"), { timeout: 3000 });
+        closeFilterModal();
       } catch (error) {
         toast.error(t("error.resetFilters"), { timeout: 3000 });
       }

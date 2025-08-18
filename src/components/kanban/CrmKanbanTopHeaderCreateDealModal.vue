@@ -196,12 +196,12 @@
             <div class="modal-footer d-flex justify-content-between">
               <button
                 type="button"
-                class="btn btn-secondary"
+                class="btn btn-danger text-white"
                 data-bs-dismiss="modal"
               >
                 {{ t("kanban-modal-create-button-close") }}
               </button>
-              <button type="submit" class="btn btn-primary">
+              <button type="submit" class="btn btn-success text-white">
                 {{ t("kanban-modal-create-button-submit") }}
               </button>
             </div>

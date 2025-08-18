@@ -45,15 +45,23 @@
         <div
           class="modal-footer d-flex justify-content-between align-items-center"
         >
-          <button type="button" class="btn btn-primary" @click="updateStage">
+          <button
+            type="button"
+            class="btn btn-success text-white"
+            @click="updateStage"
+          >
             {{ $t("kanban-modal-editstage-button-submit") }}
           </button>
-          <button type="button" class="btn btn-danger" @click="deleteStage">
+          <button
+            type="button"
+            class="btn btn-danger text-white"
+            @click="deleteStage"
+          >
             delete
           </button>
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-danger text-white"
             data-bs-dismiss="modal"
           >
             {{ $t("kanban-modal-editstage-button-cancel") }}

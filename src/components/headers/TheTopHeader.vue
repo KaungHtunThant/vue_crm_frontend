@@ -248,7 +248,9 @@
             class="btnHeaderBg userImg d-flex justify-content-center align-items-center px-2 rounded-1 me-2"
           >
             <img
-              :src="userImage || require('@/assets/default-user-image.jpg')"
+              :src="
+                userImage || require('@/assets/default-avatar-profile.webp')
+              "
               class="img-fluid user-img rounded-5 me-1"
               alt="user image"
             />

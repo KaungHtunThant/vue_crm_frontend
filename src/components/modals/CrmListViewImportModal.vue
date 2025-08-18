@@ -26,6 +26,7 @@
           <import-buttons
             @close-modal="closeImportModal"
             @submit="submitImports"
+            :loading="loading"
           />
         </form>
       </div>
@@ -36,6 +37,7 @@
 <script>
 import { ref } from "vue";
 import { Modal } from "bootstrap";
+
 import ImportForm from "@/components/importElements/CrmListViewImportModalFormItems.vue";
 import ImportButtons from "@/components/importElements/CrmListViewImportModalButtonsItems.vue";
 import { useToast } from "vue-toastification";
@@ -45,12 +47,13 @@ import { importDeals } from "@/plugins/services/authService";
 export default {
   name: "CrmListViewImportModal",
   components: { ImportButtons, ImportForm },
-
+  props: ["modelValue"],
   setup(props, { emit }) {
     const toast = useToast();
     const { t } = useI18n();
     const importModalRef = ref(null);
-    const importFormRef = ref(null); // Reference to ImportForm
+    const importFormRef = ref(null);
+    const loading = ref(false);
     let modalInstance = null;
 
     const openImportModal = () => {
@@ -86,6 +89,7 @@ export default {
 
     const submitImports = async () => {
       try {
+        loading.value = true;
         if (importFormRef.value) {
           console.log("ImportForm Data:", importFormRef.value);
           // Access fields from ImportForm
@@ -118,15 +122,18 @@ export default {
           }
         );
         console.error("Import Error:", error);
+      } finally {
+        loading.value = false;
       }
     };
 
     return {
       importModalRef,
-      importFormRef, // Return the ref
+      importFormRef,
       openImportModal,
       closeImportModal,
       submitImports,
+      loading,
       t,
     };
   },
