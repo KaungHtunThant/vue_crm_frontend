@@ -77,20 +77,18 @@ export const getDeals = async (params = {}) => {
     },
   });
 };
-
 export const fetchAdditionalDealsByStageId = (
   stageId,
   limit,
   offset,
-  filteredDeals
+  filters
 ) => {
-  console.log(filteredDeals);
   return axios.get(`/deals/get-more`, {
     params: {
       stage_id: stageId,
       limit: limit,
       offset: offset,
-      filters: filteredDeals,
+      filters: filters,
     },
   });
 };
