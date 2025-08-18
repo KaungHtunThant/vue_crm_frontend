@@ -82,14 +82,15 @@ export const fetchAdditionalDealsByStageId = (
   stageId,
   limit,
   offset,
-  filters
+  filteredDeals
 ) => {
+  console.log(filteredDeals);
   return axios.get(`/deals/get-more`, {
     params: {
       stage_id: stageId,
       limit: limit,
       offset: offset,
-      filters: filters,
+      filters: filteredDeals,
     },
   });
 };

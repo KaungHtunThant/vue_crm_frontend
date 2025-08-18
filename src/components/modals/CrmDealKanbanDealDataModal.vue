@@ -1571,7 +1571,10 @@ export default {
           created_at: comment.created_at || "No date",
           username: comment.user?.name || "No user",
           isAdmin:
-            comment.user && comment.user.role === "super-admin" ? true : false,
+            (comment.user && comment.user.role === "super-admin") ||
+            (comment.user && comment.user.role === "crm-admin")
+              ? true
+              : false,
           isPinned: comment.pinned || false,
         })) || [],
       assigned_to: props.deal?.assigned_to_id || "",
