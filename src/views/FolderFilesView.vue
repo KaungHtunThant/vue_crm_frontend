@@ -116,7 +116,7 @@
       </div>
 
       <!-- Files Section -->
-      <div
+      <!-- <div
         v-for="file in files"
         :key="file.id"
         class="file-item p-3 border-bottom"
@@ -151,7 +151,97 @@
               title="Delete"
             >
               <i class="fas fa-trash"></i>
-            </button>
+            </button> -->
+      <!-- Grid Layout for Files -->
+      <div class="files-grid d-grid">
+        <div
+          v-for="file in files"
+          :key="file.id"
+          class="file-card overflow-hidden bg-white"
+          :class="{ 'is-image': isImageFile(file.type) }"
+        >
+          <!-- Image Preview -->
+          <div
+            v-if="isImageFile(file.type)"
+            class="image-preview position-relative w-100 h-100 overflow-hidden"
+          >
+            <img
+              :src="file.download_url"
+              :alt="file.name"
+              class="file-thumbnail w-100 h-100 object-fit-cover"
+              @error="handleImageError"
+            />
+            <div
+              class="image-overlay d-flex justify-content-center align-items-center"
+            >
+              <div
+                class="image-actions d-flex justify-content-center flex-wrap"
+              >
+                <button
+                  v-if="permissionStore.hasPermission(PERMISSIONS.VIEW_FILE)"
+                  class="btn btn-sm btn-primary me-2"
+                  @click="viewFile(file)"
+                  title="View"
+                >
+                  <i class="fas fa-eye"></i>
+                </button>
+                <a
+                  v-if="permissionStore.hasPermission(PERMISSIONS.VIEW_FILE)"
+                  class="btn btn-sm btn-success me-2"
+                  title="Download"
+                  :href="file.download_url"
+                  download
+                >
+                  <i class="fas fa-download"></i>
+                </a>
+                <button
+                  v-if="permissionStore.hasPermission(PERMISSIONS.DELETE_FILE)"
+                  class="btn btn-sm btn-danger"
+                  @click="deleteFile(file.id)"
+                  title="Delete"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Non-Image Files -->
+          <div
+            v-else
+            class="file-info text-center d-flex flex-column justify-content-between h-100"
+          >
+            <div class="file-icon">
+              <i :class="getFileIcon(file.type)"></i>
+            </div>
+            <div class="file-name">{{ file.name }}</div>
+            <div class="file-actions d-flex justify-content-center flex-wrap">
+              <button
+                v-if="permissionStore.hasPermission(PERMISSIONS.VIEW_FILE)"
+                class="btn btn-sm text-bg-primary me-2"
+                @click="viewFile(file)"
+                title="View"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+              <a
+                v-if="permissionStore.hasPermission(PERMISSIONS.VIEW_FILE)"
+                class="btn btn-sm btn-success me-2"
+                title="Download"
+                :href="file.download_url"
+                download
+              >
+                <i class="fas fa-download"></i>
+              </a>
+              <button
+                v-if="permissionStore.hasPermission(PERMISSIONS.DELETE_FILE)"
+                class="btn btn-sm btn-danger"
+                @click="deleteFile(file.id)"
+                title="Delete"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -219,6 +309,26 @@ export default {
         default: "fas fa-file text-secondary",
       };
       return icons[type] || icons.default;
+    };
+
+    const isImageFile = (type) => {
+      return (
+        type === "image" ||
+        type === "jpg" ||
+        type === "jpeg" ||
+        type === "png" ||
+        type === "gif" ||
+        type === "webp"
+      );
+    };
+
+    const handleImageError = (event) => {
+      event.target.style.display = "none";
+      const parent = event.target.parentElement;
+      const icon = document.createElement("i");
+      icon.className = "fas fa-image text-muted";
+      icon.style.fontSize = "48px";
+      parent.appendChild(icon);
     };
 
     const fetchFiles = async () => {
@@ -522,6 +632,8 @@ export default {
       handleFolderSubmit,
       deleteFolder,
       getFileIcon,
+      isImageFile,
+      handleImageError,
       viewFile,
       downloadFile,
       handleFileSelect,
@@ -593,5 +705,90 @@ export default {
 
 .fs-7 {
   font-size: 0.875rem;
+}
+
+/* image and files styles */
+.files-grid {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.file-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.file-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.file-card.is-image {
+  aspect-ratio: 1;
+}
+
+.file-thumbnail {
+  transition: transform 0.3s ease;
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-preview:hover .image-overlay {
+  opacity: 1;
+}
+
+.image-preview:hover .file-thumbnail {
+  transform: scale(1.05);
+}
+
+.image-actions {
+  gap: 0.5rem;
+}
+
+.image-actions .btn {
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.file-info {
+  padding: 1rem;
+}
+
+.file-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  color: #6c757d;
+}
+
+.file-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+.file-actions {
+  gap: 0.25rem;
+}
+
+.file-actions .btn {
+  font-size: 12px;
+  padding: 0.25rem 0.5rem;
 }
 </style>

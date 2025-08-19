@@ -2,7 +2,11 @@
   <div
     class="modal-footer btns d-flex justify-content-between align-items-center"
   >
-    <button type="submit" class="btn btn-primary" :disabled="loading">
+    <button
+      type="submit"
+      class="btn btn-success text-white"
+      :disabled="loading"
+    >
       <span v-if="loading">
         <i class="fas fa-spinner fa-spin"></i> {{ t("modals.updating") }}
       </span>
@@ -11,7 +15,7 @@
 
     <button
       type="button"
-      class="btn btn-secondary"
+      class="btn btn-danger text-white"
       @click="handleClose"
       data-bs-dismiss="modal"
     >

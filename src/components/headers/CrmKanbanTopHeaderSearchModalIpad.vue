@@ -21,10 +21,12 @@
           <form @submit.prevent="handleSearch">
             <input type="search" class="form-control" />
             <div class="modal-footer d-flex justify-content-between px-0">
-              <button type="submit" class="btn btn-primary">Search</button>
+              <button type="submit" class="btn btn-success text-white">
+                Search
+              </button>
               <button
                 type="button"
-                class="btn btn-secondary"
+                class="btn btn-danger text-white"
                 data-bs-dismiss="modal"
               >
                 Close

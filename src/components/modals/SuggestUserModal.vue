@@ -5,14 +5,15 @@
     tabindex="-1"
     aria-labelledby="SuggestUserModalLabel"
     aria-hidden="true"
+    style="z-index: 10000"
     v-on:="{'hidden.bs.modal': resetModal}"
   >
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content pt-3 bg-warning">
-        <div class="modal-body text-center text-white">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content pt-3">
+        <div class="modal-body text-center text-dark">
           <div class="modal1" v-if="!showModal2">
             <i
-              class="fa-solid fa-triangle-exclamation pb-4"
+              class="fa-solid fa-triangle-exclamation pb-4 text-warning"
               style="font-size: 60px"
             ></i>
             <h4>{{ $t("kanban-suggest-user-heading") }}</h4>
@@ -22,7 +23,7 @@
           </div>
           <div class="modal2" v-else>
             <i
-              class="fa-solid fa-triangle-exclamation pb-4"
+              class="fa-solid fa-triangle-exclamation pb-4 text-warning"
               style="font-size: 60px"
             ></i>
             <h4>
@@ -42,6 +43,9 @@
               class="form-select mt-2"
               v-model="selected_user_id"
             >
+              <option value="" disabled selected>
+                {{ $t("kanban-suggest-user-modal2-select-placeholder") }}
+              </option>
               <option v-for="user in users" :key="user.id" :value="user.id">
                 {{ user.name }}
               </option>
@@ -51,8 +55,8 @@
         <div class="modal-footer border-top-0 mt-5">
           <button
             type="button"
-            class="btn bg-white py-2 px-4"
-            style="color: red; font-size: 14px"
+            class="btn bg-danger text-white py-2 px-4"
+            style="font-size: 14px"
             @click="closeSuggestUserModal"
           >
             {{ $t("kanban-suggest-user-cancel-button") }}
@@ -60,8 +64,8 @@
           <button
             v-if="!showModal2"
             type="button"
-            class="btn bg-white py-2 px-4"
-            style="color: red; font-size: 14px"
+            class="btn bg-success text-white py-2 px-4"
+            style="font-size: 14px"
             @click="showModal2 = true"
           >
             {{ $t("kanban-suggest-user-next-button") }}
@@ -69,8 +73,8 @@
           <button
             v-else
             type="button"
-            class="btn bg-white py-2 px-4"
-            style="color: red; font-size: 14px"
+            class="btn bg-success text-white py-2 px-4"
+            style="font-size: 14px"
             @click="handleSuggestUserSubmit"
             :disabled="!selected_user_id || !comment"
           >
@@ -108,7 +112,8 @@ export default {
     const toast = useToast();
     const showModal2 = ref(false);
     const comment = ref("");
-    const selected_user_id = ref(null);
+    // const selected_user_id = ref(null);
+    const selected_user_id = ref("");
     const local_dealId = ref(props.dealId);
     const local_phone = ref(props.phone);
     const { t } = useI18n();
@@ -173,7 +178,8 @@ export default {
 
     const resetModal = () => {
       showModal2.value = false;
-      selected_user_id.value = null;
+      // selected_user_id.value = null;
+      selected_user_id.value = "";
       comment.value = "";
     };
 
@@ -187,6 +193,16 @@ export default {
       toast,
       local_dealId,
     };
+  },
+  mounted() {
+    const modal = document.getElementById("suggestUserModal");
+    modal.addEventListener("hidden.bs.modal", () => {
+      const modalBackdrop = document.querySelector(".modal-backdrop");
+      if (modalBackdrop) {
+        modalBackdrop.remove();
+      }
+      this.resetModal();
+    });
   },
 };
 </script>

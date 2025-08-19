@@ -89,7 +89,8 @@
                 <button
                   v-if="!expandedStages[stage.id] && stage.parent_id"
                   class="btn btn-sm h-100 rounded-0"
-                  style="background-color: #f4f4f4"
+                  style="background-color: #cecfce"
+                  @click.stop="hiddenStages[stage.id] = true"
                 >
                   <i
                     class="fa-regular fa-square-caret-left"
@@ -200,7 +201,9 @@
               >
                 <template #item="{ element: deal }">
                   <ticket-card
-                    :deal="{ ...deal }"
+                    :deal="deal"
+                    :stage-id="deal.stage_id"
+                    :all-stages="allStages"
                     @open-deal-data-card="openDealDataCard(deal.id, stage.id)"
                     @toggle-highlight="handleHighlight(deal.id)"
                   />
@@ -1566,7 +1569,7 @@ export default {
 <style scoped>
 .kanban-wrapper {
   width: 100%;
-  height: calc(100vh - 127px);
+  height: calc(100vh - 115px);
   overflow-x: auto;
 }
 .kanban-board {

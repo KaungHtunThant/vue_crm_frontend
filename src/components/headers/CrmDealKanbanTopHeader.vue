@@ -133,7 +133,7 @@
                   @click="openWhatsappModal"
                 >
                   <i class="fa-brands fa-whatsapp fs-5"></i>
-                  <span class="removeIpad" style="font-size: 14px">{{
+                  <span class="removeIpad" style="font-size: 16px">{{
                     $t("kanban-modal-edit-whatsapp")
                   }}</span>
                 </button>
@@ -191,8 +191,8 @@
       v-if="!disableFilter"
       v-model="headerFilterData"
       v-model:headerSelectedStatuses="headerSelectedStatuses"
-      @apply-filters="handleFilters"
-      @reset-filter="handleResetFilter"
+      :applyActualFiltersProp="applyActualFiltersProp"
+      :resetActualFiltersProp="resetActualFiltersProp"
     />
     <import-modal ref="importModalRef" />
     <export-modal ref="exportModalRef" />
@@ -273,6 +273,8 @@ export default {
       type: String,
       default: null,
     },
+    applyActualFiltersProp: { type: Function, required: true },
+    resetActualFiltersProp: { type: Function, required: true },
   },
   emits: ["filter-applied", "reset-filter"],
   setup(props, { emit }) {

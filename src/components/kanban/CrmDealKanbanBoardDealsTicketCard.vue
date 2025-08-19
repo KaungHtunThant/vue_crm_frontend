@@ -131,6 +131,26 @@
           }}</span>
         </span>
       </div>
+
+      <div
+        v-if="$route.path === '/crm-tasks' && currentStageName"
+        class="d-flex align-items-center p-0 mt-1"
+      >
+        <span
+          class="badge fw-medium text-white py-1 px-2"
+          :style="{
+            backgroundColor: currentStageColor,
+            fontSize: '11px',
+          }"
+        >
+          <i :class="`fa-solid fa-${currentStageIcon} me-1`"></i>
+          {{
+            currentStageName.length > 20
+              ? currentStageName.slice(0, 20) + "…"
+              : currentStageName
+          }}
+        </span>
+      </div>
     </div>
 
     <!-- ملاحظة إدارية -->
@@ -179,6 +199,7 @@
 <script>
 import { useI18n } from "vue-i18n";
 import { useToast } from "vue-toastification";
+import { computed } from "vue";
 import CountryFlagAvatar from "@/components/whatsapp/WhatsAppModalSidebarLeftCountryFlagAvatar.vue";
 import Cookies from "js-cookie";
 
@@ -188,6 +209,14 @@ export default {
     deal: {
       type: Object,
       required: true,
+    },
+    stageId: {
+      type: [String, Number],
+      default: null,
+    },
+    allStages: {
+      type: Array,
+      default: () => [],
     },
   },
   components: {
@@ -302,9 +331,26 @@ export default {
       if (status <= 75) return "bg-info";
       return "bg-success";
     };
-    const handleHighlight = async () => {
-      emit("toggle-highlight", props.deal.id);
-    };
+
+    const currentStage = computed(() => {
+      if (!props.stageId || !props.allStages || props.allStages.length === 0) {
+        return null;
+      }
+      const stage = props.allStages.find((s) => s.id == props.stageId);
+      return stage || null;
+    });
+
+    const currentStageName = computed(() => {
+      return currentStage.value ? currentStage.value.name : "";
+    });
+
+    const currentStageColor = computed(() => {
+      return currentStage.value ? currentStage.value.color_code : "#17a2b8";
+    });
+
+    const currentStageIcon = computed(() => {
+      return currentStage.value ? currentStage.value.icon : "layer-group";
+    });
     return {
       t,
       formatDate,
@@ -318,7 +364,9 @@ export default {
       formatDateUpdate,
       getPersuasionColorClass,
       userRole,
-      handleHighlight,
+      currentStageName,
+      currentStageColor,
+      currentStageIcon,
     };
   },
   methods: {},

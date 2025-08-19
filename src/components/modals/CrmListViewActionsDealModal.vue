@@ -33,14 +33,14 @@
         <div class="modal-footer">
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-danger text-white"
             data-bs-dismiss="modal"
           >
             {{ t("buttons.cancel") }}
           </button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="btn btn-success text-white"
             @click="confirmChangeStage"
             :disabled="isLoading || !newStage"
           >
@@ -86,14 +86,14 @@
         <div class="modal-footer">
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-danger text-white"
             data-bs-dismiss="modal"
           >
             {{ t("buttons.cancel") }}
           </button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="btn btn-success text-white"
             @click="confirmAssignUser"
             :disabled="isLoading || !newUser"
           >
@@ -139,14 +139,14 @@
         <div class="modal-footer">
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-danger text-white"
             data-bs-dismiss="modal"
           >
             {{ t("users-modal-add-button-cancel") }}
           </button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="btn btn-success text-white"
             @click="confirmChangeSource"
             :disabled="isLoading || !newSource"
           >
@@ -177,7 +177,7 @@
         </div>
         <div class="modal-body">
           <select v-model="newStage" class="form-select mb-2">
-            <option value="">
+            <option value="" disabled selected>
               {{ t("crmlist-modal-filter-placeholder-stage") }}
             </option>
             <option
@@ -189,11 +189,11 @@
             </option>
           </select>
           <select v-model="newUser" class="form-select mb-2">
-            <option value="">
+            <option value="" disabled selected>
               {{ t("crmlist-modal-import-placeholder-representative") }}
             </option>
             <option
-              v-for="option in userOptions"
+              v-for="option in sortedUserOptions"
               :key="option.value"
               :value="option.value"
             >
@@ -201,7 +201,7 @@
             </option>
           </select>
           <select v-model="newSource" class="form-select">
-            <option value="">
+            <option value="" disabled selected>
               {{ t("crmlist-modal-import-placeholder-source") }}
             </option>
             <option
@@ -216,14 +216,14 @@
         <div class="modal-footer">
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-danger text-white"
             data-bs-dismiss="modal"
           >
             {{ t("users-modal-add-button-cancel") }}
           </button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="btn btn-success text-white"
             @click="confirmMultiAction"
             :disabled="isLoading"
           >
@@ -240,7 +240,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, onMounted } from "vue";
+import { ref, defineProps, defineEmits, onMounted, computed } from "vue";
 import { Modal } from "bootstrap";
 import {
   getAvailableStages,
@@ -275,6 +275,13 @@ const newSource = ref("");
 const stageOptions = ref([]);
 const sourceOptions = ref([]);
 const userOptions = ref([]);
+
+const sortedUserOptions = computed(() => {
+  return [...userOptions.value].sort((a, b) =>
+    a.name.localeCompare(b.name, "en")
+  );
+});
+
 // Options for dropdowns
 const fetchStages = async () => {
   try {

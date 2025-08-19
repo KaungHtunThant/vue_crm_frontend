@@ -32,11 +32,24 @@
           </div>
         </div>
         <div class="modal-footer d-flex justify-content-between">
-          <button type="button" class="btn btn-secondary" @click="resetFilters">
-            Reset
-          </button>
-          <button type="button" class="btn btn-primary" @click="applyFilters">
-            Apply Filters
+          <div class="">
+            <button
+              type="button"
+              class="btn btn-success text-white me-2"
+              @click="applyFilters"
+            >
+              Apply Filters
+            </button>
+            <button type="button" class="btn btn-warning" @click="resetFilters">
+              Reset
+            </button>
+          </div>
+          <button
+            type="button"
+            class="btn btn-danger text-white"
+            data-bs-dismiss="modal"
+          >
+            Close
           </button>
         </div>
       </div>
