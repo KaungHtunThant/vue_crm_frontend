@@ -109,7 +109,7 @@
         </div>
       </div> -->
 
-      <div
+      <!-- <div
         class="d-flex gap-1 align-items-center p-0 flex-wrap"
         v-if="deal.tags && deal.tags.length && userRole !== 'sales'"
       >
@@ -130,7 +130,7 @@
             tag.name.length > 20 ? tag.name.slice(0, 20) + "…" : tag.name
           }}</span>
         </span>
-      </div>
+      </div> -->
 
       <div
         v-if="$route.path === '/crm-tasks' && currentStageName"
