@@ -2,10 +2,13 @@
   <div class="mt-2 pe-2">
     <div class="row">
       <div class="col-8 col-md-8 col-lg-8">
-        <div class="mb-3 position-relative inputSearch d-flex">
+        <div
+          class="mb-3 position-relative inputSearch d-flex align-items-center"
+        >
           <input
             type="text"
             class="form-control w-50 ps-5 rounded-end-0"
+            style="padding: 7px 0"
             :placeholder="t('users-placeholder-search')"
             v-model="search"
           />
@@ -46,7 +49,7 @@
       <template #item-profile="item">
         <div class="d-flex align-items-center py-1">
           <img
-            :src="userImage || require('@/assets/default-user-image.jpg')"
+            :src="userImage || require('@/assets/default-avatar-profile.webp')"
             alt="User Image"
             class="rounded-circle me-3"
             style="width: 45px; height: 45px"
@@ -368,7 +371,7 @@ export default {
 :deep(.custom-table) {
   display: flex;
   flex-direction: column;
-  max-height: 80vh !important;
+  max-height: 87vh !important;
   border-radius: 10px;
   overflow: hidden;
   border: none !important;

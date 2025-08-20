@@ -33,14 +33,14 @@
             <div class="d-flex justify-content-end gap-2 mt-4 mb-2">
               <button
                 type="submit"
-                class="btn btn-primary"
+                class="btn btn-success text-white"
                 data-bs-dismiss="modal"
               >
                 {{ t("buttons.submit") }}
               </button>
               <button
                 type="button"
-                class="btn btn-secondary"
+                class="btn btn-danger text-white"
                 data-bs-dismiss="modal"
               >
                 {{ t("buttons.close") }}

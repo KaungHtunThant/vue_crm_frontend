@@ -5,14 +5,15 @@
     tabindex="-1"
     aria-labelledby="trashDealModalLabel"
     aria-hidden="true"
+    style="z-index: 10000"
     v-on:="{'hidden.bs.modal': resetModal}"
   >
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content pt-3" style="background-color: red">
-        <div class="modal-body text-center text-white">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content pt-3">
+        <div class="modal-body text-center text-dark">
           <div class="modal1" v-if="!showModal2">
             <i
-              class="fa-solid fa-triangle-exclamation pb-4"
+              class="fa-solid fa-triangle-exclamation pb-4 text-danger"
               style="font-size: 60px"
             ></i>
             <h4>{{ $t("kanban-trash-heading") }}</h4>
@@ -22,7 +23,7 @@
           </div>
           <div class="modal2" v-else>
             <i
-              class="fa-solid fa-triangle-exclamation pb-4"
+              class="fa-solid fa-triangle-exclamation pb-4 text-danger"
               style="font-size: 60px"
             ></i>
             <h4>
@@ -41,7 +42,7 @@
               <button
                 v-for="tag in trash_stages"
                 :key="tag.id"
-                class="btn"
+                class="btn btn-danger"
                 @click="selected_stage_id = tag.id"
                 :style="{
                   backgroundColor:
@@ -49,7 +50,7 @@
                   color:
                     selected_stage_id === tag.id
                       ? getContrastColor(tag.color_code)
-                      : 'gray',
+                      : 'black',
                 }"
               >
                 <i
@@ -58,7 +59,7 @@
                     color:
                       selected_stage_id === tag.id
                         ? getContrastColor(tag.color_code)
-                        : 'gray',
+                        : 'black',
                   }"
                 ></i>
                 {{ tag.name }}
@@ -69,8 +70,8 @@
         <div class="modal-footer border-top-0 mt-5">
           <button
             type="button"
-            class="btn bg-white py-2 px-4"
-            style="color: red; font-size: 14px"
+            class="btn bg-danger text-white py-2 px-4"
+            style="font-size: 14px"
             @click="closeTrashDealModal"
           >
             {{ $t("kanban-trash-cancel-button") }}
@@ -78,8 +79,8 @@
           <button
             v-if="!showModal2"
             type="button"
-            class="btn bg-white py-2 px-4"
-            style="color: red; font-size: 14px"
+            class="btn bg-success text-white py-2 px-4"
+            style="font-size: 14px"
             @click="showModal2 = true"
           >
             {{ $t("kanban-trash-next-button") }}
@@ -87,8 +88,8 @@
           <button
             v-else
             type="button"
-            class="btn bg-white py-2 px-4"
-            style="color: red; font-size: 14px"
+            class="btn bg-success text-white py-2 px-4"
+            style="font-size: 14px"
             @click="handleTrashDeal"
             :disabled="!selected_stage_id || !comment"
           >

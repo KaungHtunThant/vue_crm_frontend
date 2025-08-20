@@ -8,6 +8,8 @@
       :selected_conversation="selected_conversation"
       :new_message="new_message"
       :update_message="update_message"
+      :applyActualFiltersProp="applyFilters"
+      :resetActualFiltersProp="resetFilter"
     />
   </div>
   <crm-kanban-kanban-board

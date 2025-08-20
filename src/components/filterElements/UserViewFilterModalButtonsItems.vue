@@ -3,7 +3,11 @@
     class="modal-footer btns d-flex justify-content-between align-items-center"
   >
     <div class="btns">
-      <button type="submit" class="btn btn-primary me-2" :disabled="loading">
+      <button
+        type="submit"
+        class="btn btn-success text-white me-2"
+        :disabled="loading"
+      >
         <span v-if="loading">
           <i class="fas fa-spinner fa-spin"></i
           >{{ t("users-modal-filter-button-submit") }}
@@ -19,7 +23,11 @@
       </button>
     </div>
 
-    <button type="button" class="btn btn-secondary" @click="$emit('close')">
+    <button
+      type="button"
+      class="btn btn-danger text-white"
+      @click="$emit('close')"
+    >
       {{ t("users-modal-filter-button-close") }}
     </button>
   </div>

@@ -5,7 +5,7 @@
     >
       <div class="profileImage me-1 border border-2 rounded-5">
         <img
-          :src="userImage || require('@/assets/default-user-image.jpg')"
+          :src="userImage || require('@/assets/default-avatar-profile.webp')"
           class="img-fluid rounded-5"
           alt="profile image"
         />
