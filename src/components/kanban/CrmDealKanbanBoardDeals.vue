@@ -43,7 +43,7 @@
           <div v-else class="kanban-stage">
             <div
               class="stage-header position-relative"
-              :title="stage.description"
+              :title="stage.name"
               :style="
                 permissionStore.hasPermission('edit-stage')
                   ? { minWidth: '301px', width: '301px' }
@@ -82,7 +82,7 @@
                   @click.stop="hiddenStages[stage.id] = true"
                 >
                   <i
-                    class="fa-solid fa-minus text-dark"
+                    class="fa-solid fa-minus text-white"
                     style="font-size: 12px"
                   ></i>
                 </button>
@@ -195,7 +195,6 @@
                     : { minWidth: '309px', width: '309px' }
                 "
                 @start="drag = true"
-                :disabled="$route.path === '/crm-task' ? true : false"
                 @change="handleDragChange($event, stage.id)"
                 @scroll="handleDealContainerScroll($event, stage.id)"
               >
@@ -205,7 +204,6 @@
                     :stage-id="deal.stage_id"
                     :all-stages="allStages"
                     @open-deal-data-card="openDealDataCard(deal.id, stage.id)"
-                    @toggle-highlight="handleHighlight(deal.id)"
                   />
                 </template>
               </draggable>
@@ -254,13 +252,13 @@
       >
         <i class="fa-solid fa-chevron-left fs-1 p-3"></i>
       </div>
-      <button
-        v-show="search_result"
+      <!-- <button
+        v-show="!allDealsCount"
         class="btn text-white position-absolute top-50 start-50 translate-middle bg-primary p-2 z-3 btn-request"
-        @click="openRequestDealModal"
+        @click="handleRequestDeal"
       >
         {{ t("kanban-btn-request-deal") }}
-      </button>
+      </button> -->
     </div>
   </div>
   <!-- :key="selectedDeal?.id" -->
@@ -277,9 +275,6 @@
     @stage-change="changeDealStage"
     @suggest-user="handleDealSuggestion"
     @update-deal="updateDeal"
-    @task-added="handleTaskViewTaskAdd"
-    @task-updated="handleTaskViewTaskUpdate"
-    @task-finish="handleTaskViewTaskFinish"
   />
   <!-- selectedDeal -->
   <div v-if="permissionStore.hasPermission('edit-stage')">
@@ -289,10 +284,6 @@
       @filter-deals="handleFilterDeals"
     />
   </div>
-  <request-deal-modal
-    :search_val="searchVal.search"
-    :search_type="search_result"
-  />
 </template>
 
 <script>
@@ -318,7 +309,7 @@ import {
   getStagesChildren,
   getAllPackages,
   getAvailableStages,
-  toggleHighlight,
+  createApproval,
 } from "@/plugins/services/authService";
 import { useI18n } from "vue-i18n";
 import Cookies from "js-cookie";
@@ -329,8 +320,6 @@ import moveCardSound from "@/assets/move-card.wav";
 import { closeWebSocket, initializeWebSocket } from "@/plugins/websocket";
 import { usePermissionStore, PERMISSIONS } from "@/stores/permissionStore";
 import { useKanbanStore } from "@/stores/kanbanStore";
-import RequestDealModal from "../modals/RequestDealModal.vue";
-
 export default {
   name: "CrmDealKanbanBoardDeals",
   components: {
@@ -339,7 +328,6 @@ export default {
     DealDataCard,
     // UpdateStage,
     FilterStageModal,
-    RequestDealModal,
   },
   props: {
     stages: {
@@ -357,10 +345,6 @@ export default {
     searchVal: {
       type: String,
       default: "",
-    },
-    search_result: {
-      type: String,
-      default: null,
     },
   },
   setup(props, { emit }) {
@@ -486,25 +470,79 @@ export default {
         const deal = event.added.element;
         const oldStageId = deal.stage_id;
 
-        const newStageInDisplay = displayStages.value.find(
-          (stage) => stage.id === newStageId
-        );
-        if (newStageInDisplay) {
-          const dealInNewStage = newStageInDisplay.deals.find(
-            (d) => d.id === deal.id
-          );
-          if (dealInNewStage) {
-            dealInNewStage.stage_id = newStageId;
-          }
-        }
+        // Store original stage_id before making any changes
+        const originalStageId = deal.stage_id;
+
+        // DON'T update the stage_id yet - wait for API success
+        // const newStageInDisplay = displayStages.value.find(
+        //   (stage) => stage.id === newStageId
+        // );
+        // if (newStageInDisplay) {
+        //   const dealInNewStage = newStageInDisplay.deals.find(
+        //     (d) => d.id === deal.id
+        //   );
+        //   if (dealInNewStage) {
+        //     dealInNewStage.stage_id = newStageId; // Remove this - do it after API success
+        //   }
+        // }
 
         try {
           const request = await updateDealStage(deal.id, newStageId);
           if (request.status !== 200) {
             console.error("Error updating deal stage:", request.data.message);
             toast.error(request.data.message);
+
+            // API failed - revert the visual move that already happened
+            const newStageInDisplay = displayStages.value.find(
+              (s) => s.id === newStageId
+            );
+            const dealIndexInNewStage = newStageInDisplay
+              ? newStageInDisplay.deals.findIndex((d) => d.id === deal.id)
+              : -1;
+
+            if (newStageInDisplay && dealIndexInNewStage !== -1) {
+              // Remove deal from new stage
+              const [revertedDeal] = newStageInDisplay.deals.splice(
+                dealIndexInNewStage,
+                1
+              );
+
+              // Put it back in old stage
+              const oldStageInDisplay = displayStages.value.find(
+                (s) => s.id === oldStageId
+              );
+              if (oldStageInDisplay) {
+                oldStageInDisplay.deals.unshift(revertedDeal);
+                revertedDeal.stage_id = originalStageId; // Restore original stage_id
+              } else {
+                const oldParentStageInDisplay = displayStages.value.find(
+                  (s) => s.parent_id === oldStageId
+                );
+                if (oldParentStageInDisplay) {
+                  oldParentStageInDisplay.deals.unshift(revertedDeal);
+                  revertedDeal.stage_id = originalStageId;
+                }
+              }
+            }
+
+            // Don't update counts here - the visual move was reverted, so counts should be unchanged
             return;
           }
+
+          // API succeeded - now update the stage_id and counts
+          const newStageInDisplay = displayStages.value.find(
+            (stage) => stage.id === newStageId
+          );
+          if (newStageInDisplay) {
+            const dealInNewStage = newStageInDisplay.deals.find(
+              (d) => d.id === deal.id
+            );
+            if (dealInNewStage) {
+              dealInNewStage.stage_id = newStageId; // Now it's safe to update
+            }
+          }
+
+          // Update counts after successful API call
           const oldStageInDisplay = displayStages.value.find(
             (s) => s.id === oldStageId
           );
@@ -520,8 +558,10 @@ export default {
           if (newStageInDisplayForCount)
             newStageInDisplayForCount.deal_count =
               (newStageInDisplayForCount.deal_count || 0) + 1;
+
           playSound();
         } catch (error) {
+          // Network error or other exception
           const newStageInDisplayToRevert = displayStages.value.find(
             (s) => s.id === newStageId
           );
@@ -539,33 +579,19 @@ export default {
             );
             if (oldStageInDisplay) {
               oldStageInDisplay.deals.unshift(revertedDeal);
-              revertedDeal.stage_id = oldStageId;
+              revertedDeal.stage_id = originalStageId; // Use original stage_id
             } else {
               const oldParentStageInDisplay = displayStages.value.find(
                 (s) => s.parent_id === oldStageId
               );
               if (oldParentStageInDisplay) {
                 oldParentStageInDisplay.deals.unshift(revertedDeal);
-                revertedDeal.stage_id = oldStageId;
+                revertedDeal.stage_id = originalStageId;
               }
             }
           }
 
-          const oldStageInDisplayForRevertCount = displayStages.value.find(
-            (s) => s.id === oldStageId
-          );
-          const newStageInDisplayForRevertCount = displayStages.value.find(
-            (s) => s.id === newStageId
-          );
-          if (oldStageInDisplayForRevertCount)
-            oldStageInDisplayForRevertCount.deal_count =
-              (oldStageInDisplayForRevertCount.deal_count || 0) + 1;
-          if (newStageInDisplayForRevertCount)
-            newStageInDisplayForRevertCount.deal_count = Math.max(
-              0,
-              newStageInDisplayForRevertCount.deal_count - 1
-            );
-
+          // Don't update counts here either - the visual move was reverted
           toast.error(error.message);
         }
       }
@@ -593,18 +619,20 @@ export default {
         if (dealData.data) {
           const deal = dealData.data.data;
           selectedStageId.value = deal.stage_id;
-          const currentStage = displayStages.value.find(
-            (stage) => stage.id === (currentStageId || deal.stage_id)
-          );
-          const deal_index = currentStage.deals.findIndex(
-            (d) => d.id === dealId
-          );
-          if (deal_index !== -1) {
-            currentStage.deals[deal_index].view_count += 1;
-          }
+          const checkStageLoaded = () => {
+            if (isTasksView.value) {
+              return displayStages.value.find(
+                (stage) => stage.id === currentStageId
+              );
+            } else {
+              return displayStages.value.some(
+                (stage) => stage.id === deal.stage_id
+              );
+            }
+          };
           const waitForStage = () => {
             return new Promise((resolve) => {
-              if (currentStage) {
+              if (checkStageLoaded()) {
                 resolve();
               } else {
                 console.warn(
@@ -862,11 +890,7 @@ export default {
     const handleTaskEvent = (event) => {
       const { action, data } = event;
       if (action === "create") {
-        if (route.path === "/crm-tasks") {
-          handleTaskCreate(event);
-        } else {
-          tasks.value.push(data);
-        }
+        tasks.value.push(data);
       } else if (action === "update") {
         const index = tasks.value.findIndex((t) => t.id === data.id);
         if (index !== -1) {
@@ -877,21 +901,6 @@ export default {
       } else if (action === "delete") {
         tasks.value = tasks.value.filter((t) => t.id !== data.id);
       }
-    };
-
-    const handleTaskCreate = (event) => {
-      console.log("handleTaskCreate", event);
-      // const task = event.data;
-      // if (task.stage_id) {
-      //   const stageIndex = displayStages.value.findIndex(
-      //     (stage) => stage.id === task.stage_id
-      //   );
-      //   if (stageIndex !== -1) {
-      //     displayStages.value[stageIndex].deals.push(task);
-      //     displayStages.value[stageIndex].deal_count =
-      //       (displayStages.value[stageIndex].deal_count || 0) + 1;
-      //   }
-      // }
     };
 
     const handleCommentEvent = (event) => {
@@ -1047,10 +1056,8 @@ export default {
             newStage?.value?.deals.find((d) => d.id == dealId) ??
             oldStage?.value?.deals.find((d) => d.id == dealId);
           console.log("deal", deal);
-
           const response = await updateDealStage(dealId, newStageId);
           console.log("response", response.status);
-
           if (response.status !== 200) {
             console.error("Error updating deal stage:", response.data.message);
             toast.error(response.data.message);
@@ -1073,7 +1080,6 @@ export default {
       } catch (error) {
         console.error("Error updating deal stage:", error);
 
-        // Revert the deal back to original stage
         const oldStage = props.stages.find((s) => s.id === oldStageId);
         if (oldStage) {
           const currentStage = props.stages.find((s) => s.id === newStageId);
@@ -1083,35 +1089,25 @@ export default {
             );
             if (dealIndex !== -1) {
               const [removedDeal] = currentStage.deals.splice(dealIndex, 1);
-              // Restore original stage_id
-              removedDeal.stage_id = oldStageId;
               oldStage.deals.push(removedDeal);
             }
           }
         }
-
-        // CORRECTED: Revert the deal counts properly
-        // When reverting, we need to:
-        // - Increase the old stage count (because deal is going back)
-        // - Decrease the new stage count (because deal is leaving)
-        const oldStageInDisplay = displayStages.value.find(
+        const oldStageInDisplayForRevertCount = displayStages.value.find(
           (s) => s.id === oldStageId
         );
-        const newStageInDisplay = displayStages.value.find(
+        const newStageAfterRevertInDisplay = displayStages.value.find(
           (s) => s.id === newStageId
         );
 
-        // Revert counts: add back to old stage, subtract from new stage
-        if (oldStageInDisplay) {
-          oldStageInDisplay.deal_count =
-            (oldStageInDisplay.deal_count || 0) + 1;
-        }
-        if (newStageInDisplay) {
-          newStageInDisplay.deal_count = Math.max(
+        if (oldStageInDisplayForRevertCount)
+          oldStageInDisplayForRevertCount.deal_count =
+            (oldStageInDisplayForRevertCount.deal_count || 0) + 1;
+        if (newStageAfterRevertInDisplay)
+          newStageAfterRevertInDisplay.deal_count = Math.max(
             0,
-            (newStageInDisplay.deal_count || 0) - 1
+            newStageAfterRevertInDisplay.deal_count - 1
           );
-        }
 
         toast.error(error.message);
       }
@@ -1240,9 +1236,17 @@ export default {
       return filteredDeals.value[stageId] || stage.deals;
     });
 
-    const openRequestDealModal = () => {
-      const modal = new Modal(document.getElementById("requestDealModal"));
-      modal.show();
+    const handleRequestDeal = async () => {
+      try {
+        const response = await createApproval(props.searchVal);
+        if (response.status === 200 || response.status === 201) {
+          toast.success(response.data.message);
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        toast.error(error.response?.data?.message);
+      }
     };
 
     onMounted(async () => {
@@ -1360,170 +1364,7 @@ export default {
       dealUpdateEvent(data, "Deal updated successfully");
     };
 
-    const getTaskStageId = (due_date) => {
-      let stage_id = null;
-      const duedate = due_date ? new Date(due_date) : null;
-      const today = new Date();
-      const todayStr = today.toISOString().slice(0, 10);
-
-      if (!duedate) {
-        console.log("Idle");
-        stage_id = props.stages.find((s) => s.name_key === "Idle")?.id;
-      } else {
-        const duedateStr = duedate.toISOString().slice(0, 10);
-
-        if (duedateStr < todayStr) {
-          console.log("Overdue");
-          stage_id = props.stages.find((s) => s.name_key === "Overdue")?.id;
-        } else if (duedateStr === todayStr) {
-          console.log("Due Today");
-          stage_id = props.stages.find((s) => s.name_key === "Due Today")?.id;
-        } else {
-          // Calculate date ranges for tomorrow, this week, next week
-          const tomorrow = new Date(today);
-          tomorrow.setDate(today.getDate() + 1);
-          const tomorrowStr = tomorrow.toISOString().slice(0, 10);
-
-          const nextWeek = new Date(today);
-          // Set nextWeek to the start of next week (Monday)
-          const dayOfWeek = today.getDay(); // 0 (Sun) - 6 (Sat)
-          const daysUntilNextMonday = (8 - dayOfWeek) % 7 || 7;
-          nextWeek.setDate(today.getDate() + daysUntilNextMonday);
-          const nextWeekStr = nextWeek.toISOString().slice(0, 10);
-
-          const twoWeeks = new Date(today);
-          const daysUntilSecondMonday = daysUntilNextMonday + 7;
-          twoWeeks.setDate(today.getDate() + daysUntilSecondMonday);
-          const twoWeeksStr = twoWeeks.toISOString().slice(0, 10);
-
-          if (duedateStr === tomorrowStr) {
-            console.log("Due Tomorrow");
-            stage_id = props.stages.find(
-              (s) => s.name_key === "Due This Week"
-            )?.id;
-          } else if (duedateStr > todayStr && duedateStr < nextWeekStr) {
-            console.log("Due This Week");
-            stage_id = props.stages.find(
-              (s) => s.name_key === "Due This Week"
-            )?.id;
-          } else if (duedateStr >= nextWeekStr && duedateStr < twoWeeksStr) {
-            console.log("Due Next Week");
-            stage_id = props.stages.find(
-              (s) => s.name_key === "Due Next Week"
-            )?.id;
-          } else if (duedateStr >= twoWeeksStr) {
-            console.log("Due Later");
-            stage_id = props.stages.find((s) => s.name_key === "Due Later")?.id;
-          } else {
-            console.error("No matching stage found for due date");
-          }
-        }
-      }
-      return stage_id;
-    };
-
-    const handleTaskViewTaskAdd = (data) => {
-      const deal_id = selectedDeal.value.id;
-      const stageId = getTaskStageId(data.duedate);
-      console.log("Stage ID for new task:", stageId);
-      const stage = ref(displayStages.value.find((s) => s.id === stageId));
-      if (stage.value) {
-        const deal = displayStages.value
-          .flatMap((s) => s.deals)
-          .find((d) => d.id === deal_id);
-        console.log("task count", selectedDeal.value.tasks.length);
-        if (selectedDeal.value.tasks.length < 1) {
-          for (const stage of displayStages.value) {
-            const index = stage.deals.findIndex((deal) => deal.id === deal_id);
-            if (index !== -1) {
-              return stage.deals.splice(index, 1)[0]; // returns the removed deal
-            }
-          }
-        }
-
-        if (deal) {
-          stage.value.deals.push(deal);
-          stage.value.deal_count = (stage.value.deal_count || 0) + 1;
-          toast.success("Task added successfully");
-        }
-      }
-    };
-
-    const handleTaskViewTaskUpdate = (data) => {
-      console.log("handleTaskViewTaskUpdate in kanban comp", data);
-      const deal_id = selectedDeal.value.id;
-      const stageId = getTaskStageId(data.new_duedate);
-      console.log("new stage ID for updated task:", stageId);
-      const stage = ref(displayStages.value.find((s) => s.id === stageId));
-      const oldStageId = getTaskStageId(data.old_duedate);
-      const old_stage = ref(
-        displayStages.value.find((s) => s.id === oldStageId)
-      );
-      console.log("old stage ID for updated task:", oldStageId);
-      if (stage.value && old_stage.value) {
-        const deal = displayStages.value
-          .flatMap((s) => s.deals)
-          .find((d) => d.id === deal_id);
-        if (deal) {
-          const index = old_stage.value.deals.findIndex(
-            (d) => d.id === deal_id
-          );
-          if (index !== -1) {
-            old_stage.value.deals.splice(index, 1);
-            old_stage.value.deal_count -= 1;
-            stage.value.deals.unshift(deal);
-            stage.value.deal_count += 1;
-            toast.success("Task updated successfully");
-          }
-        }
-      }
-    };
-
-    const handleTaskViewTaskFinish = (duedate) => {
-      const oldStageId = getTaskStageId(duedate);
-      const old_stage = ref(
-        displayStages.value.find((s) => s.id === oldStageId)
-      );
-      if (old_stage.value) {
-        const index = old_stage.value.deals.findIndex(
-          (d) => d.id === selectedDeal.value.id
-        );
-        old_stage.value.deal_count -= 1;
-        old_stage.value.deals.splice(index, 1);
-      }
-    };
-
-    const handleHighlight = async (deal_id) => {
-      for (const stage of displayStages.value) {
-        const stageIndex = displayStages.value.findIndex(
-          (s) => s.id === stage.id
-        );
-        const index = stage.deals.findIndex((deal) => deal.id === deal_id);
-        if (index !== -1) {
-          console.log("found index", index);
-          displayStages.value[stageIndex].deals[index].highlighted =
-            !displayStages.value[stageIndex].deals[index].highlighted;
-          console.log(
-            "highlighted",
-            displayStages.value[stageIndex].deals[index].highlighted
-          );
-          break;
-        }
-      }
-      const response = await toggleHighlight(deal_id);
-      if (response.status === 200) {
-        toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
-    };
-
     return {
-      openRequestDealModal,
-      handleHighlight,
-      handleTaskViewTaskFinish,
-      handleTaskViewTaskAdd,
-      handleTaskViewTaskUpdate,
       handleDealSuggestion,
       fetchPackages,
       packages,
@@ -1573,6 +1414,7 @@ export default {
       allStages,
       selectedStageId,
       allDealsCount,
+      handleRequestDeal,
       updateDeal,
     };
   },
