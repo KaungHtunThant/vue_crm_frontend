@@ -1047,8 +1047,10 @@ export default {
             newStage?.value?.deals.find((d) => d.id == dealId) ??
             oldStage?.value?.deals.find((d) => d.id == dealId);
           console.log("deal", deal);
+
           const response = await updateDealStage(dealId, newStageId);
           console.log("response", response.status);
+
           if (response.status !== 200) {
             console.error("Error updating deal stage:", response.data.message);
             toast.error(response.data.message);
@@ -1071,6 +1073,7 @@ export default {
       } catch (error) {
         console.error("Error updating deal stage:", error);
 
+        // Revert the deal back to original stage
         const oldStage = props.stages.find((s) => s.id === oldStageId);
         if (oldStage) {
           const currentStage = props.stages.find((s) => s.id === newStageId);
@@ -1080,25 +1083,35 @@ export default {
             );
             if (dealIndex !== -1) {
               const [removedDeal] = currentStage.deals.splice(dealIndex, 1);
+              // Restore original stage_id
+              removedDeal.stage_id = oldStageId;
               oldStage.deals.push(removedDeal);
             }
           }
         }
-        const oldStageInDisplayForRevertCount = displayStages.value.find(
+
+        // CORRECTED: Revert the deal counts properly
+        // When reverting, we need to:
+        // - Increase the old stage count (because deal is going back)
+        // - Decrease the new stage count (because deal is leaving)
+        const oldStageInDisplay = displayStages.value.find(
           (s) => s.id === oldStageId
         );
-        const newStageAfterRevertInDisplay = displayStages.value.find(
+        const newStageInDisplay = displayStages.value.find(
           (s) => s.id === newStageId
         );
 
-        if (oldStageInDisplayForRevertCount)
-          oldStageInDisplayForRevertCount.deal_count =
-            (oldStageInDisplayForRevertCount.deal_count || 0) + 1;
-        if (newStageAfterRevertInDisplay)
-          newStageAfterRevertInDisplay.deal_count = Math.max(
+        // Revert counts: add back to old stage, subtract from new stage
+        if (oldStageInDisplay) {
+          oldStageInDisplay.deal_count =
+            (oldStageInDisplay.deal_count || 0) + 1;
+        }
+        if (newStageInDisplay) {
+          newStageInDisplay.deal_count = Math.max(
             0,
-            newStageAfterRevertInDisplay.deal_count - 1
+            (newStageInDisplay.deal_count || 0) - 1
           );
+        }
 
         toast.error(error.message);
       }
