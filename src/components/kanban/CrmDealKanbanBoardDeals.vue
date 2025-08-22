@@ -469,8 +469,6 @@ export default {
       if (event.added) {
         const deal = event.added.element;
         const oldStageId = deal.stage_id;
-
-        // Store original stage_id before making any changes
         const originalStageId = deal.stage_id;
 
         // DON'T update the stage_id yet - wait for API success
@@ -491,8 +489,6 @@ export default {
           if (request.status !== 200) {
             console.error("Error updating deal stage:", request.data.message);
             toast.error(request.data.message);
-
-            // API failed - revert the visual move that already happened
             const newStageInDisplay = displayStages.value.find(
               (s) => s.id === newStageId
             );
@@ -501,19 +497,16 @@ export default {
               : -1;
 
             if (newStageInDisplay && dealIndexInNewStage !== -1) {
-              // Remove deal from new stage
               const [revertedDeal] = newStageInDisplay.deals.splice(
                 dealIndexInNewStage,
                 1
               );
-
-              // Put it back in old stage
               const oldStageInDisplay = displayStages.value.find(
                 (s) => s.id === oldStageId
               );
               if (oldStageInDisplay) {
                 oldStageInDisplay.deals.unshift(revertedDeal);
-                revertedDeal.stage_id = originalStageId; // Restore original stage_id
+                revertedDeal.stage_id = originalStageId; 
               } else {
                 const oldParentStageInDisplay = displayStages.value.find(
                   (s) => s.parent_id === oldStageId
@@ -524,12 +517,8 @@ export default {
                 }
               }
             }
-
-            // Don't update counts here - the visual move was reverted, so counts should be unchanged
             return;
           }
-
-          // API succeeded - now update the stage_id and counts
           const newStageInDisplay = displayStages.value.find(
             (stage) => stage.id === newStageId
           );
@@ -538,11 +527,9 @@ export default {
               (d) => d.id === deal.id
             );
             if (dealInNewStage) {
-              dealInNewStage.stage_id = newStageId; // Now it's safe to update
+              dealInNewStage.stage_id = newStageId; 
             }
           }
-
-          // Update counts after successful API call
           const oldStageInDisplay = displayStages.value.find(
             (s) => s.id === oldStageId
           );
@@ -561,7 +548,6 @@ export default {
 
           playSound();
         } catch (error) {
-          // Network error or other exception
           const newStageInDisplayToRevert = displayStages.value.find(
             (s) => s.id === newStageId
           );
@@ -579,7 +565,7 @@ export default {
             );
             if (oldStageInDisplay) {
               oldStageInDisplay.deals.unshift(revertedDeal);
-              revertedDeal.stage_id = originalStageId; // Use original stage_id
+              revertedDeal.stage_id = originalStageId; 
             } else {
               const oldParentStageInDisplay = displayStages.value.find(
                 (s) => s.parent_id === oldStageId
@@ -590,8 +576,6 @@ export default {
               }
             }
           }
-
-          // Don't update counts here either - the visual move was reverted
           toast.error(error.message);
         }
       }
