@@ -82,7 +82,7 @@
                   @click.stop="hiddenStages[stage.id] = true"
                 >
                   <i
-                    class="fa-solid fa-minus text-white"
+                     class="fa-solid fa-minus text-dark"
                     style="font-size: 12px"
                   ></i>
                 </button>
