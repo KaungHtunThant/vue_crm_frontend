@@ -82,7 +82,7 @@
                   @click.stop="hiddenStages[stage.id] = true"
                 >
                   <i
-                     class="fa-solid fa-minus text-dark"
+                    class="fa-solid fa-minus text-dark"
                     style="font-size: 12px"
                   ></i>
                 </button>
@@ -204,6 +204,7 @@
                     :stage-id="deal.stage_id"
                     :all-stages="allStages"
                     @open-deal-data-card="openDealDataCard(deal.id, stage.id)"
+                    @toggle-highlight="handleHighlight(deal.id)"
                   />
                 </template>
               </draggable>
@@ -310,6 +311,7 @@ import {
   getAllPackages,
   getAvailableStages,
   createApproval,
+  toggleHighlight,
 } from "@/plugins/services/authService";
 import { useI18n } from "vue-i18n";
 import Cookies from "js-cookie";
@@ -506,7 +508,7 @@ export default {
               );
               if (oldStageInDisplay) {
                 oldStageInDisplay.deals.unshift(revertedDeal);
-                revertedDeal.stage_id = originalStageId; 
+                revertedDeal.stage_id = originalStageId;
               } else {
                 const oldParentStageInDisplay = displayStages.value.find(
                   (s) => s.parent_id === oldStageId
@@ -527,7 +529,7 @@ export default {
               (d) => d.id === deal.id
             );
             if (dealInNewStage) {
-              dealInNewStage.stage_id = newStageId; 
+              dealInNewStage.stage_id = newStageId;
             }
           }
           const oldStageInDisplay = displayStages.value.find(
@@ -565,7 +567,7 @@ export default {
             );
             if (oldStageInDisplay) {
               oldStageInDisplay.deals.unshift(revertedDeal);
-              revertedDeal.stage_id = originalStageId; 
+              revertedDeal.stage_id = originalStageId;
             } else {
               const oldParentStageInDisplay = displayStages.value.find(
                 (s) => s.parent_id === oldStageId
@@ -1347,8 +1349,28 @@ export default {
       console.log("updateDeal in kanban comp", data);
       dealUpdateEvent(data, "Deal updated successfully");
     };
+    const handleHighlight = async (deal_id) => {
+      for (const stage of displayStages.value) {
+        const stageIndex = displayStages.value.findIndex(
+          (s) => s.id === stage.id
+        );
+        const index = stage.deals.findIndex((deal) => deal.id === deal_id);
+        if (index !== -1) {
+          displayStages.value[stageIndex].deals[index].highlighted =
+            !displayStages.value[stageIndex].deals[index].highlighted;
+          break;
+        }
+      }
+      const response = await toggleHighlight(deal_id);
+      if (response.status === 200) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    };
 
     return {
+      handleHighlight,
       handleDealSuggestion,
       fetchPackages,
       packages,

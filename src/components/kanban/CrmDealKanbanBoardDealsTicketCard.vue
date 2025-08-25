@@ -351,6 +351,9 @@ export default {
     const currentStageIcon = computed(() => {
       return currentStage.value ? currentStage.value.icon : "layer-group";
     });
+    const handleHighlight = async () => {
+      emit("toggle-highlight", props.deal.id);
+    };
     return {
       t,
       formatDate,
@@ -367,6 +370,7 @@ export default {
       currentStageName,
       currentStageColor,
       currentStageIcon,
+      handleHighlight,
     };
   },
   methods: {},
