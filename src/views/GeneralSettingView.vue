@@ -393,7 +393,7 @@
               <div class="text-center loading-container">
                 <div class="position-relative d-inline-block">
                   <img
-                    src="@/assets/Mediceva-Logo.png"
+                    src="@/assets/new-nokta-logo.png"
                     class="loading-logo"
                     style="width: 50px; height: 50px"
                   />
@@ -520,7 +520,7 @@
               <div class="text-center loading-container">
                 <div class="position-relative d-inline-block">
                   <img
-                    src="@/assets/Mediceva-Logo.png"
+                    src="@/assets/new-nokta-logo.png"
                     class="loading-logo"
                     style="width: 50px; height: 50px"
                   />
@@ -543,7 +543,7 @@
 import { useToast } from "vue-toastification";
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
-import defaultImage from "@/assets/Mediceva-Logo.png";
+import defaultImage from "@/assets/new-nokta-logo.png";
 import { useI18n } from "vue-i18n";
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import EasyDataTable from "vue3-easy-data-table";

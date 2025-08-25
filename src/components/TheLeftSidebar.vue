@@ -6,7 +6,7 @@
     <div class="d-flex justify-content-start align-items-center ps-2 mt-3">
       <div class="imgLogo me-2">
         <img
-          src="@/assets/Mediceva-Logo.png"
+          src="@/assets/new-nokta-logo.png"
           style="width: 35px; height: 35px"
           alt=""
         />

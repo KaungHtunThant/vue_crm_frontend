@@ -86,7 +86,7 @@
         <div class="text-center loading-container">
           <div class="position-relative d-inline-block">
             <img
-              src="@/assets/Mediceva-Logo.png"
+              src="@/assets/new-nokta-logo.png"
               class="loading-logo"
               style="width: 50px; height: 50px"
             />

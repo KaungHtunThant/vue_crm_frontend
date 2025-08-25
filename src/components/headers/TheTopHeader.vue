@@ -6,7 +6,7 @@
 
         <img
           class="me-2 rounded-1 p-1 btnHeaderBg"
-          src="@/assets/Mediceva-Logo.png"
+          src="@/assets/new-nokta-logo.png"
           alt=""
         />
         <span
