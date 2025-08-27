@@ -8,7 +8,7 @@
     style="z-index: 10000"
     v-on:="{'hidden.bs.modal': resetModal}"
   >
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content pt-3">
         <div class="modal-body text-center text-dark">
           <div class="modal1" v-if="!showModal2">
@@ -38,11 +38,11 @@
             <h4 class="mt-5">
               {{ $t("kanban-trash-modal2-choosebutton-heading") }}
             </h4>
-            <div class="btn-group mt-2">
+            <div class="">
               <button
                 v-for="tag in trash_stages"
                 :key="tag.id"
-                class="btn btn-danger"
+                class="btn btn-danger rounded-0 mt-2"
                 @click="selected_stage_id = tag.id"
                 :style="{
                   backgroundColor:
@@ -234,5 +234,11 @@ export default {
 }
 textarea {
   width: 100% !important;
+}
+@media (min-width: 800px) {
+  .modal-dialog {
+    width: 85% !important;
+    max-width: 85% !important;
+  }
 }
 </style>
