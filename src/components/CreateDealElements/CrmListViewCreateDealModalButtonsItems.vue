@@ -1,11 +1,15 @@
 <template>
   <div class="modal-footer d-flex justify-content-between align-items-center">
     <div class="btns d-flex justify-content-end align-items-center gap-3">
-      <button type="submit" class="btn btn-primary">
+      <button type="submit" class="btn btn-success text-white">
         {{ t("kanban-modal-create-button-submit") }}
       </button>
     </div>
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+    <button
+      type="button"
+      class="btn btn-danger text-white"
+      data-bs-dismiss="modal"
+    >
       {{ t("kanban-modal-create-button-close") }}
     </button>
   </div>

@@ -31,6 +31,8 @@
           <filter-modal-buttons-items
             @reset-filter="resetFilter"
             @close-modal="closeFilterModal"
+            :isApplyingFilters="isApplyingFilters"
+            :isResettingFilters="isResettingFilters"
           />
         </form>
       </div>
@@ -52,15 +54,19 @@ export default {
   props: {
     modelValue: { type: Object, required: true },
     selectedStatuses: { type: Array, required: true, default: () => [] },
+    applyActualFiltersProp: { type: Function, required: true },
+    resetActualFiltersProp: { type: Function, required: true },
   },
-  emits: ["update:modelValue", "apply-filters", "reset-filter"],
-
+  emits: ["update:modelValue"],
+  // emits: ["update:modelValue", "apply-filters", "reset-filter"],
   setup(props, { emit }) {
     const { t } = useI18n();
     const toast = useToast();
     const headerFilterData = ref({ ...props.modelValue });
     const headerSelectedStatuses = ref([]);
     const filterModal = ref(null);
+    const isApplyingFilters = ref(false);
+    const isResettingFilters = ref(false);
 
     watch(
       () => props.modelValue,
@@ -99,18 +105,22 @@ export default {
       }
     };
 
-    const submitFilters = () => {
+    const submitFilters = async () => {
       try {
+        isApplyingFilters.value = true;
         if (Array.isArray(headerSelectedStatuses.value)) {
           headerFilterData.value.status = [...headerSelectedStatuses.value];
         }
 
-        emit("update:modelValue", { ...headerFilterData.value });
-        emit("apply-filters", { ...headerFilterData.value });
+        await props.applyActualFiltersProp({ ...headerFilterData.value });
 
-        // closeFilterModal();
+        emit("update:modelValue", { ...headerFilterData.value });
+        // emit("apply-filters", { ...headerFilterData.value });
+        closeFilterModal();
       } catch (error) {
         toast.error(t("error.applyFilters"), { timeout: 3000 });
+      } finally {
+        isApplyingFilters.value = false;
       }
     };
 
@@ -121,8 +131,9 @@ export default {
       }
     };
 
-    const resetFilter = () => {
+    const resetFilter = async () => {
       try {
+        isResettingFilters.value = true;
         const emptyFilters = {
           package_id: null,
           updated_at_start: null,
@@ -136,10 +147,15 @@ export default {
         };
         headerFilterData.value = emptyFilters;
         headerSelectedStatuses.value = [];
+
+        await props.resetActualFiltersProp();
+
         emit("update:modelValue", emptyFilters);
-        emit("reset-filter");
+        closeFilterModal();
       } catch (error) {
         toast.error(t("error.resetFilters"), { timeout: 3000 });
+      } finally {
+        isResettingFilters.value = false;
       }
     };
 
@@ -161,6 +177,8 @@ export default {
       resetFilter,
       t,
       filterModal,
+      isApplyingFilters,
+      isResettingFilters,
     };
   },
 };

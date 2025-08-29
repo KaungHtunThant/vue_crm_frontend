@@ -1,16 +1,26 @@
 <template>
   <div class="modal-footer d-flex justify-content-between align-items-center">
     <div class="btns d-flex justify-content-end align-items-center gap-3">
-      <button type="submit" class="btn btn-primary" @click="submitFilters">
+      <button
+        type="submit"
+        class="btn btn-success text-white"
+        data-bs-dismiss="modal"
+        @click="submitFilters"
+      >
         {{ t("crmlist-modal-filter-button-submit") }}
       </button>
-      <button type="button" class="btn btn-warning" @click="removeFilter">
+      <button
+        type="button"
+        class="btn btn-warning"
+        data-bs-dismiss="modal"
+        @click="removeFilter"
+      >
         {{ t("crmlist-modal-filter-button-reset") }}
       </button>
     </div>
     <button
       type="button"
-      class="btn btn-secondary"
+      class="btn btn-danger text-white"
       data-bs-dismiss="modal"
       @click="closeFilterModal"
     >

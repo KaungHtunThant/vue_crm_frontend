@@ -66,14 +66,14 @@
         <div class="modal-footer">
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-danger text-white"
             @click="$emit('close')"
           >
             {{ $t("settings-role-modal-add-button-cancel") }}
           </button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="btn btn-success text-white"
             @click="save"
             :disabled="!role.name"
           >

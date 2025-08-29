@@ -32,14 +32,9 @@
               />
             </div>
           </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              {{ t("documents-modal-createfolder-button-close") }}
-            </button>
+          <div
+            class="modal-footer d-flex justify-content-between align-items-center"
+          >
             <button
               type="submit"
               class="btn btn-primary"
@@ -50,6 +45,13 @@
                   ? t("loading")
                   : t("documents-modal-createfolder-button-submit")
               }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              {{ t("documents-modal-createfolder-button-close") }}
             </button>
           </div>
         </form>

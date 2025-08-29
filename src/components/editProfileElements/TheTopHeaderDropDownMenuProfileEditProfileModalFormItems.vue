@@ -72,7 +72,7 @@ export default {
     return {
       localName: "",
       localEmail: "",
-      localImage: require("@/assets/default-user-image.jpg"),
+      localImage: require("@/assets/default-avatar-profile.webp"),
     };
   },
   methods: {
@@ -93,7 +93,8 @@ export default {
     this.localName = this.localUserData?.name;
     this.localEmail = this.localUserData?.email;
     this.localImage =
-      this.localUserData?.image || require("@/assets/default-user-image.jpg");
+      this.localUserData?.image ||
+      require("@/assets/default-avatar-profile.webp");
   },
   watch: {
     userData(newVal) {
@@ -101,7 +102,7 @@ export default {
       this.localName = newVal.name;
       this.localEmail = newVal.email;
       this.localImage =
-        newVal.image || require("@/assets/default-user-image.jpg");
+        newVal.image || require("@/assets/default-avatar-profile.webp");
     },
   },
 };
