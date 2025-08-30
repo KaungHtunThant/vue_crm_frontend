@@ -348,6 +348,10 @@ export default {
       type: String,
       default: "",
     },
+    filters: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props, { emit }) {
     const isIdle = ref(false);
@@ -412,7 +416,13 @@ export default {
 
     const fetchChildStages = async (parentId) => {
       try {
-        const response = await getStagesChildren(parentId);
+        const formattedFilters = formatFilters();
+        const response = await getStagesChildren(
+          parentId,
+          10,
+          0,
+          formattedFilters
+        );
 
         if (response.data && response.data.data) {
           const childStages = response.data.data;
@@ -426,6 +436,70 @@ export default {
         throw error;
       }
     };
+    const formatFilters = () => {
+      const formattedFilters = {};
+
+      if (props.filters.source_id) {
+        formattedFilters["filters[source_id]"] = props.filters.source_id;
+      }
+      if (props.filters.stage_id) {
+        formattedFilters["filters[stage_id]"] = props.filters.stage_id;
+      }
+      if (props.filters.user_id) {
+        formattedFilters["filters[assigned_to_id]"] = props.filters.user_id;
+      }
+      if (props.filters.created_at_start) {
+        formattedFilters["filters[created_date_start]"] =
+          props.filters.created_at_start;
+      }
+      if (props.filters.created_at_end) {
+        formattedFilters["filters[created_date_end]"] =
+          props.filters.created_at_end;
+      }
+      if (props.filters.updated_at_start) {
+        formattedFilters["filters[updated_date_start]"] =
+          props.filters.updated_at_start;
+      }
+      if (props.filters.updated_at_end) {
+        formattedFilters["filters[updated_date_end]"] =
+          props.filters.updated_at_end;
+      }
+      if (Array.isArray(props.filters.status)) {
+        if (props.filters.status.includes("unassigned")) {
+          formattedFilters["filters[unassigned]"] = 1;
+        }
+        if (props.filters.status.includes("no_comments")) {
+          formattedFilters["filters[uncommented]"] = 1;
+        }
+        if (props.filters.status.includes("no_task")) {
+          formattedFilters["filters[no_tasks]"] = 1;
+        }
+        if (props.filters.status.includes("overdue")) {
+          formattedFilters["filters[overdue]"] = 1;
+        }
+        if (props.filters.status.includes("new")) {
+          formattedFilters["filters[new]"] = 1;
+        }
+        if (props.filters.status.includes("reclaimed")) {
+          formattedFilters["filters[reclaimed]"] = 1;
+        }
+        if (props.filters.status.includes("admin_comments")) {
+          formattedFilters["filters[admin_comments]"] = 1;
+        }
+      }
+      if (props.filters.sort_by) {
+        formattedFilters["sort_by"] = props.filters.sort_by;
+      }
+      if (props.filters.sort_order) {
+        formattedFilters["sort_order"] = props.filters.sort_order;
+      }
+
+      if (props.searchVal) {
+        formattedFilters.search = props.searchVal;
+      }
+
+      return formattedFilters;
+    };
 
     const toggleExpandStage = async (parentStage) => {
       const isExpanded = expandedStages.value[parentStage.id];
@@ -438,14 +512,21 @@ export default {
         const stageIndex = displayStages.value.findIndex(
           (s) => s.id === parentStage.id
         );
-        const parentStageDeals = await fetchAdditionalDealsByStageId(
-          parentStage.id,
-          10,
-          0,
-          []
-        );
-        if (parentStageDeals.data) {
-          displayStages.value[stageIndex].deals = parentStageDeals.data.data;
+        try {
+          const formattedFilters = formatFilters();
+          console.log("filters applied ", formatFilters);
+          const parentStageDeals = await fetchAdditionalDealsByStageId(
+            parentStage.id,
+            10,
+            0,
+            formattedFilters
+          );
+          if (parentStageDeals?.data?.data) {
+            displayStages.value[stageIndex].deals = parentStageDeals.data.data;
+          }
+        } catch (error) {
+          console.error("Error fetching parent stage deals:", error);
+          toast.error("Failed to load parent stage deals");
         }
       } else {
         expandedStages.value[parentStage.id] = true;
@@ -961,24 +1042,30 @@ export default {
         return;
       if (scrollTop + clientHeight >= scrollHeight - 1) {
         reachedBottom.value = true;
-        fetchAdditionalDealsByStageId(
-          id,
-          10,
-          displayStages.value[stageIndex].deals.length,
-          []
-        )
-          .then((additional_deals) => {
-            if (additional_deals.data) {
-              if (stageIndex !== -1) {
-                displayStages.value[stageIndex].deals.push(
-                  ...additional_deals.data.data
-                );
-              }
+        try {
+          const formattedFilters = formatFilters();
+          const additional_deals = await fetchAdditionalDealsByStageId(
+            id,
+            10,
+            displayStages.value[stageIndex].deals.length,
+            formattedFilters
+          );
+
+          if (
+            additional_deals &&
+            additional_deals.data &&
+            additional_deals.data.data &&
+            Array.isArray(additional_deals.data.data)
+          ) {
+            if (stageIndex !== -1) {
+              displayStages.value[stageIndex].deals.push(
+                ...additional_deals.data.data
+              );
             }
-          })
-          .finally(() => {
-            reachedBottom.value = false;
-          });
+          }
+        } finally {
+          reachedBottom.value = false;
+        }
       }
     };
 

@@ -81,14 +81,14 @@ export const fetchAdditionalDealsByStageId = (
   stageId,
   limit,
   offset,
-  filters
+  filters = {}
 ) => {
   return axios.get(`/deals/get-more`, {
     params: {
       stage_id: stageId,
       limit: limit,
       offset: offset,
-      filters: filters,
+      ...filters,
     },
   });
 };
@@ -143,8 +143,15 @@ export const getSources = () => axios.get("/sources");
 export const getStages = () => axios.get("/stages");
 export const getAvailableStages = () => axios.get("/stages/deals");
 // getStagesChildren
-export const getStagesChildren = (parentId) =>
-  axios.get(`/kanban/deals/${parentId}/children`);
+export const getStagesChildren = (parentId, limit, offset, filters = {}) =>
+  axios.get(`/kanban/deals/${parentId}/children`, {
+    params: {
+      parentId: parentId,
+      limit: limit,
+      offset: offset,
+      ...filters,
+    },
+  });
 
 export const getTrashStages = () => axios.get("/stages/trash");
 
