@@ -331,6 +331,26 @@ export default {
       if (status <= 75) return "bg-info";
       return "bg-success";
     };
+
+    const currentStage = computed(() => {
+      if (!props.stageId || !props.allStages || props.allStages.length === 0) {
+        return null;
+      }
+      const stage = props.allStages.find((s) => s.id == props.stageId);
+      return stage || null;
+    });
+
+    const currentStageName = computed(() => {
+      return currentStage.value ? currentStage.value.name : "";
+    });
+
+    const currentStageColor = computed(() => {
+      return currentStage.value ? currentStage.value.color_code : "#17a2b8";
+    });
+
+    const currentStageIcon = computed(() => {
+      return currentStage.value ? currentStage.value.icon : "layer-group";
+    });
     const handleHighlight = async () => {
       emit("toggle-highlight", props.deal.id);
     };
@@ -367,6 +387,9 @@ export default {
       formatDateUpdate,
       getPersuasionColorClass,
       userRole,
+      currentStageName,
+      currentStageColor,
+      currentStageIcon,
       handleHighlight,
       currentStageName,
       currentStageColor,

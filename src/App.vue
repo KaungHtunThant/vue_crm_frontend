@@ -64,7 +64,7 @@ export default {
     return {
       loaderImage: "/images/new-nokta-logo.png",
       loaderColors: ["#dd3636", "#dd3636", "#dd3636", "#dd3636"], //Nokta
-      // loaderColors: ["#dd3636", "#3d3d3d", "#595959", "#8c8c8c"],  //Mediceva
+      // loaderColors: ["#dd3636", "#3d3d3d", "#595959", "#8c8c8c"], //Mediceva
       // loaderColors: ["#ff4d00", "#f04f0a", "#d44204", "#ff5d17"],  //Eurasia
       isLoggedIn: false,
       isSidebarCollapsed: true,

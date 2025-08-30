@@ -15,6 +15,7 @@
   <crm-kanban-kanban-board
     :stages="stages"
     :searchVal="searchVal"
+    :filters="filters"
     :search_result="search_result"
     defaultColor="#333"
     @open-whatsapp-modal="openWhatsappModal"
