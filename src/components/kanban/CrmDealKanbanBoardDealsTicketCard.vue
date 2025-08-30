@@ -355,25 +355,6 @@ export default {
       emit("toggle-highlight", props.deal.id);
     };
 
-    const currentStage = computed(() => {
-      if (!props.stageId || !props.allStages || props.allStages.length === 0) {
-        return null;
-      }
-      const stage = props.allStages.find((s) => s.id == props.stageId);
-      return stage || null;
-    });
-
-    const currentStageName = computed(() => {
-      return currentStage.value ? currentStage.value.name : "";
-    });
-
-    const currentStageColor = computed(() => {
-      return currentStage.value ? currentStage.value.color_code : "#17a2b8";
-    });
-
-    const currentStageIcon = computed(() => {
-      return currentStage.value ? currentStage.value.icon : "layer-group";
-    });
     return {
       t,
       formatDate,
@@ -391,9 +372,6 @@ export default {
       currentStageColor,
       currentStageIcon,
       handleHighlight,
-      currentStageName,
-      currentStageColor,
-      currentStageIcon,
     };
   },
   methods: {},
