@@ -105,6 +105,31 @@
             </div>
           </div>
         </div>
+        <div
+          class="row"
+          v-if="permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)"
+        >
+          <div class="col-3 pt-2">
+            <span>{{ t("crmlist-modal-filter-label-excludeduser") }}</span>
+          </div>
+          <div class="col-9">
+            <div class="mb-3">
+              <select
+                v-model="localFilters.excluded_user_id"
+                class="form-select text-secondary"
+              >
+                <option value="" selected>All</option>
+                <option
+                  v-for="user in local_users"
+                  :key="user.id"
+                  :value="user.id"
+                >
+                  {{ user.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
 
         <!-- Package Filter -->
         <!-- <div class="row">
@@ -267,6 +292,7 @@ export default {
       source_id: null,
       stage_id: null,
       user_id: null,
+      excluded_user_id: null,
       country: null,
       created_at_start: null,
       created_at_end: null,

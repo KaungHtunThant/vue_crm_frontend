@@ -345,13 +345,13 @@ const packages = ref([]);
 const filters = ref({
   source: "",
   stage: "",
-  supervisor: "",
-  representative: "",
+  user_id: null,
   package: "",
   country: "",
   updated_at_start: null,
   updated_at_end: null,
   source_id: null,
+  excluded_user_id: null,
   stage_id: null,
   created_at_start: null,
   created_at_end: null,
@@ -659,6 +659,10 @@ const applyFilters = async (newFilters) => {
 
     if (apiFilters.filters.user_id) {
       formattedFilters["filters[user_id]"] = apiFilters.filters.user_id;
+    }
+    if (apiFilters.filters.excluded_user_id) {
+      formattedFilters["filters[excluded_user_id]"] =
+        apiFilters.filters.excluded_user_id;
     }
 
     if (apiFilters.filters.created_at_start) {
