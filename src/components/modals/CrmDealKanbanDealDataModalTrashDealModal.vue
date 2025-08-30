@@ -176,6 +176,7 @@ export default {
         const commentResponse = await createComment({
           text_body: this.comment,
           deal_id: this.dealId,
+          is_trash: 1,
         });
         if (commentResponse.data) {
           this.$emit("deal-trashed", this.dealId, selected_stage_id, true);
