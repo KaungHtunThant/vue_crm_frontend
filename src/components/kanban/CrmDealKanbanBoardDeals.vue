@@ -480,9 +480,6 @@ export default {
         if (props.filters.status.includes("new")) {
           formattedFilters["filters[new]"] = 1;
         }
-        if (props.filters.status.includes("reclaimed")) {
-          formattedFilters["filters[reclaimed]"] = 1;
-        }
         if (props.filters.status.includes("admin_comments")) {
           formattedFilters["filters[admin_comments]"] = 1;
         }

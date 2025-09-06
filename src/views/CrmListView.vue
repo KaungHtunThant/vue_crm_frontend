@@ -517,9 +517,6 @@ const fetchData = async () => {
       if (apiFilters.filters.status.includes("new")) {
         formattedFilters["filters[new]"] = 1;
       }
-      if (apiFilters.filters.status.includes("reclaimed")) {
-        formattedFilters["filters[reclaimed]"] = 1;
-      }
       if (apiFilters.filters.status.includes("admin_comments")) {
         formattedFilters["filters[admin_comments]"] = 1;
       }
@@ -545,14 +542,14 @@ const fetchData = async () => {
 
       return {
         id: deal.id,
-        name: deal.name || "Empty",
+        name: deal.name || t("not-set"),
         phone: deal.phone,
-        note: deal.note || "Empty",
+        note: deal.note || t("not-set"),
         created_at: deal.created_at.split("T")[0],
         updated_at: deal.updated_at.split("T")[0],
-        stage: matchedStage ? matchedStage.name : "Not set",
-        responsible: deal.responsible_user?.name || "Not Assigned",
-        source: matchedSource ? matchedSource.name : "Not set",
+        stage: matchedStage ? matchedStage.name : t("not-set"),
+        responsible: deal.responsible_user?.name || t("not-set"),
+        source: matchedSource ? matchedSource.name : t("not-set"),
       };
     });
 
@@ -690,9 +687,6 @@ const applyFilters = async (newFilters) => {
       if (apiFilters.filters.status.includes("new")) {
         formattedFilters["filters[new]"] = 1;
       }
-      if (apiFilters.filters.status.includes("reclaimed")) {
-        formattedFilters["filters[reclaimed]"] = 1;
-      }
       if (apiFilters.filters.status.includes("admin_comments")) {
         formattedFilters["filters[admin_comments]"] = 1;
       }
@@ -720,14 +714,14 @@ const applyFilters = async (newFilters) => {
 
       return {
         id: deal.id,
-        name: deal.name || "Empty",
+        name: deal.name || t("not-set"),
         phone: deal.phone,
-        note: deal.note || "Empty",
+        note: deal.note || t("not-set"),
         created_at: deal.created_at.split("T")[0],
         updated_at: deal.updated_at.split("T")[0],
-        stage: matchedStage ? matchedStage.name : "Not set",
-        responsible: deal.responsible_user?.name || "Not Assigned",
-        source: matchedSource ? matchedSource.name : "Not set",
+        stage: matchedStage ? matchedStage.name : t("not-set"),
+        responsible: deal.responsible_user?.name || t("not-set"),
+        source: matchedSource ? matchedSource.name : t("not-set"),
       };
     });
 
@@ -966,9 +960,9 @@ const addNewDeal = (newDeal) => {
       email: newDeal.email,
       note: newDeal.note,
       created_at: new Date().toISOString().split("T")[0],
-      source: matchedSource ? matchedSource.name : "Not set",
-      stage: matchedStage ? matchedStage.name : "Not set",
-      responsible: newDeal.responsible_user?.name || "Not Assigned",
+      source: matchedSource ? matchedSource.name : t("not-set"),
+      stage: matchedStage ? matchedStage.name : t("not-set"),
+      responsible: newDeal.responsible_user?.name || t("not-set"),
       rating: newDeal.rating,
     };
 

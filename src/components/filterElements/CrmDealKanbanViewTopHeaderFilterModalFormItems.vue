@@ -335,10 +335,6 @@ export default {
           value: "unassigned",
           label: t("kanban-modal-filter-status-unassigned"),
         });
-        statuses.value.push({
-          value: "reclaimed",
-          label: t("kanban-modal-filter-status-reclaimed"),
-        });
       }
     });
 

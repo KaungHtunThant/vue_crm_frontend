@@ -114,9 +114,6 @@ export default {
             if (filters.value.status.includes("new")) {
               formattedFilters["filters[new]"] = 1;
             }
-            if (filters.value.status.includes("reclaimed")) {
-              formattedFilters["filters[reclaimed]"] = 1;
-            }
           }
           if (filters.value.sort_by) {
             formattedFilters["sort_by"] = filters.value.sort_by;
