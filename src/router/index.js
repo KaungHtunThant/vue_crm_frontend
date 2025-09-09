@@ -19,6 +19,7 @@ import StagingSettingView from "@/views/StagingSettingView.vue";
 import WebWhatsapp from "@/views/WebWhatsapp.vue";
 import PatientRegistrationView from "@/views/PatientRegistrationView.vue";
 import ApprovalsView from "@/views/ApprovalsView.vue";
+import CompleteCase from "@/views/CompleteCase.vue";
 
 const routes = [
   {
@@ -212,6 +213,14 @@ const routes = [
     meta: {
       requiresAuth: true,
       title: "Web Whatsapp",
+    },
+  },
+  {
+    path: "/CompleteCase",
+    name: "CompleteCase",
+    component: CompleteCase,
+    meta: {
+      layout: "print",
     },
   },
 ];
