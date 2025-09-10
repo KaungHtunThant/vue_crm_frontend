@@ -42,6 +42,7 @@
               <button
                 v-for="tag in trash_stages"
                 :key="tag.id"
+                :title="tag.description"
                 class="btn btn-danger rounded-0 mt-2"
                 @click="selected_stage_id = tag.id"
                 :style="{

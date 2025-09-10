@@ -58,7 +58,7 @@
             </td>
           </tr>
           <tr class="table-secondary">
-            <td>{{ t("print-case-patient-passport") }} XXXXXXX</td>
+            <td>{{ t("print-case-patient-passport") }} CR749848</td>
             <td>{{ t("print-case-patient-personal-companion") }} Yes / No</td>
           </tr>
         </tbody>
@@ -73,8 +73,8 @@
       <table class="table table-bordered fs-8">
         <tbody>
           <tr class="table-secondary">
-            <td>{{ t("print-case-patient-phone") }}</td>
-            <td>{{ t("print-case-patient-email") }}</td>
+            <td>{{ t("print-case-patient-phone") }} +905357176133</td>
+            <td>{{ t("print-case-patient-email") }} abc123@gmail.com</td>
           </tr>
         </tbody>
       </table>

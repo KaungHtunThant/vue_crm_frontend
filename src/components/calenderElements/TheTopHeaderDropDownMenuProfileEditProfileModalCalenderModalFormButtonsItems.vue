@@ -16,7 +16,7 @@
     <button
       type="button"
       class="btn btn-danger text-white"
-      @click="$emit('close')"
+      @click="handleClose"
     >
       {{ t("buttons.close") }}
     </button>
@@ -24,13 +24,24 @@
 </template>
 
 <script>
+import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { useI18n } from "vue-i18n";
 export default {
   name: "TheTopHeaderDropDownMenuProfileEditProfileModalCalenderModalFormButtonsItems",
   props: ["loading"],
   setup() {
     const { t } = useI18n();
-    return { t };
+    const handleClose = () => {
+      const modal = document.getElementById("calenderModal");
+      const modalInstance = Modal.getInstance(modal);
+      if (modalInstance) modalInstance.hide();
+      document.querySelector(".modal-backdrop")?.remove();
+      document.body.classList.remove("modal-open");
+    };
+    return {
+      t,
+      handleClose,
+    };
   },
 };
 </script>

@@ -75,9 +75,11 @@ export default {
         const modalInstance = Modal.getInstance(modal);
         if (modalInstance) {
           modalInstance.hide();
-          document.querySelector(".modal-backdrop")?.remove();
-          document.body.classList.remove("modal-open");
         }
+        document.querySelectorAll(".modal-backdrop").forEach((backdrop) => {
+          backdrop.remove();
+        });
+        document.body.classList.remove("modal-open");
       } catch (error) {
         this.toast.error(this.t("error.closeModal"), {
           timeout: 3000,
