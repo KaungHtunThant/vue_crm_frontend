@@ -164,7 +164,10 @@
                 :phone="slotProps.data.phone"
                 style="width: 25px; height: 20px !important"
               />
-              <span>{{ slotProps.data.phone }}</span>
+              <span>
+                <!-- {{ slotProps.data.phone }} -->
+                {{ slotProps.data.phone ?? "************" }}
+              </span>
             </div>
           </template></Column
         >
