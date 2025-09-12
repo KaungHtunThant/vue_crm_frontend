@@ -974,13 +974,21 @@
                     <p>{{ new Date(log.created_at).toLocaleString() }}</p>
                   </div>
                   <div class="col-9">
-                    <p>
-                      {{
-                        log.description.length > 200
-                          ? log.description.substring(0, 200) + "..."
-                          : log.description
-                      }}
-                    </p>
+                    <template
+                      v-for="(part, index) in formatLogEntry(log)"
+                      :key="index"
+                    >
+                      <span v-if="typeof part === 'string'">{{ part }}</span>
+                      <span
+                        v-else-if="part.isBadge"
+                        class="badge me-1"
+                        :style="{
+                          backgroundColor: part.backgroundColor,
+                          color: 'white',
+                        }"
+                        >{{ part.text }}</span
+                      >
+                    </template>
                   </div>
                 </div>
               </div>
@@ -1026,9 +1034,9 @@
                   <div
                     v-for="comment in sortedComments"
                     :key="comment.id"
-                    class="row mt-2"
+                    class="mt-2 d-flex justify-content-start align-items-start flex-nowrap"
                   >
-                    <div class="col-1 pe-0">
+                    <div class="pe-0">
                       <img
                         src="@/assets/default-avatar-profile.webp"
                         class="rounded-5"
@@ -1038,7 +1046,10 @@
                       />
                       <!-- <span class="ms-2">{{ comment.username }}</span> -->
                     </div>
-                    <div class="col-11 position-relative ps-0">
+                    <div
+                      class="position-relative ps-0"
+                      style="max-width: calc(100% - 45px)"
+                    >
                       <div
                         class="rounded-3 p-2"
                         style="
@@ -1287,18 +1298,20 @@
             </div>
           </div>
         </div>
-        <button
-          class="btn ApprovalCustm position-fixed bg-warning py-2 px-3 rounded-3"
-          @click="openSuggestApprovalModal"
-        >
-          <i class="fa-solid fa-user text-white"></i>
-        </button>
-        <button
-          class="btn trashCustm position-fixed bg-danger py-2 px-3 rounded-3"
-          @click="openTrashDealModal"
-        >
-          <i class="fa-solid fa-trash text-white"></i>
-        </button>
+        <div class="position-fixed trashCustm">
+          <button
+            class="btn bg-warning py-2 px-3 rounded-3 me-2"
+            @click="openSuggestApprovalModal"
+          >
+            <i class="fa-solid fa-user text-white"></i>
+          </button>
+          <button
+            class="btn bg-danger py-2 px-3 rounded-3"
+            @click="openTrashDealModal"
+          >
+            <i class="fa-solid fa-trash text-white"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -3105,8 +3118,131 @@ export default {
         });
       }
     };
+    const formatLogEntry = (log) => {
+      const parts = [];
+      const userName = getUserName(log.user_id);
+      const userColor = getUserColor(log.user_id);
 
+      parts.push({ text: userName, backgroundColor: userColor, isBadge: true });
+
+      if (
+        log.event === "updated" &&
+        log.entity_type === "Task" &&
+        log.new_values?.status === "completed"
+      ) {
+        parts.push(` completed Task ID: ${log.entity_id}.`);
+      } else if (
+        log.event === "updated" &&
+        log.entity_type === "Deal" &&
+        log.old_values?.stage_id &&
+        log.new_values?.stage_id
+      ) {
+        const oldStageName = getStageName(log.old_values.stage_id);
+        const oldStageColor = getStageColor(log.old_values.stage_id);
+        const newStageName = getStageName(log.new_values.stage_id);
+        const newStageColor = getStageColor(log.new_values.stage_id);
+
+        parts.push(` moved Deal ID: ${log.entity_id} from `);
+        parts.push({
+          text: oldStageName,
+          backgroundColor: oldStageColor,
+          isBadge: true,
+        });
+        parts.push(` to `);
+        parts.push({
+          text: newStageName,
+          backgroundColor: newStageColor,
+          isBadge: true,
+        });
+        parts.push(`.`);
+      } else if (log.event === "created" && log.entity_type === "Deal") {
+        parts.push(` created a new Deal with ID: ${log.entity_id}.`);
+      } else if (log.event === "created" && log.entity_type === "Comment") {
+        parts.push(` added a new Comment on Entity ID: ${log.entity_id}.`);
+      } else if (log.event === "created" && log.entity_type === "Task") {
+        parts.push(` created a new Task with ID: ${log.entity_id}.`);
+      } else {
+        // General update message
+        parts.push(
+          ` updated ${
+            log.entity_type === "Deal"
+              ? "Deal"
+              : log.entity_type === "Task"
+              ? "Task"
+              : "Comment"
+          } ID: ${log.entity_id}.`
+        );
+        const changes = [];
+        for (const key in log.new_values) {
+          if (
+            Object.prototype.hasOwnProperty.call(log.new_values, key) &&
+            log.old_values?.[key] !== undefined &&
+            log.old_values?.[key] !== log.new_values[key]
+          ) {
+            const oldValue = log.old_values[key];
+            const newValue = log.new_values[key];
+
+            let formattedOldValue = oldValue === null ? "Unassigned" : oldValue;
+            let formattedNewValue = newValue === null ? "Unassigned" : newValue;
+
+            if (key === "assign_by_id" || key === "assigned_to_id") {
+              parts.push(` ${key}: `);
+
+              if (oldValue !== null && oldValue !== undefined) {
+                parts.push({
+                  text: getUserName(oldValue),
+                  backgroundColor: getUserColor(oldValue),
+                  isBadge: true,
+                });
+              } else {
+                parts.push("");
+              }
+              parts.push(` -> `);
+              if (newValue !== null && newValue !== undefined) {
+                parts.push({
+                  text: getUserName(newValue),
+                  backgroundColor: getUserColor(newValue),
+                  isBadge: true,
+                });
+              } else {
+                parts.push("Unassigned");
+              }
+            } else {
+              changes.push(
+                `${key}: ${formattedOldValue} -> ${formattedNewValue}`
+              );
+            }
+          }
+        }
+        if (changes.length > 0) {
+          parts.push(` Changes: ${changes.join(", ")}.`);
+        }
+      }
+      parts.push(` (${formatDate(log.created_at)})`);
+      return parts;
+    };
+    const getStageName = (id) => {
+      const stage = props.stages.find((s) => s.id === id);
+      return stage ? stage.name : id;
+    };
+    const getStageColor = (id) => {
+      const stage = props.stages.find((s) => s.id === id);
+      return stage ? stage.color_code : id;
+    };
+    const getUserName = (id) => {
+      if (id === null || id === undefined) return "Unassigned";
+      const user = users.value.find((u) => u.id === id);
+      return user ? user.name : `User#${id}`;
+    };
+    const getUserColor = (id) => {
+      const user = users.value.find((u) => u.id === id);
+      return user ? user.color_code : "#000";
+    };
     return {
+      getStageColor,
+      getStageName,
+      getUserName,
+      getUserColor,
       handleDealSuggestion,
       allStages,
       currentStage,
@@ -3186,6 +3322,7 @@ export default {
       openSuggestApprovalModal,
       taskDataModified,
       handleTaskUpdate,
+      formatLogEntry,
     };
   },
 };
@@ -3419,11 +3556,11 @@ label {
   bottom: 3%;
   z-index: 9999;
 }
-.ApprovalCustm {
+/* .ApprovalCustm {
   right: 5%;
   bottom: 3%;
   z-index: 9999;
-}
+} */
 .adminComment {
   background: linear-gradient(45deg, #e5c086, #f1d65e, #e5c086, #f1d65e);
   color: #000;

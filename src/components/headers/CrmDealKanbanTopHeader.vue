@@ -63,10 +63,10 @@
                   v-model="searchText"
                   id="dealSearchInput"
                 />
+                <!-- @click="openFilterModal" -->
                 <button
                   class="btn btn-hover py-2 btnFilterIpad text-white"
                   :title="t('kanban-modal-filter-heading')"
-                  @click="openFilterModal"
                 >
                   <i class="fa-solid fa-filter"></i>
                 </button>
