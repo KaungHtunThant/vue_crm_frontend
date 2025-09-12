@@ -79,10 +79,12 @@
           </div>
         </div>
 
-        <!-- Supervisor Filter -->
+        <!-- User Filter -->
         <div
           class="row"
-          v-if="permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)"
+          v-if="
+            permissionStore.hasPermission(PERMISSIONS.FILTER_DEAL_WITH_USER)
+          "
         >
           <div class="col-3 pt-2">
             <span>{{ t("crmlist-modal-filter-label-user") }}</span>
@@ -107,7 +109,9 @@
         </div>
         <div
           class="row"
-          v-if="permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)"
+          v-if="
+            permissionStore.hasPermission(PERMISSIONS.FILTER_DEAL_WITH_USER)
+          "
         >
           <div class="col-3 pt-2">
             <span>{{ t("crmlist-modal-filter-label-excludeduser") }}</span>

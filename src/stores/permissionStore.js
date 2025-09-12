@@ -15,6 +15,7 @@ export const PERMISSIONS = {
   UPDATE_DEAL: "edit-deal",
   DELETE_DEAL: "delete-deal",
   READ_DEAL: "read-deal",
+  FILTER_DEAL_WITH_USER: "filter-deal-with-user",
   READ_TASK: "read-task",
   VIEW_SIDEBAR: "view-sidebar",
   BROADCAST_SETTINGS: "view-broadcast-settings-page",
