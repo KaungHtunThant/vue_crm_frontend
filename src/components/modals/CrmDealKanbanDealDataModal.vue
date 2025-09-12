@@ -25,6 +25,12 @@
               </button>
             </h5>
           </div>
+          <div class="">
+            <button @click="PrintCase" class="bg-transparent border-0">
+              <i class="fa-solid fa-print"></i>
+              {{ t("kanban-modal-edit-print-case") }}
+            </button>
+          </div>
           <div class="rating">
             <rating-stars
               v-model="customerData.rating"
@@ -1060,7 +1066,7 @@
                     <textarea
                       ref="commentInput"
                       v-model="customerData.comment"
-                      placeholder="اكتب تعليقك هنا..."
+                      :placeholder="t('kanban-modal-edit-comment-placeholder')"
                       class="form-control comment-textarea bg-input text-secondary rounded-0 me-1"
                       rows="1"
                       style="
@@ -1390,7 +1396,7 @@ import {
   watch,
   onBeforeUnmount,
 } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import RatingStars from "@/components/CreateDealElements/CrmDealKanbanDealDataModalRatingStars.vue";
 import ViewReport from "@/components/kanban/CrmDealKanbanDealDataModalReportModal.vue";
 import { Modal } from "bootstrap";
@@ -1446,6 +1452,7 @@ export default {
   },
   setup(props, { emit }) {
     const route = useRoute();
+    const router = useRouter();
     const permissionStore = usePermissionStore();
     const selected_conversation = ref(null);
     const { t, locale } = useI18n();
@@ -3255,6 +3262,44 @@ export default {
         customerData.is_local = false;
       }
     };
+    const PrintCase = () => {
+      try {
+        const routeData = router.resolve({ path: "/CompleteCase" });
+        const printWindow = window.open(
+          routeData.href,
+          "_blank",
+          "width=800,height=600"
+        );
+        printWindow.onload = () => {
+          setTimeout(() => {
+            const style = printWindow.document.createElement("style");
+            style.innerHTML = `
+          @page {
+            size: A4;
+          }
+          body {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;       
+            padding: 0;
+          }
+          .top-bar {
+            display: none;
+          }
+        `;
+            printWindow.document.head.appendChild(style);
+
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+          }, 5000);
+        };
+      } catch (error) {
+        console.error("Error printing the Documents", error);
+        toast.error(t("error.PrintCase"), {
+          timeout: 3000,
+        });
+      }
+    };
 
     return {
       toggleIsLocal,
@@ -3340,6 +3385,7 @@ export default {
       taskDataModified,
       handleTaskUpdate,
       handlePassportUpload,
+      PrintCase,
     };
   },
 };

@@ -175,10 +175,10 @@
                 <div class="dropdown-link">
                   <div
                     class="sidebar-item d-flex align-items-center"
-                    :title="$t('sidebar-nav-item-settings')"
+                    :title="$t('sidebar-nav-item-rules')"
                   >
                     <i class="fa-solid fa-sliders fs-5 me-2"></i>
-                    <span>{{ $t("sidebar-nav-item-settings") }}</span>
+                    <span>{{ $t("sidebar-nav-item-rules") }}</span>
                   </div>
                 </div>
               </router-link>
