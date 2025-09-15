@@ -328,7 +328,7 @@
                       {{ t("kanban-modal-edit-placeholder-representative") }}
                     </option>
                     <option
-                      v-for="user in users"
+                      v-for="user in logStore.users"
                       :key="user.id"
                       :value="user.id"
                     >
@@ -966,7 +966,7 @@
                 "
               >
                 <div
-                  v-for="log in local_logs"
+                  v-for="log in logStore?.logs || []"
                   :key="log.id"
                   class="row bg-input pt-2 text-secondary border border-top"
                 >
@@ -1357,12 +1357,13 @@ import {
   updateDealStage,
   updateDeal,
   createConversation,
-  getLogsByDealId,
-  getUser,
+  // getLogsByDealId,
+  // getUser,
   getAvailableStages,
 } from "@/plugins/services/authService";
 import { PERMISSIONS, usePermissionStore } from "@/stores/permissionStore";
 import moveCardSound from "@/assets/move-card.wav";
+import { useLogStore } from "@/stores/logStore";
 export default {
   name: "CrmDealKanbanDealDataModal",
   components: { RatingStars, ViewReport, TrashDeal, SuggestUserModal },
@@ -1393,6 +1394,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const logStore = useLogStore();
     const permissionStore = usePermissionStore();
     const selected_conversation = ref(null);
     const { t, locale } = useI18n();
@@ -1402,8 +1404,8 @@ export default {
     const isEditMode = ref(false);
     const hoveredStage = ref(null);
     const stageColors = reactive({});
-    const local_logs = ref([]);
-    const users = ref([]);
+    // const local_logs = ref([]);
+    // const users = ref([]);
     const commentInput = ref(null);
     const local_packages = ref(props.packages || []);
 
@@ -2340,14 +2342,14 @@ export default {
     const formatDate = (dateString) => {
       return dateString ? dateString.split("T")[0] : "No date";
     };
-    const fetchUsers = async () => {
-      try {
-        const response = await getUser();
-        users.value = response.data.data;
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
+    // const fetchUsers = async () => {
+    //   try {
+    //     const response = await getUser();
+    //     users.value = response.data.data;
+    //   } catch (error) {
+    //     console.error("Error fetching users:", error);
+    //   }
+    // };
     const fetchSources = async () => {
       try {
         const response = await getSources();
@@ -2883,21 +2885,25 @@ export default {
         is_trash
       );
     };
-    const fetchLogs = async () => {
-      try {
-        const response = await getLogsByDealId(props.deal?.id);
-        if (response.data) {
-          local_logs.value = response.data.data;
-        }
-      } catch (error) {
-        console.error("Error fetching logs:", error);
-      }
-    };
+    // const fetchLogs = async () => {
+    //   try {
+    //     const response = await getLogsByDealId(props.deal?.id);
+    //     if (response.data) {
+    //       local_logs.value = response.data.data;
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching logs:", error);
+    //   }
+    // };
     watch(
       () => props.deal,
       (newDeal) => {
         if (newDeal) {
-          fetchLogs(newDeal.id);
+          // fetchLogs(newDeal.id);
+          if (newDeal?.id) {
+            logStore.logs = [];
+            logStore.fetchLogs(newDeal.id);
+          }
           nextTick(() => {
             if (newDeal.comments) {
               newDeal.comments.forEach((comment) => {
@@ -2996,8 +3002,10 @@ export default {
       editingCommentText.value = "";
     };
     onMounted(() => {
+      logStore.fetchUsers();
+      if (props.deal?.id) logStore.fetchLogs(props.deal.id);
       fetchSources();
-      fetchUsers();
+      // fetchUsers();
       document.addEventListener("click", handleClickOutside);
 
       if (commentInput.value) {
@@ -3120,8 +3128,8 @@ export default {
     };
     const formatLogEntry = (log) => {
       const parts = [];
-      const userName = getUserName(log.user_id);
-      const userColor = getUserColor(log.user_id);
+      const userName = logStore.getUserName(log.user_id);
+      const userColor = logStore.getUserColor(log.user_id);
 
       parts.push({ text: userName, backgroundColor: userColor, isBadge: true });
 
@@ -3162,7 +3170,6 @@ export default {
       } else if (log.event === "created" && log.entity_type === "Task") {
         parts.push(` created a new Task with ID: ${log.entity_id}.`);
       } else {
-        // General update message
         parts.push(
           ` updated ${
             log.entity_type === "Deal"
@@ -3190,8 +3197,8 @@ export default {
 
               if (oldValue !== null && oldValue !== undefined) {
                 parts.push({
-                  text: getUserName(oldValue),
-                  backgroundColor: getUserColor(oldValue),
+                  text: logStore.getUserName(oldValue),
+                  backgroundColor: logStore.getUserColor(oldValue),
                   isBadge: true,
                 });
               } else {
@@ -3200,8 +3207,8 @@ export default {
               parts.push(` -> `);
               if (newValue !== null && newValue !== undefined) {
                 parts.push({
-                  text: getUserName(newValue),
-                  backgroundColor: getUserColor(newValue),
+                  text: logStore.getUserName(newValue),
+                  backgroundColor: logStore.getUserColor(newValue),
                   isBadge: true,
                 });
               } else {
@@ -3229,20 +3236,20 @@ export default {
       const stage = props.stages.find((s) => s.id === id);
       return stage ? stage.color_code : id;
     };
-    const getUserName = (id) => {
-      if (id === null || id === undefined) return "Unassigned";
-      const user = users.value.find((u) => u.id === id);
-      return user ? user.name : `User#${id}`;
-    };
-    const getUserColor = (id) => {
-      const user = users.value.find((u) => u.id === id);
-      return user ? user.color_code : "#000";
-    };
+    // const getUserName = (id) => {
+    //   if (id === null || id === undefined) return "Unassigned";
+    //   const user = users.value.find((u) => u.id === id);
+    //   return user ? user.name : `User#${id}`;
+    // };
+    // const getUserColor = (id) => {
+    //   const user = users.value.find((u) => u.id === id);
+    //   return user ? user.color_code : "#000";
+    // };
     return {
       getStageColor,
       getStageName,
-      getUserName,
-      getUserColor,
+      // getUserName,
+      // getUserColor,
       handleDealSuggestion,
       allStages,
       currentStage,
@@ -3288,8 +3295,7 @@ export default {
       permissionStore,
       PERMISSIONS,
       getContrastColor,
-      local_logs,
-      fetchLogs,
+      // fetchLogs,
       handleEnter,
       autoResize,
       resetTextareaSize,
@@ -3304,7 +3310,9 @@ export default {
       togglePin,
       sortedComments,
       cancelEditComment,
-      users,
+      logStore,
+      // logs: logStore.logs,
+      // users: logStore.users,
       commentInput,
       autoResizeEditWidth,
       resizeDisplayedCommentWidth,
