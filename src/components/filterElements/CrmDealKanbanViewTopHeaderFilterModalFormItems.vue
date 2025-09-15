@@ -43,7 +43,9 @@
                 v-model="localHeaderFilters.source_id"
                 class="form-select text-secondary"
               >
-                <option value="" selected>All</option>
+                <option value="" selected>
+                  {{ t("crmlist-modal-filter-all") }}
+                </option>
                 <option
                   v-for="source in sources"
                   :key="source.id"
@@ -66,7 +68,9 @@
                 v-model="localHeaderFilters.stage_id"
                 class="form-select text-secondary"
               >
-                <option value="" selected>All</option>
+                <option value="" selected>
+                  {{ t("crmlist-modal-filter-all") }}
+                </option>
                 <option
                   v-for="stage in stages"
                   :key="stage.id"
@@ -93,7 +97,9 @@
                 v-model="localHeaderFilters.user_id"
                 class="form-select text-secondary"
               >
-                <option value="" selected>All</option>
+                <option value="" selected>
+                  {{ t("crmlist-modal-filter-all") }}
+                </option>
                 <option v-for="user in users" :key="user.id" :value="user.id">
                   {{ user.name }}
                 </option>
@@ -182,19 +188,35 @@
                 v-model="localHeaderFilters.sort_by"
                 class="form-select text-secondary"
               >
-                <option value="" selected>None</option>
-                <option value="created_at">Created At</option>
-                <option value="updated_at">Updated At</option>
-                <option value="source_id">Source</option>
-                <option value="stage_id">Stage</option>
+                <option value="" selected>
+                  {{ t("crmlist-modal-filter-none") }}
+                </option>
+                <option value="created_at">
+                  {{ t("crmlist-modal-filter-sort-created-at") }}
+                </option>
+                <option value="updated_at">
+                  {{ t("crmlist-modal-filter-sort-updated-at") }}
+                </option>
+                <option value="source_id">
+                  {{ t("crmlist-modal-filter-sort-source") }}
+                </option>
+                <option value="stage_id">
+                  {{ t("crmlist-modal-filter-sort-stage") }}
+                </option>
               </select>
               <select
                 v-model="localHeaderFilters.sort_order"
                 class="form-select text-secondary"
               >
-                <option value="" selected>None</option>
-                <option value="desc">Desc</option>
-                <option value="asc">Asc</option>
+                <option value="" selected>
+                  {{ t("crmlist-modal-filter-none") }}
+                </option>
+                <option value="desc">
+                  {{ t("crmlist-modal-filter-sort-desc") }}
+                </option>
+                <option value="asc">
+                  {{ t("crmlist-modal-filter-sort-asc") }}
+                </option>
               </select>
             </div>
           </div>

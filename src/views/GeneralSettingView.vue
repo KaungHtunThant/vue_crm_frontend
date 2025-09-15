@@ -12,7 +12,7 @@
           aria-controls="general"
           aria-selected="true"
         >
-          General Setting
+          {{ t("settings-general-settings") }}
         </button>
       </li>
       <li class="nav-item" role="presentation">
@@ -26,7 +26,7 @@
           aria-controls="roles"
           aria-selected="false"
         >
-          Roles Setting
+          {{ t("settings-role-settings") }}
         </button>
       </li>
       <li class="nav-item" role="presentation">
@@ -40,7 +40,7 @@
           aria-controls="broadcast"
           aria-selected="false"
         >
-          Broadcast Setting
+          {{ t("settings-broadcast-messages") }}
         </button>
       </li>
     </ul>
@@ -73,7 +73,7 @@
             <div class="col-12 col-md-6 col-lg-3">
               <div class="form-group">
                 <label class="form-label">
-                  {{ t("settings.planExpireNotification") }}
+                  {{ t("settings-planExpireNotification") }}
                   <span class="text-danger">*</span>
                 </label>
                 <input
@@ -159,7 +159,7 @@
             <div class="col-12 col-md-6 col-lg-3">
               <div class="form-group">
                 <label class="form-label d-block">
-                  {{ t("settings.enableGoogleRecaptcha") }}
+                  {{ t("settings-enableGoogleRecaptcha") }}
                 </label>
                 <div class="form-check form-switch">
                   <input
@@ -198,7 +198,7 @@
                 <div class="col-12 col-md-6">
                   <div class="form-group">
                     <label class="form-label">
-                      {{ t("settings.googleCaptchaKey") }}
+                      {{ t("settings-googleCaptchaKey") }}
                     </label>
                     <input
                       type="text"
@@ -211,7 +211,7 @@
                 <div class="col-12 col-md-6">
                   <div class="form-group">
                     <label class="form-label">
-                      {{ t("settings.googleCaptchaSecret") }}
+                      {{ t("settings-googleCaptchaSecret") }}
                     </label>
                     <input
                       type="text"
@@ -227,13 +227,13 @@
             <div class="col-12 col-md-6">
               <div class="form-group">
                 <label class="form-label">
-                  {{ t("settings.manualInstruction") }}
+                  {{ t("settings-manualInstruction") }}
                 </label>
                 <textarea
                   class="form-control"
                   v-model="settings.manualInstruction"
                   rows="4"
-                  placeholder="Manual Instruction"
+                  :placeholder="$t('settings-manual-instructions-placeholder')"
                 ></textarea>
               </div>
             </div>
@@ -421,7 +421,7 @@
       >
         <div class="mt-4 pe-3 bg-white rounded-3 p-3 me-2">
           <button class="btn btn-primary mb-3" @click="OpenCreateModal">
-            Add
+            {{ $t("settings-broadcast-button-add") }}
           </button>
           <EasyDataTable
             :headers="headersBroadcast"
