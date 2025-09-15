@@ -279,8 +279,22 @@ export default {
           return "fa-brands fa-vk";
         case 9:
           return "fab fa-telegram";
-        default:
+        case 10:
           return "fa-solid fa-recycle";
+        case 11:
+          return "fa-solid fa-recycle";
+        case 12:
+          return "fa-solid fa-recycle";
+        case 13:
+          return "fa-solid fa-recycle";
+        case 14:
+          return "fa-solid fa-recycle";
+        case 15:
+          return "fa-solid fa-recycle";
+        case 16:
+          return "fa-solid fa-recycle";
+        default:
+          return "fa-solid fa-circle-question";
       }
     };
     const tagIcon = (tagName) => {
