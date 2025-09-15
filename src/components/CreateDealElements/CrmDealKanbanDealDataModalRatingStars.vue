@@ -66,7 +66,7 @@ export default {
     },
     calculateAmount(stars) {
       const baseAmount = 1500;
-      return `${baseAmount * (stars || 0)}$`;
+      return `${baseAmount * (stars || 0)}`;
     },
   },
 };
