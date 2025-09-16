@@ -183,6 +183,14 @@
               "
             >
               <div class="line"></div>
+              <button
+                v-if="stage.id == 26"
+                class="btn btn-secondary mt-2 mx-2 text-center"
+                style="width: calc(100% - 1rem)"
+                @click="handleDealRequest"
+              >
+                {{ t("kanban-board-stage-olddeal-title") }}
+              </button>
               <draggable
                 v-if="!expandedStages[stage.id]"
                 :list="getStageDeals(stage.id)"
@@ -312,6 +320,7 @@ import {
   getAvailableStages,
   createApproval,
   toggleHighlight,
+  pullDealsFromOldSystem,
 } from "@/plugins/services/authService";
 import { useI18n } from "vue-i18n";
 import Cookies from "js-cookie";
@@ -1456,6 +1465,19 @@ export default {
         toast.error(response.data.message);
       }
     };
+    // making a request to pull deals from old system
+    const handleOldDealRequest = async () => {
+      try {
+        const response = await pullDealsFromOldSystem();
+        if (response.status === 200) {
+          toast.success(response.data.message);
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        toast.error(error.response?.data?.message);
+      }
+    };
 
     return {
       handleHighlight,
@@ -1510,6 +1532,7 @@ export default {
       allDealsCount,
       handleRequestDeal,
       updateDeal,
+      handleOldDealRequest,
     };
   },
 };

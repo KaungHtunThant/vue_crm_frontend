@@ -1,11 +1,11 @@
 <template>
   <div class="mt-4 me-2 bg-white pb-0 pt-4 rounded-3 tableStage">
     <form>
-      <h5 class="mb-4 ps-4">Staging Settings</h5>
+      <h5 class="mb-4 ps-4">{{ $t("role-setting-title-stage") }}</h5>
       <div class="row my-3 border-bottom pb-2 mb-4 headerStage p-4">
-        <div class="col-4">Stage Name</div>
-        <div class="col-4">Status</div>
-        <div class="col-4">Days Counts</div>
+        <div class="col-4">{{ $t("role-setting-stage-name") }}</div>
+        <div class="col-4">{{ $t("role-setting-stage-status") }}</div>
+        <div class="col-4">{{ $t("role-setting-stage-days") }}</div>
       </div>
       <div
         v-for="(stage, index) in stages"
