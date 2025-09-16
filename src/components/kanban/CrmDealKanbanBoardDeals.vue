@@ -492,7 +492,11 @@ export default {
       }
 
       if (props.searchVal) {
-        formattedFilters.search = props.searchVal;
+        if (typeof props.searchVal === "object" && props.searchVal !== null) {
+          formattedFilters.search = props.searchVal.search;
+        } else if (props.searchVal) {
+          formattedFilters.search = props.searchVal;
+        }
       }
 
       return formattedFilters;
