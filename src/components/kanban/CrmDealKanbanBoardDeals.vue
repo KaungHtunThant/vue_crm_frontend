@@ -184,10 +184,10 @@
             >
               <div class="line"></div>
               <button
-                v-if="stage.id == 26"
+                v-if="stage.is_pullable"
                 class="btn btn-secondary mt-2 mx-2 text-center"
                 style="width: calc(100% - 1rem)"
-                @click="handleDealRequest"
+                @click="handleOldDealRequest(stage.id)"
               >
                 {{ t("kanban-board-stage-olddeal-title") }}
               </button>
@@ -1466,11 +1466,19 @@ export default {
       }
     };
     // making a request to pull deals from old system
-    const handleOldDealRequest = async () => {
+    const handleOldDealRequest = async (stage_id) => {
       try {
         const response = await pullDealsFromOldSystem();
         if (response.status === 200) {
           toast.success(response.data.message);
+          const deals = response.data.data;
+          const stageIndex = displayStages.value.findIndex(
+            (s) => s.id === stage_id
+          );
+          if (stageIndex !== -1) {
+            displayStages.value[stageIndex].deals.unshift(...deals);
+            displayStages.value[stageIndex].deal_count += deals.length;
+          }
         } else {
           toast.error(response.data.message);
         }

@@ -524,5 +524,5 @@ export const toggleHighlight = async (dealId) => {
   return await axios.post(`/deals/highlight/${dealId}`);
 };
 export const pullDealsFromOldSystem = async () => {
-  return await axios.post("/deals/pull-old-deals");
+  return await axios.get("/deals/pull-random");
 };
