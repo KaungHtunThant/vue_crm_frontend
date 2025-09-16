@@ -7,7 +7,12 @@
         deal.responsible_user && getUserColor(deal.responsible_user?.id)
           ? `3px solid ${getUserColor(deal.responsible_user?.id)}`
           : '',
-      background: deal.highlighted ? '#ffdc73' : '#fff',
+      //  background: deal.highlighted ? '#ffdc73' : '#fff',
+      background: deal.highlighted
+        ? '#ffdc73'
+        : deal.old_deal
+        ? '#E2E2E2'
+        : '#fff',
     }"
   >
     <div
@@ -19,8 +24,13 @@
     <div
       class="row"
       :style="{
+        // background: deal.highlighted
+        //   ? '#ffdc73'
+        //   : 'linear-gradient(to left, white, rgb(231, 227, 227))',
         background: deal.highlighted
           ? '#ffdc73'
+          : deal.old_deal
+          ? '#E2E2E2'
           : 'linear-gradient(to left, white, rgb(231, 227, 227))',
       }"
     >
