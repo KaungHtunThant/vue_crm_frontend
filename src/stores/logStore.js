@@ -27,7 +27,7 @@ export const useLogStore = defineStore("logStore", () => {
   };
 
   const getUserName = (id) => {
-    if (id === null || id === undefined) return "Unassigned";
+    if (id === null || id === undefined) return "System";
     const user = users.value.find((u) => u.id === id);
     return user ? user.name : `User#${id}`;
   };
