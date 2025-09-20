@@ -184,6 +184,99 @@
                     </option>
                   </select>
                 </div>
+                <div class="row mt-2">
+                  <div class="col-2"></div>
+                  <!-- Passport Number -->
+                  <div class="col">
+                    <label class="form-label" for="passportNumber"
+                      ><i class="fa-solid fa-passport"></i>
+                      {{ t("kanban-modal-edit-label-passportNumber")
+                      }}<span class="text-danger">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      :class="[
+                        'form-control',
+                        isEditMode ? 'bg-input-edit' : 'bg-input',
+                        'py-2',
+                      ]"
+                      v-model="customerData.passportNumber"
+                      :placeholder="
+                        t('kanban-modal-edit-placeholder-passportNumber')
+                      "
+                      :readonly="!isEditMode"
+                      name="passportNumber"
+                    />
+                  </div>
+                  <!-- maritalStatus -->
+                  <div class="col">
+                    <label class="form-label" for="maritalStatus"
+                      ><i class="fa-solid fa-heart"></i>
+                      {{ t("kanban-modal-edit-label-maritalStatus") }}
+                    </label>
+                    <select
+                      :class="[
+                        'form-select',
+                        isEditMode ? 'bg-input-edit' : 'bg-input',
+                        'py-2',
+                      ]"
+                      v-model="customerData.maritalStatus"
+                      :disabled="!isEditMode"
+                      name="maritalStatus"
+                      @dblclick="handleDoubleClick"
+                    >
+                      <option
+                        :value="null"
+                        disabled
+                        :selected="!customerData.maritalStatus"
+                      >
+                        {{ t("kanban-modal-edit-placeholder-maritalStatus") }}
+                      </option>
+                      <option
+                        v-for="(value, key) in maritalStatusList"
+                        :key="key"
+                        :value="key"
+                      >
+                        {{ value }}
+                      </option>
+                    </select>
+                  </div>
+                  <!-- Personal Companion -->
+                  <div class="col">
+                    <label class="form-label" for="personalCompanion"
+                      ><i class="fa-solid fa-person-circle-plus"></i>
+                      {{ t("kanban-modal-edit-label-personalCompanion") }}
+                    </label>
+                    <select
+                      :class="[
+                        'form-select',
+                        isEditMode ? 'bg-input-edit' : 'bg-input',
+                        'py-2',
+                      ]"
+                      v-model="customerData.personalCompanion"
+                      :disabled="!isEditMode"
+                      name="personalCompanion"
+                      @dblclick="handleDoubleClick"
+                    >
+                      <option
+                        :value="null"
+                        disabled
+                        :selected="!customerData.personalCompanion"
+                      >
+                        {{
+                          t("kanban-modal-edit-placeholder-personalCompanion")
+                        }}
+                      </option>
+                      <option
+                        v-for="(value, key) in personalCompanionList"
+                        :key="key"
+                        :value="key"
+                      >
+                        {{ value }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
               </div>
 
               <!-- Phone -->
@@ -306,6 +399,78 @@
                   >
                     {{ t("kanban-modal-edit-button-reports") }}
                   </button>
+                </div>
+              </div>
+
+              <!-- Patient Problems -->
+              <div class="row mb-3" @dblclick="handleDoubleClick">
+                <div class="col-2 pt-2">
+                  <label class="form-label"
+                    ><i class="fa-solid fa-notes-medical"></i>
+                    {{ t("kanban-modal-edit-label-patient-problems") }}</label
+                  >
+                </div>
+                <div class="col-10">
+                  <div class="" v-if="customerData.patient_problems.length > 0">
+                    <div class="row">
+                      <div
+                        class="col-4 mb-2 px-2"
+                        v-for="(
+                          problem, index
+                        ) in customerData.patient_problems"
+                        :key="index"
+                      >
+                        <div class="row p-0">
+                          <div
+                            class="col-12 p-1 px-1 d-flex align-items-center"
+                            @dblclick="handleDoubleClick"
+                          >
+                            <select
+                              class="form-select py-2 me-2"
+                              :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
+                              v-model="problem.id"
+                              :disabled="!isEditMode"
+                              @dblclick="handleDoubleClick"
+                            >
+                              <option value="" disabled>
+                                {{
+                                  t(
+                                    "kanban-modal-edit-placeholder-patient-problems"
+                                  )
+                                }}
+                              </option>
+                              <option
+                                v-for="(value, key) in patientProblemsList"
+                                :key="key"
+                                :value="key"
+                              >
+                                {{ value }}
+                              </option>
+                            </select>
+                            <button
+                              class="btn btn-primary me-2"
+                              @click="removePatientProblem(index)"
+                              v-if="isEditMode"
+                            >
+                              x
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pt-2" v-else-if="!isEditMode">
+                    {{ t("kanban-modal-edit-label-no-patient-problems") }}
+                  </div>
+                  <div class="w-100 d-flex mt-2 justify-content-start gap-2">
+                    <button
+                      class="btn btn-primary fs-5 px-3"
+                      @click="addNewPatientProblem"
+                      :disabled="!isEditMode"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -630,6 +795,83 @@
                   </div>
                 </div>
               </div>
+              <!-- Additional Services -->
+              <div class="row mb-3" @dblclick="handleDoubleClick">
+                <div class="col-2 pt-2">
+                  <label class="form-label"
+                    ><i class="fa-solid fa-hand-holding-medical"></i>
+                    {{
+                      t("kanban-modal-edit-label-additional-services")
+                    }}</label
+                  >
+                </div>
+                <div class="col-10">
+                  <div
+                    class=""
+                    v-if="customerData.additional_services.length > 0"
+                  >
+                    <div class="row">
+                      <div
+                        class="col-4 mb-2 px-2"
+                        v-for="(
+                          service, index
+                        ) in customerData.additional_services"
+                        :key="index"
+                      >
+                        <div class="row p-0">
+                          <div
+                            class="col-12 p-1 px-1 d-flex align-items-center"
+                            @dblclick="handleDoubleClick"
+                          >
+                            <select
+                              class="form-select py-2 me-2"
+                              :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
+                              v-model="service.id"
+                              :disabled="!isEditMode"
+                              @dblclick="handleDoubleClick"
+                            >
+                              <option value="" disabled>
+                                {{
+                                  t(
+                                    "kanban-modal-edit-placeholder-additional-services"
+                                  )
+                                }}
+                              </option>
+                              <option
+                                v-for="(value, key) in additionalServicesList"
+                                :key="key"
+                                :value="key"
+                              >
+                                {{ value }}
+                              </option>
+                            </select>
+                            <button
+                              class="btn btn-primary me-2"
+                              @click="removeAdditionalService(index)"
+                              v-if="isEditMode"
+                            >
+                              x
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pt-2" v-else-if="!isEditMode">
+                    {{ t("kanban-modal-edit-label-no-additional-services") }}
+                  </div>
+                  <div class="w-100 d-flex mt-2 justify-content-start gap-2">
+                    <button
+                      class="btn btn-primary fs-5 px-3"
+                      @click="addNewAdditionalService"
+                      :disabled="!isEditMode"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               <div class="row mb-3">
                 <div class="col-2">
                   <label class="form-label"
@@ -1036,10 +1278,12 @@
                   :key="log.id"
                   class="row bg-input pt-2 text-secondary border border-top"
                 >
-                  <div class="col-3">
-                    <p>{{ new Date(log.created_at).toLocaleString() }}</p>
+                  <div class="col-2 ps-2">
+                    <p style="font-size: 12px">
+                      {{ new Date(log.created_at).toLocaleString() }}
+                    </p>
                   </div>
-                  <div class="col-9">
+                  <div class="col-10" style="font-size: 12px">
                     <template
                       v-for="(part, index) in formatLogEntry(log)"
                       :key="index"
@@ -1561,6 +1805,8 @@ export default {
       name: props.deal?.contact.name || "Custome Name",
       nationality: props.deal?.contact.nationality || null,
       language: props.deal?.contact.language || null,
+      personalCompanion: props.deal?.contact.personalCompanion || null,
+      maritalStatus: props.deal?.contact.maritalStatus || null,
       phone: props.deal?.contact.phones[0]?.phone || "",
       phone2: props.deal?.contact.phones[1]?.phone || "",
       email: props.deal?.contact.email || "",
@@ -1599,6 +1845,8 @@ export default {
       kanban_total_cost: props.deal?.kanban_total_cost || null,
       hospital_total_cost: props.deal?.hospital_total_cost || null,
       passports: props.deal?.passports || [],
+      patient_problems: props.deal?.patient_problems || [],
+      additional_services: props.deal?.additional_services || [],
     });
     const nationalities_options = {
       afghan: {
@@ -2412,6 +2660,151 @@ export default {
         ])
       );
     });
+    const maritalStatusOptions = {
+      single: {
+        en: "Single",
+        ar: "أعزب",
+        fr: "Célibataire",
+      },
+      married: {
+        en: "Married",
+        ar: "متزوج",
+        fr: "Marié(e)",
+      },
+    };
+
+    const maritalStatusList = computed(() => {
+      return Object.fromEntries(
+        Object.entries(maritalStatusOptions).map(([key, value]) => [
+          key,
+          locale.value === "ar"
+            ? value.ar
+            : locale.value === "fr"
+            ? value.fr
+            : value.en,
+        ])
+      );
+    });
+    const personalCompanionOptions = {
+      present: {
+        en: "Present",
+        ar: "موجود",
+        fr: "Présent",
+      },
+      absent: {
+        en: "Absent",
+        ar: "غير موجود",
+        fr: "Absent",
+      },
+    };
+
+    const personalCompanionList = computed(() => {
+      return Object.fromEntries(
+        Object.entries(personalCompanionOptions).map(([key, value]) => [
+          key,
+          locale.value === "ar"
+            ? value.ar
+            : locale.value === "fr"
+            ? value.fr
+            : value.en,
+        ])
+      );
+    });
+    const patientProblemsOptions = {
+      premature_ejaculation: {
+        en: "Premature Ejaculation",
+        ar: "سرعة قذف",
+        fr: "Éjaculation précoce",
+      },
+      erectile_dysfunction: {
+        en: "Erectile Dysfunction",
+        ar: "ضعف جنسي",
+        fr: "Dysfonction érectile",
+      },
+      peyronies_disease: {
+        en: "Peyronie's Disease",
+        ar: "بيروني",
+        fr: "Maladie de La Peyronie",
+      },
+    };
+
+    const patientProblemsList = computed(() => {
+      return Object.fromEntries(
+        Object.entries(patientProblemsOptions).map(([key, value]) => [
+          key,
+          locale.value === "ar"
+            ? value.ar
+            : locale.value === "fr"
+            ? value.fr
+            : value.en,
+        ])
+      );
+    });
+    const additionalServicesOptions = {
+      personal_companion: {
+        en: "Personal Companion",
+        ar: "مرافق شخصي",
+        fr: "Accompagnateur personnel",
+      },
+      translator: {
+        en: "Translator",
+        ar: "مترجم",
+        fr: "Traducteur",
+      },
+      medical_driver: {
+        en: "Medical Driver",
+        ar: "سائق طبي",
+        fr: "Chauffeur médical",
+      },
+      comprehensive_driver: {
+        en: "Comprehensive Driver",
+        ar: "سائق شامل",
+        fr: "Chauffeur complet",
+      },
+      airport_driver_only: {
+        en: "Airport Driver Only",
+        ar: "سائق مطار فقط",
+        fr: "Chauffeur d'aéroport uniquement",
+      },
+      airport_pickup_dropoff: {
+        en: "Airport Pick-up & Drop-off",
+        ar: "استقبال و توديع",
+        fr: "Prise en charge et dépôt à l'aéroport",
+      },
+      medical_transport: {
+        en: "Medical Transport",
+        ar: "مواصلات طبية",
+        fr: "Transport médical",
+      },
+      personal_driver: {
+        en: "Personal Driver",
+        ar: "سائق شخصي",
+        fr: "Chauffeur personnel",
+      },
+      hotel_booking: {
+        en: "Hotel Booking",
+        ar: "حجز فندقي",
+        fr: "Réservation d'hôtel",
+      },
+      personal_assistant: {
+        en: "Personal Assistant",
+        ar: "مرافق",
+        fr: "Assistant personnel",
+      },
+    };
+
+    const additionalServicesList = computed(() => {
+      return Object.fromEntries(
+        Object.entries(additionalServicesOptions).map(([key, value]) => [
+          key,
+          locale.value === "ar"
+            ? value.ar
+            : locale.value === "fr"
+            ? value.fr
+            : value.en,
+        ])
+      );
+    });
     const formatDateForInput = (dateString) => {
       if (!dateString) return "";
       const [day, month, year] = dateString.split("/");
@@ -2640,6 +3033,8 @@ export default {
           name: customerData.name,
           nationality: customerData.nationality,
           language: customerData.language,
+          personalCompanion: customerData.personalCompanion,
+          maritalStatus: customerData.maritalStatus,
           phones: phones,
           email: customerData.email || "",
           note: customerData.note || "",
@@ -2661,6 +3056,8 @@ export default {
           kanban_total_cost: customerData.kanban_total_cost || null,
           hospital_total_cost: customerData.hospital_total_cost || null,
           passports: [customerData.passport || null],
+          patient_problems: customerData.patient_problems || [],
+          additional_services: customerData.additional_services || [],
         };
 
         const response = await updateDeal(props.deal.id, formData);
@@ -2748,6 +3145,48 @@ export default {
       } catch (error) {
         console.error("Error removing package:", error);
         toast.error(t("error.removePackage"), {
+          timeout: 3000,
+        });
+      }
+    };
+
+    const addNewPatientProblem = () => {
+      if (!isEditMode.value) return;
+      customerData.patient_problems.push({
+        id: "",
+      });
+    };
+
+    const removePatientProblem = (index) => {
+      try {
+        customerData.patient_problems.splice(index, 1);
+        toast.success(t("success.removePatientProblem"), {
+          timeout: 3000,
+        });
+      } catch (error) {
+        console.error("Error removing patient problem:", error);
+        toast.error(t("error.removePatientProblem"), {
+          timeout: 3000,
+        });
+      }
+    };
+
+    const addNewAdditionalService = () => {
+      if (!isEditMode.value) return;
+      customerData.additional_services.push({
+        id: "",
+      });
+    };
+
+    const removeAdditionalService = (index) => {
+      try {
+        customerData.additional_services.splice(index, 1);
+        toast.success(t("success.removeAdditionalService"), {
+          timeout: 3000,
+        });
+      } catch (error) {
+        console.error("Error removing additional service:", error);
+        toast.error(t("error.removeAdditionalService"), {
           timeout: 3000,
         });
       }
@@ -3531,6 +3970,14 @@ export default {
       handlePassportUpload,
       PrintCase,
       formatLogEntry,
+      maritalStatusList,
+      personalCompanionList,
+      patientProblemsList,
+      addNewPatientProblem,
+      removePatientProblem,
+      additionalServicesList,
+      addNewAdditionalService,
+      removeAdditionalService,
     };
   },
 };

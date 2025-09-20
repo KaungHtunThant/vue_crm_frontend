@@ -11,6 +11,8 @@
       <div
         v-if="isNewsBarVisible"
         class="marquee-container bg-body-secondary text-primary fw-bold position-fixed bottom-0 left-0 right-0 overflow-hidden w-100"
+        @mouseover="pauseAnimation"
+        @mouseleave="resumeAnimation"
       >
         <div
           ref="marquee"
@@ -33,7 +35,7 @@
 
 <script>
 import { getKanbanBroadcasts } from "@/plugins/services/authService";
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed, nextTick } from "vue";
 
 export default {
   name: "TheNewsBar",
@@ -41,10 +43,12 @@ export default {
     const newsList = ref([]);
     const marquee = ref(null);
     const translateX = ref(0);
-    let animationFrame;
+    let animationFrame = null;
     let contentWidth = 0;
     const speed = 1;
     const isNewsBarVisible = ref(true);
+    const isPaused = ref(false);
+
     const toggleNewsBar = () => {
       isNewsBarVisible.value = !isNewsBarVisible.value;
     };
@@ -58,22 +62,46 @@ export default {
       return length;
     });
 
-    const startAnimation = () => {
-      if (!marquee.value) return;
+    const step = () => {
+      if (!isPaused.value) {
+        translateX.value += speed;
+        if (marquee.value && translateX.value >= contentWidth) {
+          translateX.value = -contentWidth;
+        }
+      }
+      animationFrame = requestAnimationFrame(step);
+    };
+
+    const initializeAndStartAnimation = () => {
+      if (!marquee.value) {
+        console.warn("Marquee element not found for animation.");
+        return;
+      }
+
       contentWidth = marquee.value.scrollWidth / 2;
       translateX.value = -contentWidth;
-      const step = () => {
-        translateX.value += speed;
-        if (translateX.value >= 0) {
-          translateX.value = contentWidth - messages_length.value * 25;
-          repeatedNewsList.value = [
-            ...repeatedNewsList.value,
-            ...newsList.value,
-          ];
-        }
+
+      isPaused.value = false;
+
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+      animationFrame = requestAnimationFrame(step);
+    };
+
+    const pauseAnimation = () => {
+      isPaused.value = true;
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = null;
+      }
+    };
+
+    const resumeAnimation = () => {
+      if (isPaused.value && animationFrame === null) {
+        isPaused.value = false;
         animationFrame = requestAnimationFrame(step);
-      };
-      step();
+      }
     };
 
     const fetchBroadcasts = async () => {
@@ -93,12 +121,19 @@ export default {
     };
 
     onMounted(() => {
-      fetchBroadcasts();
-      startAnimation();
+      fetchBroadcasts().then(() => {
+        nextTick(() => {
+          if (marquee.value) {
+            initializeAndStartAnimation();
+          }
+        });
+      });
     });
 
     onUnmounted(() => {
-      cancelAnimationFrame(animationFrame);
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
     });
 
     const toggleButtonStyle = computed(() => {
@@ -118,6 +153,8 @@ export default {
       toggleButtonStyle,
       repeatedNewsList,
       messages_length,
+      pauseAnimation,
+      resumeAnimation,
     };
   },
 };

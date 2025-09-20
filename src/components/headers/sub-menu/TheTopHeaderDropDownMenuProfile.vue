@@ -15,13 +15,13 @@
           class="profileStatus d-flex justify-content-between align-items-center w-100"
         >
           <span class="">{{ name }}</span>
-          <div class="form-check form-switch">
+          <div class="form-check form-switch" @click.stop>
             <input
               ref="customSwitchInput"
               class="form-check-input shadow-none custom-switch"
-              style="padding: 10px 20px"
+              style="padding: 10px 20px; cursor: pointer"
               type="checkbox"
-              @click.stop="handleSwitchClick"
+              @change="handleSwitchClick"
               checked
             />
           </div>
@@ -30,6 +30,22 @@
       </div>
     </div>
     <hr class="my-2" />
+    <div class="ms-3 pe-1 d-flex justify-content-between align-items-center">
+      <div>
+        <i class="fa-solid fa-bell text-secondary"></i>
+        <span class="ms-2">{{ t("header-user-menu-item-notification") }}</span>
+      </div>
+      <div class="form-check form-switch" @click.stop>
+        <input
+          ref="isNotificationsEnabled"
+          type="checkbox"
+          v-model="isNotificationsEnabled"
+          class="form-check-input shadow-none custom-switch"
+          style="padding: 10px 20px; cursor: pointer"
+          @change="handleNotificationSwitchClick"
+        />
+      </div>
+    </div>
     <ul class="list-unstyled mb-0 lh-lg">
       <profile-menu-item
         icon="fa-user"
@@ -102,6 +118,7 @@ export default {
     const { t } = useI18n();
 
     const customSwitchInput = ref(null);
+    const isNotificationsEnabled = ref(null);
 
     const handleSwitchClick = () => {
       nextTick(() => {
@@ -110,7 +127,13 @@ export default {
         }
       });
     };
-
+    const handleNotificationSwitchClick = () => {
+      nextTick(() => {
+        if (isNotificationsEnabled.value) {
+          isNotificationsEnabled.value.blur();
+        }
+      });
+    };
     onMounted(() => {
       // ... باقي الـ onMounted
     });
@@ -128,6 +151,7 @@ export default {
       t,
       customSwitchInput,
       handleSwitchClick,
+      handleNotificationSwitchClick,
     };
   },
   data() {
