@@ -800,9 +800,7 @@
                 <div class="col-2 pt-2">
                   <label class="form-label"
                     ><i class="fa-solid fa-hand-holding-medical"></i>
-                    {{
-                      t("kanban-modal-edit-label-additional-services")
-                    }}</label
+                    {{ t("kanban-modal-edit-label-addon") }}</label
                   >
                 </div>
                 <div class="col-10">
@@ -858,7 +856,7 @@
                     </div>
                   </div>
                   <div class="pt-2" v-else-if="!isEditMode">
-                    {{ t("kanban-modal-edit-label-no-additional-services") }}
+                    {{ t("kanban-modal-edit-label-noaddon") }}
                   </div>
                   <div class="w-100 d-flex mt-2 justify-content-start gap-2">
                     <button
@@ -868,6 +866,28 @@
                     >
                       +
                     </button>
+                    <div class="input-group">
+                      <span class="input-group-text">{{
+                        t("kanban-modal-edit-label-total-cost")
+                      }}</span>
+                      <input
+                        type="number"
+                        lang="en"
+                        :class="[
+                          'bg-input',
+                          isEditMode ? 'bg-input-edit' : 'bg-input',
+                          'p-2',
+                          'rounded-right-2',
+                          'form-control',
+                        ]"
+                        v-model="customerData.hospital_total_cost"
+                        :placeholder="
+                          t('kanban-modal-edit-placeholder-total-cost')
+                        "
+                        :readonly="!isEditMode"
+                        min="0"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -3181,9 +3201,6 @@ export default {
     const removeAdditionalService = (index) => {
       try {
         customerData.additional_services.splice(index, 1);
-        toast.success(t("success.removeAdditionalService"), {
-          timeout: 3000,
-        });
       } catch (error) {
         console.error("Error removing additional service:", error);
         toast.error(t("error.removeAdditionalService"), {
