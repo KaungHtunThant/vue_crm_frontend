@@ -1,6 +1,8 @@
 <template>
-  <div class="mt-4 pe-3 bg-white rounded-3 p-3 me-2">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="documents mt-4 bg-white rounded-3 pb-3 me-2">
+    <div
+      class="d-flex justify-content-between align-items-center mb-4 position-sticky top-0 bg-white z-3 px-3 py-2 shadow-sm"
+    >
       <div class="d-flex align-items-center pt-3">
         <!-- Breadcrumbs -->
         <nav aria-label="breadcrumb">
@@ -72,7 +74,7 @@
     </div>
 
     <!-- Files and Folders List -->
-    <div class="files-list">
+    <div class="files-list px-3">
       <!-- Folders Section -->
       <div
         v-for="folder in folders"
@@ -681,6 +683,10 @@ export default {
 </script>
 
 <style scoped>
+.documents {
+  height: calc(100vh - 70px) !important;
+  overflow: scroll;
+}
 .dropzone {
   border: 2px dashed #ccc;
   padding: 2rem;
