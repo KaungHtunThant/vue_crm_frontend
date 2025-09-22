@@ -2786,20 +2786,70 @@ export default {
       );
     });
     const patientProblemsOptions = {
-      premature_ejaculation: {
-        en: "Premature Ejaculation",
-        ar: "سرعة قذف",
-        fr: "Éjaculation précoce",
+      premature_ejaculation_mild: {
+        en: "Premature Ejaculation (Mild)",
+        ar: "سرعة قذف (خفيف)",
+        fr: "Éjaculation précoce (légère)",
       },
-      erectile_dysfunction: {
-        en: "Erectile Dysfunction",
-        ar: "ضعف جنسي",
-        fr: "Dysfonction érectile",
+      premature_ejaculation_moderate: {
+        en: "Premature Ejaculation (Moderate)",
+        ar: "سرعة قذف (متوسط)",
+        fr: "Éjaculation précoce (modérée)",
       },
-      peyronies_disease: {
-        en: "Peyronie's Disease",
-        ar: "بيروني",
-        fr: "Maladie de La Peyronie",
+      premature_ejaculation_severe: {
+        en: "Premature Ejaculation (Severe)",
+        ar: "سرعة قذف (حرج)",
+        fr: "Éjaculation précoce (sévère)",
+      },
+
+      erectile_dysfunction_mild: {
+        en: "Erectile Dysfunction (Mild)",
+        ar: "ضعف انتصاب (خفيف)",
+        fr: "Dysfonction érectile (légère)",
+      },
+      erectile_dysfunction_moderate: {
+        en: "Erectile Dysfunction (Moderate)",
+        ar: "ضعف انتصاب (متوسط)",
+        fr: "Dysfonction érectile (modérée)",
+      },
+      erectile_dysfunction_severe: {
+        en: "Erectile Dysfunction (Severe)",
+        ar: "ضعف انتصاب (حرج)",
+        fr: "Dysfonction érectile (sévère)",
+      },
+
+      size_related_issues: {
+        en: "Size-related Issues",
+        ar: "مشاكل حجم العضو",
+        fr: "Problèmes liés à la taille",
+      },
+
+      peyronies_disease_mild: {
+        en: "Peyronie's Disease (Mild)",
+        ar: "البيروني (خفيف)",
+        fr: "Maladie de La Peyronie (légère)",
+      },
+      peyronies_disease_moderate: {
+        en: "Peyronie's Disease (Moderate)",
+        ar: "البيروني (متوسط)",
+        fr: "Maladie de La Peyronie (modérée)",
+      },
+      peyronies_disease_severe: {
+        en: "Peyronie's Disease (Severe)",
+        ar: "البيروني (حرج)",
+        fr: "Maladie de La Peyronie (sévère)",
+      },
+
+      prostate_issues: {
+        en: "Prostate Issues",
+        ar: "مشاكل البروستاتا",
+        fr: "Problèmes de prostate",
+      },
+
+      initial_diagnosis: {
+        en: "Initial Diagnosis",
+        ar: "التشخيص المبدئي",
+        fr: "Diagnostic initial",
       },
     };
 

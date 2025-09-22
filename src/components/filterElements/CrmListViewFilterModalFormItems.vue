@@ -48,8 +48,8 @@
                 </option>
                 <option
                   v-for="source in local_sources"
-                  :key="source.value"
-                  :value="source.value"
+                  :key="source.id"
+                  :value="source.id"
                 >
                   {{ source.name }}
                 </option>

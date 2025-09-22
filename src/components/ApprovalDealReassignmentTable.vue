@@ -2,8 +2,8 @@
   <div class="tableCrmList me-2">
     <div class="container-fluid mt-3 bg-white rounded-3 p-3 pb-0">
       <div class="controls mb-3">
-        <div class="row">
-          <div class="col-12 col-m-6 col-lg-6">
+        <div class="row d-flex">
+          <div class="col-12 col-md-6 m-auto">
             <div class="input-group position-relative h-100">
               <input
                 type="search"
@@ -240,6 +240,7 @@ export default {
     const onPageChange = (event) => {
       currentPage.value = event.page;
       rowsPerPage.value = event.rows;
+      fetchData(currentPage.value, rowsPerPage.value);
     };
 
     const handleShowDealModal = async (dealId) => {
