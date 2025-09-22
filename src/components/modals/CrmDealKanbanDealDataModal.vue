@@ -187,7 +187,7 @@
                 <div class="row mt-2">
                   <div class="col-2"></div>
                   <!-- Passport Number -->
-                  <div class="col">
+                  <!-- <div class="col">
                     <label class="form-label" for="passportNumber"
                       ><i class="fa-solid fa-passport"></i>
                       {{ t("kanban-modal-edit-label-passportNumber")
@@ -207,12 +207,36 @@
                       :readonly="!isEditMode"
                       name="passportNumber"
                     />
+                  </div> -->
+                  <!-- Passport Number -->
+                  <div class="col" @dblclick="handleDoubleClick">
+                    <label class="form-label" for="date_of_birth"
+                      ><i class="fa-solid fa-calendar-days"></i>
+                      {{ t("kanban-modal-edit-label-date_of_birth")
+                      }}<span class="text-danger">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      lang="en"
+                      :disabled="!isEditMode"
+                      :class="[
+                        'form-control',
+                        isEditMode ? 'bg-input-edit' : 'bg-input',
+                        'py-2',
+                      ]"
+                      v-model="customerData.date_of_birth"
+                      :placeholder="
+                        t('kanban-modal-edit-placeholder-date_of_birth')
+                      "
+                      name="date_of_birth"
+                      @mousedown="dateTaskClick"
+                    />
                   </div>
                   <!-- maritalStatus -->
                   <div class="col">
                     <label class="form-label" for="maritalStatus"
                       ><i class="fa-solid fa-heart"></i>
-                      {{ t("kanban-modal-edit-label-maritalStatus") }}
+                      {{ t("kanban-modal-edit-label-marital-status") }}
                     </label>
                     <select
                       :class="[
@@ -245,7 +269,7 @@
                   <div class="col">
                     <label class="form-label" for="personalCompanion"
                       ><i class="fa-solid fa-person-circle-plus"></i>
-                      {{ t("kanban-modal-edit-label-personalCompanion") }}
+                      {{ t("kanban-modal-edit-label-personal-companion") }}
                     </label>
                     <select
                       :class="[
@@ -1199,7 +1223,11 @@
                 </div>
               </div>
               <!-- Deal passport upload -->
-              <div class="row mb-3" v-show="!customerData.is_local">
+              <div
+                class="row mb-3"
+                v-show="!customerData.is_local"
+                @dblclick="handleDoubleClick"
+              >
                 <div class="col-2">
                   <label class="form-label"
                     ><i class="fa-solid fa-list"></i>
@@ -1207,52 +1235,77 @@
                   >
                 </div>
                 <div class="col-10">
-                  <input
-                    v-if="customerData.passports.length === 0"
-                    type="file"
-                    :class="[
-                      'form-control',
-                      isEditMode ? 'bg-input-edit' : 'bg-input',
-                    ]"
-                    @change="handlePassportUpload"
-                    @dblclick="handleDoubleClick"
-                    :disabled="!isEditMode"
-                  />
-                  <div
-                    v-for="(passport, index) in customerData.passports"
-                    :key="index"
-                  >
-                    <div class="row">
-                      <div class="col-4">
-                        <button
-                          class="btn btn-primary w-100"
-                          @click="removePassport(index)"
-                          :disabled="!isEditMode"
-                        >
-                          <i class="fa-solid fa-file"></i>
-                          {{ t("kanban-modal-edit-button-remove-passport") }}
-                        </button>
-                      </div>
-                      <div class="col-4">
-                        <a
-                          class="btn btn-primary w-100"
-                          :href="passport"
-                          target="_blank"
-                        >
-                          <i class="fa-solid fa-file"></i>
-                          {{ t("kanban-modal-edit-button-view-passport") }}
-                        </a>
-                      </div>
-                      <div class="col-4">
-                        <a
-                          class="btn btn-primary w-100"
-                          :href="passport"
-                          target="_blank"
-                          download
-                        >
-                          <i class="fa-solid fa-file"></i>
-                          {{ t("kanban-modal-edit-button-download-passport") }}
-                        </a>
+                  <div class="row">
+                    <!-- Passport Number -->
+                    <div class="col-12 col-md-4 p-0 pe-2">
+                      <input
+                        type="number"
+                        :class="[
+                          'form-control',
+                          isEditMode ? 'bg-input-edit' : 'bg-input',
+                          '',
+                        ]"
+                        v-model="customerData.passportNumber"
+                        :placeholder="
+                          t('kanban-modal-edit-placeholder-passportNumber')
+                        "
+                        :readonly="!isEditMode"
+                        name="passportNumber"
+                      />
+                    </div>
+                    <div class="col-12 mt-2 mt-md-0 col-md-8 p-0">
+                      <input
+                        v-if="customerData.passports.length === 0"
+                        type="file"
+                        :class="[
+                          'form-control',
+                          isEditMode ? 'bg-input-edit' : 'bg-input',
+                        ]"
+                        @change="handlePassportUpload"
+                        @dblclick="handleDoubleClick"
+                        :disabled="!isEditMode"
+                      />
+                      <div
+                        v-for="(passport, index) in customerData.passports"
+                        :key="index"
+                      >
+                        <div class="row">
+                          <div class="col-4">
+                            <button
+                              class="btn btn-primary w-100"
+                              @click="removePassport(index)"
+                              :disabled="!isEditMode"
+                            >
+                              <i class="fa-solid fa-file"></i>
+                              {{
+                                t("kanban-modal-edit-button-remove-passport")
+                              }}
+                            </button>
+                          </div>
+                          <div class="col-4">
+                            <a
+                              class="btn btn-primary w-100"
+                              :href="passport"
+                              target="_blank"
+                            >
+                              <i class="fa-solid fa-file"></i>
+                              {{ t("kanban-modal-edit-button-view-passport") }}
+                            </a>
+                          </div>
+                          <div class="col-4">
+                            <a
+                              class="btn btn-primary w-100"
+                              :href="passport"
+                              target="_blank"
+                              download
+                            >
+                              <i class="fa-solid fa-file"></i>
+                              {{
+                                t("kanban-modal-edit-button-download-passport")
+                              }}
+                            </a>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1827,6 +1880,8 @@ export default {
       language: props.deal?.contact.language || null,
       personalCompanion: props.deal?.contact.personalCompanion || null,
       maritalStatus: props.deal?.contact.maritalStatus || null,
+      passportNumber: props.deal?.contact.passportNumber || null,
+      date_of_birth: props.deal?.contact.date_of_birth || null,
       phone: props.deal?.contact.phones[0]?.phone || "",
       phone2: props.deal?.contact.phones[1]?.phone || "",
       email: props.deal?.contact.email || "",
@@ -3078,6 +3133,8 @@ export default {
           passports: [customerData.passport || null],
           patient_problems: customerData.patient_problems || [],
           additional_services: customerData.additional_services || [],
+          date_of_birth: customerData.date_of_birth || [],
+          passportNumber: customerData.passportNumber || [],
         };
 
         const response = await updateDeal(props.deal.id, formData);
