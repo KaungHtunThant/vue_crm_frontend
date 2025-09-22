@@ -1235,25 +1235,9 @@
                   >
                 </div>
                 <div class="col-10">
-                  <div class="row">
+                  <div class="row p-0 g-2">
                     <!-- Passport Number -->
-                    <div class="col-12 col-md-4 p-0 pe-2">
-                      <input
-                        type="number"
-                        :class="[
-                          'form-control',
-                          isEditMode ? 'bg-input-edit' : 'bg-input',
-                          '',
-                        ]"
-                        v-model="customerData.passportNumber"
-                        :placeholder="
-                          t('kanban-modal-edit-placeholder-passportNumber')
-                        "
-                        :readonly="!isEditMode"
-                        name="passportNumber"
-                      />
-                    </div>
-                    <div class="col-12 mt-2 mt-md-0 col-md-8 p-0">
+                    <div class="col-12 col-md-8">
                       <input
                         v-if="customerData.passports.length === 0"
                         type="file"
@@ -1307,6 +1291,22 @@
                           </div>
                         </div>
                       </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                      <input
+                        type="number"
+                        :class="[
+                          'form-control',
+                          isEditMode ? 'bg-input-edit' : 'bg-input',
+                          '',
+                        ]"
+                        v-model="customerData.passportNumber"
+                        :placeholder="
+                          t('kanban-modal-edit-placeholder-passport-number')
+                        "
+                        :readonly="!isEditMode"
+                        name="passportNumber"
+                      />
                     </div>
                   </div>
                 </div>
