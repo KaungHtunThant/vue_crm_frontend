@@ -104,6 +104,14 @@
               <i class="fas fa-download"></i>
             </button> -->
             <button
+              v-if="permissionStore.hasPermission(PERMISSIONS.SHARE_WHATSAPP)"
+              class="btn btn-sm btn-success text-white me-2"
+              @click.stop="shareWhatsapp(file.id)"
+              title="Share Whatsapp"
+            >
+              <i class="fas fa-share-from-square"></i>
+            </button>
+            <button
               v-if="permissionStore.hasPermission(PERMISSIONS.DELETE_FOLDER)"
               class="btn btn-sm btn-danger"
               @click.stop="deleteFolder(folder.id)"
@@ -179,7 +187,7 @@
               >
                 <button
                   v-if="permissionStore.hasPermission(PERMISSIONS.VIEW_FILE)"
-                  class="btn btn-sm btn-primary me-2"
+                  class="btn btn-sm btn-primary me-1"
                   @click="viewFile(file)"
                   title="View"
                 >
@@ -187,13 +195,23 @@
                 </button>
                 <a
                   v-if="permissionStore.hasPermission(PERMISSIONS.VIEW_FILE)"
-                  class="btn btn-sm btn-success me-2"
+                  class="btn btn-sm btn-warning text-white me-1"
                   title="Download"
                   :href="file.download_url"
                   download
                 >
                   <i class="fas fa-download"></i>
                 </a>
+                <button
+                  v-if="
+                    permissionStore.hasPermission(PERMISSIONS.SHARE_WHATSAPP)
+                  "
+                  class="btn btn-sm btn-success text-white me-1"
+                  @click="shareWhatsapp(file.id)"
+                  title="Share Whatsapp"
+                >
+                  <i class="fas fa-share-from-square"></i>
+                </button>
                 <button
                   v-if="permissionStore.hasPermission(PERMISSIONS.DELETE_FILE)"
                   class="btn btn-sm btn-danger"
@@ -218,7 +236,7 @@
             <div class="file-actions d-flex justify-content-center flex-wrap">
               <button
                 v-if="permissionStore.hasPermission(PERMISSIONS.VIEW_FILE)"
-                class="btn btn-sm text-bg-primary me-2"
+                class="btn btn-sm text-bg-primary me-1"
                 @click="viewFile(file)"
                 title="View"
               >
@@ -226,13 +244,21 @@
               </button>
               <a
                 v-if="permissionStore.hasPermission(PERMISSIONS.VIEW_FILE)"
-                class="btn btn-sm btn-success me-2"
+                class="btn btn-sm btn-warning text-white me-1"
                 title="Download"
                 :href="file.download_url"
                 download
               >
                 <i class="fas fa-download"></i>
               </a>
+              <button
+                v-if="permissionStore.hasPermission(PERMISSIONS.SHARE_WHATSAPP)"
+                class="btn btn-sm btn-success text-white me-1"
+                @click="shareWhatsapp(file.id)"
+                title="Share Whatsapp"
+              >
+                <i class="fas fa-share-from-square"></i>
+              </button>
               <button
                 v-if="permissionStore.hasPermission(PERMISSIONS.DELETE_FILE)"
                 class="btn btn-sm btn-danger"

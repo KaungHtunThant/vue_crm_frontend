@@ -27,6 +27,7 @@ export const PERMISSIONS = {
   CREATE_FILE: "create-file",
   UPDATE_FILE: "edit-file",
   DELETE_FILE: "delete-file",
+  SHARE_WHATSAPP: "share-whatsapp",
   VIEW_FILE: "view-file",
   SHOW_HISTORY: "show-history",
   SHOW_ASSIGNED_TO: "show-assigned-to",
