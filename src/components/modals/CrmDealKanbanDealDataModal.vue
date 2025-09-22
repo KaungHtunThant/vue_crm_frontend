@@ -190,7 +190,7 @@
                   <div class="col">
                     <label class="form-label" for="passportNumber"
                       ><i class="fa-solid fa-passport"></i>
-                      {{ t("kanban-modal-edit-label-passportNumber")
+                      {{ t("kanban-modal-edit-label-passport-number")
                       }}<span class="text-danger">*</span>
                     </label>
                     <input
@@ -407,7 +407,7 @@
                 <div class="col-2 pt-2">
                   <label class="form-label"
                     ><i class="fa-solid fa-notes-medical"></i>
-                    {{ t("kanban-modal-edit-label-patient-problems") }}</label
+                    {{ t("kanban-modal-edit-label-initialdiagnosis") }}</label
                   >
                 </div>
                 <div class="col-10">
@@ -460,7 +460,7 @@
                     </div>
                   </div>
                   <div class="pt-2" v-else-if="!isEditMode">
-                    {{ t("kanban-modal-edit-label-no-patient-problems") }}
+                    {{ t("kanban-modal-edit-label-no-initialdiagnosis") }}
                   </div>
                   <div class="w-100 d-flex mt-2 justify-content-start gap-2">
                     <button
