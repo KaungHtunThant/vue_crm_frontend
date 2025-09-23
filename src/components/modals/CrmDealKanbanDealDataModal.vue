@@ -209,7 +209,7 @@
                     />
                   </div> -->
                   <!-- Passport Number -->
-                  <div class="col" @dblclick="handleDoubleClick">
+                  <!-- <div class="col" @dblclick="handleDoubleClick">
                     <label class="form-label" for="date_of_birth"
                       ><i class="fa-solid fa-calendar-days"></i>
                       {{ t("kanban-modal-edit-label-date_of_birth")
@@ -231,9 +231,9 @@
                       name="date_of_birth"
                       @mousedown="dateTaskClick"
                     />
-                  </div>
+                  </div> -->
                   <!-- maritalStatus -->
-                  <div class="col">
+                  <!-- <div class="col">
                     <label class="form-label" for="maritalStatus"
                       ><i class="fa-solid fa-heart"></i>
                       {{ t("kanban-modal-edit-label-marital-status") }}
@@ -264,9 +264,9 @@
                         {{ value }}
                       </option>
                     </select>
-                  </div>
+                  </div> -->
                   <!-- Personal Companion -->
-                  <div class="col">
+                  <!-- <div class="col">
                     <label class="form-label" for="personalCompanion"
                       ><i class="fa-solid fa-person-circle-plus"></i>
                       {{ t("kanban-modal-edit-label-personal-companion") }}
@@ -299,7 +299,7 @@
                         {{ value }}
                       </option>
                     </select>
-                  </div>
+                  </div> -->
                 </div>
               </div>
 
@@ -427,7 +427,7 @@
               </div>
 
               <!-- Patient Problems -->
-              <div class="row mb-3" @dblclick="handleDoubleClick">
+              <!-- <div class="row mb-3" @dblclick="handleDoubleClick">
                 <div class="col-2 pt-2">
                   <label class="form-label"
                     ><i class="fa-solid fa-notes-medical"></i>
@@ -496,7 +496,7 @@
                     </button>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <div
                 class="row mb-3"
@@ -820,7 +820,7 @@
                 </div>
               </div>
               <!-- Additional Services -->
-              <div class="row mb-3" @dblclick="handleDoubleClick">
+              <!-- <div class="row mb-3" @dblclick="handleDoubleClick">
                 <div class="col-2 pt-2">
                   <label class="form-label"
                     ><i class="fa-solid fa-hand-holding-medical"></i>
@@ -914,7 +914,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <div class="row mb-3">
                 <div class="col-2">
@@ -1292,7 +1292,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-12 col-md-4">
+                    <!-- <div class="col-12 col-md-4">
                       <input
                         type="number"
                         :class="[
@@ -1307,7 +1307,7 @@
                         :readonly="!isEditMode"
                         name="passportNumber"
                       />
-                    </div>
+                    </div> -->
                   </div>
                 </div>
               </div>
@@ -4023,7 +4023,7 @@ export default {
       cancelEditComment,
       logStore,
       // logs: logStore.logs,
-      // users: logStore.users,
+      users: logStore.users,
       commentInput,
       autoResizeEditWidth,
       resizeDisplayedCommentWidth,
