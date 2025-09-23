@@ -184,7 +184,7 @@
                     </option>
                   </select>
                 </div>
-                <div class="row mt-2">
+                <div class="row mt-2 pe-0">
                   <div class="col-2"></div>
                   <!-- Passport Number -->
                   <!-- <div class="col">
@@ -266,7 +266,7 @@
                     </select>
                   </div>
                   <!-- Personal Companion -->
-                  <div class="col">
+                  <div class="col p-0">
                     <label class="form-label" for="personalCompanion"
                       ><i class="fa-solid fa-person-circle-plus"></i>
                       {{ t("kanban-modal-edit-label-personal-companion") }}
@@ -436,9 +436,9 @@
                 </div>
                 <div class="col-10">
                   <div class="" v-if="customerData.patient_problems.length > 0">
-                    <div class="row">
+                    <div class="row mx-1">
                       <div
-                        class="col-4 mb-2 px-2"
+                        class="col-6 col-lg-4 mb-2 px-2"
                         v-for="(
                           problem, index
                         ) in customerData.patient_problems"
@@ -832,9 +832,9 @@
                     class=""
                     v-if="customerData.additional_services.length > 0"
                   >
-                    <div class="row">
+                    <div class="row mx-1 p-0">
                       <div
-                        class="col-4 mb-2 px-2"
+                        class="col-6 col-lg-4 mb-2 px-2"
                         v-for="(
                           service, index
                         ) in customerData.additional_services"
@@ -1235,9 +1235,9 @@
                   >
                 </div>
                 <div class="col-10">
-                  <div class="row">
+                  <div class="row mx-1">
                     <!-- Passport Number -->
-                    <div class="col-12 col-md-4 p-0 pe-2">
+                    <div class="col-12 col-md-4 p-0">
                       <input
                         type="number"
                         :class="[
@@ -1253,7 +1253,7 @@
                         name="passportNumber"
                       />
                     </div>
-                    <div class="col-12 mt-2 mt-md-0 col-md-8 p-0">
+                    <div class="col-12 mt-2 mt-md-0 col-md-8 p-0 ps-2">
                       <input
                         v-if="customerData.passports.length === 0"
                         type="file"
@@ -1358,7 +1358,14 @@
                   </div>
                   <div class="col-10" style="font-size: 12px">
                     <template
-                      v-for="(part, index) in formatLogEntry(log)"
+                      v-for="(part, index) in logStore.formatLogEntry(
+                        log,
+                        getStageName,
+                        getStageColor,
+                        formatDate,
+                        logStore.getUserName,
+                        logStore.getUserColor
+                      )"
                       :key="index"
                     >
                       <span v-if="typeof part === 'string'">{{ part }}</span>
@@ -2936,7 +2943,14 @@ export default {
       return `${year}-${month}-${day}`;
     };
     const formatDate = (dateString) => {
-      return dateString ? dateString.split("T")[0] : "No date";
+      const options = {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      };
+      return new Date(dateString).toLocaleDateString("en-US", options);
     };
     // const fetchUsers = async () => {
     //   try {
@@ -3671,10 +3685,10 @@ export default {
       editingCommentId.value = null;
       editingCommentText.value = "";
     };
-    onMounted(() => {
-      logStore.fetchUsers();
-      if (props.deal?.id) logStore.fetchLogs(props.deal.id);
-      fetchSources();
+    onMounted(async () => {
+      await logStore.fetchUsers();
+      if (props.deal?.id) await logStore.fetchLogs(props.deal.id);
+      await fetchSources();
       // fetchUsers();
       document.addEventListener("click", handleClickOutside);
 
@@ -3884,111 +3898,112 @@ export default {
         });
       }
     };
-    const formatLogEntry = (log) => {
-      const parts = [];
-      const userName = logStore.getUserName(log.user_id);
-      const userColor = logStore.getUserColor(log.user_id);
+    // const formatLogEntry = (log) => {
+    //   const parts = [];
+    //   const userName = logStore.getUserName(log.user_id);
+    //   const userColor = logStore.getUserColor(log.user_id);
 
-      parts.push({ text: userName, backgroundColor: userColor, isBadge: true });
+    //   parts.push({ text: userName, backgroundColor: userColor, isBadge: true });
 
-      if (
-        log.event === "updated" &&
-        log.entity_type === "Task" &&
-        log.new_values?.status === "completed"
-      ) {
-        parts.push(` completed Task ID: ${log.entity_id}.`);
-      } else if (
-        log.event === "updated" &&
-        log.entity_type === "Deal" &&
-        log.old_values?.stage_id &&
-        log.new_values?.stage_id
-      ) {
-        const oldStageName = getStageName(log.old_values.stage_id);
-        const oldStageColor = getStageColor(log.old_values.stage_id);
-        const newStageName = getStageName(log.new_values.stage_id);
-        const newStageColor = getStageColor(log.new_values.stage_id);
+    //   if (
+    //     log.event === "updated" &&
+    //     log.entity_type === "Task" &&
+    //     log.new_values?.status === "completed"
+    //   ) {
+    //     parts.push(` completed Task ID: ${log.entity_id}.`);
+    //   } else if (
+    //     log.event === "updated" &&
+    //     log.entity_type === "Deal" &&
+    //     log.old_values?.stage_id &&
+    //     log.new_values?.stage_id
+    //   ) {
+    //     const oldStageName = getStageName(log.old_values.stage_id);
+    //     const oldStageColor = getStageColor(log.old_values.stage_id);
+    //     const newStageName = getStageName(log.new_values.stage_id);
+    //     const newStageColor = getStageColor(log.new_values.stage_id);
 
-        parts.push(` moved Deal ID: ${log.entity_id} from `);
-        parts.push({
-          text: oldStageName,
-          backgroundColor: oldStageColor,
-          isBadge: true,
-        });
-        parts.push(` to `);
-        parts.push({
-          text: newStageName,
-          backgroundColor: newStageColor,
-          isBadge: true,
-        });
-        parts.push(`.`);
-      } else if (log.event === "created" && log.entity_type === "Deal") {
-        parts.push(` created a new Deal with ID: ${log.entity_id}.`);
-      } else if (log.event === "created" && log.entity_type === "Comment") {
-        parts.push(` added a new Comment on Entity ID: ${log.entity_id}.`);
-      } else if (log.event === "created" && log.entity_type === "Task") {
-        parts.push(` created a new Task with ID: ${log.entity_id}.`);
-      } else {
-        parts.push(
-          ` updated ${
-            log.entity_type === "Deal"
-              ? "Deal"
-              : log.entity_type === "Task"
-              ? "Task"
-              : "Comment"
-          } ID: ${log.entity_id}.`
-        );
-        const changes = [];
-        for (const key in log.new_values) {
-          if (
-            Object.prototype.hasOwnProperty.call(log.new_values, key) &&
-            log.old_values?.[key] !== undefined &&
-            log.old_values?.[key] !== log.new_values[key]
-          ) {
-            const oldValue = log.old_values[key];
-            const newValue = log.new_values[key];
+    //     parts.push(` moved Deal ID: ${log.entity_id} from `);
+    //     parts.push({
+    //       text: oldStageName,
+    //       backgroundColor: oldStageColor,
+    //       isBadge: true,
+    //     });
+    //     parts.push(` to `);
+    //     parts.push({
+    //       text: newStageName,
+    //       backgroundColor: newStageColor,
+    //       isBadge: true,
+    //     });
+    //     parts.push(`.`);
+    //   } else if (log.event === "created" && log.entity_type === "Deal") {
+    //     parts.push(` created a new Deal with ID: ${log.entity_id}.`);
+    //   } else if (log.event === "created" && log.entity_type === "Comment") {
+    //     parts.push(` added a new Comment on Entity ID: ${log.entity_id}.`);
+    //   } else if (log.event === "created" && log.entity_type === "Task") {
+    //     parts.push(` created a new Task with ID: ${log.entity_id}.`);
+    //   } else {
+    //     parts.push(
+    //       ` updated ${
+    //         log.entity_type === "Deal"
+    //           ? "Deal"
+    //           : log.entity_type === "Task"
+    //           ? "Task"
+    //           : "Comment"
+    //       } ID: ${log.entity_id}.`
+    //     );
+    //     const changes = [];
+    //     for (const key in log.new_values) {
+    //       if (
+    //         Object.prototype.hasOwnProperty.call(log.new_values, key) &&
+    //         log.old_values?.[key] !== undefined &&
+    //         log.old_values?.[key] !== log.new_values[key]
+    //       ) {
+    //         const oldValue = log.old_values[key];
+    //         const newValue = log.new_values[key];
 
-            let formattedOldValue = oldValue === null ? "Unassigned" : oldValue;
-            let formattedNewValue = newValue === null ? "Unassigned" : newValue;
+    //         let formattedOldValue = oldValue === null ? "Unassigned" : oldValue;
+    //         let formattedNewValue = newValue === null ? "Unassigned" : newValue;
 
-            if (key === "assign_by_id" || key === "assigned_to_id") {
-              parts.push(` ${key}: `);
+    //         if (key === "assign_by_id" || key === "assigned_to_id") {
+    //           parts.push(` ${key}: `);
 
-              if (oldValue !== null && oldValue !== undefined) {
-                parts.push({
-                  text: logStore.getUserName(oldValue),
-                  backgroundColor: logStore.getUserColor(oldValue),
-                  isBadge: true,
-                });
-              } else {
-                parts.push("");
-              }
-              parts.push(` -> `);
-              if (newValue !== null && newValue !== undefined) {
-                parts.push({
-                  text: logStore.getUserName(newValue),
-                  backgroundColor: logStore.getUserColor(newValue),
-                  isBadge: true,
-                });
-              } else {
-                parts.push("Unassigned");
-              }
-            } else {
-              changes.push(
-                `${key}: ${formattedOldValue} -> ${formattedNewValue}`
-              );
-            }
-          }
-        }
-        if (changes.length > 0) {
-          parts.push(` Changes: ${changes.join(", ")}.`);
-        }
-      }
-      parts.push(` (${formatDate(log.created_at)})`);
-      return parts;
-    };
-    const getStageName = (id) => {
-      const stage = props.stages.find((s) => s.id === id);
-      return stage ? stage.name : id;
+    //           if (oldValue !== null && oldValue !== undefined) {
+    //             parts.push({
+    //               text: logStore.getUserName(oldValue),
+    //               backgroundColor: logStore.getUserColor(oldValue),
+    //               isBadge: true,
+    //             });
+    //           } else {
+    //             parts.push("");
+    //           }
+    //           parts.push(` -> `);
+    //           if (newValue !== null && newValue !== undefined) {
+    //             parts.push({
+    //               text: logStore.getUserName(newValue),
+    //               backgroundColor: logStore.getUserColor(newValue),
+    //               isBadge: true,
+    //             });
+    //           } else {
+    //             parts.push("Unassigned");
+    //           }
+    //         } else {
+    //           changes.push(
+    //             `${key}: ${formattedOldValue} -> ${formattedNewValue}`
+    //           );
+    //         }
+    //       }
+    //     }
+    //     if (changes.length > 0) {
+    //       parts.push(` Changes: ${changes.join(", ")}.`);
+    //     }
+    //   }
+    //   parts.push(` (${formatDate(log.created_at)})`);
+    //   return parts;
+    // };
+
+    const getStageName = (stageId) => {
+      const stage = props.stages.find((s) => s.id === stageId);
+      return stage ? stage.name : `Stage#${stageId}`;
     };
     const getStageColor = (id) => {
       const stage = props.stages.find((s) => s.id === id);
@@ -4093,7 +4108,7 @@ export default {
       handleTaskUpdate,
       handlePassportUpload,
       PrintCase,
-      formatLogEntry,
+      // formatLogEntry,
       maritalStatusList,
       personalCompanionList,
       patientProblemsList,
