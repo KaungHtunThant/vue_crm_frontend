@@ -186,33 +186,10 @@
                 </div>
                 <div class="row mt-2 pe-0">
                   <div class="col-2"></div>
-                  <!-- Passport Number -->
-                  <div class="col">
-                    <label class="form-label" for="passportNumber"
-                      ><i class="fa-solid fa-passport"></i>
-                      {{ t("kanban-modal-edit-label-passport-number")
-                      }}<span class="text-danger">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      :class="[
-                        'form-control',
-                        isEditMode ? 'bg-input-edit' : 'bg-input',
-                        'py-2',
-                      ]"
-                      v-model="customerData.passportNumber"
-                      :placeholder="
-                        t('kanban-modal-edit-placeholder-passportNumber')
-                      "
-                      :readonly="!isEditMode"
-                      name="passportNumber"
-                    />
-                  </div>
-                  <!-- Passport Number -->
                   <div class="col" @dblclick="handleDoubleClick">
                     <label class="form-label" for="date_of_birth"
                       ><i class="fa-solid fa-calendar-days"></i>
-                      {{ t("kanban-modal-edit-label-date_of_birth")
+                      {{ t("kanban-modal-edit-label-dob")
                       }}<span class="text-danger">*</span>
                     </label>
                     <input
@@ -225,9 +202,7 @@
                         'py-2',
                       ]"
                       v-model="customerData.date_of_birth"
-                      :placeholder="
-                        t('kanban-modal-edit-placeholder-date_of_birth')
-                      "
+                      :placeholder="t('kanban-modal-edit-placeholder-dob')"
                       name="date_of_birth"
                       @mousedown="dateTaskClick"
                     />
@@ -236,7 +211,7 @@
                   <div class="col">
                     <label class="form-label" for="maritalStatus"
                       ><i class="fa-solid fa-heart"></i>
-                      {{ t("kanban-modal-edit-label-marital-status") }}
+                      {{ t("kanban-modal-edit-label-maritalstatus") }}
                     </label>
                     <select
                       :class="[
@@ -254,7 +229,7 @@
                         disabled
                         :selected="!customerData.maritalStatus"
                       >
-                        {{ t("kanban-modal-edit-placeholder-maritalStatus") }}
+                        {{ t("kanban-modal-edit-maritalstatus-placeholder") }}
                       </option>
                       <option
                         v-for="(value, key) in maritalStatusList"
@@ -288,7 +263,7 @@
                         :selected="!customerData.personalCompanion"
                       >
                         {{
-                          t("kanban-modal-edit-placeholder-personalCompanion")
+                          t("kanban-modal-edit-placeholder-personal-companion")
                         }}
                       </option>
                       <option
@@ -621,7 +596,7 @@
                             />
                           </div>
                         </div>
-                        <div class="col-1 p-1 px-1">
+                        <div class="col-1 py-1">
                           <button
                             class="btn btn-primary"
                             @click="removeKanbanPackage(index)"
@@ -641,7 +616,7 @@
                       class="btn btn-primary fs-5 px-3"
                       @click="addNewKanbanPackage"
                       :disabled="!isEditMode"
-                      v-if="isEditMode"
+                      v-show="isEditMode"
                     >
                       +
                     </button>
@@ -770,11 +745,11 @@
                             />
                           </div>
                         </div>
-                        <div class="col-1 p-1 px-1">
+                        <div class="col-1 py-1">
                           <button
                             class="btn btn-primary"
                             @click="removeHospitalPackage(index)"
-                            v-if="isEditMode"
+                            v-show="isEditMode"
                           >
                             x
                           </button>
@@ -829,52 +804,60 @@
                 </div>
                 <div class="col-10">
                   <div
-                    class=""
+                    class="row m-0 g-2"
                     v-if="customerData.additional_services.length > 0"
                   >
-                    <div class="row mx-1 p-0">
-                      <div
-                        class="col-6 col-lg-4 mb-2 px-2"
-                        v-for="(
-                          service, index
-                        ) in customerData.additional_services"
-                        :key="index"
-                      >
-                        <div class="row p-0">
-                          <div
-                            class="col-12 p-1 px-1 d-flex align-items-center"
+                    <div
+                      class="col-12 col-lg-6 px-0 pe-2"
+                      v-for="(
+                        service, index
+                      ) in customerData.additional_services"
+                      :key="index"
+                    >
+                      <div class="row m-0 gx-0">
+                        <div class="col-7 pe-2" @dblclick="handleDoubleClick">
+                          <select
+                            class="form-select py-2"
+                            :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
+                            v-model="service.id"
+                            :disabled="!isEditMode"
                             @dblclick="handleDoubleClick"
                           >
-                            <select
-                              class="form-select py-2 me-2"
-                              :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
-                              v-model="service.id"
-                              :disabled="!isEditMode"
-                              @dblclick="handleDoubleClick"
+                            <option value="" disabled>
+                              {{ t("kanban-modal-edit-placeholder-addon") }}
+                            </option>
+                            <option
+                              v-for="(value, key) in additionalServicesList"
+                              :key="key"
+                              :value="key"
                             >
-                              <option value="" disabled>
-                                {{
-                                  t(
-                                    "kanban-modal-edit-placeholder-additional-services"
-                                  )
-                                }}
-                              </option>
-                              <option
-                                v-for="(value, key) in additionalServicesList"
-                                :key="key"
-                                :value="key"
-                              >
-                                {{ value }}
-                              </option>
-                            </select>
-                            <button
-                              class="btn btn-primary me-2"
-                              @click="removeAdditionalService(index)"
-                              v-if="isEditMode"
-                            >
-                              x
-                            </button>
-                          </div>
+                              {{ value }}
+                            </option>
+                          </select>
+                        </div>
+                        <div class="col-4 pe-2">
+                          <input
+                            type="number"
+                            v-model="service.days"
+                            :placeholder="
+                              t(
+                                'kanban-model-edit-addon-input-placeholder-days'
+                              )
+                            "
+                            class="form-control py-2"
+                            :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
+                            :readonly="!isEditMode"
+                            min="1"
+                          />
+                        </div>
+                        <div class="col-1 pe-2">
+                          <button
+                            class="btn btn-primary h-100"
+                            @click="removeAdditionalService(index)"
+                            v-if="isEditMode"
+                          >
+                            x
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -887,6 +870,7 @@
                       class="btn btn-primary fs-5 px-3"
                       @click="addNewAdditionalService"
                       :disabled="!isEditMode"
+                      v-show="isEditMode"
                     >
                       +
                     </button>
@@ -1235,25 +1219,8 @@
                   >
                 </div>
                 <div class="col-10">
-                  <div class="row mx-1">
-                    <!-- Passport Number -->
-                    <div class="col-12 col-md-4 p-0">
-                      <input
-                        type="number"
-                        :class="[
-                          'form-control',
-                          isEditMode ? 'bg-input-edit' : 'bg-input',
-                          '',
-                        ]"
-                        v-model="customerData.passportNumber"
-                        :placeholder="
-                          t('kanban-modal-edit-placeholder-passportNumber')
-                        "
-                        :readonly="!isEditMode"
-                        name="passportNumber"
-                      />
-                    </div>
-                    <div class="col-12 mt-2 mt-md-0 col-md-8 p-0 ps-2">
+                  <div class="row p-0 g-2">
+                    <div class="col-12 col-md-8">
                       <input
                         v-if="customerData.passports.length === 0"
                         type="file"
@@ -1308,9 +1275,10 @@
                         </div>
                       </div>
                     </div>
-                    <!-- <div class="col-12 col-md-4">
+                    <!-- Passport Number -->
+                    <div class="col-12 col-md-4 p-0">
                       <input
-                        type="number"
+                        type="text"
                         :class="[
                           'form-control',
                           isEditMode ? 'bg-input-edit' : 'bg-input',
@@ -1323,7 +1291,7 @@
                         :readonly="!isEditMode"
                         name="passportNumber"
                       />
-                    </div> -->
+                    </div>
                   </div>
                 </div>
               </div>
