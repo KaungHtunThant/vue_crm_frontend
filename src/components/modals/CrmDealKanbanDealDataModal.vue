@@ -411,19 +411,16 @@
                 </div>
                 <div class="col-10">
                   <div class="" v-if="customerData.patient_problems.length > 0">
-                    <div class="row mx-1">
+                    <div class="row m-0 g-0">
                       <div
-                        class="col-6 col-lg-4 mb-2 px-2"
+                        class="col-12 col-lg-6 p-0"
                         v-for="(
                           problem, index
                         ) in customerData.patient_problems"
                         :key="index"
                       >
-                        <div class="row p-0">
-                          <div
-                            class="col-12 p-1 px-1 d-flex align-items-center"
-                            @dblclick="handleDoubleClick"
-                          >
+                        <div class="row p-0 g-0 pe-2">
+                          <div class="col-7" @dblclick="handleDoubleClick">
                             <select
                               class="form-select py-2 me-2"
                               :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
@@ -446,8 +443,36 @@
                                 {{ value }}
                               </option>
                             </select>
+                          </div>
+                          <div class="col-4">
+                            <select
+                              class="form-select py-2 me-2"
+                              :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
+                              v-model="problem.severity"
+                              :disabled="!isEditMode"
+                              @dblclick="handleDoubleClick"
+                            >
+                              <option value="" disabled>
+                                {{
+                                  t(
+                                    "kanban-modal-edit-placeholder-initialdiagnosis"
+                                  )
+                                }}
+                              </option>
+                              <option value="mild">
+                                {{ t("kanban-modal-edit-severity-low") }}
+                              </option>
+                              <option value="moderate">
+                                {{ t("kanban-modal-edit-severity-medium") }}
+                              </option>
+                              <option value="severe">
+                                {{ t("kanban-modal-edit-severity-high") }}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="col-1">
                             <button
-                              class="btn btn-primary me-2"
+                              class="btn btn-primary me-2 h-100"
                               @click="removePatientProblem(index)"
                               v-if="isEditMode"
                             >
