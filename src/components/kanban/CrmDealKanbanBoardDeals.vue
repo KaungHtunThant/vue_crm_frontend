@@ -284,6 +284,9 @@
     @stage-change="changeDealStage"
     @suggest-user="handleDealSuggestion"
     @update-deal="updateDeal"
+    @task-added="handleTaskViewTaskAdd"
+    @task-updated="handleTaskViewTaskUpdate"
+    @task-finish="handleTaskViewTaskFinish"
   />
   <!-- selectedDeal -->
   <div v-if="permissionStore.hasPermission('edit-stage')">
@@ -1487,6 +1490,139 @@ export default {
       }
     };
 
+    const getTaskStageId = (due_date) => {
+      let stage_id = null;
+      const duedate = due_date ? new Date(due_date) : null;
+      const today = new Date();
+      const todayStr = today.toISOString().slice(0, 10);
+
+      if (!duedate) {
+        console.log("Idle");
+        stage_id = props.stages.find((s) => s.name_key === "Idle")?.id;
+      } else {
+        const duedateStr = duedate.toISOString().slice(0, 10);
+
+        if (duedateStr < todayStr) {
+          console.log("Overdue");
+          stage_id = props.stages.find((s) => s.name_key === "Overdue")?.id;
+        } else if (duedateStr === todayStr) {
+          console.log("Due Today");
+          stage_id = props.stages.find((s) => s.name_key === "Due Today")?.id;
+        } else {
+          // Calculate date ranges for tomorrow, this week, next week
+          const tomorrow = new Date(today);
+          tomorrow.setDate(today.getDate() + 1);
+          const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+
+          const nextWeek = new Date(today);
+          // Set nextWeek to the start of next week (Monday)
+          const dayOfWeek = today.getDay(); // 0 (Sun) - 6 (Sat)
+          const daysUntilNextMonday = (8 - dayOfWeek) % 7 || 7;
+          nextWeek.setDate(today.getDate() + daysUntilNextMonday);
+          const nextWeekStr = nextWeek.toISOString().slice(0, 10);
+
+          const twoWeeks = new Date(today);
+          const daysUntilSecondMonday = daysUntilNextMonday + 7;
+          twoWeeks.setDate(today.getDate() + daysUntilSecondMonday);
+          const twoWeeksStr = twoWeeks.toISOString().slice(0, 10);
+
+          if (duedateStr === tomorrowStr) {
+            console.log("Due Tomorrow");
+            stage_id = props.stages.find(
+              (s) => s.name_key === "Due This Week"
+            )?.id;
+          } else if (duedateStr > todayStr && duedateStr < nextWeekStr) {
+            console.log("Due This Week");
+            stage_id = props.stages.find(
+              (s) => s.name_key === "Due This Week"
+            )?.id;
+          } else if (duedateStr >= nextWeekStr && duedateStr < twoWeeksStr) {
+            console.log("Due Next Week");
+            stage_id = props.stages.find(
+              (s) => s.name_key === "Due Next Week"
+            )?.id;
+          } else if (duedateStr >= twoWeeksStr) {
+            console.log("Due Later");
+            stage_id = props.stages.find((s) => s.name_key === "Due Later")?.id;
+          } else {
+            console.error("No matching stage found for due date");
+          }
+        }
+      }
+      return stage_id;
+    };
+
+    const handleTaskViewTaskAdd = (data) => {
+      const deal_id = selectedDeal.value.id;
+      const stageId = getTaskStageId(data.duedate);
+      console.log("Stage ID for new task:", stageId);
+      const stage = ref(displayStages.value.find((s) => s.id === stageId));
+      if (stage.value) {
+        const deal = displayStages.value
+          .flatMap((s) => s.deals)
+          .find((d) => d.id === deal_id);
+        console.log("task count", selectedDeal.value.tasks.length);
+        if (selectedDeal.value.tasks.length < 1) {
+          for (const stage of displayStages.value) {
+            const index = stage.deals.findIndex((deal) => deal.id === deal_id);
+            if (index !== -1) {
+              return stage.deals.splice(index, 1)[0]; // returns the removed deal
+            }
+          }
+        }
+
+        if (deal) {
+          stage.value.deals.push(deal);
+          stage.value.deal_count = (stage.value.deal_count || 0) + 1;
+          toast.success("Task added successfully");
+        }
+      }
+    };
+
+    const handleTaskViewTaskUpdate = (data) => {
+      console.log("handleTaskViewTaskUpdate in kanban comp", data);
+      const deal_id = selectedDeal.value.id;
+      const stageId = getTaskStageId(data.new_duedate);
+      console.log("new stage ID for updated task:", stageId);
+      const stage = ref(displayStages.value.find((s) => s.id === stageId));
+      const oldStageId = getTaskStageId(data.old_duedate);
+      const old_stage = ref(
+        displayStages.value.find((s) => s.id === oldStageId)
+      );
+      console.log("old stage ID for updated task:", oldStageId);
+      if (stage.value && old_stage.value) {
+        const deal = displayStages.value
+          .flatMap((s) => s.deals)
+          .find((d) => d.id === deal_id);
+        if (deal) {
+          const index = old_stage.value.deals.findIndex(
+            (d) => d.id === deal_id
+          );
+          if (index !== -1) {
+            old_stage.value.deals.splice(index, 1);
+            old_stage.value.deal_count -= 1;
+            stage.value.deals.unshift(deal);
+            stage.value.deal_count += 1;
+            toast.success("Task updated successfully");
+          }
+        }
+      }
+    };
+
+    const handleTaskViewTaskFinish = (duedate) => {
+      const oldStageId = getTaskStageId(duedate);
+      const old_stage = ref(
+        displayStages.value.find((s) => s.id === oldStageId)
+      );
+      if (old_stage.value) {
+        const index = old_stage.value.deals.findIndex(
+          (d) => d.id === selectedDeal.value.id
+        );
+        old_stage.value.deal_count -= 1;
+        old_stage.value.deals.splice(index, 1);
+      }
+    };
+
     return {
       handleHighlight,
       handleDealSuggestion,
@@ -1541,6 +1677,9 @@ export default {
       handleRequestDeal,
       updateDeal,
       handleOldDealRequest,
+      handleTaskViewTaskAdd,
+      handleTaskViewTaskUpdate,
+      handleTaskViewTaskFinish,
     };
   },
 };
