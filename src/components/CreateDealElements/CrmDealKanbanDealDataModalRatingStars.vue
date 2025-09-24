@@ -12,16 +12,9 @@
         @mouseover="handleHover(index)"
         @mouseleave="handleLeave"
         @click="handleClick(index)"
-        :title="calculateAmount(index)"
       >
         <i class="fa-star" :class="[index <= modelValue ? 'fas' : 'far']"></i>
       </span>
-    </div>
-    <div v-if="hoveredStar" class="rating-amount">
-      {{ calculateAmount(hoveredStar) }}
-    </div>
-    <div v-else class="rating-amount">
-      {{ calculateAmount(modelValue || 0) }}
     </div>
   </div>
 </template>
@@ -63,10 +56,6 @@ export default {
     handleClick(index) {
       if (!this.isEditable) return;
       this.$emit("update:modelValue", index);
-    },
-    calculateAmount(stars) {
-      const baseAmount = 1500;
-      return `${baseAmount * (stars || 0)}`;
     },
   },
 };
