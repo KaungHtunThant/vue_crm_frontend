@@ -266,7 +266,7 @@
                     </select>
                   </div>
                   <!-- Personal Companion -->
-                  <div class="col">
+                  <div class="col p-0">
                     <label class="form-label" for="personalCompanion"
                       ><i class="fa-solid fa-person-circle-plus"></i>
                       {{ t("kanban-modal-edit-label-personal-companion") }}
@@ -1235,9 +1235,9 @@
                   >
                 </div>
                 <div class="col-10">
-                  <div class="row">
+                  <div class="row mx-1">
                     <!-- Passport Number -->
-                    <div class="col-12 col-md-4 p-0 pe-2">
+                    <div class="col-12 col-md-4 p-0">
                       <input
                         type="number"
                         :class="[
@@ -1253,7 +1253,7 @@
                         name="passportNumber"
                       />
                     </div>
-                    <div class="col-12 mt-2 mt-md-0 col-md-8 p-0">
+                    <div class="col-12 mt-2 mt-md-0 col-md-8 p-0 ps-2">
                       <input
                         v-if="customerData.passports.length === 0"
                         type="file"

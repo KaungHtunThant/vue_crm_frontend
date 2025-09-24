@@ -99,13 +99,14 @@ export default {
     const closeFilterModal = () => {
       try {
         const modal = filterModal.value;
-        let modalInstance = Modal.getInstance(modal);
-        if (!modalInstance) {
-          modalInstance = new Modal(modal);
+        if (modal) {
+          const modalInstance = Modal.getInstance(modal);
+          if (modalInstance) {
+            modalInstance.hide();
+            document.querySelector(".modal-backdrop")?.remove();
+            document.body.classList.remove("modal-open");
+          }
         }
-        modalInstance.hide();
-        document.querySelector(".modal-backdrop")?.remove();
-        document.body.classList.remove("modal-open");
       } catch (error) {
         toast.error(t("error.closeModal"), { timeout: 3000 });
         console.error("Error closing modal:", error);
