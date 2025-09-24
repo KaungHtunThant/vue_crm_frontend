@@ -184,10 +184,10 @@
                     </option>
                   </select>
                 </div>
-                <div class="row mt-2">
+                <div class="row mt-2 pe-0">
                   <div class="col-2"></div>
                   <!-- Passport Number -->
-                  <!-- <div class="col">
+                  <div class="col">
                     <label class="form-label" for="passportNumber"
                       ><i class="fa-solid fa-passport"></i>
                       {{ t("kanban-modal-edit-label-passport-number")
@@ -207,9 +207,9 @@
                       :readonly="!isEditMode"
                       name="passportNumber"
                     />
-                  </div> -->
+                  </div>
                   <!-- Passport Number -->
-                  <!-- <div class="col" @dblclick="handleDoubleClick">
+                  <div class="col" @dblclick="handleDoubleClick">
                     <label class="form-label" for="date_of_birth"
                       ><i class="fa-solid fa-calendar-days"></i>
                       {{ t("kanban-modal-edit-label-date_of_birth")
@@ -231,9 +231,9 @@
                       name="date_of_birth"
                       @mousedown="dateTaskClick"
                     />
-                  </div> -->
+                  </div>
                   <!-- maritalStatus -->
-                  <!-- <div class="col">
+                  <div class="col">
                     <label class="form-label" for="maritalStatus"
                       ><i class="fa-solid fa-heart"></i>
                       {{ t("kanban-modal-edit-label-marital-status") }}
@@ -264,9 +264,9 @@
                         {{ value }}
                       </option>
                     </select>
-                  </div> -->
+                  </div>
                   <!-- Personal Companion -->
-                  <!-- <div class="col">
+                  <div class="col">
                     <label class="form-label" for="personalCompanion"
                       ><i class="fa-solid fa-person-circle-plus"></i>
                       {{ t("kanban-modal-edit-label-personal-companion") }}
@@ -299,7 +299,7 @@
                         {{ value }}
                       </option>
                     </select>
-                  </div> -->
+                  </div>
                 </div>
               </div>
 
@@ -427,7 +427,7 @@
               </div>
 
               <!-- Patient Problems -->
-              <!-- <div class="row mb-3" @dblclick="handleDoubleClick">
+              <div class="row mb-3" @dblclick="handleDoubleClick">
                 <div class="col-2 pt-2">
                   <label class="form-label"
                     ><i class="fa-solid fa-notes-medical"></i>
@@ -436,9 +436,9 @@
                 </div>
                 <div class="col-10">
                   <div class="" v-if="customerData.patient_problems.length > 0">
-                    <div class="row">
+                    <div class="row mx-1">
                       <div
-                        class="col-4 mb-2 px-2"
+                        class="col-6 col-lg-4 mb-2 px-2"
                         v-for="(
                           problem, index
                         ) in customerData.patient_problems"
@@ -496,7 +496,7 @@
                     </button>
                   </div>
                 </div>
-              </div> -->
+              </div>
 
               <div
                 class="row mb-3"
@@ -820,7 +820,7 @@
                 </div>
               </div>
               <!-- Additional Services -->
-              <!-- <div class="row mb-3" @dblclick="handleDoubleClick">
+              <div class="row mb-3" @dblclick="handleDoubleClick">
                 <div class="col-2 pt-2">
                   <label class="form-label"
                     ><i class="fa-solid fa-hand-holding-medical"></i>
@@ -832,9 +832,9 @@
                     class=""
                     v-if="customerData.additional_services.length > 0"
                   >
-                    <div class="row">
+                    <div class="row mx-1 p-0">
                       <div
-                        class="col-4 mb-2 px-2"
+                        class="col-6 col-lg-4 mb-2 px-2"
                         v-for="(
                           service, index
                         ) in customerData.additional_services"
@@ -914,7 +914,7 @@
                     </div>
                   </div>
                 </div>
-              </div> -->
+              </div>
 
               <div class="row mb-3">
                 <div class="col-2">
@@ -1235,9 +1235,25 @@
                   >
                 </div>
                 <div class="col-10">
-                  <div class="row p-0 g-2">
+                  <div class="row">
                     <!-- Passport Number -->
-                    <div class="col-12 col-md-8">
+                    <div class="col-12 col-md-4 p-0 pe-2">
+                      <input
+                        type="number"
+                        :class="[
+                          'form-control',
+                          isEditMode ? 'bg-input-edit' : 'bg-input',
+                          '',
+                        ]"
+                        v-model="customerData.passportNumber"
+                        :placeholder="
+                          t('kanban-modal-edit-placeholder-passportNumber')
+                        "
+                        :readonly="!isEditMode"
+                        name="passportNumber"
+                      />
+                    </div>
+                    <div class="col-12 mt-2 mt-md-0 col-md-8 p-0">
                       <input
                         v-if="customerData.passports.length === 0"
                         type="file"
@@ -1358,7 +1374,14 @@
                   </div>
                   <div class="col-10" style="font-size: 12px">
                     <template
-                      v-for="(part, index) in formatLogEntry(log)"
+                      v-for="(part, index) in logStore.formatLogEntry(
+                        log,
+                        getStageName,
+                        getStageColor,
+                        formatDate,
+                        logStore.getUserName,
+                        logStore.getUserColor
+                      )"
                       :key="index"
                     >
                       <span v-if="typeof part === 'string'">{{ part }}</span>
@@ -2786,20 +2809,70 @@ export default {
       );
     });
     const patientProblemsOptions = {
-      premature_ejaculation: {
-        en: "Premature Ejaculation",
-        ar: "سرعة قذف",
-        fr: "Éjaculation précoce",
+      premature_ejaculation_mild: {
+        en: "Premature Ejaculation (Mild)",
+        ar: "سرعة قذف (خفيف)",
+        fr: "Éjaculation précoce (légère)",
       },
-      erectile_dysfunction: {
-        en: "Erectile Dysfunction",
-        ar: "ضعف جنسي",
-        fr: "Dysfonction érectile",
+      premature_ejaculation_moderate: {
+        en: "Premature Ejaculation (Moderate)",
+        ar: "سرعة قذف (متوسط)",
+        fr: "Éjaculation précoce (modérée)",
       },
-      peyronies_disease: {
-        en: "Peyronie's Disease",
-        ar: "بيروني",
-        fr: "Maladie de La Peyronie",
+      premature_ejaculation_severe: {
+        en: "Premature Ejaculation (Severe)",
+        ar: "سرعة قذف (حرج)",
+        fr: "Éjaculation précoce (sévère)",
+      },
+
+      erectile_dysfunction_mild: {
+        en: "Erectile Dysfunction (Mild)",
+        ar: "ضعف انتصاب (خفيف)",
+        fr: "Dysfonction érectile (légère)",
+      },
+      erectile_dysfunction_moderate: {
+        en: "Erectile Dysfunction (Moderate)",
+        ar: "ضعف انتصاب (متوسط)",
+        fr: "Dysfonction érectile (modérée)",
+      },
+      erectile_dysfunction_severe: {
+        en: "Erectile Dysfunction (Severe)",
+        ar: "ضعف انتصاب (حرج)",
+        fr: "Dysfonction érectile (sévère)",
+      },
+
+      size_related_issues: {
+        en: "Size-related Issues",
+        ar: "مشاكل حجم العضو",
+        fr: "Problèmes liés à la taille",
+      },
+
+      peyronies_disease_mild: {
+        en: "Peyronie's Disease (Mild)",
+        ar: "البيروني (خفيف)",
+        fr: "Maladie de La Peyronie (légère)",
+      },
+      peyronies_disease_moderate: {
+        en: "Peyronie's Disease (Moderate)",
+        ar: "البيروني (متوسط)",
+        fr: "Maladie de La Peyronie (modérée)",
+      },
+      peyronies_disease_severe: {
+        en: "Peyronie's Disease (Severe)",
+        ar: "البيروني (حرج)",
+        fr: "Maladie de La Peyronie (sévère)",
+      },
+
+      prostate_issues: {
+        en: "Prostate Issues",
+        ar: "مشاكل البروستاتا",
+        fr: "Problèmes de prostate",
+      },
+
+      initial_diagnosis: {
+        en: "Initial Diagnosis",
+        ar: "التشخيص المبدئي",
+        fr: "Diagnostic initial",
       },
     };
 
@@ -2886,7 +2959,14 @@ export default {
       return `${year}-${month}-${day}`;
     };
     const formatDate = (dateString) => {
-      return dateString ? dateString.split("T")[0] : "No date";
+      const options = {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      };
+      return new Date(dateString).toLocaleDateString("en-US", options);
     };
     // const fetchUsers = async () => {
     //   try {
@@ -3621,10 +3701,10 @@ export default {
       editingCommentId.value = null;
       editingCommentText.value = "";
     };
-    onMounted(() => {
-      logStore.fetchUsers();
-      if (props.deal?.id) logStore.fetchLogs(props.deal.id);
-      fetchSources();
+    onMounted(async () => {
+      await logStore.fetchUsers();
+      if (props.deal?.id) await logStore.fetchLogs(props.deal.id);
+      await fetchSources();
       // fetchUsers();
       document.addEventListener("click", handleClickOutside);
 
@@ -3834,111 +3914,112 @@ export default {
         });
       }
     };
-    const formatLogEntry = (log) => {
-      const parts = [];
-      const userName = logStore.getUserName(log.user_id);
-      const userColor = logStore.getUserColor(log.user_id);
+    // const formatLogEntry = (log) => {
+    //   const parts = [];
+    //   const userName = logStore.getUserName(log.user_id);
+    //   const userColor = logStore.getUserColor(log.user_id);
 
-      parts.push({ text: userName, backgroundColor: userColor, isBadge: true });
+    //   parts.push({ text: userName, backgroundColor: userColor, isBadge: true });
 
-      if (
-        log.event === "updated" &&
-        log.entity_type === "Task" &&
-        log.new_values?.status === "completed"
-      ) {
-        parts.push(` completed Task ID: ${log.entity_id}.`);
-      } else if (
-        log.event === "updated" &&
-        log.entity_type === "Deal" &&
-        log.old_values?.stage_id &&
-        log.new_values?.stage_id
-      ) {
-        const oldStageName = getStageName(log.old_values.stage_id);
-        const oldStageColor = getStageColor(log.old_values.stage_id);
-        const newStageName = getStageName(log.new_values.stage_id);
-        const newStageColor = getStageColor(log.new_values.stage_id);
+    //   if (
+    //     log.event === "updated" &&
+    //     log.entity_type === "Task" &&
+    //     log.new_values?.status === "completed"
+    //   ) {
+    //     parts.push(` completed Task ID: ${log.entity_id}.`);
+    //   } else if (
+    //     log.event === "updated" &&
+    //     log.entity_type === "Deal" &&
+    //     log.old_values?.stage_id &&
+    //     log.new_values?.stage_id
+    //   ) {
+    //     const oldStageName = getStageName(log.old_values.stage_id);
+    //     const oldStageColor = getStageColor(log.old_values.stage_id);
+    //     const newStageName = getStageName(log.new_values.stage_id);
+    //     const newStageColor = getStageColor(log.new_values.stage_id);
 
-        parts.push(` moved Deal ID: ${log.entity_id} from `);
-        parts.push({
-          text: oldStageName,
-          backgroundColor: oldStageColor,
-          isBadge: true,
-        });
-        parts.push(` to `);
-        parts.push({
-          text: newStageName,
-          backgroundColor: newStageColor,
-          isBadge: true,
-        });
-        parts.push(`.`);
-      } else if (log.event === "created" && log.entity_type === "Deal") {
-        parts.push(` created a new Deal with ID: ${log.entity_id}.`);
-      } else if (log.event === "created" && log.entity_type === "Comment") {
-        parts.push(` added a new Comment on Entity ID: ${log.entity_id}.`);
-      } else if (log.event === "created" && log.entity_type === "Task") {
-        parts.push(` created a new Task with ID: ${log.entity_id}.`);
-      } else {
-        parts.push(
-          ` updated ${
-            log.entity_type === "Deal"
-              ? "Deal"
-              : log.entity_type === "Task"
-              ? "Task"
-              : "Comment"
-          } ID: ${log.entity_id}.`
-        );
-        const changes = [];
-        for (const key in log.new_values) {
-          if (
-            Object.prototype.hasOwnProperty.call(log.new_values, key) &&
-            log.old_values?.[key] !== undefined &&
-            log.old_values?.[key] !== log.new_values[key]
-          ) {
-            const oldValue = log.old_values[key];
-            const newValue = log.new_values[key];
+    //     parts.push(` moved Deal ID: ${log.entity_id} from `);
+    //     parts.push({
+    //       text: oldStageName,
+    //       backgroundColor: oldStageColor,
+    //       isBadge: true,
+    //     });
+    //     parts.push(` to `);
+    //     parts.push({
+    //       text: newStageName,
+    //       backgroundColor: newStageColor,
+    //       isBadge: true,
+    //     });
+    //     parts.push(`.`);
+    //   } else if (log.event === "created" && log.entity_type === "Deal") {
+    //     parts.push(` created a new Deal with ID: ${log.entity_id}.`);
+    //   } else if (log.event === "created" && log.entity_type === "Comment") {
+    //     parts.push(` added a new Comment on Entity ID: ${log.entity_id}.`);
+    //   } else if (log.event === "created" && log.entity_type === "Task") {
+    //     parts.push(` created a new Task with ID: ${log.entity_id}.`);
+    //   } else {
+    //     parts.push(
+    //       ` updated ${
+    //         log.entity_type === "Deal"
+    //           ? "Deal"
+    //           : log.entity_type === "Task"
+    //           ? "Task"
+    //           : "Comment"
+    //       } ID: ${log.entity_id}.`
+    //     );
+    //     const changes = [];
+    //     for (const key in log.new_values) {
+    //       if (
+    //         Object.prototype.hasOwnProperty.call(log.new_values, key) &&
+    //         log.old_values?.[key] !== undefined &&
+    //         log.old_values?.[key] !== log.new_values[key]
+    //       ) {
+    //         const oldValue = log.old_values[key];
+    //         const newValue = log.new_values[key];
 
-            let formattedOldValue = oldValue === null ? "Unassigned" : oldValue;
-            let formattedNewValue = newValue === null ? "Unassigned" : newValue;
+    //         let formattedOldValue = oldValue === null ? "Unassigned" : oldValue;
+    //         let formattedNewValue = newValue === null ? "Unassigned" : newValue;
 
-            if (key === "assign_by_id" || key === "assigned_to_id") {
-              parts.push(` ${key}: `);
+    //         if (key === "assign_by_id" || key === "assigned_to_id") {
+    //           parts.push(` ${key}: `);
 
-              if (oldValue !== null && oldValue !== undefined) {
-                parts.push({
-                  text: logStore.getUserName(oldValue),
-                  backgroundColor: logStore.getUserColor(oldValue),
-                  isBadge: true,
-                });
-              } else {
-                parts.push("");
-              }
-              parts.push(` -> `);
-              if (newValue !== null && newValue !== undefined) {
-                parts.push({
-                  text: logStore.getUserName(newValue),
-                  backgroundColor: logStore.getUserColor(newValue),
-                  isBadge: true,
-                });
-              } else {
-                parts.push("Unassigned");
-              }
-            } else {
-              changes.push(
-                `${key}: ${formattedOldValue} -> ${formattedNewValue}`
-              );
-            }
-          }
-        }
-        if (changes.length > 0) {
-          parts.push(` Changes: ${changes.join(", ")}.`);
-        }
-      }
-      parts.push(` (${formatDate(log.created_at)})`);
-      return parts;
-    };
-    const getStageName = (id) => {
-      const stage = props.stages.find((s) => s.id === id);
-      return stage ? stage.name : id;
+    //           if (oldValue !== null && oldValue !== undefined) {
+    //             parts.push({
+    //               text: logStore.getUserName(oldValue),
+    //               backgroundColor: logStore.getUserColor(oldValue),
+    //               isBadge: true,
+    //             });
+    //           } else {
+    //             parts.push("");
+    //           }
+    //           parts.push(` -> `);
+    //           if (newValue !== null && newValue !== undefined) {
+    //             parts.push({
+    //               text: logStore.getUserName(newValue),
+    //               backgroundColor: logStore.getUserColor(newValue),
+    //               isBadge: true,
+    //             });
+    //           } else {
+    //             parts.push("Unassigned");
+    //           }
+    //         } else {
+    //           changes.push(
+    //             `${key}: ${formattedOldValue} -> ${formattedNewValue}`
+    //           );
+    //         }
+    //       }
+    //     }
+    //     if (changes.length > 0) {
+    //       parts.push(` Changes: ${changes.join(", ")}.`);
+    //     }
+    //   }
+    //   parts.push(` (${formatDate(log.created_at)})`);
+    //   return parts;
+    // };
+
+    const getStageName = (stageId) => {
+      const stage = props.stages.find((s) => s.id === stageId);
+      return stage ? stage.name : `Stage#${stageId}`;
     };
     const getStageColor = (id) => {
       const stage = props.stages.find((s) => s.id === id);
@@ -4043,7 +4124,7 @@ export default {
       handleTaskUpdate,
       handlePassportUpload,
       PrintCase,
-      formatLogEntry,
+      // formatLogEntry,
       maritalStatusList,
       personalCompanionList,
       patientProblemsList,
