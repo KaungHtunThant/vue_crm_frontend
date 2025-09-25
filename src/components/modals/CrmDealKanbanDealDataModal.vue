@@ -420,7 +420,10 @@
                         :key="index"
                       >
                         <div class="row p-0 g-0 pe-2">
-                          <div class="col-7" @dblclick="handleDoubleClick">
+                          <div
+                            class="col-7 pe-2 pb-2"
+                            @dblclick="handleDoubleClick"
+                          >
                             <select
                               class="form-select py-2 me-2"
                               :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
@@ -431,7 +434,7 @@
                               <option value="" disabled>
                                 {{
                                   t(
-                                    "kanban-modal-edit-placeholder-patient-problems"
+                                    "kanban-modal-edit-placeholder-initialdiagnosis"
                                   )
                                 }}
                               </option>
@@ -444,7 +447,7 @@
                               </option>
                             </select>
                           </div>
-                          <div class="col-4">
+                          <div class="col-4 pe-2 pb-2">
                             <select
                               class="form-select py-2 me-2"
                               :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
@@ -454,9 +457,7 @@
                             >
                               <option value="" disabled>
                                 {{
-                                  t(
-                                    "kanban-modal-edit-placeholder-initialdiagnosis"
-                                  )
+                                  t("kanban-modal-edit-placeholder-severity")
                                 }}
                               </option>
                               <option value="mild">
@@ -470,11 +471,11 @@
                               </option>
                             </select>
                           </div>
-                          <div class="col-1">
+                          <div class="col-1 pb-2">
                             <button
                               class="btn btn-primary me-2 h-100"
                               @click="removePatientProblem(index)"
-                              v-if="isEditMode"
+                              v-show="isEditMode"
                             >
                               x
                             </button>
@@ -491,6 +492,7 @@
                       class="btn btn-primary fs-5 px-3"
                       @click="addNewPatientProblem"
                       :disabled="!isEditMode"
+                      v-show="isEditMode"
                     >
                       +
                     </button>
@@ -1301,7 +1303,7 @@
                       </div>
                     </div>
                     <!-- Passport Number -->
-                    <div class="col-12 col-md-4 p-0">
+                    <div class="col-12 col-md-4 p-0 pe-1">
                       <input
                         type="text"
                         :class="[
