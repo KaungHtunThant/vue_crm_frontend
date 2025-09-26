@@ -16,16 +16,19 @@
       </span>
     </div>
     <div class="sidebar-items overflow-auto">
-      <div
-        v-if="permissionStore.hasPermission(PERMISSIONS.DEALS_KANBAN)"
-        class="sidebar-item d-flex align-items-center"
-        :title="$t('sidebar-nav-item-kanban')"
+      <router-link
+        v-if="permissionStore.hasPermission(PERMISSIONS.USERS)"
+        to="/crm-kanban"
+        class="text-decoration-none text-white"
       >
-        <router-link to="/crm-kanban" class="text-decoration-none text-white">
-          <i class="fa-solid fa-chart-column fs-5 me-2"></i>
+        <div
+          class="sidebar-item d-flex align-items-center"
+          :title="$t('sidebar-nav-item-kanban')"
+        >
+          <i class="fa-solid fa-chart fs-5 me-2"></i>
           <span v-if="!isCollapsed">{{ $t("sidebar-nav-item-kanban") }}</span>
-        </router-link>
-      </div>
+        </div>
+      </router-link>
       <router-link
         v-if="permissionStore.hasPermission(PERMISSIONS.DEALS_LIST)"
         to="/crmlist"

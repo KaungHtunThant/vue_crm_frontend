@@ -35,18 +35,13 @@
                 @click="closeDropdown"
               >
                 <div class="dropdown-link">
-                  <i class="fa-solid fa-chart-column fs-5 me-2"></i>
-                  <span>{{ $t("sidebar-nav-item-kanban") }}</span>
-                </div>
-              </router-link>
-              <router-link
-                to="/crm-tasks"
-                class="text-decoration-none text-black mb-2"
-                @click="closeDropdown"
-              >
-                <div class="dropdown-link">
-                  <i class="fa-solid fa-chart-column fs-5 me-2"></i>
-                  <span>{{ $t("header-subnav-item-kanban-tasks") }}</span>
+                  <div
+                    class="sidebar-item d-flex align-items-center"
+                    :title="$t('sidebar-nav-item-kanban')"
+                  >
+                    <i class="fa-solid fa-chart-line fs-5 me-2"></i>
+                    <span>{{ $t("sidebar-nav-item-kanban") }}</span>
+                  </div>
                 </div>
               </router-link>
               <router-link
@@ -62,6 +57,21 @@
                   >
                     <i class="fa-solid fa-table-list fs-5 me-2"></i>
                     <span>{{ $t("sidebar-nav-item-crmlist") }}</span>
+                  </div>
+                </div>
+              </router-link>
+              <router-link
+                to="/crm-tasks"
+                class="text-decoration-none text-black mb-2"
+                @click="closeDropdown"
+              >
+                <div class="dropdown-link">
+                  <div
+                    class="sidebar-item d-flex align-items-center"
+                    :title="$t('header-subnav-item-kanban-tasks')"
+                  >
+                    <i class="fa-solid fa-chart-simple fs-5 me-2"></i>
+                    <span>{{ $t("header-subnav-item-kanban-tasks") }}</span>
                   </div>
                 </div>
               </router-link>
