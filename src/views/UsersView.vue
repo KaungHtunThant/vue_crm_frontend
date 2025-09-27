@@ -74,6 +74,14 @@
         />
       </template>
 
+      <template #item-rating="item">
+        <rating-selector
+          :rating_id="item.rating?.id"
+          :user_id="item.id"
+          @rating-changed="handleRatingChange"
+        />
+      </template>
+
       <template #item-actions="item">
         <user-view-action-buttons
           :item="item"
@@ -118,6 +126,8 @@ import UserViewStatusAccount from "@/components/usersElements/UserViewStatusAcco
 import UserViewFilterModal from "@/components/modals/UserViewFilterModal.vue";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
+import RatingSelector from "@/views/UserViewRatingSelector.vue";
+import { useRatingStore } from "@/stores/ratingStore";
 // import { useLoadingStore } from "@/plugins/loadingStore";
 // import Cookies from "js-cookie"
 
@@ -125,6 +135,7 @@ import {
   getUser,
   deleteUser,
   updateUser,
+  updateUserRating,
 } from "@/plugins/services/authService";
 import { useI18n } from "vue-i18n";
 
@@ -136,15 +147,18 @@ export default {
     UserViewActionButtons,
     UserViewStatusAccount,
     UserViewFilterModal,
+    RatingSelector,
   },
 
   setup() {
     const { t } = useI18n();
     const toast = useToast();
+    const ratingStore = useRatingStore();
     const headers = [
       { text: t("users-table-header-fullname"), value: "profile" },
       { text: t("users-table-header-email"), value: "emailVerified" },
       { text: t("users-table-header-status"), value: "status" },
+      { text: t("users-table-header-rating"), value: "rating" },
       { text: t("users-table-header-actions"), value: "actions" },
     ];
     // const loadingStore = useLoadingStore();
@@ -326,9 +340,24 @@ export default {
       });
     };
 
+    const handleRatingChange = (rating_id, user_id) => {
+      const user = items.value.find((u) => u.id === user_id);
+      if (user) {
+        user.rating_id = rating_id;
+      }
+      const response = updateUserRating(user_id, rating_id);
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
+      }
+      toast.success(response.data.message, {
+        timeout: 3000,
+      });
+    };
+
     onMounted(async () => {
       // loadingStore.startLoading();
       await fetchUsers();
+      ratingStore.fetchRatings();
       // loadingStore.stopLoading();
       window.addEventListener("contextmenu", handleRightClick);
     });
@@ -355,6 +384,7 @@ export default {
       applyFilters,
       resetFilters,
       t,
+      handleRatingChange,
     };
   },
 };
