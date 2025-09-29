@@ -548,8 +548,16 @@ const fetchData = async () => {
         name: deal.name || t("not-set"),
         phone: deal.phone,
         note: deal.note || t("not-set"),
-        created_at: deal.created_at.split("T")[0],
-        updated_at: deal.updated_at.split("T")[0],
+        created_at: deal.created_at
+          ? (() => {
+              const date = new Date(deal.created_at);
+              const mm = String(date.getMonth() + 1).padStart(2, "0");
+              const dd = String(date.getDate()).padStart(2, "0");
+              const yyyy = date.getFullYear();
+              return `${mm}/${dd}/${yyyy}`;
+            })()
+          : "",
+        updated_at: new Date(deal.updated_at).toLocaleString(),
         stage: matchedStage ? matchedStage.name : t("not-set"),
         responsible: deal.responsible_user?.name || t("not-set"),
         source: matchedSource ? matchedSource.name : t("not-set"),
@@ -720,8 +728,16 @@ const applyFilters = async (newFilters) => {
         name: deal.name || t("not-set"),
         phone: deal.phone,
         note: deal.note || t("not-set"),
-        created_at: deal.created_at.split("T")[0],
-        updated_at: deal.updated_at.split("T")[0],
+        created_at: deal.created_at
+          ? (() => {
+              const date = new Date(deal.created_at);
+              const mm = String(date.getMonth() + 1).padStart(2, "0");
+              const dd = String(date.getDate()).padStart(2, "0");
+              const yyyy = date.getFullYear();
+              return `${mm}/${dd}/${yyyy}`;
+            })()
+          : "",
+        updated_at: new Date(deal.updated_at).toLocaleString(),
         stage: matchedStage ? matchedStage.name : t("not-set"),
         responsible: deal.responsible_user?.name || t("not-set"),
         source: matchedSource ? matchedSource.name : t("not-set"),

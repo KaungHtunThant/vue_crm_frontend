@@ -1473,7 +1473,6 @@ export default {
       try {
         const response = await pullDealsFromOldSystem();
         if (response.status === 200) {
-          toast.success(response.data.message);
           const deals = response.data.data;
           const stageIndex = displayStages.value.findIndex(
             (s) => s.id === stage_id
@@ -1485,7 +1484,9 @@ export default {
         } else {
           toast.error(response.data.message);
         }
+        toast.success(response.data.message);
       } catch (error) {
+        console.error("Error pulling deals from old system:", error);
         toast.error(error.response?.data?.message);
       }
     };
