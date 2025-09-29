@@ -439,11 +439,13 @@
                                 }}
                               </option>
                               <option
-                                v-for="(value, key) in patientProblemsList"
-                                :key="key"
-                                :value="key"
+                                v-for="pkg in local_packages.filter(
+                                  (p) => p.category_id === 3
+                                )"
+                                :key="pkg.id"
+                                :value="pkg.id"
                               >
-                                {{ value }}
+                                {{ pkg.name }}
                               </option>
                             </select>
                           </div>
@@ -1942,7 +1944,7 @@ export default {
       kanban_total_cost: props.deal?.kanban_total_cost || null,
       hospital_total_cost: props.deal?.hospital_total_cost || null,
       passports: props.deal?.passports || [],
-      patient_problems: props.deal?.patient_problems || [],
+      patient_problems: props.deal?.diagnoses || [],
       additional_services: props.deal?.additional_services || [],
       add_on_total_cost: props.deal?.add_on_total_cost || null,
     });
@@ -3212,7 +3214,7 @@ export default {
           hospital_total_cost: customerData.hospital_total_cost || null,
           add_on_total_cost: customerData.add_on_total_cost || null,
           passports: [customerData.passport || null],
-          patient_problems: customerData.patient_problems || [],
+          diagnosis: customerData.patient_problems || [],
           additional_services: customerData.additional_services || [],
           date_of_birth: customerData.date_of_birth || [],
           passportNumber: customerData.passportNumber || [],
@@ -3908,7 +3910,7 @@ export default {
 
             printWindow.focus();
             printWindow.print();
-            // printWindow.close();
+            printWindow.close();
           }, 5000);
         };
       } catch (error) {

@@ -124,9 +124,13 @@
             </td>
           </tr>
           <tr class="table-secondary">
-            <td>Selection 1</td>
-            <td>Selection 2</td>
-            <td>Selection 3</td>
+            <td
+              v-for="pkg in deal?.diagnoses"
+              :key="pkg.id"
+              class="text-center"
+            >
+              {{ pkg.name }} - {{ pkg.severity }}
+            </td>
           </tr>
         </tbody>
       </table>
