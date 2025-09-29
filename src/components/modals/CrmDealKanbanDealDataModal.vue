@@ -567,7 +567,9 @@
                               }}
                             </option>
                             <option
-                              v-for="pkg in local_packages"
+                              v-for="pkg in local_packages.filter(
+                                (p) => p.category_id === 1
+                              )"
                               :key="pkg.id"
                               :value="pkg.id"
                             >
@@ -854,11 +856,13 @@
                               {{ t("kanban-modal-edit-placeholder-addon") }}
                             </option>
                             <option
-                              v-for="(value, key) in additionalServicesList"
-                              :key="key"
-                              :value="key"
+                              v-for="pkg in local_packages.filter(
+                                (p) => p.category_id === 2
+                              )"
+                              :key="pkg.id"
+                              :value="pkg.id"
                             >
-                              {{ value }}
+                              {{ pkg.name }}
                             </option>
                           </select>
                         </div>
@@ -915,7 +919,7 @@
                           'rounded-right-2',
                           'form-control',
                         ]"
-                        v-model="customerData.hospital_total_cost"
+                        v-model="customerData.add_on_total_cost"
                         :placeholder="
                           t('kanban-modal-edit-placeholder-total-cost')
                         "
@@ -1940,6 +1944,7 @@ export default {
       passports: props.deal?.passports || [],
       patient_problems: props.deal?.patient_problems || [],
       additional_services: props.deal?.additional_services || [],
+      add_on_total_cost: props.deal?.add_on_total_cost || null,
     });
     const nationalities_options = {
       afghan: {
@@ -3205,6 +3210,7 @@ export default {
           time: customerData.time || "",
           kanban_total_cost: customerData.kanban_total_cost || null,
           hospital_total_cost: customerData.hospital_total_cost || null,
+          add_on_total_cost: customerData.add_on_total_cost || null,
           passports: [customerData.passport || null],
           patient_problems: customerData.patient_problems || [],
           additional_services: customerData.additional_services || [],
@@ -3873,7 +3879,10 @@ export default {
     };
     const PrintCase = () => {
       try {
-        const routeData = router.resolve({ path: "/CompleteCase" });
+        const routeData = router.resolve({
+          path: "/CompleteCase",
+          query: { dealId: props.deal?.id },
+        });
         const printWindow = window.open(
           routeData.href,
           "_blank",
@@ -3899,7 +3908,7 @@ export default {
 
             printWindow.focus();
             printWindow.print();
-            printWindow.close();
+            // printWindow.close();
           }, 5000);
         };
       } catch (error) {
