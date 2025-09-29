@@ -3988,10 +3988,8 @@ export default {
       // formatLogEntry,
       maritalStatusList,
       personalCompanionList,
-      patientProblemsList,
       addNewPatientProblem,
       removePatientProblem,
-      additionalServicesList,
       addNewAdditionalService,
       removeAdditionalService,
     };
