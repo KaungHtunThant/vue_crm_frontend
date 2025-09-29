@@ -340,14 +340,16 @@ export default {
       });
     };
 
-    const handleRatingChange = (rating_id, user_id) => {
+    const handleRatingChange = async (rating_id, user_id) => {
       const user = items.value.find((u) => u.id === user_id);
       if (user) {
         user.rating_id = rating_id;
       }
-      const response = updateUserRating(user_id, rating_id);
+      const response = await updateUserRating(user_id, rating_id);
       if (response.status !== 200) {
-        throw new Error(response.data.message);
+        toast.error(response.data.message, {
+          timeout: 3000,
+        });
       }
       toast.success(response.data.message, {
         timeout: 3000,
