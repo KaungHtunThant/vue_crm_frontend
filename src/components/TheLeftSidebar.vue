@@ -5,11 +5,7 @@
   >
     <div class="d-flex justify-content-start align-items-center ps-2 mt-3">
       <div class="imgLogo me-2">
-        <img
-          src="@/assets/new-nokta-logo.png"
-          style="width: 35px; height: 35px"
-          alt=""
-        />
+        <img :src="logo" style="width: 35px; height: 35px" alt="" />
       </div>
       <span class="pe-1" v-if="!isCollapsed"
         >{{ $t("sidebar-heading") }}:
@@ -184,8 +180,10 @@ export default {
       isCollapsed.value = !isCollapsed.value;
       emit("toggle", isCollapsed.value);
     };
+    const logo = require("@/assets/" + process.env.VUE_APP_LOGO_NAME);
 
     return {
+      logo,
       isCollapsed,
       toggleSidebar,
       permissionStore,

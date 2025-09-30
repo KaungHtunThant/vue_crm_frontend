@@ -393,7 +393,7 @@
               <div class="text-center loading-container">
                 <div class="position-relative d-inline-block">
                   <img
-                    src="@/assets/new-nokta-logo.png"
+                    :src="logo"
                     class="loading-logo"
                     style="width: 50px; height: 50px"
                   />
@@ -520,7 +520,7 @@
               <div class="text-center loading-container">
                 <div class="position-relative d-inline-block">
                   <img
-                    src="@/assets/new-nokta-logo.png"
+                    :src="logo"
                     class="loading-logo"
                     style="width: 50px; height: 50px"
                   />
@@ -939,7 +939,9 @@ export default {
     onMounted(() => {
       fetchBroadcasts();
     });
+    const logo = require("@/assets/" + process.env.VUE_APP_LOGO_NAME);
     return {
+      logo,
       search,
       headers,
       filteredItems,

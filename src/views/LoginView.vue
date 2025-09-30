@@ -5,11 +5,7 @@
         <div class="card">
           <form class="card-body" @submit.prevent="handleLogin">
             <div class="mb-3 text-center">
-              <img
-                src="@/assets/new-nokta-logo.png"
-                class="img-fluid profile-image-pic"
-                alt="logo"
-              />
+              <img :src="logo" class="img-fluid profile-image-pic" alt="logo" />
             </div>
             <p v-if="errors.message" class="text-danger text-center">
               {{ errors.message }}
@@ -93,6 +89,7 @@ export default {
 
   data() {
     return {
+      logo: require("@/assets/" + process.env.VUE_APP_LOGO_NAME),
       email: "",
       password: "",
       rememberMe: false,

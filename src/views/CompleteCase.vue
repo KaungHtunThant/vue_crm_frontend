@@ -4,7 +4,7 @@
     <div class="d-flex justify-content-between align-items-start pb-1 mb-2">
       <div>
         <img
-          src="@/assets/new-nokta-logo.png"
+          :src="logo"
           class="img-fluid"
           style="height: 80px"
           alt="Nokta Urology Logo"
@@ -225,7 +225,9 @@ export default {
   },
   setup() {
     const { t } = useI18n();
+    const logo = require("@/assets/" + process.env.VUE_APP_LOGO_NAME);
     return {
+      logo,
       t,
     };
   },

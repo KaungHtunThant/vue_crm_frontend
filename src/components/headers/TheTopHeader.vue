@@ -4,11 +4,7 @@
       <div class="col-4 d-flex align-items-center text-white fs-6">
         <!-- v-show="user_role === 'sales'" -->
 
-        <img
-          class="me-2 rounded-1 p-1 btnHeaderBg"
-          src="@/assets/new-nokta-logo.png"
-          alt=""
-        />
+        <img class="me-2 rounded-1 p-1 btnHeaderBg" :src="logo" alt="" />
         <span
           class="rounded-1 btnHeaderBg d-flex justify-content-center align-items-center me-2"
           style="font-size: 14px; padding: 0 45px"
@@ -403,7 +399,9 @@ export default {
       kanbanStore.setHasNewChanges(false);
       window.location.reload();
     }
+    const logo = require("@/assets/" + process.env.VUE_APP_LOGO_NAME);
     return {
+      logo,
       currentTime,
       pageTitle,
       showRoleSettings,
