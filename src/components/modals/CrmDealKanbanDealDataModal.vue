@@ -139,7 +139,7 @@
                     <option
                       :value="null"
                       disabled
-                      :selected="!customerData.nationality"
+                      v-if="!customerData.nationality"
                     >
                       {{ t("kanban-modal-edit-placeholder-nationality") }}
                     </option>
@@ -153,8 +153,8 @@
                   </select>
                 </div>
                 <div class="col">
-                  <label class="form-label" for="nationality"
-                    ><i class="fa-solid fa-language"></i>
+                  <label class="form-label" for="language">
+                    <i class="fa-solid fa-language"></i>
                     {{ t("kanban-modal-edit-label-prefered-language") }}
                   </label>
                   <select
@@ -171,7 +171,7 @@
                     <option
                       :value="null"
                       disabled
-                      :selected="!customerData.language"
+                      v-if="!customerData.language"
                     >
                       {{ t("kanban-modal-edit-placeholder-prefered-language") }}
                     </option>
@@ -247,12 +247,12 @@
                       {{ t("kanban-modal-edit-label-personal-companion") }}
                     </label>
                     <select
+                      v-model.number="customerData.personalCompanion"
                       :class="[
                         'form-select',
                         isEditMode ? 'bg-input-edit' : 'bg-input',
                         'py-2',
                       ]"
-                      v-model="customerData.personalCompanion"
                       :disabled="!isEditMode"
                       name="personalCompanion"
                       @dblclick="handleDoubleClick"
@@ -260,7 +260,7 @@
                       <option
                         :value="null"
                         disabled
-                        :selected="!customerData.personalCompanion"
+                        v-if="!customerData.personalCompanion"
                       >
                         {{
                           t("kanban-modal-edit-placeholder-personal-companion")
@@ -1902,10 +1902,10 @@ export default {
       name: props.deal?.contact.name || "Custome Name",
       nationality: props.deal?.contact.nationality || null,
       language: props.deal?.contact.language || null,
-      personalCompanion: props.deal?.contact.personalCompanion || null,
-      maritalStatus: props.deal?.contact.maritalStatus || null,
+      personalCompanion: props.deal?.contact.companion || null,
+      maritalStatus: props.deal?.contact.marital_status || null,
       passportNumber: props.deal?.contact.passportNumber || null,
-      date_of_birth: props.deal?.contact.date_of_birth || null,
+      date_of_birth: props.deal?.contact.dob || null,
       phone: props.deal?.contact.phones[0]?.phone || "",
       phone2: props.deal?.contact.phones[1]?.phone || "",
       email: props.deal?.contact.email || "",
@@ -2786,15 +2786,15 @@ export default {
       );
     });
     const personalCompanionOptions = {
-      present: {
-        en: "Present",
+      1: {
+        en: "Yes",
         ar: "موجود",
-        fr: "Présent",
+        fr: "Oui",
       },
-      absent: {
-        en: "Absent",
+      0: {
+        en: "No",
         ar: "غير موجود",
-        fr: "Absent",
+        fr: "Non",
       },
     };
 
@@ -3045,8 +3045,8 @@ export default {
           name: customerData.name,
           nationality: customerData.nationality,
           language: customerData.language,
-          personalCompanion: customerData.personalCompanion,
-          maritalStatus: customerData.maritalStatus,
+          companion: customerData.personalCompanion,
+          marital_status: customerData.maritalStatus,
           phones: phones,
           email: customerData.email || "",
           note: customerData.note || "",
@@ -3071,7 +3071,7 @@ export default {
           passports: [customerData.passport || null],
           diagnosis: customerData.patient_problems || [],
           additional_services: customerData.additional_services || [],
-          date_of_birth: customerData.date_of_birth || [],
+          dob: customerData.date_of_birth || [],
           passportNumber: customerData.passportNumber || [],
         };
 

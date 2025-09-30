@@ -82,7 +82,16 @@
               {{ t("print-case-patient-passport") }}
               {{ deal?.passport_number ?? "-" }}
             </td>
-            <td>{{ t("print-case-patient-personal-companion") }} Yes / No</td>
+            <td>
+              {{ t("print-case-patient-personal-companion") }}
+              {{
+                deal?.contact?.companion === 1
+                  ? t("Yes")
+                  : deal?.contact?.companion === 0
+                  ? t("No")
+                  : "-"
+              }}
+            </td>
           </tr>
         </tbody>
       </table>
