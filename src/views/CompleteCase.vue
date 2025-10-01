@@ -48,18 +48,50 @@
       <table class="table table-bordered fs-8">
         <tbody>
           <tr class="table-secondary">
-            <td>{{ t("print-case-patient-name") }}</td>
-            <td>{{ t("print-case-patient-dateofbirth") }} 00-00-0000</td>
-          </tr>
-          <tr class="table-secondary">
-            <td>{{ t("print-case-patient-address") }}</td>
             <td>
-              {{ t("print-case-patient-marital-status") }} Married / Single
+              {{ t("print-case-patient-name") }}
+              {{ deal?.contact?.name ?? "-" }}
+            </td>
+            <td>
+              {{ t("print-case-patient-dateofbirth") }}
+              <span dir="ltr" class="d-inline-block">
+                {{
+                  deal?.contact?.dob
+                    ? new Date(deal.contact.dob).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })
+                    : "-"
+                }}
+              </span>
             </td>
           </tr>
           <tr class="table-secondary">
-            <td>{{ t("print-case-patient-passport") }} CR749848</td>
-            <td>{{ t("print-case-patient-personal-companion") }} Yes / No</td>
+            <td>
+              {{ t("print-case-patient-address") }}
+              {{ deal?.contact?.address ?? "-" }}
+            </td>
+            <td>
+              {{ t("print-case-patient-marital-status") }}
+              {{ deal?.contact?.marital_status ?? "-" }}
+            </td>
+          </tr>
+          <tr class="table-secondary">
+            <td>
+              {{ t("print-case-patient-passport") }}
+              {{ deal?.passport_number ?? "-" }}
+            </td>
+            <td>
+              {{ t("print-case-patient-personal-companion") }}
+              {{
+                deal?.contact?.companion === 1
+                  ? t("Yes")
+                  : deal?.contact?.companion === 0
+                  ? t("No")
+                  : "-"
+              }}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -73,8 +105,16 @@
       <table class="table table-bordered fs-8">
         <tbody>
           <tr class="table-secondary">
-            <td>{{ t("print-case-patient-phone") }} +905357176133</td>
-            <td>{{ t("print-case-patient-email") }} abc123@gmail.com</td>
+            <td>
+              {{ t("print-case-patient-phone") }}
+              <span dir="ltr" class="d-inline-block">
+                {{ deal?.contact?.phones?.[0]?.phone ?? "-" }}
+              </span>
+            </td>
+            <td>
+              {{ t("print-case-patient-email") }}
+              {{ deal?.contact?.email ?? "-" }}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -93,9 +133,13 @@
             </td>
           </tr>
           <tr class="table-secondary">
-            <td>Selection 1</td>
-            <td>Selection 2</td>
-            <td>Selection 3</td>
+            <td
+              v-for="pkg in deal?.diagnoses"
+              :key="pkg.id"
+              class="text-center"
+            >
+              {{ pkg.name }} - {{ pkg.severity }}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -108,13 +152,13 @@
       </h6>
       <table class="table table-bordered fs-8 mb-1">
         <tbody>
-          <tr class="table-success">
-            <td class="w-85">Treatment 1</td>
-            <td class="text-center">Qty</td>
-          </tr>
-          <tr class="table-success">
-            <td class="w-85">Treatment 2</td>
-            <td class="text-center">Qty</td>
+          <tr
+            v-for="pkg in deal?.kanban_packages"
+            :key="pkg.id"
+            class="table-success"
+          >
+            <td class="w-85">{{ pkg.name }}</td>
+            <td class="text-center">{{ pkg.quantity }}</td>
           </tr>
         </tbody>
       </table>
@@ -124,7 +168,7 @@
           direction === 'ltr' ? 'float-end' : 'float-start',
         ]"
       >
-        $ xxxxx
+        $ {{ grandTotal }}
       </div>
     </section>
 
@@ -135,25 +179,13 @@
       </h6>
       <table class="table table-bordered fs-8 mb-1">
         <tbody>
-          <tr class="table-success">
-            <td class="w-75">Service 1</td>
-            <td class="text-center">Days (x)</td>
-            <td class="text-center">Yes / No</td>
-          </tr>
-          <tr class="table-success">
-            <td>Service 2</td>
-            <td class="text-center">Days (x)</td>
-            <td class="text-center">Yes / No</td>
-          </tr>
-          <tr class="table-success">
-            <td>Service 3</td>
-            <td class="text-center">Days (x)</td>
-            <td class="text-center">Yes / No</td>
-          </tr>
-          <tr class="table-success">
-            <td>Service 4</td>
-            <td class="text-center">Days (x)</td>
-            <td class="text-center">Yes / No</td>
+          <tr
+            v-for="pkg in deal?.additional_services"
+            :key="pkg.id"
+            class="table-success"
+          >
+            <td class="w-85">{{ pkg.name }}</td>
+            <td class="text-center">Days({{ pkg.days }})</td>
           </tr>
         </tbody>
       </table>
@@ -163,14 +195,20 @@
           direction === 'ltr' ? 'float-end' : 'float-start',
         ]"
       >
-        $ xxxxx
+        $ {{ deal?.add_on_total_cost || "0.00" }}
       </div>
     </section>
 
     <!-- Total -->
     <section class="mb-1">
       <div class="fw-bold fs-7 mt-4">
-        {{ t("print-case-patient-total-vat") }} XXXX
+        {{ t("print-case-patient-total-vat") }}
+        $
+        {{
+          (
+            Number(deal?.add_on_total_cost ?? 0) + Number(grandTotal ?? 0)
+          ).toFixed(2)
+        }}
       </div>
     </section>
 
@@ -217,27 +255,74 @@
 
 <script>
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
+import { ref } from "vue";
+import { showDeal } from "@/plugins/services/authService";
+
 export default {
   data() {
     return {
       direction: "ltr",
+      deal: null,
+      loading: false,
+      error: null,
     };
   },
   setup() {
     const { t } = useI18n();
+    const route = useRoute();
+    const dealId = ref(null);
+
     const logo = require("@/assets/" + process.env.VUE_APP_LOGO_NAME);
     return {
       logo,
       t,
+      route,
+      dealId,
     };
   },
-  mounted() {
+  async mounted() {
     const locale = localStorage.getItem("locale") || "en";
     this.direction = ["ar", "ur"].includes(locale) ? "rtl" : "ltr";
+    this.dealId = this.route.query.dealId || this.route.query.deal_id;
+
+    if (this.dealId) {
+      await this.fetchDealData(this.dealId);
+    } else {
+      console.error("No deal ID found in query params");
+      console.log("Query params received:", this.route.query);
+      this.error = "Deal ID not found";
+    }
+  },
+  methods: {
+    async fetchDealData(dealId) {
+      try {
+        this.loading = true;
+        const response = await showDeal(dealId);
+        this.deal = response.data.data;
+
+        console.log("Fetched deal data:", this.deal);
+
+        this.loading = false;
+      } catch (error) {
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+
+        this.error = "Failed to fetch deal data: " + error.message;
+        this.loading = false;
+      }
+    },
+  },
+  computed: {
+    grandTotal() {
+      if (!this.deal || !this.deal.kanban_packages) return 0;
+      return this.deal.kanban_packages
+        .reduce((sum, pkg) => sum + parseFloat(pkg.total_price), 0)
+        .toFixed(2);
+    },
   },
 };
 </script>
-
 <style scoped>
 @page {
   size: A4;

@@ -139,7 +139,7 @@
                     <option
                       :value="null"
                       disabled
-                      :selected="!customerData.nationality"
+                      v-if="!customerData.nationality"
                     >
                       {{ t("kanban-modal-edit-placeholder-nationality") }}
                     </option>
@@ -153,8 +153,8 @@
                   </select>
                 </div>
                 <div class="col">
-                  <label class="form-label" for="nationality"
-                    ><i class="fa-solid fa-language"></i>
+                  <label class="form-label" for="language">
+                    <i class="fa-solid fa-language"></i>
                     {{ t("kanban-modal-edit-label-prefered-language") }}
                   </label>
                   <select
@@ -171,7 +171,7 @@
                     <option
                       :value="null"
                       disabled
-                      :selected="!customerData.language"
+                      v-if="!customerData.language"
                     >
                       {{ t("kanban-modal-edit-placeholder-prefered-language") }}
                     </option>
@@ -247,12 +247,12 @@
                       {{ t("kanban-modal-edit-label-personal-companion") }}
                     </label>
                     <select
+                      v-model.number="customerData.personalCompanion"
                       :class="[
                         'form-select',
                         isEditMode ? 'bg-input-edit' : 'bg-input',
                         'py-2',
                       ]"
-                      v-model="customerData.personalCompanion"
                       :disabled="!isEditMode"
                       name="personalCompanion"
                       @dblclick="handleDoubleClick"
@@ -260,7 +260,7 @@
                       <option
                         :value="null"
                         disabled
-                        :selected="!customerData.personalCompanion"
+                        v-if="!customerData.personalCompanion"
                       >
                         {{
                           t("kanban-modal-edit-placeholder-personal-companion")
@@ -439,11 +439,13 @@
                                 }}
                               </option>
                               <option
-                                v-for="(value, key) in patientProblemsList"
-                                :key="key"
-                                :value="key"
+                                v-for="pkg in local_packages.filter(
+                                  (p) => p.category_id === 3
+                                )"
+                                :key="pkg.id"
+                                :value="pkg.id"
                               >
-                                {{ value }}
+                                {{ pkg.name }}
                               </option>
                             </select>
                           </div>
@@ -567,7 +569,9 @@
                               }}
                             </option>
                             <option
-                              v-for="pkg in local_packages"
+                              v-for="pkg in local_packages.filter(
+                                (p) => p.category_id === 1
+                              )"
                               :key="pkg.id"
                               :value="pkg.id"
                             >
@@ -854,11 +858,13 @@
                               {{ t("kanban-modal-edit-placeholder-addon") }}
                             </option>
                             <option
-                              v-for="(value, key) in additionalServicesList"
-                              :key="key"
-                              :value="key"
+                              v-for="pkg in local_packages.filter(
+                                (p) => p.category_id === 2
+                              )"
+                              :key="pkg.id"
+                              :value="pkg.id"
                             >
-                              {{ value }}
+                              {{ pkg.name }}
                             </option>
                           </select>
                         </div>
@@ -915,7 +921,7 @@
                           'rounded-right-2',
                           'form-control',
                         ]"
-                        v-model="customerData.hospital_total_cost"
+                        v-model="customerData.add_on_total_cost"
                         :placeholder="
                           t('kanban-modal-edit-placeholder-total-cost')
                         "
@@ -1896,10 +1902,10 @@ export default {
       name: props.deal?.contact.name || "Custome Name",
       nationality: props.deal?.contact.nationality || null,
       language: props.deal?.contact.language || null,
-      personalCompanion: props.deal?.contact.personalCompanion || null,
-      maritalStatus: props.deal?.contact.maritalStatus || null,
+      personalCompanion: props.deal?.contact.companion || null,
+      maritalStatus: props.deal?.contact.marital_status || null,
       passportNumber: props.deal?.contact.passportNumber || null,
-      date_of_birth: props.deal?.contact.date_of_birth || null,
+      date_of_birth: props.deal?.contact.dob || null,
       phone: props.deal?.contact.phones[0]?.phone || "",
       phone2: props.deal?.contact.phones[1]?.phone || "",
       email: props.deal?.contact.email || "",
@@ -1938,8 +1944,9 @@ export default {
       kanban_total_cost: props.deal?.kanban_total_cost || null,
       hospital_total_cost: props.deal?.hospital_total_cost || null,
       passports: props.deal?.passports || [],
-      patient_problems: props.deal?.patient_problems || [],
+      patient_problems: props.deal?.diagnoses || [],
       additional_services: props.deal?.additional_services || [],
+      add_on_total_cost: props.deal?.add_on_total_cost || null,
     });
     const nationalities_options = {
       afghan: {
@@ -2779,166 +2786,21 @@ export default {
       );
     });
     const personalCompanionOptions = {
-      present: {
-        en: "Present",
+      1: {
+        en: "Yes",
         ar: "موجود",
-        fr: "Présent",
+        fr: "Oui",
       },
-      absent: {
-        en: "Absent",
+      0: {
+        en: "No",
         ar: "غير موجود",
-        fr: "Absent",
+        fr: "Non",
       },
     };
 
     const personalCompanionList = computed(() => {
       return Object.fromEntries(
         Object.entries(personalCompanionOptions).map(([key, value]) => [
-          key,
-          locale.value === "ar"
-            ? value.ar
-            : locale.value === "fr"
-            ? value.fr
-            : value.en,
-        ])
-      );
-    });
-    const patientProblemsOptions = {
-      premature_ejaculation_mild: {
-        en: "Premature Ejaculation (Mild)",
-        ar: "سرعة قذف (خفيف)",
-        fr: "Éjaculation précoce (légère)",
-      },
-      premature_ejaculation_moderate: {
-        en: "Premature Ejaculation (Moderate)",
-        ar: "سرعة قذف (متوسط)",
-        fr: "Éjaculation précoce (modérée)",
-      },
-      premature_ejaculation_severe: {
-        en: "Premature Ejaculation (Severe)",
-        ar: "سرعة قذف (حرج)",
-        fr: "Éjaculation précoce (sévère)",
-      },
-
-      erectile_dysfunction_mild: {
-        en: "Erectile Dysfunction (Mild)",
-        ar: "ضعف انتصاب (خفيف)",
-        fr: "Dysfonction érectile (légère)",
-      },
-      erectile_dysfunction_moderate: {
-        en: "Erectile Dysfunction (Moderate)",
-        ar: "ضعف انتصاب (متوسط)",
-        fr: "Dysfonction érectile (modérée)",
-      },
-      erectile_dysfunction_severe: {
-        en: "Erectile Dysfunction (Severe)",
-        ar: "ضعف انتصاب (حرج)",
-        fr: "Dysfonction érectile (sévère)",
-      },
-
-      size_related_issues: {
-        en: "Size-related Issues",
-        ar: "مشاكل حجم العضو",
-        fr: "Problèmes liés à la taille",
-      },
-
-      peyronies_disease_mild: {
-        en: "Peyronie's Disease (Mild)",
-        ar: "البيروني (خفيف)",
-        fr: "Maladie de La Peyronie (légère)",
-      },
-      peyronies_disease_moderate: {
-        en: "Peyronie's Disease (Moderate)",
-        ar: "البيروني (متوسط)",
-        fr: "Maladie de La Peyronie (modérée)",
-      },
-      peyronies_disease_severe: {
-        en: "Peyronie's Disease (Severe)",
-        ar: "البيروني (حرج)",
-        fr: "Maladie de La Peyronie (sévère)",
-      },
-
-      prostate_issues: {
-        en: "Prostate Issues",
-        ar: "مشاكل البروستاتا",
-        fr: "Problèmes de prostate",
-      },
-
-      initial_diagnosis: {
-        en: "Initial Diagnosis",
-        ar: "التشخيص المبدئي",
-        fr: "Diagnostic initial",
-      },
-    };
-
-    const patientProblemsList = computed(() => {
-      return Object.fromEntries(
-        Object.entries(patientProblemsOptions).map(([key, value]) => [
-          key,
-          locale.value === "ar"
-            ? value.ar
-            : locale.value === "fr"
-            ? value.fr
-            : value.en,
-        ])
-      );
-    });
-    const additionalServicesOptions = {
-      personal_companion: {
-        en: "Personal Companion",
-        ar: "مرافق شخصي",
-        fr: "Accompagnateur personnel",
-      },
-      translator: {
-        en: "Translator",
-        ar: "مترجم",
-        fr: "Traducteur",
-      },
-      medical_driver: {
-        en: "Medical Driver",
-        ar: "سائق طبي",
-        fr: "Chauffeur médical",
-      },
-      comprehensive_driver: {
-        en: "Comprehensive Driver",
-        ar: "سائق شامل",
-        fr: "Chauffeur complet",
-      },
-      airport_driver_only: {
-        en: "Airport Driver Only",
-        ar: "سائق مطار فقط",
-        fr: "Chauffeur d'aéroport uniquement",
-      },
-      airport_pickup_dropoff: {
-        en: "Airport Pick-up & Drop-off",
-        ar: "استقبال و توديع",
-        fr: "Prise en charge et dépôt à l'aéroport",
-      },
-      medical_transport: {
-        en: "Medical Transport",
-        ar: "مواصلات طبية",
-        fr: "Transport médical",
-      },
-      personal_driver: {
-        en: "Personal Driver",
-        ar: "سائق شخصي",
-        fr: "Chauffeur personnel",
-      },
-      hotel_booking: {
-        en: "Hotel Booking",
-        ar: "حجز فندقي",
-        fr: "Réservation d'hôtel",
-      },
-      personal_assistant: {
-        en: "Personal Assistant",
-        ar: "مرافق",
-        fr: "Assistant personnel",
-      },
-    };
-
-    const additionalServicesList = computed(() => {
-      return Object.fromEntries(
-        Object.entries(additionalServicesOptions).map(([key, value]) => [
           key,
           locale.value === "ar"
             ? value.ar
@@ -3183,8 +3045,8 @@ export default {
           name: customerData.name,
           nationality: customerData.nationality,
           language: customerData.language,
-          personalCompanion: customerData.personalCompanion,
-          maritalStatus: customerData.maritalStatus,
+          companion: customerData.personalCompanion,
+          marital_status: customerData.maritalStatus,
           phones: phones,
           email: customerData.email || "",
           note: customerData.note || "",
@@ -3205,10 +3067,11 @@ export default {
           time: customerData.time || "",
           kanban_total_cost: customerData.kanban_total_cost || null,
           hospital_total_cost: customerData.hospital_total_cost || null,
+          add_on_total_cost: customerData.add_on_total_cost || null,
           passports: [customerData.passport || null],
-          patient_problems: customerData.patient_problems || [],
+          diagnosis: customerData.patient_problems || [],
           additional_services: customerData.additional_services || [],
-          date_of_birth: customerData.date_of_birth || [],
+          dob: customerData.date_of_birth || [],
           passportNumber: customerData.passportNumber || [],
         };
 
@@ -3873,7 +3736,10 @@ export default {
     };
     const PrintCase = () => {
       try {
-        const routeData = router.resolve({ path: "/CompleteCase" });
+        const routeData = router.resolve({
+          path: "/CompleteCase",
+          query: { dealId: props.deal?.id },
+        });
         const printWindow = window.open(
           routeData.href,
           "_blank",
@@ -4122,10 +3988,8 @@ export default {
       // formatLogEntry,
       maritalStatusList,
       personalCompanionList,
-      patientProblemsList,
       addNewPatientProblem,
       removePatientProblem,
-      additionalServicesList,
       addNewAdditionalService,
       removeAdditionalService,
     };
