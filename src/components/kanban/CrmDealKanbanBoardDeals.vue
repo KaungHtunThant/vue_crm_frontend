@@ -1486,8 +1486,8 @@ export default {
         }
         toast.success(response.data.message);
       } catch (error) {
-        console.error("Error pulling deals from old system:", error);
-        toast.error(error.response?.data?.message);
+        console.error("Error pulling deals from old system:", error.message);
+        toast.error(error.message);
       }
     };
 
