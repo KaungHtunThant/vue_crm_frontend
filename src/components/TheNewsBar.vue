@@ -45,7 +45,7 @@ export default {
     const translateX = ref(0);
     let animationFrame = null;
     let contentWidth = 0;
-    const speed = 1;
+    const speed = 0.5;
     const isNewsBarVisible = ref(true);
     const isPaused = ref(false);
 

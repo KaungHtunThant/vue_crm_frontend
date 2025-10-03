@@ -10,14 +10,14 @@
                 class="form-control"
                 :placeholder="t('crmlist-placeholder-search')"
                 v-model="searchInput"
-                @search="fetchData"
+                @search="onSearch"
                 style="padding: 0.5rem 0.5rem"
               />
               <button
                 :title="t('buttons.search')"
                 type="button"
                 class="btn btn-header input-group-text"
-                @click="fetchData"
+                @click="onSearch"
               >
                 <i class="fas fa-magnifying-glass text-white"></i>
               </button>
@@ -41,11 +41,12 @@
       <DataTable
         :value="approvals"
         :paginator="true"
-        :rows="rowsPerPage"
+        :rows="localRowsPerPage"
         :rowsPerPageOptions="[10, 25, 50]"
         :total-records="totalRows"
         :lazy="true"
         :loading="loading"
+        :first="first"
         @page="onPageChange"
         v-model:selection="selectedRows"
         :selectionMode="
@@ -55,7 +56,7 @@
         "
         responsive="true"
         scrollable
-        scrollHeight="calc(90vh - 110px)"
+        scrollHeight="calc(78vh - 110px)"
       >
         <Column
           :selectionMode="
@@ -68,7 +69,9 @@
         ></Column>
         <Column :header="'#'">
           <template #body="slotProps">
-            {{ slotProps.index + 1 + currentPage * rowsPerPage }}
+            {{
+              slotProps.index + 1 + (localCurrentPage - 1) * localRowsPerPage
+            }}
           </template>
         </Column>
         <Column
@@ -187,13 +190,12 @@ export default {
     const { t } = useI18n();
     const toast = useToast();
     const approvalStore = useApprovalStore();
-    const approvals = computed(() =>
-      approvalStore.getApprovals("idle_deal_assign_approval")
-    );
+    const typeKey = "idle_deal_assign_approval";
+    const approvals = computed(() => approvalStore.getApprovals(typeKey));
     const searchInput = ref("");
-    const rowsPerPage = computed(() => approvalStore.getPerPage);
-    const currentPage = computed(() => approvalStore.getCurrentPage);
-    const totalRows = computed(() => approvalStore.getTotal);
+    const totalRows = computed(() => approvalStore.getTotal(typeKey));
+    const localRowsPerPage = ref(approvalStore.getPerPage(typeKey) || 10);
+    const localCurrentPage = ref(approvalStore.getCurrentPage(typeKey) || 1);
     // Table state
     const rows = ref([]);
     const loading = ref(false);
@@ -211,15 +213,14 @@ export default {
     const user_role = Cookies.get("user_role");
     const selected_conversation = ref(null);
     // Fetch data from the server
-    const fetchData = async () => {
+    const fetchData = async (
+      search = searchInput.value,
+      page = localCurrentPage.value,
+      perPage = localRowsPerPage.value
+    ) => {
       try {
         loading.value = true;
-        approvalStore.fetchApprovals(
-          searchInput.value,
-          currentPage.value,
-          rowsPerPage.value,
-          "idle_deal_assign_approval"
-        );
+        await approvalStore.fetchApprovals(search, page, perPage, typeKey);
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error(t("error.fetchFailed"));
@@ -230,8 +231,16 @@ export default {
 
     // Handle page change event
     const onPageChange = (event) => {
-      currentPage.value = event.page;
-      rowsPerPage.value = event.rows;
+      const nextPage = (event.page ?? 0) + 1;
+      const nextRows = event.rows ?? localRowsPerPage.value;
+      localCurrentPage.value = nextPage;
+      localRowsPerPage.value = nextRows;
+      fetchData(searchInput.value, nextPage, nextRows);
+    };
+
+    const onSearch = () => {
+      localCurrentPage.value = 1;
+      fetchData(searchInput.value, 1, localRowsPerPage.value);
     };
 
     const handleShowDealModal = async (dealId) => {
@@ -365,6 +374,7 @@ export default {
     };
 
     onMounted(async () => {
+      await fetchData();
       fetchUsers();
       const modalElements = document.querySelectorAll(".modal");
       modalElements.forEach((element) => {
@@ -388,8 +398,8 @@ export default {
       rows,
       loading,
       totalRows,
-      currentPage,
-      rowsPerPage,
+      localCurrentPage,
+      localRowsPerPage,
       selectedRows,
       selectedStatuses,
       sources,
@@ -421,6 +431,11 @@ export default {
       approvalStore,
       approvals,
       searchInput,
+      onSearch,
+      first: computed(
+        () => (localCurrentPage.value - 1) * localRowsPerPage.value
+      ),
+      typeKey,
     };
   },
 };

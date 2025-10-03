@@ -209,7 +209,7 @@
                     />
                   </div> -->
                   <!-- Passport Number -->
-                  <div class="col" @dblclick="handleDoubleClick">
+                  <div class="col mt-2" @dblclick="handleDoubleClick">
                     <label class="form-label" for="date_of_birth"
                       ><i class="fa-solid fa-calendar-days"></i>
                       {{ t("kanban-modal-edit-label-date_of_birth")
@@ -233,7 +233,7 @@
                     />
                   </div>
                   <!-- maritalStatus -->
-                  <div class="col">
+                  <div class="col mt-2">
                     <label class="form-label" for="maritalStatus"
                       ><i class="fa-solid fa-heart"></i>
                       {{ t("kanban-modal-edit-label-marital-status") }}
@@ -266,7 +266,7 @@
                     </select>
                   </div>
                   <!-- Personal Companion -->
-                  <div class="col p-0">
+                  <div class="col p-0 mt-2">
                     <label class="form-label" for="personalCompanion"
                       ><i class="fa-solid fa-person-circle-plus"></i>
                       {{ t("kanban-modal-edit-label-personal-companion") }}
