@@ -462,7 +462,6 @@ export const webstart = async () => {
 export const webqrcode = async () => {
   const userId = getUserId();
   return await axios.get(`/webwhatsapp/qr/${userId}`);
-  //return await axios.get(`http://127.0.0.1:3000/get-qr/${userId}`);
 };
 
 export const checkstatus = async () => {
@@ -489,7 +488,7 @@ export const getActiveClients = async () => {
 };
 
 export const getAllPackages = async () => {
-  return await axios.get("/packages");
+  return await axios.get("/packages/all");
 };
 
 export const getApprovals = async (params = {}) => {
@@ -534,4 +533,7 @@ export const getAllRatings = async () => {
 };
 export const updateUserRating = async (userId, ratingId) => {
   return await axios.patch(`/users/${userId}/rating`, { rating_id: ratingId });
+};
+export const getAllPackageCategories = async () => {
+  return await axios.get("/package-categories/all");
 };

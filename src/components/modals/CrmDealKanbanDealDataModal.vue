@@ -439,9 +439,7 @@
                                 }}
                               </option>
                               <option
-                                v-for="pkg in local_packages.filter(
-                                  (p) => p.category_id === 3
-                                )"
+                                v-for="pkg in diagnoses_packages"
                                 :key="pkg.id"
                                 :value="pkg.id"
                               >
@@ -569,9 +567,7 @@
                               }}
                             </option>
                             <option
-                              v-for="pkg in local_packages.filter(
-                                (p) => p.category_id === 1
-                              )"
+                              v-for="pkg in treatment_packages"
                               :key="pkg.id"
                               :value="pkg.id"
                             >
@@ -720,7 +716,7 @@
                               }}
                             </option>
                             <option
-                              v-for="pkg in local_packages"
+                              v-for="pkg in treatment_packages"
                               :key="pkg.id"
                               :value="pkg.id"
                             >
@@ -858,9 +854,7 @@
                               {{ t("kanban-modal-edit-placeholder-addon") }}
                             </option>
                             <option
-                              v-for="pkg in local_packages.filter(
-                                (p) => p.category_id === 2
-                              )"
+                              v-for="pkg in additional_packages"
                               :key="pkg.id"
                               :value="pkg.id"
                             >
@@ -1776,6 +1770,8 @@ import {
 import { PERMISSIONS, usePermissionStore } from "@/stores/permissionStore";
 import moveCardSound from "@/assets/move-card.wav";
 import { useLogStore } from "@/stores/logStore";
+import { usePackageStore } from "@/stores/packageStore";
+
 export default {
   name: "CrmDealKanbanDealDataModal",
   components: { RatingStars, ViewReport, TrashDeal, SuggestUserModal },
@@ -1807,6 +1803,7 @@ export default {
   },
   setup(props, { emit }) {
     const logStore = useLogStore();
+    const packageStore = usePackageStore();
     const route = useRoute();
     const router = useRouter();
     const permissionStore = usePermissionStore();
@@ -1818,10 +1815,16 @@ export default {
     const isEditMode = ref(false);
     const hoveredStage = ref(null);
     const stageColors = reactive({});
-    // const local_logs = ref([]);
-    // const users = ref([]);
     const commentInput = ref(null);
-    const local_packages = ref(props.packages || []);
+    const treatment_packages = computed(() =>
+      packageStore.getPackagesWithCategory("treatments")
+    );
+    const additional_packages = computed(() =>
+      packageStore.getPackagesWithCategory("add-ons")
+    );
+    const diagnoses_packages = computed(() =>
+      packageStore.getPackagesWithCategory("initial-diagnosis")
+    );
 
     const commentTextWidths = reactive({});
     const originalDataValue = ref({});
@@ -3436,16 +3439,6 @@ export default {
         is_trash
       );
     };
-    // const fetchLogs = async () => {
-    //   try {
-    //     const response = await getLogsByDealId(props.deal?.id);
-    //     if (response.data) {
-    //       local_logs.value = response.data.data;
-    //     }
-    //   } catch (error) {
-    //     console.error("Error fetching logs:", error);
-    //   }
-    // };
     watch(
       () => props.deal,
       (newDeal) => {
@@ -3775,109 +3768,6 @@ export default {
         });
       }
     };
-    // const formatLogEntry = (log) => {
-    //   const parts = [];
-    //   const userName = logStore.getUserName(log.user_id);
-    //   const userColor = logStore.getUserColor(log.user_id);
-
-    //   parts.push({ text: userName, backgroundColor: userColor, isBadge: true });
-
-    //   if (
-    //     log.event === "updated" &&
-    //     log.entity_type === "Task" &&
-    //     log.new_values?.status === "completed"
-    //   ) {
-    //     parts.push(` completed Task ID: ${log.entity_id}.`);
-    //   } else if (
-    //     log.event === "updated" &&
-    //     log.entity_type === "Deal" &&
-    //     log.old_values?.stage_id &&
-    //     log.new_values?.stage_id
-    //   ) {
-    //     const oldStageName = getStageName(log.old_values.stage_id);
-    //     const oldStageColor = getStageColor(log.old_values.stage_id);
-    //     const newStageName = getStageName(log.new_values.stage_id);
-    //     const newStageColor = getStageColor(log.new_values.stage_id);
-
-    //     parts.push(` moved Deal ID: ${log.entity_id} from `);
-    //     parts.push({
-    //       text: oldStageName,
-    //       backgroundColor: oldStageColor,
-    //       isBadge: true,
-    //     });
-    //     parts.push(` to `);
-    //     parts.push({
-    //       text: newStageName,
-    //       backgroundColor: newStageColor,
-    //       isBadge: true,
-    //     });
-    //     parts.push(`.`);
-    //   } else if (log.event === "created" && log.entity_type === "Deal") {
-    //     parts.push(` created a new Deal with ID: ${log.entity_id}.`);
-    //   } else if (log.event === "created" && log.entity_type === "Comment") {
-    //     parts.push(` added a new Comment on Entity ID: ${log.entity_id}.`);
-    //   } else if (log.event === "created" && log.entity_type === "Task") {
-    //     parts.push(` created a new Task with ID: ${log.entity_id}.`);
-    //   } else {
-    //     parts.push(
-    //       ` updated ${
-    //         log.entity_type === "Deal"
-    //           ? "Deal"
-    //           : log.entity_type === "Task"
-    //           ? "Task"
-    //           : "Comment"
-    //       } ID: ${log.entity_id}.`
-    //     );
-    //     const changes = [];
-    //     for (const key in log.new_values) {
-    //       if (
-    //         Object.prototype.hasOwnProperty.call(log.new_values, key) &&
-    //         log.old_values?.[key] !== undefined &&
-    //         log.old_values?.[key] !== log.new_values[key]
-    //       ) {
-    //         const oldValue = log.old_values[key];
-    //         const newValue = log.new_values[key];
-
-    //         let formattedOldValue = oldValue === null ? "Unassigned" : oldValue;
-    //         let formattedNewValue = newValue === null ? "Unassigned" : newValue;
-
-    //         if (key === "assign_by_id" || key === "assigned_to_id") {
-    //           parts.push(` ${key}: `);
-
-    //           if (oldValue !== null && oldValue !== undefined) {
-    //             parts.push({
-    //               text: logStore.getUserName(oldValue),
-    //               backgroundColor: logStore.getUserColor(oldValue),
-    //               isBadge: true,
-    //             });
-    //           } else {
-    //             parts.push("");
-    //           }
-    //           parts.push(` -> `);
-    //           if (newValue !== null && newValue !== undefined) {
-    //             parts.push({
-    //               text: logStore.getUserName(newValue),
-    //               backgroundColor: logStore.getUserColor(newValue),
-    //               isBadge: true,
-    //             });
-    //           } else {
-    //             parts.push("Unassigned");
-    //           }
-    //         } else {
-    //           changes.push(
-    //             `${key}: ${formattedOldValue} -> ${formattedNewValue}`
-    //           );
-    //         }
-    //       }
-    //     }
-    //     if (changes.length > 0) {
-    //       parts.push(` Changes: ${changes.join(", ")}.`);
-    //     }
-    //   }
-    //   parts.push(` (${formatDate(log.created_at)})`);
-    //   return parts;
-    // };
-
     const getStageName = (stageId) => {
       const stage = props.stages.find((s) => s.id === stageId);
       return stage ? stage.name : `Stage#${stageId}`;
@@ -3886,20 +3776,12 @@ export default {
       const stage = props.stages.find((s) => s.id === id);
       return stage ? stage.color_code : id;
     };
-    // const getUserName = (id) => {
-    //   if (id === null || id === undefined) return "Unassigned";
-    //   const user = users.value.find((u) => u.id === id);
-    //   return user ? user.name : `User#${id}`;
-    // };
-    // const getUserColor = (id) => {
-    //   const user = users.value.find((u) => u.id === id);
-    //   return user ? user.color_code : "#000";
-    // };
+    onMounted(() => {
+      packageStore.fetchAll();
+    });
     return {
       getStageColor,
       getStageName,
-      // getUserName,
-      // getUserColor,
       toggleIsLocal,
       storeOldValue,
       removePassport,
@@ -3948,7 +3830,6 @@ export default {
       permissionStore,
       PERMISSIONS,
       getContrastColor,
-      // fetchLogs,
       handleEnter,
       autoResize,
       resetTextareaSize,
@@ -3964,7 +3845,6 @@ export default {
       sortedComments,
       cancelEditComment,
       logStore,
-      // logs: logStore.logs,
       users: logStore.users,
       commentInput,
       autoResizeEditWidth,
@@ -3972,7 +3852,6 @@ export default {
       getCommentTextWidth,
       commentTextWidths,
       handleTicketUpload,
-      local_packages,
       originalDataValue,
       dataDealCopy,
       dateTaskClick,
@@ -3985,13 +3864,15 @@ export default {
       handleTaskUpdate,
       handlePassportUpload,
       PrintCase,
-      // formatLogEntry,
       maritalStatusList,
       personalCompanionList,
       addNewPatientProblem,
       removePatientProblem,
       addNewAdditionalService,
       removeAdditionalService,
+      treatment_packages,
+      additional_packages,
+      diagnoses_packages,
     };
   },
 };
