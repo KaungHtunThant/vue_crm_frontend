@@ -220,8 +220,13 @@
             <td class="w-50">
               {{ t("print-case-warranty") }} Provided / Not Provided
             </td>
-            <td>{{ t("print-case-warranty-from") }} 00-00-0000</td>
-            <td>{{ t("print-case-warranty-duedate") }} 00-00-0000</td>
+            <td>
+              {{ t("print-case-warranty-from") }} {{ formatDate(new Date()) }}
+            </td>
+            <td>
+              {{ t("print-case-warranty-duedate") }}
+              {{ formatDate(addDays(new Date(), 30)) }}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -311,6 +316,20 @@ export default {
         this.error = "Failed to fetch deal data: " + error.message;
         this.loading = false;
       }
+    },
+    formatDate(date) {
+      if (!date) return "";
+      const d = new Date(date);
+      return d.toLocaleDateString("en-US", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      });
+    },
+    addDays(date, days) {
+      const result = new Date(date);
+      result.setDate(result.getDate() + days);
+      return result;
     },
   },
   computed: {
