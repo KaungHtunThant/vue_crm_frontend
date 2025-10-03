@@ -159,17 +159,19 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
-import { getSources } from "@/plugins/services/authService";
+import { ref } from "vue";
 import * as XLSX from "xlsx";
 import { useI18n } from "vue-i18n";
+import { useSourceStore } from "@/stores/sourceStore";
+import { computed } from "vue";
 export default {
   name: "CrmListViewImportModalFormItems",
   setup() {
     const { t } = useI18n();
     const fileError = ref("");
     const isFileValid = ref(false);
-    const sources = ref([]);
+    const sourceStore = useSourceStore();
+    const sources = computed(() => sourceStore.getAllSources);
     const source = ref("");
     const name = ref("");
     const description = ref("");
@@ -180,17 +182,6 @@ export default {
     const email = ref("");
     const options = ref([]);
     const fileInput = ref(null);
-    // get sources api
-    const fetchSources = async () => {
-      try {
-        const response = await getSources();
-        if (response.status === 200) {
-          sources.value = response.data.data;
-        }
-      } catch (error) {
-        console.error("Error fetching sources:", error);
-      }
-    };
 
     // handle file change
     const handleFileChange = async (event) => {
@@ -271,10 +262,6 @@ export default {
         }
       });
     };
-
-    onMounted(() => {
-      fetchSources();
-    });
 
     return {
       fileInput,

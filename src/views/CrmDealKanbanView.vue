@@ -32,6 +32,7 @@ import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vu
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 import { getDealsKanban } from "@/plugins/services/authService";
+import { useSourceStore } from "@/stores/sourceStore";
 export default {
   name: "CrmDealKanbanView",
 
@@ -46,6 +47,7 @@ export default {
     const stages = ref([]);
     const selected_conversation = ref(null);
     const searchVal = ref("");
+    const sourceStore = useSourceStore();
     const filters = ref({
       source_id: "",
       stage_id: "",
@@ -265,6 +267,7 @@ export default {
 
     onMounted(async () => {
       try {
+        sourceStore.fetchSources();
         await fetchStages();
         window.addEventListener("contextmenu", handleRightClick);
       } catch (error) {

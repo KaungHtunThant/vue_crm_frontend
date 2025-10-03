@@ -1754,7 +1754,6 @@ import TrashDeal from "@/components/modals/CrmDealKanbanDealDataModalTrashDealMo
 import SuggestUserModal from "@/components/modals/SuggestUserModal.vue";
 import {
   fetchConversationByDealId,
-  getSources,
   createComment,
   updateComments,
   createTask,
@@ -1762,8 +1761,6 @@ import {
   updateDealStage,
   updateDeal,
   createConversation,
-  // getLogsByDealId,
-  // getUser,
   getAvailableStages,
   toggleCommentPin,
 } from "@/plugins/services/authService";
@@ -1771,6 +1768,7 @@ import { PERMISSIONS, usePermissionStore } from "@/stores/permissionStore";
 import moveCardSound from "@/assets/move-card.wav";
 import { useLogStore } from "@/stores/logStore";
 import { usePackageStore } from "@/stores/packageStore";
+import { useSourceStore } from "@/stores/sourceStore";
 
 export default {
   name: "CrmDealKanbanDealDataModal",
@@ -1810,7 +1808,8 @@ export default {
     const selected_conversation = ref(null);
     const { t, locale } = useI18n();
     const toast = useToast();
-    const sources = ref([]);
+    const sourceStore = useSourceStore();
+    const sources = computed(() => sourceStore.sources);
     const allStages = ref(null);
     const isEditMode = ref(false);
     const hoveredStage = ref(null);
@@ -2828,22 +2827,6 @@ export default {
       };
       return new Date(dateString).toLocaleDateString("en-US", options);
     };
-    // const fetchUsers = async () => {
-    //   try {
-    //     const response = await getUser();
-    //     users.value = response.data.data;
-    //   } catch (error) {
-    //     console.error("Error fetching users:", error);
-    //   }
-    // };
-    const fetchSources = async () => {
-      try {
-        const response = await getSources();
-        sources.value = response.data.data;
-      } catch (error) {
-        console.error("Error fetching sources:", error);
-      }
-    };
     const sourceName = computed(() => {
       const source = sources.value.find((s) => s.id === props.deal?.source_id);
       return source ? source.name : "null";
@@ -3555,7 +3538,6 @@ export default {
     onMounted(async () => {
       await logStore.fetchUsers();
       if (props.deal?.id) await logStore.fetchLogs(props.deal.id);
-      await fetchSources();
       // fetchUsers();
       document.addEventListener("click", handleClickOutside);
 

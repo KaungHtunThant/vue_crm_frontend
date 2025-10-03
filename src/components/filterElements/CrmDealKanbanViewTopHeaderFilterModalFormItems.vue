@@ -232,11 +232,9 @@
 import { onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePermissionStore, PERMISSIONS } from "@/stores/permissionStore";
-import {
-  getSources,
-  getUser,
-  getAvailableStages,
-} from "@/plugins/services/authService";
+import { getUser, getAvailableStages } from "@/plugins/services/authService";
+import { useSourceStore } from "@/stores/sourceStore";
+import { computed } from "vue";
 
 export default {
   name: "CrmDealKanbanViewTopHeaderFilterModalFormItems",
@@ -261,7 +259,8 @@ export default {
       ...props.headerFilters,
     });
     const stages = ref([]);
-    const sources = ref([]);
+    const sourceStore = useSourceStore();
+    const sources = computed(() => sourceStore.getAllSources);
     const users = ref([]);
     const local_packages = ref([]);
 
@@ -351,7 +350,6 @@ export default {
 
     onMounted(() => {
       handleFetchStages();
-      handleFetchSources();
       handleFetchUsers();
 
       if (permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)) {
@@ -368,14 +366,6 @@ export default {
         stages.value = response.data.data || response;
       } catch (e) {
         stages.value = [];
-      }
-    }
-    async function handleFetchSources() {
-      try {
-        const response = await getSources();
-        sources.value = response.data.data || response;
-      } catch (e) {
-        sources.value = [];
       }
     }
     async function handleFetchUsers() {

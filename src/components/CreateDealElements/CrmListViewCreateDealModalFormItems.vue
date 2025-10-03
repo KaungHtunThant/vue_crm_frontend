@@ -136,13 +136,11 @@
 
 <script>
 import { ref, onMounted, watch } from "vue";
-import {
-  getSources,
-  getStages,
-  getAllUsers,
-} from "@/plugins/services/authService";
+import { getStages, getAllUsers } from "@/plugins/services/authService";
 import RatingStars from "@/components/CreateDealElements/CrmDealKanbanDealDataModalRatingStars.vue";
 import { useI18n } from "vue-i18n";
+import { useSourceStore } from "@/stores/sourceStore";
+import { computed } from "vue";
 export default {
   name: "CrmListViewCreateDealModalFormItems",
   components: {
@@ -169,25 +167,10 @@ export default {
       },
     });
     const showPhone2 = ref(false);
-    const sources = ref([]);
+    const sourceStore = useSourceStore();
+    const sources = computed(() => sourceStore.getAllSources);
     const stages = ref([]);
     const users = ref([]);
-    const fetchSources = async () => {
-      try {
-        const response = await getSources();
-        if (response.status === 200) {
-          sources.value = response.data.data.map((source) => ({
-            value: source.id,
-            name: source.name,
-          }));
-        } else {
-          // alert("Failed to fetch sources");
-        }
-      } catch (error) {
-        console.error("Error fetching sources:", error);
-        // alert("Failed to fetch sources");
-      }
-    };
     const fetchStages = async () => {
       try {
         const response = await getStages();
@@ -220,7 +203,6 @@ export default {
     };
 
     onMounted(() => {
-      fetchSources();
       fetchStages();
       fetchUsers();
     });

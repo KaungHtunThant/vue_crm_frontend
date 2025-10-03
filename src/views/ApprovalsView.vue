@@ -109,6 +109,7 @@ import ApprovalSuggestUserTable from "@/components/ApprovalSuggestUserTable.vue"
 import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";
 import { useApprovalStore } from "@/stores/approvalStore";
 import { onMounted } from "vue";
+import { useSourceStore } from "@/stores/sourceStore";
 export default {
   name: "ApprovalsView",
   components: {
@@ -121,6 +122,7 @@ export default {
   setup() {
     const { t } = useI18n();
     const approvalStore = useApprovalStore();
+    const sourceStore = useSourceStore();
     const fetchApprovals = async () => {
       try {
         await approvalStore.fetchApprovals("", 1, 10);
@@ -131,6 +133,7 @@ export default {
 
     onMounted(() => {
       fetchApprovals();
+      sourceStore.fetchSources();
     });
     return {
       t,

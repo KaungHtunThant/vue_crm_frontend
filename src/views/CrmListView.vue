@@ -304,7 +304,6 @@ import {
   getDeals,
   showDeal,
   deleteDeals,
-  getSources,
   bulkUpdateDeals,
   bulkDeleteDeals,
   getAllUsers,
@@ -323,6 +322,7 @@ import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";
 import Cookies from "js-cookie";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CountryFlagAvatar from "@/components/whatsapp/WhatsAppModalSidebarLeftCountryFlagAvatar.vue";
+import { useSourceStore } from "@/stores/sourceStore";
 const { t } = useI18n();
 const toast = useToast();
 const permissionStore = usePermissionStore();
@@ -338,7 +338,8 @@ const searchInput = ref("");
 const selectedRows = ref([]);
 const selectedAction = ref("");
 const selectedStatuses = ref([]);
-const sources = ref([]);
+const sourceStore = useSourceStore();
+const sources = computed(() => sourceStore.sources);
 const stages = ref([]);
 const users = ref([]);
 
@@ -456,8 +457,8 @@ const fetchData = async () => {
   try {
     loading.value = true;
 
-    if (stages.value.length === 0 || sources.value.length === 0) {
-      await fetchStagesAndSources();
+    if (stages.value.length === 0) {
+      await fetchStages();
     }
 
     const apiFilters = {
@@ -814,26 +815,16 @@ const handleRightClick = (event) => {
   });
 };
 
-const fetchStagesAndSources = async () => {
+const fetchStages = async () => {
   try {
-    if (stages.value.length === 0 || sources.value.length === 0) {
-      console.log("Fetching stages and sources...");
-      const [stageRes, sourceRes] = await Promise.all([
-        getAvailableStages(),
-        getSources(),
-      ]);
+    if (stages.value.length === 0) {
+      console.log("Fetching stages");
+      const stageRes = await getAvailableStages();
 
       stages.value = stageRes.data.data;
-
-      sources.value = sourceRes.data.data;
-
-      console.log("Fetched stages and sources:", {
-        stages: stages.value,
-        sources: sources.value,
-      });
     }
   } catch (error) {
-    console.error("Error fetching stages and sources:", error);
+    console.error("Error fetching stages:", error);
     toast.error(t("error.fetchFailed"));
   }
 };
@@ -1010,6 +1001,7 @@ const changeDealStage = async (dealId, newStageId) => {
 onMounted(async () => {
   await fetchData();
   fetchUsers();
+  sourceStore.fetchSources();
   const modalElements = document.querySelectorAll(".modal");
   modalElements.forEach((element) => {
     new Modal(element, {

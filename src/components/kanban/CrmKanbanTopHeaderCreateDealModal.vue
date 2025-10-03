@@ -215,11 +215,8 @@
 <script>
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
-import {
-  createDeal,
-  getUser,
-  getSources,
-} from "@/plugins/services/authService";
+import { createDeal, getUser } from "@/plugins/services/authService";
+import { useSourceStore } from "@/stores/sourceStore";
 export default {
   name: "CrmKanbanTopHeaderCreateDealModal",
   setup() {
@@ -231,7 +228,7 @@ export default {
     return {
       showModal: false,
       users: [],
-      sources: [],
+      sourceStore: useSourceStore(),
       form: {
         note: "",
         source_id: null,
@@ -257,7 +254,11 @@ export default {
       // ],
     };
   },
-
+  computed: {
+    sources() {
+      return this.sourceStore.sources;
+    },
+  },
   methods: {
     async fetchUsers() {
       try {
@@ -265,15 +266,6 @@ export default {
         this.users = response.data.data || [];
       } catch (e) {
         this.users = [];
-      }
-    },
-
-    async fetchSources() {
-      try {
-        const response = await getSources();
-        this.sources = response.data.data || [];
-      } catch (e) {
-        this.sources = [];
       }
     },
 
@@ -362,7 +354,6 @@ export default {
   },
   mounted() {
     this.fetchUsers();
-    this.fetchSources();
   },
 };
 </script>

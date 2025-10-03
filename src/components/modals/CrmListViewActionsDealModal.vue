@@ -244,11 +244,11 @@ import { ref, defineProps, defineEmits, onMounted, computed } from "vue";
 import { Modal } from "bootstrap";
 import {
   getAvailableStages,
-  getSources,
   getAllUsers,
 } from "@/plugins/services/authService";
 import { useI18n } from "vue-i18n";
 import { useToast } from "vue-toastification";
+import { useSourceStore } from "@/stores/sourceStore";
 const { t } = useI18n();
 const props = defineProps({
   selectedRows: {
@@ -269,11 +269,16 @@ const emits = defineEmits([
 // State
 const isLoading = ref(false);
 const newStage = ref("");
-// const newSupervisor = ref("");
 const newUser = ref("");
 const newSource = ref("");
 const stageOptions = ref([]);
-const sourceOptions = ref([]);
+const sourceStore = useSourceStore();
+const sourceOptions = computed(() =>
+  sourceStore.getAllSources.map((source) => ({
+    value: source.id,
+    label: source.name,
+  }))
+);
 const userOptions = ref([]);
 
 const sortedUserOptions = computed(() => {
@@ -309,20 +314,6 @@ const fetchStages = async () => {
 //   { value: "rep2", label: "user 2" },
 //   { value: "rep3", label: "user 3" },
 // ];
-
-const fetchSources = async () => {
-  try {
-    const response = await getSources();
-    if (response.status === 200) {
-      sourceOptions.value = response.data.data.map((source) => ({
-        value: source.id,
-        label: source.name,
-      }));
-    }
-  } catch (error) {
-    console.error("Error fetching sources:", error);
-  }
-};
 const fetchUsers = async () => {
   try {
     const response = await getAllUsers();
@@ -344,7 +335,6 @@ const fetchUsers = async () => {
 };
 onMounted(async () => {
   await fetchStages();
-  await fetchSources();
   await fetchUsers();
 });
 

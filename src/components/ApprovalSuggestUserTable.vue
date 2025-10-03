@@ -162,7 +162,6 @@ import {
   updateApproval,
   showDeal,
   getAvailableStages,
-  getSources,
   getAllUsers,
   updateDealStage,
 } from "@/plugins/services/authService";
@@ -170,6 +169,7 @@ import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Swal from "sweetalert2";
 import { ref, onMounted, onUnmounted, nextTick, computed } from "vue";
 import { useApprovalStore } from "@/stores/approvalStore";
+import { useSourceStore } from "@/stores/sourceStore";
 
 export default {
   name: "ApprovalNewDealCreationTable",
@@ -197,7 +197,8 @@ export default {
     const loading = ref(false);
     const selectedRows = ref([]);
     const selectedStatuses = ref([]);
-    const sources = ref([]);
+    const sourceStore = useSourceStore();
+    const sources = computed(() => sourceStore.sources);
     const stages = ref([]);
     const users = ref([]);
     const dealData = ref(null);
@@ -274,29 +275,16 @@ export default {
       });
     };
 
-    const fetchStagesAndSources = async () => {
+    const fetchStages = async () => {
       try {
-        if (stages.value.length === 0 || sources.value.length === 0) {
-          console.log("Fetching stages and sources...");
-          const [stageRes, sourceRes] = await Promise.all([
-            getAvailableStages(),
-            getSources(),
-          ]);
+        if (stages.value.length === 0) {
+          console.log("Fetching stages...");
+          const stageRes = await getAvailableStages();
 
           stages.value = stageRes.data.data.map((stage) => ({
             value: stage.id,
             name: stage.name,
           }));
-
-          sources.value = sourceRes.data.data.map((source) => ({
-            value: source.id,
-            name: source.name,
-          }));
-
-          console.log("Fetched stages and sources:", {
-            stages: stages.value,
-            sources: sources.value,
-          });
         }
       } catch (error) {
         console.error("Error fetching stages and sources:", error);
@@ -409,13 +397,12 @@ export default {
       onPageChange,
       handleShowDealModal,
       handleRightClick,
-      fetchStagesAndSources,
+      fetchStages,
       fetchUsers,
       openWhatsappModal,
       changeDealStage,
       handleApprove,
       getAvailableStages,
-      getSources,
       getAllUsers,
       updateDealStage,
       updateApproval,
