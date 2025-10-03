@@ -277,7 +277,6 @@
     :logs="logs"
     :comments="comments"
     :tasks="tasks"
-    :packages="packages"
     :stages="allStages"
     :currentStageId="selectedStageId"
     @open-whatsapp-modal="openWhatsappModal"
@@ -319,7 +318,6 @@ import {
   fetchAdditionalDealsByStageId,
   addViewCount,
   getStagesChildren,
-  getAllPackages,
   getAvailableStages,
   createApproval,
   toggleHighlight,
@@ -391,7 +389,6 @@ export default {
     const expandedStages = ref({});
     const displayStages = ref([]);
     const filteredDeals = ref({});
-    const packages = ref([]);
     const allStages = ref(null);
     const selectedStageId = ref(null);
 
@@ -410,21 +407,6 @@ export default {
         return count + (stage.deal_count || 0);
       }, 0);
     });
-
-    const fetchPackages = async () => {
-      try {
-        const response = await getAllPackages();
-        if (response.data && response.data.data) {
-          packages.value = response.data.data;
-        } else {
-          console.error(response.data.message);
-          throw new Error(response.data.message);
-        }
-      } catch (error) {
-        console.error(error.message);
-        throw error;
-      }
-    };
 
     const fetchChildStages = async (parentId) => {
       try {
@@ -1395,8 +1377,6 @@ export default {
         console.error("Error mounting component:", error);
       }
 
-      fetchPackages();
-
       props.stages.forEach((stage) => {
         hiddenStages.value[stage.id] = false;
         expandedStages.value[stage.id] = false;
@@ -1627,8 +1607,6 @@ export default {
     return {
       handleHighlight,
       handleDealSuggestion,
-      fetchPackages,
-      packages,
       t,
       displayStages,
       drag,

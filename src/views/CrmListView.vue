@@ -287,7 +287,6 @@
     :logs="logs"
     :comments="comments"
     :tasks="tasks"
-    :packages="packages"
     :stages="stages"
     :users="users"
     :current-stage-id="selectedDeal?.stage_id"
@@ -311,7 +310,6 @@ import {
   getAllUsers,
   updateDealStage,
   getAvailableStages,
-  getAllPackages,
 } from "@/plugins/services/authService";
 import CrmListViewActionsDealModal from "@/components/modals/CrmListViewActionsDealModal.vue";
 import CrmListViewFilterModal from "@/components/modals/CrmListViewFilterModal.vue";
@@ -343,7 +341,6 @@ const selectedStatuses = ref([]);
 const sources = ref([]);
 const stages = ref([]);
 const users = ref([]);
-const packages = ref([]);
 
 const filters = ref({
   source: "",
@@ -821,22 +818,18 @@ const fetchStagesAndSources = async () => {
   try {
     if (stages.value.length === 0 || sources.value.length === 0) {
       console.log("Fetching stages and sources...");
-      const [stageRes, sourceRes, packageRes] = await Promise.all([
+      const [stageRes, sourceRes] = await Promise.all([
         getAvailableStages(),
         getSources(),
-        getAllPackages(),
       ]);
 
       stages.value = stageRes.data.data;
 
       sources.value = sourceRes.data.data;
 
-      packages.value = packageRes.data.data;
-
       console.log("Fetched stages and sources:", {
         stages: stages.value,
         sources: sources.value,
-        packages: packages.value,
       });
     }
   } catch (error) {
