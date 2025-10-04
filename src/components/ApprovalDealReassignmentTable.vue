@@ -364,7 +364,6 @@ export default {
     onMounted(async () => {
       await fetchData();
       fetchUsers();
-      sourceStore.fetchSources();
       const modalElements = document.querySelectorAll(".modal");
       modalElements.forEach((element) => {
         new Modal(element, {
