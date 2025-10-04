@@ -11,6 +11,7 @@ export const PERMISSIONS = {
   GENERAL_SETTINGS: "view-general-settings-page",
   TASKS_KANBAN: "view-tasks-kanban-page",
   ROLES_SETTINGS: "view-roles-settings-page",
+  EMRKANBAN: "view-emr-kanban-page",
   CREATE_DEAL: "create-deal",
   UPDATE_DEAL: "edit-deal",
   DELETE_DEAL: "delete-deal",

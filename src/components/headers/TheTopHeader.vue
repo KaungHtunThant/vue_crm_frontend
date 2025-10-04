@@ -206,6 +206,22 @@
                   </div>
                 </div>
               </router-link>
+              <router-link
+                v-if="permissionStore.hasPermission(PERMISSIONS.EMRKANBAN)"
+                to="/emr-kanban"
+                class="text-decoration-none text-black mb-2"
+                @click="closeDropdown"
+              >
+                <div class="dropdown-link">
+                  <div
+                    class="sidebar-item d-flex align-items-center"
+                    :title="$t('sidebar-nav-item-emr-kanban')"
+                  >
+                    <i class="fa-regular fa-folder-open fs-5 me-2"></i>
+                    <span>{{ $t("sidebar-nav-item-emr-kanban") }}</span>
+                  </div>
+                </div>
+              </router-link>
             </div>
           </transition>
         </div>
