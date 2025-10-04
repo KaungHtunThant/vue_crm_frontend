@@ -10,6 +10,10 @@
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.15",
+    "@fullcalendar/core": "^6.1.19",
+    "@fullcalendar/daygrid": "^6.1.19",
+    "@fullcalendar/interaction": "^6.1.19",
+    "@fullcalendar/vue3": "^6.1.19",
     "@popperjs/core": "^2.11.8",
     "@primeuix/themes": "^1.0.0",
     "@vue/compiler-sfc": "^3.5.13",

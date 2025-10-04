@@ -213,6 +213,7 @@
                     :all-stages="allStages"
                     @open-deal-data-card="openDealDataCard(deal.id, stage.id)"
                     @toggle-highlight="handleHighlight(deal.id)"
+                    :show-calendar-drag="showCalendarDrag"
                   />
                 </template>
               </draggable>
@@ -361,6 +362,10 @@ export default {
     filters: {
       type: Object,
       default: () => ({}),
+    },
+    showCalendarDrag: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {

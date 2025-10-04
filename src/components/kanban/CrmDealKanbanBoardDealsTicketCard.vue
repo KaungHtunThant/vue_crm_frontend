@@ -1,6 +1,9 @@
 <template>
   <div
     class="deal-card position-relative"
+    draggable="true"
+    @dragstart="onDragStart"
+    :data-ticket="JSON.stringify(deal)"
     @click="openDealDataCard"
     :style="{
       borderLeft:
@@ -24,9 +27,6 @@
     <div
       class="row"
       :style="{
-        // background: deal.highlighted
-        //   ? '#ffdc73'
-        //   : 'linear-gradient(to left, white, rgb(231, 227, 227))',
         background: deal.highlighted
           ? '#ffdc73'
           : deal.old_deal
@@ -88,7 +88,7 @@
             ></i>
           </template>
         </div>
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center" v-if="!showCalendarDrag">
           <button
             class="btn btn-link fs-7 m-0 p-0"
             @click.stop="handleHighlight"
@@ -96,6 +96,16 @@
             <i class="fa-solid fa-star text-warning"></i>
           </button>
         </div>
+        <span
+          v-if="showCalendarDrag"
+          class="deal-card-calendar"
+          draggable="true"
+          :data-ticket="JSON.stringify(deal)"
+          style="cursor: grab"
+          title="اسحب إلى التقويم"
+        >
+          <i class="fa fa-calendar-plus text-primary fs-6"></i>
+        </span>
       </div>
 
       <!-- persuasion progress  -->
@@ -227,6 +237,10 @@ export default {
     allStages: {
       type: Array,
       default: () => [],
+    },
+    showCalendarDrag: {
+      type: Boolean,
+      default: false,
     },
   },
   components: {
@@ -379,6 +393,17 @@ export default {
       emit("toggle-highlight", props.deal.id);
     };
 
+    const onDragStart = (event) => {
+      event.dataTransfer.setData(
+        "application/json",
+        JSON.stringify({
+          id: props.deal.id,
+          name: props.deal.name,
+          stage_id: props.deal.stage_id,
+        })
+      );
+    };
+
     return {
       t,
       formatDate,
@@ -396,6 +421,7 @@ export default {
       currentStageColor,
       currentStageIcon,
       handleHighlight,
+      onDragStart,
     };
   },
   methods: {},

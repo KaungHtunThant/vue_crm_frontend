@@ -20,6 +20,7 @@ import WebWhatsapp from "@/views/WebWhatsapp.vue";
 import PatientRegistrationView from "@/views/PatientRegistrationView.vue";
 import ApprovalsView from "@/views/ApprovalsView.vue";
 import CompleteCase from "@/views/CompleteCase.vue";
+import EMRDealKanbanView from "@/views/EMRDealKanbanView.vue";
 
 const routes = [
   {
@@ -222,6 +223,16 @@ const routes = [
     meta: {
       layout: "print",
     },
+  },
+  {
+    path: "/emr-kanban",
+    name: "EmrDealKanbanView",
+    component: EMRDealKanbanView,
+    meta: {
+      requiresAuth: true,
+      title: "EMR Kanban",
+    },
+    beforeEnter: requirePermission(PERMISSIONS.ROLES_SETTINGS),
   },
 ];
 
