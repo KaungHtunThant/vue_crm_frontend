@@ -445,7 +445,7 @@ export default {
         formattedFilters["filters[stage_id]"] = props.filters.stage_id;
       }
       if (props.filters.user_id) {
-        formattedFilters["filters[assigned_to_id]"] = props.filters.user_id;
+        formattedFilters["filters[user_id]"] = props.filters.user_id;
       }
       if (props.filters.created_at_start) {
         formattedFilters["filters[created_date_start]"] =
