@@ -184,7 +184,7 @@ export default {
     const reachedBottom = ref(false);
     const deals = computed(() => {
       if (local_stage.value.is_dynamic) {
-        return deal_store.getDynamicDealsByStage(local_stage);
+        return deal_store.getDynamicDealsByStage(local_stage.value);
       } else {
         return deal_store.getDealsByStageIds([
           local_stage.value.id,
@@ -205,13 +205,17 @@ export default {
         return;
       if (scrollTop + clientHeight >= scrollHeight - 1) {
         reachedBottom.value = true;
-        deal_store
-          .fetchDealsByStageId(
+        let deals_count = 0;
+        if (local_stage.value.is_dynamic) {
+          deals_count = deal_store.getCountByStageIds([
             id,
-            10,
-            deal_store.getCountByStageIds([id, ...stage.children_ids]),
-            []
-          )
+            ...stage.children_ids,
+          ]);
+        } else {
+          deals_count = deal_store.getCountByDynamicStage(local_stage.value);
+        }
+        deal_store
+          .fetchDealsByStageId(id, 10, deals_count, [])
           .then(() => {
             reachedBottom.value = false;
           })

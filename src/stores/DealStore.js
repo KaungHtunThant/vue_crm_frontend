@@ -128,18 +128,25 @@ export const useDealStore = defineStore("deal", {
       return this.deals.filter((deal) => stage_ids.includes(deal.stage_id))
         .length;
     },
+    getCountByDynamicStage(stage) {
+      return this.getDynamicDealsByStage(stage).length;
+    },
     getDynamicDealsByStage(stage) {
+      console.log("getDynamicDealsByStage");
       let deals = [];
-      if (stage.rules.includes(rules.OLD_DEALS_ONLY)) {
+      console.log("rules", stage);
+      if (stage.rules?.includes(rules.OLD_DEALS_ONLY)) {
+        console.log("OLD_DEALS_ONLY");
         deals = this.deals.filter(
-          (deal) => deal.stage_id === stage.parent_id && deal.is_old
+          (deal) => deal.stage_id === stage.parent_id && deal.old_deal
         );
       }
-      if (stage.rules.includes(rules.NEW_DEALS_ONLY)) {
+      if (stage.rules?.includes(rules.NEW_DEALS_ONLY)) {
+        console.log("NEW_DEALS_ONLY");
         deals = [
           ...deals,
           ...this.deals.filter(
-            (deal) => deal.stage_id === stage.parent_id && !deal.is_old
+            (deal) => deal.stage_id === stage.parent_id && !deal.old_deal
           ),
         ];
       }

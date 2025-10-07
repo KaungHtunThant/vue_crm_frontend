@@ -34,6 +34,14 @@ export const useStageStore = defineStore("stage", {
     getAllStagesWithHidden: (state) => {
       return state.stages;
     },
+    getDynamicStages: (state) => {
+      return state.stages.filter((stage) => stage.is_dynamic);
+    },
+    getNonDynamicChildStages: (state) => {
+      return state.stages.filter(
+        (stage) => stage.parent_id !== null && !stage.is_dynamic
+      );
+    },
   },
   actions: {
     async addStage(stage_data) {

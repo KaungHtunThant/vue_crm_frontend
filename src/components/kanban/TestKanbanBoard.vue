@@ -46,7 +46,10 @@ export default {
     const stage_store = useStageStore();
     const stages = computed(() => stage_store.getAllStages);
     const nonChildStages = computed(() => stage_store.getNonChildStages);
-    const childStages = computed(() => stage_store.getChildStages);
+    const dynamicStages = computed(() => stage_store.getDynamicStages);
+    const nonDynamicChildStages = computed(
+      () => stage_store.getNonDynamicChildStages
+    );
     const deal_store = useDealStore();
     const permissionStore = usePermissionStore();
     const toast = useToast();
@@ -105,8 +108,17 @@ export default {
               });
             });
         })
+        .then(() => {
+          dynamicStages.value
+            .filter((stage) => stage.deals_count > 0)
+            .forEach((element) => {
+              deal_store.fetchDealsByStageId(element.id).catch((error) => {
+                toast.error(error.message || "Failed to fetch deals for stage");
+              });
+            });
+        })
         .finally(() => {
-          childStages.value
+          nonDynamicChildStages.value
             .filter((stage) => stage.deals_count > 0)
             .forEach((element) => {
               deal_store.fetchDealsByStageId(element.id).catch((error) => {
