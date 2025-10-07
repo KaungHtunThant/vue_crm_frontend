@@ -266,13 +266,6 @@ export const uploadFiles = async (formData) => {
   });
 };
 //getDealsKanban
-// export const getDealsKanban = (searchText) => {
-//   return axios.get("/kanban/deals", {
-//     params: {
-//       search: searchText ?? "",
-//     },
-//   });
-// };
 export const getDealsKanban = async (params = {}) => {
   return axios.get("/kanban/deals", {
     params,
@@ -280,6 +273,11 @@ export const getDealsKanban = async (params = {}) => {
 };
 export const getTasksKanban = async (params) => {
   return await axios.get("/kanban/tasks", {
+    params,
+  });
+};
+export const getEmrKanban = async (params) => {
+  return await axios.get("/kanban/emr", {
     params,
   });
 };
