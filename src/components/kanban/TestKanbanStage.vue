@@ -120,7 +120,7 @@
             : { minWidth: '309px', width: '309px' }
         "
         @start="drag = true"
-        @scroll="handleDealContainerScroll(local_stage.id, $event)"
+        @scroll="handleDealContainerScroll($event)"
       >
         <template #item="{ element: deal }">
           <ticket-card
@@ -183,39 +183,29 @@ export default {
     const { t } = useI18n();
     const reachedBottom = ref(false);
     const deals = computed(() => {
-      if (local_stage.value.is_dynamic) {
-        return deal_store.getDynamicDealsByStage(local_stage.value);
-      } else {
-        return deal_store.getDealsByStageIds([
-          local_stage.value.id,
-          ...local_stage.value.children_ids,
-        ]);
-      }
+      return local_stage.value.is_dynamic
+        ? deal_store.getDynamicDealsByStage(local_stage.value)
+        : deal_store.getDealsByStageIds([
+            local_stage.value.id,
+            ...local_stage.value.children_ids,
+          ]);
     });
-    const handleDealContainerScroll = async (id, event) => {
+    const handleDealContainerScroll = async (event) => {
       if (reachedBottom.value) return;
       const scrollTop = event.target.scrollTop;
       const scrollHeight = event.target.scrollHeight;
       const clientHeight = event.target.clientHeight;
-      const stage = stage_store.getStageById(id);
-      if (
-        deal_store.getCountByStageIds([id, ...stage.children_ids]) >=
-        stage.deals_count
-      )
-        return;
+      let deals_count = local_stage.value.is_dynamic
+        ? deal_store.getDynamicDealsByStage(local_stage.value).length
+        : deal_store.getDealsByStageIds([
+            local_stage.value.id,
+            ...local_stage.value.children_ids,
+          ]).length;
+      if (deals_count >= local_stage.value.deals_count) return;
       if (scrollTop + clientHeight >= scrollHeight - 1) {
         reachedBottom.value = true;
-        let deals_count = 0;
-        if (local_stage.value.is_dynamic) {
-          deals_count = deal_store.getCountByStageIds([
-            id,
-            ...stage.children_ids,
-          ]);
-        } else {
-          deals_count = deal_store.getCountByDynamicStage(local_stage.value);
-        }
         deal_store
-          .fetchDealsByStageId(id, 10, deals_count, [])
+          .fetchDealsByStageId(local_stage.value.id, 10, deals_count, [])
           .then(() => {
             reachedBottom.value = false;
           })
