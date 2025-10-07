@@ -40,7 +40,8 @@ import TheLoaderComponent from "@/components/TheLoaderComponent.vue";
 import TheNewsBar from "@/components/TheNewsBar.vue";
 import { useLoadingStore } from "@/plugins/loadingStore";
 import { logout, getBackgroundId } from "@/plugins/services/authService";
-import { PERMISSIONS, usePermissionStore } from "@/stores/permissionStore";
+import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
+
 export default {
   name: "App",
   components: {

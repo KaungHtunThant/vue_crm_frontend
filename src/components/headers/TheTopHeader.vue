@@ -326,7 +326,7 @@ import {
   watch,
 } from "vue";
 import { useRoute } from "vue-router";
-import { usePermissionStore, PERMISSIONS } from "@/stores/permissionStore";
+import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import { useI18n } from "vue-i18n";
 
 export default {

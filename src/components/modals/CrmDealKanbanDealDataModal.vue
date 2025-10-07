@@ -1764,7 +1764,7 @@ import {
   getAvailableStages,
   toggleCommentPin,
 } from "@/plugins/services/authService";
-import { PERMISSIONS, usePermissionStore } from "@/stores/permissionStore";
+import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import moveCardSound from "@/assets/move-card.wav";
 import { useLogStore } from "@/stores/logStore";
 import { usePackageStore } from "@/stores/packageStore";

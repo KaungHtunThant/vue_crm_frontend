@@ -287,7 +287,7 @@
 <script>
 import { onMounted, ref, watch, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { usePermissionStore, PERMISSIONS } from "@/stores/permissionStore";
+import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 
 export default {
   name: "CrmListViewFilterModalFormItems",

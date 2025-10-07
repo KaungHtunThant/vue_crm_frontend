@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { requireGuest, requirePermission } from "@/router/guards";
-import { PERMISSIONS } from "@/stores/permissionStore";
+import { PERMISSIONS } from "@/stores/PermissionStore";
 import HomeView from "@/views/HomeView.vue";
 import LoginView from "@/views/LoginView.vue";
 import UsersView from "@/views/UsersView.vue";
@@ -13,7 +13,6 @@ import CrmDealKanbanView from "@/views/CrmDealKanbanView.vue";
 import Cookies from "js-cookie";
 import CrmDealTasksView from "@/views/CrmDealTasksView.vue";
 import CrmListView from "@/views/CrmListView.vue";
-// import TasksKanban from "@/views/CrmDealTasksView.vue";
 import BroadcastSettingsView from "@/views/BroadcastSettingsView.vue";
 import StagingSettingView from "@/views/StagingSettingView.vue";
 import WebWhatsapp from "@/views/WebWhatsapp.vue";
@@ -21,6 +20,7 @@ import PatientRegistrationView from "@/views/PatientRegistrationView.vue";
 import ApprovalsView from "@/views/ApprovalsView.vue";
 import CompleteCase from "@/views/CompleteCase.vue";
 import EMRDealKanbanView from "@/views/EMRDealKanbanView.vue";
+import TestKanbanView from "@/views/TestKanbanView.vue";
 
 const routes = [
   {
@@ -202,6 +202,16 @@ const routes = [
   //   component: TasksKanban,
   //   beforeEnter: requirePermission(PERMISSIONS.TASKS_KANBAN),
   // },
+  {
+    path: "/test-kanban",
+    name: "Test Kanban View",
+    component: TestKanbanView,
+    meta: {
+      requiresAuth: true,
+      title: "Test Kanban View",
+    },
+    beforeEnter: requirePermission(PERMISSIONS.DEALS_KANBAN),
+  },
   {
     path: "/:pathMatch(.*)*",
     name: "NotFound",

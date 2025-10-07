@@ -1,4 +1,4 @@
-import { usePermissionStore } from "@/stores/permissionStore";
+import { usePermissionStore } from "@/stores/PermissionStore";
 
 export function requirePermission(permission) {
   return (to, from, next) => {

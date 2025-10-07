@@ -141,6 +141,10 @@ export const getSources = () => axios.get("/sources");
 
 // Get All Stages
 export const getStages = () => axios.get("/stages");
+
+export const getAllStages = () => {
+  return axios.get("/stages/all");
+};
 export const getAvailableStages = () => axios.get("/stages/deals");
 // getStagesChildren
 export const getStagesChildren = (parentId, limit, offset, filters = {}) =>
@@ -159,8 +163,16 @@ export const getStageTimers = async () => {
   return await axios.get("/settings/stages/timers");
 };
 
+export const createStage = async (params) => {
+  return await axios.post("/stages", params);
+};
+
 export const updateStage = async (id, params) => {
   return await axios.patch(`/stages/${id}`, params);
+};
+
+export const deleteStage = async (id) => {
+  return await axios.delete(`/stages/${id}`);
 };
 // ------------------------------------------------------------
 // Contacts
@@ -487,6 +499,10 @@ export const getActiveClients = async () => {
 
 export const getAllPackages = async () => {
   return await axios.get("/packages/all");
+};
+
+export const getTasksByDealId = async (dealId) => {
+  return await axios.get(`/tasks/${dealId}`);
 };
 
 export const getApprovals = async (params = {}) => {

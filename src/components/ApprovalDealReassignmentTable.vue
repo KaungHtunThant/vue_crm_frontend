@@ -159,7 +159,7 @@
   <show-data :formData="dealData" ref="showDataModal" />
 </template>
 <script>
-import { usePermissionStore, PERMISSIONS } from "@/stores/permissionStore";
+import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CountryFlagAvatar from "@/components/whatsapp/WhatsAppModalSidebarLeftCountryFlagAvatar.vue";
 import DataTable from "primevue/datatable";

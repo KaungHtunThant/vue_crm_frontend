@@ -317,7 +317,7 @@ import ImportModal from "@/components/modals/CrmListViewImportModal.vue";
 import ShowData from "@/components/modals/CrmListViewShowDataModal.vue";
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Swal from "sweetalert2";
-import { PERMISSIONS, usePermissionStore } from "@/stores/permissionStore";
+import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";
 import Cookies from "js-cookie";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";

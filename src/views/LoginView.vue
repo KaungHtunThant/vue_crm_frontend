@@ -67,7 +67,7 @@
 <script>
 import { getBackgroundId, login } from "@/plugins/services/authService";
 import Cookies from "js-cookie";
-import { usePermissionStore } from "@/stores/permissionStore";
+import { usePermissionStore } from "@/stores/PermissionStore";
 import { useRouter } from "vue-router";
 import { initializeTranslations } from "@/i18n";
 import { useLoadingStore } from "@/plugins/loadingStore";

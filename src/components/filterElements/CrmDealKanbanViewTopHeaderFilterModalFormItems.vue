@@ -231,7 +231,7 @@
 <script>
 import { onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { usePermissionStore, PERMISSIONS } from "@/stores/permissionStore";
+import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import { getUser, getAvailableStages } from "@/plugins/services/authService";
 import { useSourceStore } from "@/stores/sourceStore";
 import { computed } from "vue";
