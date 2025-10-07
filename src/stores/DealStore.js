@@ -6,6 +6,7 @@ import {
   updateDeal,
 } from "@/plugins/services/authService";
 import { defineStore } from "pinia";
+import { rules } from "@/enums/StageRulesEnum";
 
 export const useDealStore = defineStore("deal", {
   state: () => ({
@@ -126,6 +127,23 @@ export const useDealStore = defineStore("deal", {
     getCountByStageIds(stage_ids) {
       return this.deals.filter((deal) => stage_ids.includes(deal.stage_id))
         .length;
+    },
+    getDynamicDealsByStage(stage) {
+      let deals = [];
+      if (stage.rules.includes(rules.OLD_DEALS_ONLY)) {
+        deals = this.deals.filter(
+          (deal) => deal.stage_id === stage.parent_id && deal.is_old
+        );
+      }
+      if (stage.rules.includes(rules.NEW_DEALS_ONLY)) {
+        deals = [
+          ...deals,
+          ...this.deals.filter(
+            (deal) => deal.stage_id === stage.parent_id && !deal.is_old
+          ),
+        ];
+      }
+      return deals;
     },
   },
 });

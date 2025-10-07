@@ -110,12 +110,7 @@
       <div class="line"></div>
       <draggable
         v-if="!local_stage.merge_view"
-        :list="
-          deal_store.getDealsByStageIds([
-            local_stage.id,
-            ...local_stage.children_ids,
-          ])
-        "
+        :list="deals"
         :group="{ name: 'deals' }"
         item-key="id"
         class="deal-list mt-3"
@@ -165,6 +160,7 @@ import { usePermissionStore } from "@/stores/PermissionStore";
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 import MinimizedStage from "@/components/kanban/TestKanbanMinimizedStage.vue";
+import { computed } from "vue";
 export default {
   name: "TestKanbanStage",
   components: {
@@ -186,6 +182,16 @@ export default {
     const toast = useToast();
     const { t } = useI18n();
     const reachedBottom = ref(false);
+    const deals = computed(() => {
+      if (local_stage.value.is_dynamic) {
+        return deal_store.getDynamicDealsByStage(local_stage);
+      } else {
+        return deal_store.getDealsByStageIds([
+          local_stage.value.id,
+          ...local_stage.value.children_ids,
+        ]);
+      }
+    });
     const handleDealContainerScroll = async (id, event) => {
       if (reachedBottom.value) return;
       const scrollTop = event.target.scrollTop;
@@ -221,6 +227,7 @@ export default {
       deal_store,
       local_stage,
       permissionStore,
+      deals,
       toast,
       t,
       handleDealContainerScroll,
