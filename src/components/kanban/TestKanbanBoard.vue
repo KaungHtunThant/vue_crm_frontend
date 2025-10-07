@@ -45,7 +45,8 @@ export default {
     const moveSound = new Audio(moveCardSound);
     const stage_store = useStageStore();
     const stages = computed(() => stage_store.getAllStages);
-    const stagesWithHidden = computed(() => stage_store.getAllStagesWithHidden);
+    const nonChildStages = computed(() => stage_store.getNonChildStages);
+    const childStages = computed(() => stage_store.getChildStages);
     const deal_store = useDealStore();
     const permissionStore = usePermissionStore();
     const toast = useToast();
@@ -96,11 +97,22 @@ export default {
       stage_store
         .fetchStages()
         .then(() => {
-          stagesWithHidden.value.forEach((element) => {
-            deal_store.fetchDealsByStageId(element.id).catch((error) => {
-              toast.error(error.message || "Failed to fetch deals for stage");
+          nonChildStages.value
+            .filter((stage) => stage.deals_count > 0)
+            .forEach((element) => {
+              deal_store.fetchDealsByStageId(element.id).catch((error) => {
+                toast.error(error.message || "Failed to fetch deals for stage");
+              });
             });
-          });
+        })
+        .finally(() => {
+          childStages.value
+            .filter((stage) => stage.deals_count > 0)
+            .forEach((element) => {
+              deal_store.fetchDealsByStageId(element.id).catch((error) => {
+                toast.error(error.message || "Failed to fetch deals for stage");
+              });
+            });
         })
         .catch((error) => {
           toast.error(error.message || "Failed to fetch stages");
