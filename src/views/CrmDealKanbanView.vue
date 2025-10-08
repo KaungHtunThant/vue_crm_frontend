@@ -32,7 +32,7 @@ import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vu
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 import { getDealsKanban } from "@/plugins/services/authService";
-import { useSourceStore } from "@/stores/sourceStore";
+import { useSourceStore } from "@/stores/SourceStore";
 export default {
   name: "CrmDealKanbanView",
 

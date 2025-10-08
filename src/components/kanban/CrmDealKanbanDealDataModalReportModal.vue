@@ -101,7 +101,6 @@ export default {
             answers: question.answers,
           };
         });
-        console.log("Fetched questions: ", this.questions);
       } else {
         console.error("Failed to fetch questions: ", response.data.message);
       }

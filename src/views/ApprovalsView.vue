@@ -107,9 +107,9 @@ import ApprovalIdleDealAssignTable from "@/components/ApprovalIdleDealAssignTabl
 import ApprovalNewDealCreationTable from "@/components/ApprovalNewDealCreationTable.vue";
 import ApprovalSuggestUserTable from "@/components/ApprovalSuggestUserTable.vue";
 import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";
-import { useApprovalStore } from "@/stores/approvalStore";
+import { useApprovalStore } from "@/stores/ApprovalStore";
 import { onMounted } from "vue";
-import { useSourceStore } from "@/stores/sourceStore";
+import { useSourceStore } from "@/stores/SourceStore";
 export default {
   name: "ApprovalsView",
   components: {

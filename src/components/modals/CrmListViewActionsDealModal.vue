@@ -248,7 +248,7 @@ import {
 } from "@/plugins/services/authService";
 import { useI18n } from "vue-i18n";
 import { useToast } from "vue-toastification";
-import { useSourceStore } from "@/stores/sourceStore";
+import { useSourceStore } from "@/stores/SourceStore";
 const { t } = useI18n();
 const props = defineProps({
   selectedRows: {

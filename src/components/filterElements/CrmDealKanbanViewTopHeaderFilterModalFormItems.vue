@@ -233,7 +233,7 @@ import { onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import { getUser, getAvailableStages } from "@/plugins/services/authService";
-import { useSourceStore } from "@/stores/sourceStore";
+import { useSourceStore } from "@/stores/SourceStore";
 import { computed } from "vue";
 
 export default {

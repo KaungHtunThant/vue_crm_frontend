@@ -262,13 +262,13 @@
       >
         <i class="fa-solid fa-chevron-left fs-1 p-3"></i>
       </div>
-      <!-- <button
+      <button
         v-show="!allDealsCount"
         class="btn text-white position-absolute top-50 start-50 translate-middle bg-primary p-2 z-3 btn-request"
         @click="handleRequestDeal"
       >
         {{ t("kanban-btn-request-deal") }}
-      </button> -->
+      </button>
     </div>
   </div>
   <!-- :key="selectedDeal?.id" -->
@@ -332,7 +332,7 @@ import FilterStageModal from "@/components/modals/CrmDealKanbanBoardDealsFilterS
 import moveCardSound from "@/assets/move-card.wav";
 import { closeWebSocket, initializeWebSocket } from "@/plugins/websocket";
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
-import { useKanbanStore } from "@/stores/kanbanStore";
+import { useKanbanStore } from "@/stores/KanbanStore";
 export default {
   name: "CrmDealKanbanBoardDeals",
   components: {
@@ -1541,18 +1541,16 @@ export default {
     const handleTaskViewTaskAdd = (data) => {
       const deal_id = selectedDeal.value.id;
       const stageId = getTaskStageId(data.duedate);
-      console.log("Stage ID for new task:", stageId);
       const stage = ref(displayStages.value.find((s) => s.id === stageId));
       if (stage.value) {
         const deal = displayStages.value
           .flatMap((s) => s.deals)
           .find((d) => d.id === deal_id);
-        console.log("task count", selectedDeal.value.tasks.length);
-        if (selectedDeal.value.tasks.length < 1) {
+        if (selectedDeal.value.tasks.length < 2) {
           for (const stage of displayStages.value) {
             const index = stage.deals.findIndex((deal) => deal.id === deal_id);
             if (index !== -1) {
-              return stage.deals.splice(index, 1)[0]; // returns the removed deal
+              stage.deals.splice(index, 1)[0];
             }
           }
         }

@@ -315,7 +315,7 @@ import NotificationsHead from "@/components/headers/sub-menu/TheTopHeaderNotific
 import Cookies from "js-cookie";
 import { changeLanguage } from "@/i18n";
 import { useLoadingStore } from "@/plugins/loadingStore";
-import { useKanbanStore } from "@/stores/kanbanStore";
+import { useKanbanStore } from "@/stores/KanbanStore";
 import ScoureUser from "@/components/headers/ScoureUser.vue";
 import {
   ref,

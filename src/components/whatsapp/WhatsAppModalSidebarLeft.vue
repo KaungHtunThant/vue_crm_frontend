@@ -246,7 +246,6 @@ export default {
         this.total = response.data.meta.total;
         this.offset = this.chats.length;
       } catch (error) {
-        console.log("No conversations available:", error);
         this.chats = [];
       }
     },

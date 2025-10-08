@@ -139,7 +139,7 @@ import { ref, onMounted, watch } from "vue";
 import { getStages, getAllUsers } from "@/plugins/services/authService";
 import RatingStars from "@/components/CreateDealElements/CrmDealKanbanDealDataModalRatingStars.vue";
 import { useI18n } from "vue-i18n";
-import { useSourceStore } from "@/stores/sourceStore";
+import { useSourceStore } from "@/stores/SourceStore";
 import { computed } from "vue";
 export default {
   name: "CrmListViewCreateDealModalFormItems",

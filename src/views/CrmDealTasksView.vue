@@ -187,18 +187,12 @@ export default {
         } else {
           toast.error(t("error.loadKanban"));
         }
-        console.table(stages.value);
       } catch (error) {
-        console.error("Error fetching stages:", error);
         toast.error(t("error.loadKanban"));
       }
     };
 
     const openWhatsappModal = (conversation) => {
-      console.log(
-        "selected conversation in Crm kanban component",
-        conversation
-      );
       selected_conversation.value = conversation;
     };
 

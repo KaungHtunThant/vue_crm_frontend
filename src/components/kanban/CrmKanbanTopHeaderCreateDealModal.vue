@@ -216,7 +216,7 @@
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 import { createDeal, getUser } from "@/plugins/services/authService";
-import { useSourceStore } from "@/stores/sourceStore";
+import { useSourceStore } from "@/stores/SourceStore";
 export default {
   name: "CrmKanbanTopHeaderCreateDealModal",
   setup() {

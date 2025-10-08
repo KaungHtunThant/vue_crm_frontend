@@ -162,7 +162,7 @@
 import { ref } from "vue";
 import * as XLSX from "xlsx";
 import { useI18n } from "vue-i18n";
-import { useSourceStore } from "@/stores/sourceStore";
+import { useSourceStore } from "@/stores/SourceStore";
 import { computed } from "vue";
 export default {
   name: "CrmListViewImportModalFormItems",

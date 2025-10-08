@@ -170,8 +170,8 @@ import {
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Swal from "sweetalert2";
 import { ref, onMounted, onUnmounted, nextTick, computed } from "vue";
-import { useApprovalStore } from "@/stores/approvalStore";
-import { useSourceStore } from "@/stores/sourceStore";
+import { useApprovalStore } from "@/stores/ApprovalStore";
+import { useSourceStore } from "@/stores/SourceStore";
 
 export default {
   name: "ApprovalDealReassignmentTable",

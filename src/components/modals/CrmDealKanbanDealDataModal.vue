@@ -1766,9 +1766,9 @@ import {
 } from "@/plugins/services/authService";
 import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import moveCardSound from "@/assets/move-card.wav";
-import { useLogStore } from "@/stores/logStore";
-import { usePackageStore } from "@/stores/packageStore";
-import { useSourceStore } from "@/stores/sourceStore";
+import { useLogStore } from "@/stores/LogStore";
+import { usePackageStore } from "@/stores/PackageStore";
+import { useSourceStore } from "@/stores/SourceStore";
 
 export default {
   name: "CrmDealKanbanDealDataModal",

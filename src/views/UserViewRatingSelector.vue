@@ -10,7 +10,7 @@
 </template>
 <script>
 import { ref, watch } from "vue";
-import { useRatingStore } from "@/stores/ratingStore";
+import { useRatingStore } from "@/stores/RatingStore";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 export default {

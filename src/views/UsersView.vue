@@ -127,7 +127,7 @@ import UserViewFilterModal from "@/components/modals/UserViewFilterModal.vue";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 import RatingSelector from "@/views/UserViewRatingSelector.vue";
-import { useRatingStore } from "@/stores/ratingStore";
+import { useRatingStore } from "@/stores/RatingStore";
 // import { useLoadingStore } from "@/plugins/loadingStore";
 // import Cookies from "js-cookie"
 

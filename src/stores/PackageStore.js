@@ -4,7 +4,7 @@ import {
   getAllPackageCategories,
 } from "@/plugins/services/authService";
 
-export const usePackageStore = defineStore("packageStore", {
+export const usePackageStore = defineStore("package", {
   state: () => ({
     packages: [],
     categories: [],
