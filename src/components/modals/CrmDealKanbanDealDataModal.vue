@@ -363,6 +363,7 @@
                   />
                 </div>
               </div>
+              <hr />
               <!-- Notes -->
               <div class="row mb-3" @dblclick="handleDoubleClick">
                 <div class="col-2">
@@ -499,41 +500,7 @@
                   </div>
                 </div>
               </div>
-
-              <div
-                class="row mb-3"
-                @dblclick="handleDoubleClick"
-                v-if="permissionStore.hasPermission('add-assigned-to-deal')"
-              >
-                <div class="col-2">
-                  <label class="form-label"
-                    ><i class="fa-solid fa-users"></i>
-                    {{ t("kanban-modal-edit-label-assignedto") }}</label
-                  >
-                </div>
-                <div class="col-10">
-                  <select
-                    :class="[
-                      'form-select',
-                      isEditMode ? 'bg-input-edit' : 'bg-input',
-                      'py-2',
-                    ]"
-                    v-model="customerData.assigned_to"
-                    :disabled="!isEditMode"
-                  >
-                    <option value="" disabled>
-                      {{ t("kanban-modal-edit-placeholder-representative") }}
-                    </option>
-                    <option
-                      v-for="user in logStore.users"
-                      :key="user.id"
-                      :value="user.id"
-                    >
-                      {{ user.name }}
-                    </option>
-                  </select>
-                </div>
-              </div>
+              <hr />
               <!-- Kanban Packages -->
               <div class="row mb-3" @dblclick="handleDoubleClick">
                 <div class="col-2 pt-2">
@@ -551,7 +518,7 @@
                     >
                       <div class="row p-0">
                         <div
-                          class="col-7 p-1 px-1"
+                          class="col-8 p-1 px-1"
                           @dblclick="handleDoubleClick"
                         >
                           <select
@@ -575,7 +542,7 @@
                             </option>
                           </select>
                         </div>
-                        <div class="col-2 p-1 px-1">
+                        <div class="col-3 p-1 px-1">
                           <div class="input-group">
                             <span class="input-group-text">Qty</span>
                             <input
@@ -599,7 +566,7 @@
                             />
                           </div>
                         </div>
-                        <div class="col-2 p-1 px-0">
+                        <div class="col-2 p-1 px-0 d-none">
                           <div class="input-group">
                             <span class="input-group-text">$</span>
                             <input
@@ -662,155 +629,6 @@
                           'form-control',
                         ]"
                         v-model="customerData.kanban_total_cost"
-                        :placeholder="
-                          t('kanban-modal-edit-placeholder-total-cost')
-                        "
-                        :readonly="!isEditMode"
-                        min="0"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- Hospital Packages -->
-              <div
-                v-if="
-                  permissionStore.hasPermission(
-                    PERMISSIONS.VIEW_HOSPITAL_PACKAGE
-                  )
-                "
-                class="row mb-3"
-                @dblclick="handleDoubleClick"
-              >
-                <div class="col-2 pt-2">
-                  <label class="form-label"
-                    ><i class="fa-solid fa-cubes"></i>
-                    {{ t("kanban-modal-edit-label-hospital-packages") }}</label
-                  >
-                </div>
-                <div class="col-10">
-                  <div
-                    class=""
-                    v-if="customerData.hospital_packages.length > 0"
-                  >
-                    <div
-                      v-for="(pkg, index) in customerData.hospital_packages"
-                      :key="index"
-                      class="packages mb-2 px-2"
-                    >
-                      <div class="row p-0">
-                        <div
-                          class="col-7 p-1 px-1"
-                          @dblclick="handleDoubleClick"
-                        >
-                          <select
-                            class="form-select py-2"
-                            :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
-                            v-model="pkg.id"
-                            :disabled="!isEditMode"
-                            @dblclick="handleDoubleClick"
-                          >
-                            <option value="" disabled>
-                              {{
-                                t("kanban-modal-edit-placeholder-packages-name")
-                              }}
-                            </option>
-                            <option
-                              v-for="pkg in treatment_packages"
-                              :key="pkg.id"
-                              :value="pkg.id"
-                            >
-                              {{ pkg.name }}
-                            </option>
-                          </select>
-                        </div>
-                        <div class="col-2 p-1 px-1">
-                          <div class="input-group">
-                            <span class="input-group-text">Qty</span>
-                            <input
-                              type="number"
-                              lang="en"
-                              :class="[
-                                'bg-input',
-                                isEditMode ? 'bg-input-edit' : 'bg-input',
-                                'p-2',
-                                'rounded-right-2',
-                                'form-control',
-                              ]"
-                              v-model="pkg.quantity"
-                              :placeholder="
-                                t(
-                                  'kanban-modal-edit-placeholder-packages-quantity'
-                                )
-                              "
-                              :readonly="!isEditMode"
-                              min="1"
-                            />
-                          </div>
-                        </div>
-                        <div class="col-2 p-1 px-0">
-                          <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            <input
-                              type="number"
-                              lang="en"
-                              :class="[
-                                'bg-input',
-                                isEditMode ? 'bg-input-edit' : 'bg-input',
-                                'p-2',
-                                'rounded-right-2',
-                                'form-control',
-                              ]"
-                              v-model="pkg.total_price"
-                              :placeholder="
-                                t(
-                                  'kanban-modal-edit-placeholder-packages-price'
-                                )
-                              "
-                              :readonly="!isEditMode"
-                              min="0"
-                            />
-                          </div>
-                        </div>
-                        <div class="col-1 py-1">
-                          <button
-                            class="btn btn-primary"
-                            @click="removeHospitalPackage(index)"
-                            v-show="isEditMode"
-                          >
-                            x
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="pt-2" v-else-if="!isEditMode">
-                    {{ t("kanban-modal-edit-label-no-packages") }}
-                  </div>
-                  <div class="w-100 d-flex mt-2 justify-content-between gap-2">
-                    <button
-                      class="btn btn-primary fs-5 px-3"
-                      @click="addNewHospitalPackage"
-                      :disabled="!isEditMode"
-                      v-if="isEditMode"
-                    >
-                      +
-                    </button>
-                    <div class="input-group">
-                      <span class="input-group-text">{{
-                        t("kanban-modal-edit-label-total-cost")
-                      }}</span>
-                      <input
-                        type="number"
-                        lang="en"
-                        :class="[
-                          'bg-input',
-                          isEditMode ? 'bg-input-edit' : 'bg-input',
-                          'p-2',
-                          'rounded-right-2',
-                          'form-control',
-                        ]"
-                        v-model="customerData.hospital_total_cost"
                         :placeholder="
                           t('kanban-modal-edit-placeholder-total-cost')
                         "
@@ -926,7 +744,7 @@
                   </div>
                 </div>
               </div>
-
+              <hr />
               <div class="row mb-3">
                 <div class="col-2">
                   <label class="form-label"
@@ -1320,6 +1138,191 @@
                       />
                     </div>
                   </div>
+                </div>
+              </div>
+              <hr />
+              <!-- Hospital Packages -->
+              <div
+                v-if="
+                  permissionStore.hasPermission(
+                    PERMISSIONS.VIEW_HOSPITAL_PACKAGE
+                  )
+                "
+                class="row mb-3"
+                @dblclick="handleDoubleClick"
+              >
+                <div class="col-2 pt-2">
+                  <label class="form-label"
+                    ><i class="fa-solid fa-cubes"></i>
+                    {{ t("kanban-modal-edit-label-hospital-packages") }}</label
+                  >
+                </div>
+                <div class="col-10">
+                  <div
+                    class=""
+                    v-if="customerData.hospital_packages.length > 0"
+                  >
+                    <div
+                      v-for="(pkg, index) in customerData.hospital_packages"
+                      :key="index"
+                      class="packages mb-2 px-2"
+                    >
+                      <div class="row p-0">
+                        <div
+                          class="col-7 p-1 px-1"
+                          @dblclick="handleDoubleClick"
+                        >
+                          <select
+                            class="form-select py-2"
+                            :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
+                            v-model="pkg.id"
+                            :disabled="!isEditMode"
+                            @dblclick="handleDoubleClick"
+                          >
+                            <option value="" disabled>
+                              {{
+                                t("kanban-modal-edit-placeholder-packages-name")
+                              }}
+                            </option>
+                            <option
+                              v-for="pkg in treatment_packages"
+                              :key="pkg.id"
+                              :value="pkg.id"
+                            >
+                              {{ pkg.name }}
+                            </option>
+                          </select>
+                        </div>
+                        <div class="col-2 p-1 px-1">
+                          <div class="input-group">
+                            <span class="input-group-text">Qty</span>
+                            <input
+                              type="number"
+                              lang="en"
+                              :class="[
+                                'bg-input',
+                                isEditMode ? 'bg-input-edit' : 'bg-input',
+                                'p-2',
+                                'rounded-right-2',
+                                'form-control',
+                              ]"
+                              v-model="pkg.quantity"
+                              :placeholder="
+                                t(
+                                  'kanban-modal-edit-placeholder-packages-quantity'
+                                )
+                              "
+                              :readonly="!isEditMode"
+                              min="1"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-2 p-1 px-0">
+                          <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input
+                              type="number"
+                              lang="en"
+                              :class="[
+                                'bg-input',
+                                isEditMode ? 'bg-input-edit' : 'bg-input',
+                                'p-2',
+                                'rounded-right-2',
+                                'form-control',
+                              ]"
+                              v-model="pkg.total_price"
+                              :placeholder="
+                                t(
+                                  'kanban-modal-edit-placeholder-packages-price'
+                                )
+                              "
+                              :readonly="!isEditMode"
+                              min="0"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-1 py-1">
+                          <button
+                            class="btn btn-primary"
+                            @click="removeHospitalPackage(index)"
+                            v-show="isEditMode"
+                          >
+                            x
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pt-2" v-else-if="!isEditMode">
+                    {{ t("kanban-modal-edit-label-no-packages") }}
+                  </div>
+                  <div class="w-100 d-flex mt-2 justify-content-between gap-2">
+                    <button
+                      class="btn btn-primary fs-5 px-3"
+                      @click="addNewHospitalPackage"
+                      :disabled="!isEditMode"
+                      v-if="isEditMode"
+                    >
+                      +
+                    </button>
+                    <div class="input-group">
+                      <span class="input-group-text">{{
+                        t("kanban-modal-edit-label-total-cost")
+                      }}</span>
+                      <input
+                        type="number"
+                        lang="en"
+                        :class="[
+                          'bg-input',
+                          isEditMode ? 'bg-input-edit' : 'bg-input',
+                          'p-2',
+                          'rounded-right-2',
+                          'form-control',
+                        ]"
+                        v-model="customerData.hospital_total_cost"
+                        :placeholder="
+                          t('kanban-modal-edit-placeholder-total-cost')
+                        "
+                        :readonly="!isEditMode"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Assigned To -->
+              <div
+                class="row mb-3"
+                @dblclick="handleDoubleClick"
+                v-if="permissionStore.hasPermission('add-assigned-to-deal')"
+              >
+                <div class="col-2">
+                  <label class="form-label"
+                    ><i class="fa-solid fa-users"></i>
+                    {{ t("kanban-modal-edit-label-assignedto") }}</label
+                  >
+                </div>
+                <div class="col-10">
+                  <select
+                    :class="[
+                      'form-select',
+                      isEditMode ? 'bg-input-edit' : 'bg-input',
+                      'py-2',
+                    ]"
+                    v-model="customerData.assigned_to"
+                    :disabled="!isEditMode"
+                  >
+                    <option value="" disabled>
+                      {{ t("kanban-modal-edit-placeholder-representative") }}
+                    </option>
+                    <option
+                      v-for="user in logStore.users"
+                      :key="user.id"
+                      :value="user.id"
+                    >
+                      {{ user.name }}
+                    </option>
+                  </select>
                 </div>
               </div>
               <!-- History -->
