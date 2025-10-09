@@ -79,10 +79,10 @@
                 <div class="dropdown-link">
                   <div
                     class="sidebar-item d-flex align-items-center"
-                    :title="$t('sidebar-nav-item-after-sales')"
+                    :title="$t('sidebar-nav-item-after-sales-kanban')"
                   >
                     <i class="fa-solid fa-chart-simple fs-5 me-2"></i>
-                    <span>{{ $t("sidebar-nav-item-after-sales") }}</span>
+                    <span>{{ $t("sidebar-nav-item-after-sales-kanban") }}</span>
                   </div>
                 </div>
               </router-link>
