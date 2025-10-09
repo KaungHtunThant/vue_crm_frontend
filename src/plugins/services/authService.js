@@ -551,3 +551,8 @@ export const updateUserRating = async (userId, ratingId) => {
 export const getAllPackageCategories = async () => {
   return await axios.get("/package-categories/all");
 };
+export const mergeDeals = async (ids) => {
+  return await axios.post("/deals/merge", {
+    ids: ids,
+  });
+};

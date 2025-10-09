@@ -309,6 +309,7 @@ import {
   getAllUsers,
   updateDealStage,
   getAvailableStages,
+  mergeDeals,
 } from "@/plugins/services/authService";
 import CrmListViewActionsDealModal from "@/components/modals/CrmListViewActionsDealModal.vue";
 import CrmListViewFilterModal from "@/components/modals/CrmListViewFilterModal.vue";
@@ -383,9 +384,7 @@ const totalPages = computed(() => {
 });
 // Actions operations
 const actions = ref([
-  // { value: "changeStage", label: t("crmlist-action-changestage") },
-  // { value: "assignUser", label: t("crmlist-action-assignto") },
-  // { value: "changeSource", label: t("crmlist-action-changesource") },
+  { value: "merge", label: t("crmlist-action-merge") },
   { value: "multi", label: t("crmlist-action-update") },
   { value: "delete", label: t("crmlist-action-delete") },
 ]);
@@ -400,42 +399,6 @@ const executeAction = () => {
   let modal;
 
   switch (selectedAction.value) {
-    case "changeStage":
-      modalElement = document.getElementById("changeStageModal");
-      if (modalElement) {
-        modal = new Modal(modalElement, {
-          backdrop: true,
-          keyboard: true,
-          focus: true,
-        });
-        modal.show();
-      }
-      break;
-
-    case "assignUser":
-      modalElement = document.getElementById("assignUser");
-      if (modalElement) {
-        modal = new Modal(modalElement, {
-          backdrop: true,
-          keyboard: true,
-          focus: true,
-        });
-        modal.show();
-      }
-      break;
-
-    case "changeSource":
-      modalElement = document.getElementById("changeSourceModal");
-      if (modalElement) {
-        modal = new Modal(modalElement, {
-          backdrop: true,
-          keyboard: true,
-          focus: true,
-        });
-        modal.show();
-      }
-      break;
-
     case "multi":
       modalElement = document.getElementById("multiActionModal");
       if (modalElement) {
@@ -450,8 +413,52 @@ const executeAction = () => {
     case "delete":
       bulkDeleteItems();
       break;
+    case "merge":
+      bulkMergeItems();
+      break;
   }
 };
+
+const bulkMergeItems = async () => {
+  try {
+    const ids = selectedRows.value.map((row) => row.id);
+    if (ids.length === 0) {
+      toast.error(t("error.noItemsSelected"), { timeout: 3000 });
+      return;
+    }
+    const result = await Swal.fire({
+      title: t("crmlist-modal-deal-merge-title"),
+      text: t("crmlist-modal-deal-merge-description"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: t("crmlist-modal-deal-merge-button-confirm"),
+      cancelButtonText: t("crmlist-modal-deal-merge-button-cancel"),
+      reverseButtons: true,
+    });
+    if (result.isConfirmed) {
+      console.log("IDs to merge:", ids);
+      const response = await mergeDeals(ids);
+      console.log("Merge response:", response);
+
+      if (response.status === 200) {
+        selectedRows.value = [];
+        selectedAction.value = "";
+        fetchData();
+        toast.success(response.data.message, { timeout: 3000 });
+      } else {
+        throw new Error(response.data.message);
+      }
+    }
+  } catch (error) {
+    console.error("Bulk Merge Error:", error);
+    toast.error(error.message, {
+      timeout: 3000,
+    });
+  }
+};
+
 // Fetch data from the server
 const fetchData = async () => {
   try {
@@ -760,12 +767,6 @@ const openDealModal = () => {
   const modal = new Modal(modalElement);
   modal.show();
 };
-
-// const clearSearch = () => {
-//   searchInput.value = "";
-//   search.value = "";
-//   fetchData();
-// };
 
 const resetFilter = () => {
   console.log("Resetting filters to default values");
