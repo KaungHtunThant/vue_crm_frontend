@@ -72,6 +72,21 @@
                 </div>
               </router-link>
               <router-link
+                to="/crm-after-sales"
+                class="text-decoration-none text-black mb-2"
+                @click="closeDropdown"
+              >
+                <div class="dropdown-link">
+                  <div
+                    class="sidebar-item d-flex align-items-center"
+                    :title="$t('sidebar-nav-item-after-sales')"
+                  >
+                    <i class="fa-solid fa-chart-simple fs-5 me-2"></i>
+                    <span>{{ $t("sidebar-nav-item-after-sales") }}</span>
+                  </div>
+                </div>
+              </router-link>
+              <router-link
                 v-if="permissionStore.hasPermission(PERMISSIONS.USERS)"
                 to="/users"
                 class="text-decoration-none text-black mb-2"
