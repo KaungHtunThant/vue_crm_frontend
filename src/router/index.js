@@ -21,6 +21,7 @@ import ApprovalsView from "@/views/ApprovalsView.vue";
 import CompleteCase from "@/views/CompleteCase.vue";
 import EMRDealKanbanView from "@/views/EMRDealKanbanView.vue";
 import TestKanbanView from "@/views/TestKanbanView.vue";
+import CrmDealAfterSalesView from "@/views/CrmDealAfterSalesView.vue";
 
 const routes = [
   {
@@ -88,6 +89,17 @@ const routes = [
       requiresAuth: true,
       title: "CRM Tasks",
       titleKey: "header-subnav-item-kanban-tasks",
+    },
+    beforeEnter: requirePermission(PERMISSIONS.TASKS_KANBAN),
+  },
+  {
+    path: "/crm-after-sales",
+    name: "CrmDealAfterSalesView",
+    component: CrmDealAfterSalesView,
+    meta: {
+      requiresAuth: true,
+      title: "CRM After Sales",
+      titleKey: "sidebar-nav-item-after-sales-kanban",
     },
     beforeEnter: requirePermission(PERMISSIONS.TASKS_KANBAN),
   },

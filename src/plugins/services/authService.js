@@ -556,3 +556,10 @@ export const mergeDeals = async (ids) => {
     ids: ids,
   });
 };
+export const getAfterSalesKanban = async (search = "") => {
+  return axios.get("/kanban/after-sales", {
+    params: {
+      search: search,
+    },
+  });
+};
