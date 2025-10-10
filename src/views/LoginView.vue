@@ -140,7 +140,11 @@ export default {
           this.email = "";
           this.password = "";
           this.loginSuccess = true;
-          const redirect = this.$route.query.redirect || "/crm-kanban";
+          let defaultRedirect =
+            response.data.user.role === "after-sales"
+              ? "/crm-after-sales"
+              : "/crm-kanban";
+          const redirect = this.$route.query.redirect || defaultRedirect;
           this.permissionStore.setPermissions(response.data.user.permissions);
           this.$emit("loginSuccess");
           let bg_fetch = await getBackgroundId(response.data.user.bg_image_id);

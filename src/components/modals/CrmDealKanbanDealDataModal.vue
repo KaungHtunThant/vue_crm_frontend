@@ -499,41 +499,6 @@
                   </div>
                 </div>
               </div>
-
-              <div
-                class="row mb-3"
-                @dblclick="handleDoubleClick"
-                v-if="permissionStore.hasPermission('add-assigned-to-deal')"
-              >
-                <div class="col-2">
-                  <label class="form-label"
-                    ><i class="fa-solid fa-users"></i>
-                    {{ t("kanban-modal-edit-label-assignedto") }}</label
-                  >
-                </div>
-                <div class="col-10">
-                  <select
-                    :class="[
-                      'form-select',
-                      isEditMode ? 'bg-input-edit' : 'bg-input',
-                      'py-2',
-                    ]"
-                    v-model="customerData.assigned_to"
-                    :disabled="!isEditMode"
-                  >
-                    <option value="" disabled>
-                      {{ t("kanban-modal-edit-placeholder-representative") }}
-                    </option>
-                    <option
-                      v-for="user in logStore.users"
-                      :key="user.id"
-                      :value="user.id"
-                    >
-                      {{ user.name }}
-                    </option>
-                  </select>
-                </div>
-              </div>
               <!-- Kanban Packages -->
               <div class="row mb-3" @dblclick="handleDoubleClick">
                 <div class="col-2 pt-2">
@@ -1320,6 +1285,40 @@
                       />
                     </div>
                   </div>
+                </div>
+              </div>
+              <div
+                class="row mb-3"
+                @dblclick="handleDoubleClick"
+                v-if="permissionStore.hasPermission('add-assigned-to-deal')"
+              >
+                <div class="col-2">
+                  <label class="form-label"
+                    ><i class="fa-solid fa-users"></i>
+                    {{ t("kanban-modal-edit-label-assignedto") }}</label
+                  >
+                </div>
+                <div class="col-10">
+                  <select
+                    :class="[
+                      'form-select',
+                      isEditMode ? 'bg-input-edit' : 'bg-input',
+                      'py-2',
+                    ]"
+                    v-model="customerData.assigned_to"
+                    :disabled="!isEditMode"
+                  >
+                    <option value="" disabled>
+                      {{ t("kanban-modal-edit-placeholder-representative") }}
+                    </option>
+                    <option
+                      v-for="user in logStore.users"
+                      :key="user.id"
+                      :value="user.id"
+                    >
+                      {{ user.name }}
+                    </option>
+                  </select>
                 </div>
               </div>
               <!-- History -->
