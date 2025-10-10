@@ -744,6 +744,44 @@
                   </div>
                 </div>
               </div>
+              <div class="row mb-3" @dblclick="handleDoubleClick">
+                <div class="col-2">
+                  <label class="form-label"
+                    ><i class="fa-solid fa-"></i>
+                    {{ t("kanban-modal-edit-label-warranty") }}
+                  </label>
+                </div>
+                <div class="col-10">
+                  <select
+                    :class="[
+                      'form-select',
+                      isEditMode ? 'bg-input-edit' : 'bg-input',
+                      'py-2',
+                    ]"
+                    v-model="customerData.warranty"
+                    :disabled="!isEditMode"
+                    name="warranty"
+                    @dblclick="handleDoubleClick"
+                  >
+                    <option
+                      :value="null"
+                      disabled
+                      v-if="!customerData.warranty"
+                    >
+                      {{
+                        t("kanban-modal-edit-placeholder-personal-companion")
+                      }}
+                    </option>
+                    <option
+                      v-for="(value, key) in warrantyList"
+                      :key="key"
+                      :value="key"
+                    >
+                      {{ value }}
+                    </option>
+                  </select>
+                </div>
+              </div>
               <hr />
               <div class="row mb-3">
                 <div class="col-2">
@@ -1052,16 +1090,16 @@
                 </div>
               </div>
               <!-- Deal passport upload -->
-              <div
-                class="row mb-3"
-                v-show="!customerData.is_local"
-                @dblclick="handleDoubleClick"
-              >
+              <div class="row mb-3" @dblclick="handleDoubleClick">
                 <div class="col-2">
                   <label class="form-label"
                     ><i class="fa-solid fa-list"></i>
-                    {{ t("kanban-modal-edit-label-passport") }}</label
-                  >
+                    {{
+                      customerData.is_local
+                        ? t("kanban-modal-edit-label-idcard")
+                        : t("kanban-modal-edit-label-passport")
+                    }}
+                  </label>
                 </div>
                 <div class="col-10">
                   <div class="row p-0 g-2">
@@ -1131,7 +1169,9 @@
                         ]"
                         v-model="customerData.passportNumber"
                         :placeholder="
-                          t('kanban-modal-edit-placeholder-passport-number')
+                          customerData.is_local
+                            ? t('kanban-modal-edit-label-placeholder-idcard')
+                            : t('kanban-modal-edit-placeholder-passport-number')
                         "
                         :readonly="!isEditMode"
                         name="passportNumber"
@@ -1952,6 +1992,7 @@ export default {
       patient_problems: props.deal?.diagnoses || [],
       additional_services: props.deal?.additional_services || [],
       add_on_total_cost: props.deal?.add_on_total_cost || null,
+      warranty: props.deal?.warranty || null,
     });
     const nationalities_options = {
       afghan: {
@@ -2802,6 +2843,30 @@ export default {
         fr: "Non",
       },
     };
+    const warrantyOptions = {
+      0: {
+        en: " Not provided",
+        ar: "غير متوفر",
+        fr: "Non fourni",
+      },
+      1: {
+        en: "Provided",
+        ar: "متوفر",
+        fr: "Fournie",
+      },
+    };
+    const warrantyList = computed(() => {
+      return Object.fromEntries(
+        Object.entries(warrantyOptions).map(([key, value]) => [
+          key,
+          locale.value === "ar"
+            ? value.ar
+            : locale.value === "fr"
+            ? value.fr
+            : value.en,
+        ])
+      );
+    });
 
     const personalCompanionList = computed(() => {
       return Object.fromEntries(
@@ -3062,6 +3127,7 @@ export default {
           additional_services: customerData.additional_services || [],
           dob: customerData.date_of_birth || [],
           passportNumber: customerData.passportNumber || [],
+          warranty: customerData.warranty || [],
         };
 
         const response = await updateDeal(props.deal.id, formData);
@@ -3858,6 +3924,7 @@ export default {
       treatment_packages,
       additional_packages,
       diagnoses_packages,
+      warrantyList,
     };
   },
 };

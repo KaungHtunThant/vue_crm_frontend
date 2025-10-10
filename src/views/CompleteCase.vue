@@ -74,7 +74,13 @@
             </td>
             <td>
               {{ t("print-case-patient-marital-status") }}
-              {{ deal?.contact?.marital_status ?? "-" }}
+              <span>
+                {{
+                  deal?.contact?.marital_status in maritalStatusList
+                    ? maritalStatusList[deal.contact.marital_status]
+                    : "-"
+                }}
+              </span>
             </td>
           </tr>
           <tr class="table-secondary">
@@ -84,13 +90,13 @@
             </td>
             <td>
               {{ t("print-case-patient-personal-companion") }}
-              {{
-                deal?.contact?.companion === 1
-                  ? t("Yes")
-                  : deal?.contact?.companion === 0
-                  ? t("No")
-                  : "-"
-              }}
+              <span>
+                {{
+                  deal?.contact?.companion in personalCompanionList
+                    ? personalCompanionList[deal.contact.companion]
+                    : "-"
+                }}
+              </span>
             </td>
           </tr>
         </tbody>
@@ -168,7 +174,7 @@
           direction === 'ltr' ? 'float-end' : 'float-start',
         ]"
       >
-        $ {{ grandTotal }}
+        $ {{ deal?.kanban_total_cost || "0.00" }}
       </div>
     </section>
 
@@ -218,7 +224,14 @@
         <tbody>
           <tr class="table-light text-center">
             <td class="w-50">
-              {{ t("print-case-warranty") }} Provided / Not Provided
+              {{ t("print-case-warranty") }}
+              <span class="fw-bold">
+                {{
+                  deal?.warranty in warrantyList
+                    ? warrantyList[deal.warranty]
+                    : t("Not provided")
+                }}
+              </span>
             </td>
             <td>
               {{ t("print-case-warranty-from") }} {{ formatDate(new Date()) }}
@@ -261,7 +274,7 @@
 <script>
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { showDeal } from "@/plugins/services/authService";
 
 export default {
@@ -277,13 +290,90 @@ export default {
     const { t } = useI18n();
     const route = useRoute();
     const dealId = ref(null);
+    const { locale } = useI18n();
 
     const logo = require("@/assets/" + process.env.VUE_APP_LOGO_NAME);
+    const warrantyOptions = {
+      0: {
+        en: " Not provided",
+        ar: "غير متوفر",
+        fr: "Non fourni",
+      },
+      1: {
+        en: "Provided",
+        ar: "متوفر",
+        fr: "Fournie",
+      },
+    };
+    const warrantyList = computed(() => {
+      return Object.fromEntries(
+        Object.entries(warrantyOptions).map(([key, value]) => [
+          key,
+          locale.value === "ar"
+            ? value.ar
+            : locale.value === "fr"
+            ? value.fr
+            : value.en,
+        ])
+      );
+    });
+    const maritalStatusOptions = {
+      single: {
+        en: "Single",
+        ar: "أعزب",
+        fr: "Célibataire",
+      },
+      married: {
+        en: "Married",
+        ar: "متزوج",
+        fr: "Marié(e)",
+      },
+    };
+    const maritalStatusList = computed(() => {
+      return Object.fromEntries(
+        Object.entries(maritalStatusOptions).map(([key, value]) => [
+          key,
+          locale.value === "ar"
+            ? value.ar
+            : locale.value === "fr"
+            ? value.fr
+            : value.en,
+        ])
+      );
+    });
+    const personalCompanionList = computed(() => {
+      return Object.fromEntries(
+        Object.entries(personalCompanionOptions).map(([key, value]) => [
+          key,
+          locale.value === "ar"
+            ? value.ar
+            : locale.value === "fr"
+            ? value.fr
+            : value.en,
+        ])
+      );
+    });
+    const personalCompanionOptions = {
+      1: {
+        en: "Yes",
+        ar: "موجود",
+        fr: "Oui",
+      },
+      0: {
+        en: "No",
+        ar: "غير موجود",
+        fr: "Non",
+      },
+    };
+
     return {
       logo,
       t,
       route,
       dealId,
+      warrantyList,
+      maritalStatusList,
+      personalCompanionList,
     };
   },
   async mounted() {
