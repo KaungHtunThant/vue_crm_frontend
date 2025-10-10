@@ -173,7 +173,7 @@ export default {
         toast.success(t("success.applyFilters"), { timeout: 3000 });
       } catch (error) {
         console.error("Filter Error:", error);
-        toast.error(t("error.applyFilters"), { timeout: 3000 });
+        toast.error(error.message, { timeout: 3000 });
         stages.value = [];
       }
     };

@@ -118,7 +118,7 @@ export default {
         // emit("apply-filters", { ...headerFilterData.value });
         closeFilterModal();
       } catch (error) {
-        toast.error(t("error.applyFilters"), { timeout: 3000 });
+        toast.error(error.message, { timeout: 3000 });
       } finally {
         isApplyingFilters.value = false;
       }
