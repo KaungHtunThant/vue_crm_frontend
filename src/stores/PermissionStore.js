@@ -38,6 +38,7 @@ export const PERMISSIONS = {
   VIEW_HOSPITAL_PACKAGE: "view-hospital-packages",
   EXPORT_DEAL: "export-deal",
   IMPORT_DEAL: "import-deal",
+  AFTER_SALES_KANBAN: "view-aftersales-kanban-page",
 };
 
 export const usePermissionStore = defineStore("permissions", {

@@ -159,6 +159,9 @@ export const getStagesChildren = (parentId, limit, offset, filters = {}) =>
 
 export const getTrashStages = () => axios.get("/stages/trash");
 
+export const getAvailableAfterSalesStages = () =>
+  axios.get("/stages/after-sales");
+
 export const getStageTimers = async () => {
   return await axios.get("/settings/stages/timers");
 };

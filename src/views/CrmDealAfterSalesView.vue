@@ -17,6 +17,7 @@
     :searchVal="searchVal"
     :filters="filters"
     :search_result="search_result"
+    :viewType="'after-sales'"
     defaultColor="#333"
     @open-whatsapp-modal="openWhatsappModal"
     @receive-whatsapp-message="receiveWhatsappMessage"

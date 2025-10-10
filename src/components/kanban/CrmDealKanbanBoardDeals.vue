@@ -280,6 +280,7 @@
     :tasks="tasks"
     :stages="allStages"
     :currentStageId="selectedStageId"
+    :viewType="viewType"
     @open-whatsapp-modal="openWhatsappModal"
     @stage-change="changeDealStage"
     @suggest-user="handleDealSuggestion"
@@ -323,6 +324,7 @@ import {
   createApproval,
   toggleHighlight,
   pullDealsFromOldSystem,
+  getAvailableAfterSalesStages,
 } from "@/plugins/services/authService";
 import { useI18n } from "vue-i18n";
 import Cookies from "js-cookie";
@@ -674,7 +676,12 @@ export default {
     const openDealDataCard = async (dealId, currentStageId = null) => {
       try {
         if (!allStages.value) {
-          const response = await getAvailableStages();
+          let response = null;
+          if (props.viewType == "after-sales") {
+            response = await getAvailableAfterSalesStages();
+          } else {
+            response = await getAvailableStages();
+          }
           if (response.data && response.data.data) {
             allStages.value = response.data.data;
           } else {
@@ -1386,8 +1393,12 @@ export default {
         hiddenStages.value[stage.id] = false;
         expandedStages.value[stage.id] = false;
       });
-
-      const response = await getAvailableStages();
+      let response = null;
+      if (props.viewType == "after-sales") {
+        response = await getAvailableAfterSalesStages();
+      } else {
+        response = await getAvailableStages();
+      }
       if (response.data && response.data.data) {
         allStages.value = response.data.data;
       } else {

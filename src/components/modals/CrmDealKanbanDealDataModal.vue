@@ -1763,6 +1763,7 @@ import {
   createConversation,
   getAvailableStages,
   toggleCommentPin,
+  getAvailableAfterSalesStages,
 } from "@/plugins/services/authService";
 import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import moveCardSound from "@/assets/move-card.wav";
@@ -1797,6 +1798,10 @@ export default {
     currentStageId: {
       type: [Number, String],
       required: true,
+    },
+    viewType: {
+      type: String,
+      default: "deal",
     },
   },
   setup(props, { emit }) {
@@ -3564,13 +3569,24 @@ export default {
           modalElement.__cancelEditHandler
         );
       }
-      getAvailableStages().then((response) => {
-        if (response.data && response.data.data) {
-          allStages.value = response.data.data;
-        } else {
-          allStages.value = [];
-        }
-      });
+      console.log("viewType", props.viewType);
+      if (props.viewType == "after-sales") {
+        getAvailableAfterSalesStages().then((response) => {
+          if (response.data && response.data.data) {
+            allStages.value = response.data.data;
+          } else {
+            allStages.value = [];
+          }
+        });
+      } else {
+        getAvailableStages().then((response) => {
+          if (response.data && response.data.data) {
+            allStages.value = response.data.data;
+          } else {
+            allStages.value = [];
+          }
+        });
+      }
     });
     watch(
       () => customerData.comments,
