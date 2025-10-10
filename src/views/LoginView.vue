@@ -71,7 +71,6 @@ import { usePermissionStore } from "@/stores/PermissionStore";
 import { useRouter } from "vue-router";
 import { initializeTranslations } from "@/i18n";
 import { useLoadingStore } from "@/plugins/loadingStore";
-// import axiosInstance from "@/plugins/axios";
 
 export default {
   name: "LoginView",
@@ -144,7 +143,7 @@ export default {
             response.data.user.role === "after-sales"
               ? "/crm-after-sales"
               : "/crm-kanban";
-          const redirect = this.$route.query.redirect || defaultRedirect;
+          console.log("Default Redirect:", defaultRedirect);
           this.permissionStore.setPermissions(response.data.user.permissions);
           this.$emit("loginSuccess");
           let bg_fetch = await getBackgroundId(response.data.user.bg_image_id);
@@ -152,7 +151,7 @@ export default {
           document.body.style.backgroundImage = `url(${imageUrl})`;
           document.body.style.backgroundSize = "cover";
           document.body.style.backgroundPosition = "center";
-          this.$router.replace(redirect);
+          this.$router.replace(defaultRedirect);
         } else {
           this.errors.message = "Invalid email or password.";
         }
@@ -191,7 +190,11 @@ export default {
 
     mounted() {
       if (Cookies.get("authToken")) {
-        this.$router.push("/crm-kanban");
+        let defaultRedirect =
+          Cookies.get("user_role") === "after-sales"
+            ? "/crm-after-sales"
+            : "/crm-kanban";
+        this.$router.push(defaultRedirect);
       }
     },
   },

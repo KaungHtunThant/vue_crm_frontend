@@ -25,12 +25,12 @@
               </button>
             </h5>
           </div>
-          <div class="">
+          <!-- <div class="">
             <button @click="PrintCase" class="bg-transparent border-0">
               <i class="fa-solid fa-print"></i>
               {{ t("kanban-modal-edit-print-case") }}
             </button>
-          </div>
+          </div> -->
           <div class="rating">
             <rating-stars
               v-model="customerData.rating"
@@ -1703,12 +1703,14 @@
         </div>
         <div class="position-fixed trashCustm">
           <button
+            v-if="this.$route.path !== '/crm-after-sales'"
             class="btn bg-warning py-2 px-3 rounded-3 me-2"
             @click="openSuggestApprovalModal"
           >
             <i class="fa-solid fa-user text-white"></i>
           </button>
           <button
+            v-if="this.$route.path !== '/crm-after-sales'"
             class="btn bg-danger py-2 px-3 rounded-3"
             @click="openTrashDealModal"
           >

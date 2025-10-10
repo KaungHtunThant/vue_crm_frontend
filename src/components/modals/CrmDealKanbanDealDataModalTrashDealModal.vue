@@ -135,7 +135,9 @@ export default {
     };
   },
   mounted() {
-    this.getStages();
+    if (this.$route.path !== "/crm-after-sales") {
+      this.getStages();
+    }
     const modal = document.getElementById("trashDealModal");
     modal.addEventListener("hidden.bs.modal", () => {
       const modalBackdrop = document.querySelector(".modal-backdrop");
