@@ -249,6 +249,7 @@ import {
 import { useI18n } from "vue-i18n";
 import { useToast } from "vue-toastification";
 import { useSourceStore } from "@/stores/SourceStore";
+import Cookies from "js-cookie";
 const { t } = useI18n();
 const props = defineProps({
   selectedRows: {
@@ -267,6 +268,7 @@ const emits = defineEmits([
 ]);
 
 // State
+const user_role = ref("");
 const isLoading = ref(false);
 const newStage = ref("");
 const newUser = ref("");
@@ -290,7 +292,10 @@ const sortedUserOptions = computed(() => {
 // Options for dropdowns
 const fetchStages = async () => {
   try {
-    const response = await getAvailableStages();
+    console.log("User role:", user_role.value);
+    const response = await getAvailableStages(
+      user_role.value == "after-sales" ? "after-sales" : "deal"
+    );
     if (response.status === 200) {
       stageOptions.value = response.data.data.map((stage) => ({
         value: stage.id,
@@ -334,6 +339,7 @@ const fetchUsers = async () => {
   }
 };
 onMounted(async () => {
+  user_role.value = Cookies.get("user_role");
   await fetchStages();
   await fetchUsers();
 });

@@ -136,11 +136,15 @@
 
 <script>
 import { ref, onMounted, watch } from "vue";
-import { getStages, getAllUsers } from "@/plugins/services/authService";
+import {
+  getAllUsers,
+  getAvailableStages,
+} from "@/plugins/services/authService";
 import RatingStars from "@/components/CreateDealElements/CrmDealKanbanDealDataModalRatingStars.vue";
 import { useI18n } from "vue-i18n";
 import { useSourceStore } from "@/stores/SourceStore";
 import { computed } from "vue";
+import Cookies from "js-cookie";
 export default {
   name: "CrmListViewCreateDealModalFormItems",
   components: {
@@ -173,7 +177,10 @@ export default {
     const users = ref([]);
     const fetchStages = async () => {
       try {
-        const response = await getStages();
+        const user_role = Cookies.get("user_role");
+        const response = await getAvailableStages(
+          user_role == "after-sales" ? "after-sales" : "deal"
+        );
         if (response.status === 200) {
           stages.value = response.data.data.map((stage) => ({
             value: stage.id,

@@ -145,7 +145,9 @@ export const getStages = () => axios.get("/stages");
 export const getAllStages = () => {
   return axios.get("/stages/all");
 };
-export const getAvailableStages = () => axios.get("/stages/deals");
+export const getAvailableStages = (stage = "deals") =>
+  axios.get("/stages/" + stage);
+
 // getStagesChildren
 export const getStagesChildren = (parentId, limit, offset, filters = {}) =>
   axios.get(`/kanban/deals/${parentId}/children`, {

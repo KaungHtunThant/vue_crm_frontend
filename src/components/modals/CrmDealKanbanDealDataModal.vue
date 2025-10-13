@@ -1703,14 +1703,14 @@
         </div>
         <div class="position-fixed trashCustm">
           <button
-            v-if="this.$route.path !== '/crm-after-sales'"
+            v-if="this.user_role !== 'after-sales'"
             class="btn bg-warning py-2 px-3 rounded-3 me-2"
             @click="openSuggestApprovalModal"
           >
             <i class="fa-solid fa-user text-white"></i>
           </button>
           <button
-            v-if="this.$route.path !== '/crm-after-sales'"
+            v-if="this.user_role !== 'after-sales'"
             class="btn bg-danger py-2 px-3 rounded-3"
             @click="openTrashDealModal"
           >
@@ -1771,6 +1771,7 @@ import moveCardSound from "@/assets/move-card.wav";
 import { useLogStore } from "@/stores/LogStore";
 import { usePackageStore } from "@/stores/PackageStore";
 import { useSourceStore } from "@/stores/SourceStore";
+import Cookies from "js-cookie";
 
 export default {
   name: "CrmDealKanbanDealDataModal",
@@ -1821,6 +1822,7 @@ export default {
     const hoveredStage = ref(null);
     const stageColors = reactive({});
     const commentInput = ref(null);
+    const user_role = ref(null);
     const treatment_packages = computed(() =>
       packageStore.getPackagesWithCategory("treatments")
     );
@@ -3777,6 +3779,7 @@ export default {
     };
     onMounted(() => {
       packageStore.fetchAll();
+      user_role.value = Cookies.get("user_role");
     });
     return {
       getStageColor,
@@ -3872,6 +3875,7 @@ export default {
       treatment_packages,
       additional_packages,
       diagnoses_packages,
+      user_role,
     };
   },
 };

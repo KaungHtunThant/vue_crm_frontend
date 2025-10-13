@@ -106,6 +106,7 @@
 import { Modal } from "bootstrap";
 import { useToast } from "vue-toastification";
 import { createComment, getTrashStages } from "@/plugins/services/authService";
+import Cookies from "js-cookie";
 
 export default {
   name: "CrmDealKanbanDealDataModalTrashDealModal",
@@ -135,7 +136,8 @@ export default {
     };
   },
   mounted() {
-    if (this.$route.path !== "/crm-after-sales") {
+    const user_role = Cookies.get("user_role");
+    if (user_role !== "after-sales") {
       this.getStages();
     }
     const modal = document.getElementById("trashDealModal");

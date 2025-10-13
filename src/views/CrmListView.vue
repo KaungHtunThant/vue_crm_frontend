@@ -368,7 +368,7 @@ const selectedDeal = ref(null);
 const logs = ref([]);
 const comments = ref([]);
 const tasks = ref([]);
-const user_role = Cookies.get("user_role");
+const user_role = ref();
 const selected_conversation = ref(null);
 
 const isFilterActive = computed(() => {
@@ -541,9 +541,6 @@ const fetchData = async () => {
       return;
     }
     rows.value = dealsRes.data.data.map((deal) => {
-      const matchedStage = stages.value.find(
-        (stage) => stage.id === deal.stage_id
-      );
       const matchedSource = sources.value.find(
         (source) => source.id === deal.source_id
       );
@@ -563,7 +560,7 @@ const fetchData = async () => {
             })()
           : "",
         updated_at: new Date(deal.updated_at).toLocaleString(),
-        stage: matchedStage ? matchedStage.name : t("not-set"),
+        stage: deal.stage_name || t("not-set"),
         responsible: deal.responsible_user?.name || t("not-set"),
         source: matchedSource ? matchedSource.name : t("not-set"),
       };
@@ -721,9 +718,6 @@ const applyFilters = async (newFilters) => {
     }
 
     rows.value = response.data.data.map((deal) => {
-      const matchedStage = stages.value.find(
-        (stage) => stage.id === deal.stage_id
-      );
       const matchedSource = sources.value.find(
         (source) => source.id === deal.source_id
       );
@@ -743,7 +737,7 @@ const applyFilters = async (newFilters) => {
             })()
           : "",
         updated_at: new Date(deal.updated_at).toLocaleString(),
-        stage: matchedStage ? matchedStage.name : t("not-set"),
+        stage: deal.stage_name || t("not-set"),
         responsible: deal.responsible_user?.name || t("not-set"),
         source: matchedSource ? matchedSource.name : t("not-set"),
       };
@@ -820,7 +814,9 @@ const fetchStages = async () => {
   try {
     if (stages.value.length === 0) {
       console.log("Fetching stages");
-      const stageRes = await getAvailableStages();
+      const stageRes = await getAvailableStages(
+        user_role.value == "after-sales" ? "after-sales" : "deal"
+      );
 
       stages.value = stageRes.data.data;
     }
@@ -1000,6 +996,7 @@ const changeDealStage = async (dealId, newStageId) => {
 };
 
 onMounted(async () => {
+  user_role.value = Cookies.get("user_role");
   await fetchData();
   fetchUsers();
   sourceStore.fetchSources();
