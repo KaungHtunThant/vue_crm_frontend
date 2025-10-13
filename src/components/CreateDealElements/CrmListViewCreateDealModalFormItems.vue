@@ -179,7 +179,7 @@ export default {
       try {
         const user_role = Cookies.get("user_role");
         const response = await getAvailableStages(
-          user_role == "after-sales" ? "after-sales" : "deal"
+          user_role == "after-sales" ? "after-sales" : "deals"
         );
         if (response.status === 200) {
           stages.value = response.data.data.map((stage) => ({

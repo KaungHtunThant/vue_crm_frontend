@@ -294,7 +294,7 @@ const fetchStages = async () => {
   try {
     console.log("User role:", user_role.value);
     const response = await getAvailableStages(
-      user_role.value == "after-sales" ? "after-sales" : "deal"
+      user_role.value == "after-sales" ? "after-sales" : "deals"
     );
     if (response.status === 200) {
       stageOptions.value = response.data.data.map((stage) => ({

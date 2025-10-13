@@ -815,7 +815,7 @@ const fetchStages = async () => {
     if (stages.value.length === 0) {
       console.log("Fetching stages");
       const stageRes = await getAvailableStages(
-        user_role.value == "after-sales" ? "after-sales" : "deal"
+        user_role.value == "after-sales" ? "after-sales" : "deals"
       );
 
       stages.value = stageRes.data.data;
