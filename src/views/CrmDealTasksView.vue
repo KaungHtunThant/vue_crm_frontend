@@ -35,6 +35,7 @@ import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vu
 import { getTasksKanban } from "@/plugins/services/authService";
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
+import Cookies from "js-cookie";
 
 export default {
   name: "CrmDealTasksView",
@@ -66,6 +67,7 @@ export default {
     const selected_conversation = ref(null);
     const new_message = ref(null);
     const update_message = ref(null);
+    const user_role = ref(null);
 
     const applyFilters = async (newFilters) => {
       try {
@@ -120,6 +122,9 @@ export default {
           }
           if (filters.value.sort_order) {
             formattedFilters["sort_order"] = filters.value.sort_order;
+          }
+          if (user_role.value == "after-sales") {
+            formattedFilters["type"] = "after-sales";
           }
 
           const response = await getTasksKanban(formattedFilters);
@@ -205,7 +210,10 @@ export default {
     };
 
     const HandleSearch = async (searchText) => {
-      await fetchStages({ search: searchText });
+      await fetchStages({
+        search: searchText,
+        type: user_role.value == "after-sales" ? "after-sales" : null,
+      });
     };
 
     const changeDealStage = async (dealId, newStageIndex, oldStageId) => {
@@ -235,7 +243,10 @@ export default {
 
     // upload data
     onMounted(async () => {
-      fetchStages();
+      user_role.value = Cookies.get("user_role");
+      fetchStages({
+        type: user_role.value == "after-sales" ? "after-sales" : null,
+      });
       window.addEventListener("contextmenu", handleRightClick);
     });
 

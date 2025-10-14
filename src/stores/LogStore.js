@@ -143,7 +143,6 @@ export const useLogStore = defineStore("log", () => {
         parts.push(` Changes: ${changes.join(", ")}.`);
       }
     }
-    parts.push(` (${formatDate(log.created_at)})`);
     return parts;
   };
 

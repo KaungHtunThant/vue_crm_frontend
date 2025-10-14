@@ -398,6 +398,7 @@ export default {
     const filteredDeals = ref({});
     const allStages = ref(null);
     const selectedStageId = ref(null);
+    const user_role = ref(null);
 
     watch(
       () => props.stages,
@@ -677,7 +678,7 @@ export default {
       try {
         if (!allStages.value) {
           let response = null;
-          if (props.viewType == "after-sales") {
+          if (user_role.value == "after-sales") {
             response = await getAvailableAfterSalesStages();
           } else {
             response = await getAvailableStages();
@@ -1330,6 +1331,7 @@ export default {
     };
 
     onMounted(async () => {
+      user_role.value = Cookies.get("user_role");
       if (dealsContainer.value) {
         dealsContainer.value.addEventListener("scroll", updateArrowVisibility);
         document.addEventListener("mouseup", stopScrolling);
@@ -1394,7 +1396,7 @@ export default {
         expandedStages.value[stage.id] = false;
       });
       let response = null;
-      if (props.viewType == "after-sales") {
+      if (user_role.value == "after-sales") {
         response = await getAvailableAfterSalesStages();
       } else {
         response = await getAvailableStages();

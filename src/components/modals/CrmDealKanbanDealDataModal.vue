@@ -1405,11 +1405,6 @@
                   :key="log.id"
                   class="row bg-input pt-2 text-secondary border border-top"
                 >
-                  <div class="col-2 ps-2">
-                    <p style="font-size: 12px">
-                      {{ new Date(log.created_at).toLocaleString() }}
-                    </p>
-                  </div>
                   <div class="col-10" style="font-size: 12px">
                     <template
                       v-for="(part, index) in logStore.formatLogEntry(
@@ -1433,6 +1428,11 @@
                         >{{ part.text }}</span
                       >
                     </template>
+                  </div>
+                  <div class="col-2 ps-2">
+                    <p style="font-size: 12px">
+                      {{ new Date(log.created_at).toLocaleString() }}
+                    </p>
                   </div>
                 </div>
               </div>
