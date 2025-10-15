@@ -281,7 +281,12 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (to.path === "/login" && token) {
-    next({ path: "/crm-kanban", replace: true });
+    const user_role = Cookies.get("user_role");
+    let redirectPath = "/crm-kanban";
+    if (user_role === "after-sales") {
+      redirectPath = "/crm-after-sales";
+    }
+    next({ path: redirectPath, replace: true });
     return;
   }
 
