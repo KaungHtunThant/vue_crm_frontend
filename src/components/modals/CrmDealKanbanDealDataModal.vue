@@ -2797,6 +2797,18 @@ export default {
         en: "French",
         ar: "الفرنسية",
       },
+      urdu: {
+        en: "Urdu",
+        ar: "الأردية",
+      },
+      turkish: {
+        en: "Turkish",
+        ar: "التركية",
+      },
+      Russian: {
+        en: "Russian",
+        ar: "الروسية",
+      },
     };
     const languages = computed(() => {
       return Object.fromEntries(
@@ -2811,11 +2823,17 @@ export default {
         en: "Single",
         ar: "أعزب",
         fr: "Célibataire",
+        ur: "اکیلا",
+        tr: "Bekar",
+        ru: "Solteiro",
       },
       married: {
         en: "Married",
         ar: "متزوج",
         fr: "Marié(e)",
+        ur: "شادی شدہ",
+        tr: "Evli",
+        ru: "Casado",
       },
     };
 
@@ -2836,11 +2854,17 @@ export default {
         en: "Yes",
         ar: "موجود",
         fr: "Oui",
+        ur: "ہاں",
+        tr: "Evet",
+        ru: "Sim",
       },
       0: {
         en: "No",
         ar: "غير موجود",
         fr: "Non",
+        ur: "نہیں",
+        tr: "Hayır",
+        ru: "Não",
       },
     };
     const warrantyOptions = {
@@ -2848,11 +2872,17 @@ export default {
         en: " Not provided",
         ar: "غير متوفر",
         fr: "Non fourni",
+        ur: "فراہم نہیں کیا گیا",
+        tr: "Sağlanmadı",
+        ru: "Não fornecido",
       },
       1: {
         en: "Provided",
         ar: "متوفر",
         fr: "Fournie",
+        ur: "فراہم کیا گیا",
+        tr: "Sağlandı",
+        ru: "Fornecido",
       },
     };
     const warrantyList = computed(() => {
@@ -2863,6 +2893,12 @@ export default {
             ? value.ar
             : locale.value === "fr"
             ? value.fr
+            : locale.value === "ur"
+            ? value.ur
+            : locale.value === "tr"
+            ? value.tr
+            : locale.value === "ru"
+            ? value.ru
             : value.en,
         ])
       );
@@ -2876,6 +2912,12 @@ export default {
             ? value.ar
             : locale.value === "fr"
             ? value.fr
+            : locale.value === "ur"
+            ? value.ur
+            : locale.value === "tr"
+            ? value.tr
+            : locale.value === "ru"
+            ? value.ru
             : value.en,
         ])
       );

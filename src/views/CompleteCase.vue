@@ -1,5 +1,5 @@
 <template>
-  <div class="print-area py-4" :dir="direction">
+  <div class="print-area py-4 mt-4" :dir="direction">
     <!-- Header with Logo and Clinic Info -->
     <div class="d-flex justify-content-between align-items-start pb-1 mb-2">
       <div>
@@ -43,7 +43,7 @@
     </div>
 
     <!-- Patient Information Section -->
-    <section class="mb-4">
+    <section class="mb-4 mt-4">
       <h6 class="fw-bold fs-7">{{ t("print-case-patient-information") }}</h6>
       <table class="table table-bordered fs-8">
         <tbody>
@@ -104,7 +104,7 @@
     </section>
 
     <!-- Contact Information -->
-    <section class="mb-4">
+    <section class="mb-4 mt-4">
       <h6 class="fw-bold fs-7">
         {{ t("print-case-patient-contact-information") }}
       </h6>
@@ -127,7 +127,7 @@
     </section>
 
     <!-- Initial Diagnosis -->
-    <section class="mb-4">
+    <section class="mb-4 mt-4">
       <h6 class="fw-bold fs-7">
         {{ t("print-case-patient-intial-diagnosis") }}
       </h6>
@@ -139,12 +139,31 @@
             </td>
           </tr>
           <tr class="table-secondary">
-            <td
+            <!-- <td
               v-for="pkg in deal?.diagnoses"
               :key="pkg.id"
               class="text-center"
             >
               {{ pkg.name }} - {{ pkg.severity }}
+            </td> -->
+            <td
+              v-for="pkg in deal?.diagnoses"
+              :key="pkg.id"
+              class="text-center"
+            >
+              {{ pkg.name }} -
+              <span v-if="pkg.severity === 'mild'">
+                {{ t("kanban-modal-edit-severity-low") }}
+              </span>
+              <span v-else-if="pkg.severity === 'moderate'">
+                {{ t("kanban-modal-edit-severity-medium") }}
+              </span>
+              <span v-else-if="pkg.severity === 'severe'">
+                {{ t("kanban-modal-edit-severity-high") }}
+              </span>
+              <span v-else>
+                {{ pkg.severity }}
+              </span>
             </td>
           </tr>
         </tbody>
@@ -152,7 +171,7 @@
     </section>
 
     <!-- Treatment Package -->
-    <section class="mb-5">
+    <section class="mb-5 mt-4">
       <h6 class="fw-bold fs-7">
         {{ t("print-case-patient-treatment-package") }}
       </h6>
@@ -170,16 +189,16 @@
       </table>
       <div
         :class="[
-          'bg-danger-subtle fw-bold mb-2 p-2 border border-dark w-25',
-          direction === 'ltr' ? 'float-end' : 'float-start',
+          'bg-danger-subtle fw-bold mb-2 p-2 border border-dark w-25 mt-2',
+          direction === 'ltr' ? 'float-end text-end' : 'float-start text-start',
         ]"
       >
-        $ {{ deal?.kanban_total_cost || "0.00" }}
+        <span dir="ltr"> $ {{ deal?.kanban_total_cost || "0.00" }} </span>
       </div>
     </section>
 
     <!-- Additional Services -->
-    <section class="mb-5">
+    <section class="mb-5 mt-4">
       <h6 class="fw-bold fs-7">
         {{ t("print-case-patient-additional-services") }}
       </h6>
@@ -191,35 +210,41 @@
             class="table-success"
           >
             <td class="w-85">{{ pkg.name }}</td>
-            <td class="text-center">Days({{ pkg.days }})</td>
+            <td class="text-center">
+              {{ t("print-case-patient-additional-service-days") }}
+              ({{ pkg.days }})
+            </td>
           </tr>
         </tbody>
       </table>
       <div
         :class="[
-          'bg-danger-subtle fw-bold mb-2 p-2 border border-dark w-25',
-          direction === 'ltr' ? 'float-end' : 'float-start',
+          'bg-danger-subtle fw-bold mb-2 p-2 border border-dark w-25 mt-2',
+          direction === 'ltr' ? 'float-end text-end' : 'float-start text-start',
         ]"
       >
-        $ {{ deal?.add_on_total_cost || "0.00" }}
+        <span dir="ltr">$ {{ deal?.add_on_total_cost || "0.00" }}</span>
       </div>
     </section>
 
     <!-- Total -->
-    <section class="mb-1">
+    <section class="mb-1 mt-4">
       <div class="fw-bold fs-7 mt-4">
         {{ t("print-case-patient-total-vat") }}
-        $
-        {{
-          (
-            Number(deal?.add_on_total_cost ?? 0) + Number(grandTotal ?? 0)
-          ).toFixed(2)
-        }}
+        <span dir="ltr">
+          $
+          {{
+            (
+              Number(deal?.add_on_total_cost ?? 0) +
+              Number(deal?.kanban_total_cost ?? 0)
+            ).toFixed(2)
+          }}
+        </span>
       </div>
     </section>
 
     <!-- Warranty -->
-    <section class="">
+    <section class="mt-3" v-if="deal?.warranty !== 0">
       <table class="table table-bordered fs-8 mb-1">
         <tbody>
           <tr class="table-light text-center">
@@ -298,11 +323,17 @@ export default {
         en: " Not provided",
         ar: "غير متوفر",
         fr: "Non fourni",
+        ur: "فراہم نہیں کیا گیا",
+        tr: "Sağlanmadı",
+        ru: "Não fornecido",
       },
       1: {
         en: "Provided",
         ar: "متوفر",
         fr: "Fournie",
+        ur: "فراہم کیا گیا",
+        tr: "Sağlandı",
+        ru: "Fornecido",
       },
     };
     const warrantyList = computed(() => {
@@ -313,6 +344,12 @@ export default {
             ? value.ar
             : locale.value === "fr"
             ? value.fr
+            : locale.value === "ur"
+            ? value.ur
+            : locale.value === "tr"
+            ? value.tr
+            : locale.value === "ru"
+            ? value.ru
             : value.en,
         ])
       );
@@ -322,11 +359,17 @@ export default {
         en: "Single",
         ar: "أعزب",
         fr: "Célibataire",
+        ur: "اکیلا",
+        tr: "Bekar",
+        ru: "Solteiro(a)",
       },
       married: {
         en: "Married",
         ar: "متزوج",
         fr: "Marié(e)",
+        ur: "شادی شدہ",
+        tr: "Evli",
+        ru: "Casado(a)",
       },
     };
     const maritalStatusList = computed(() => {
@@ -337,6 +380,12 @@ export default {
             ? value.ar
             : locale.value === "fr"
             ? value.fr
+            : locale.value === "ur"
+            ? value.ur
+            : locale.value === "tr"
+            ? value.tr
+            : locale.value === "ru"
+            ? value.ru
             : value.en,
         ])
       );
@@ -349,6 +398,12 @@ export default {
             ? value.ar
             : locale.value === "fr"
             ? value.fr
+            : locale.value === "ur"
+            ? value.ur
+            : locale.value === "tr"
+            ? value.tr
+            : locale.value === "ru"
+            ? value.ru
             : value.en,
         ])
       );
@@ -358,11 +413,17 @@ export default {
         en: "Yes",
         ar: "موجود",
         fr: "Oui",
+        ur: "ہاں",
+        tr: "Evet",
+        ru: "Sim",
       },
       0: {
         en: "No",
         ar: "غير موجود",
         fr: "Non",
+        ur: "نہیں",
+        tr: "Hayır",
+        ru: "Não",
       },
     };
 
@@ -462,5 +523,8 @@ export default {
   text-align: left !important;
   direction: ltr !important;
   unicode-bidi: embed;
+}
+.mt-4 {
+  margin-top: 2rem !important;
 }
 </style>
