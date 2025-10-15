@@ -29,11 +29,13 @@
                 class="btn text-white me-2 fs-7 btnKanban btn-hover"
                 @click="openAfterSalesKanban"
                 v-if="
-                  permissionStore.hasPermission(PERMISSIONS.AFTER_SALES_KANBAN)
+                  permissionStore.hasPermission(
+                    PERMISSIONS.AFTER_SALES_KANBAN
+                  ) && !permissionStore.hasPermission(PERMISSIONS.DEALS_KANBAN)
                 "
                 style="padding: 0.5rem 2rem"
               >
-                {{ t("header-subnav-item-kanban-after-sales") }}
+                {{ t("sidebar-nav-item-after-sales-kanban") }}
               </button>
               <button
                 class="btn text-white me-2 fs-7 btnKanban btn-hover"
