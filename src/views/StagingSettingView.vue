@@ -78,7 +78,6 @@ export default {
         const stage = stages.value.find((stage) => stage.id == id);
         if (stage) {
           stage.timer_status = stage.timer_status ? 0 : 1;
-          console.log("Stage status:", stage.timer_status);
           await updateStage(id, { timer_status: stage.timer_status });
           toast.success("Stage status updated successfully");
         }

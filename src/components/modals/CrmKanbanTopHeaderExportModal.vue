@@ -78,8 +78,6 @@ export default {
           return;
         }
 
-        console.log("Exporting as:", exportFormat.value);
-
         const modal = Modal.getInstance(document.getElementById("exportModal"));
         modal?.hide();
 

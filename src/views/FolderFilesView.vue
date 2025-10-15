@@ -361,10 +361,6 @@ export default {
 
     const fetchFiles = async () => {
       try {
-        console.log(
-          "Fetching folder contents...",
-          route.params.folderName || route.params.fullPath
-        );
         var folderPath = route.params.folderName || route.params.fullPath;
         if (!folderPath) {
           router.push({ path: "/documents" });
@@ -403,11 +399,7 @@ export default {
       formData.append("parent_id", parentId);
 
       try {
-        console.log("Sending form data:", formData);
         const response = await uploadFiles(formData);
-
-        console.log("API response:", response);
-
         if (response.data && response.data.result) {
           fetchFiles();
         } else {
@@ -542,7 +534,7 @@ export default {
 
     const downloadFolder = async (folderId) => {
       try {
-        console.log("Downloading folder:", folderId);
+        console.info("Downloading folder:", folderId);
         await new Promise((resolve) => setTimeout(resolve, 1000));
         toast.success(t("success.downloadStarted"), {
           timeout: 3000,
@@ -596,7 +588,6 @@ export default {
           (folder) => folder.id === folderId
         );
         if (currentFolder && currentFolder.full_path) {
-          // console.log(`/documents${currentFolder.full_path}`);
           router
             .push({
               path: `/documents${currentFolder.full_path}`,

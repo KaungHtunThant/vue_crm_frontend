@@ -275,12 +275,11 @@ export default {
             this.qrCode
           )}`;
           this.isLoading = false;
-          console.log("QR Code retrieved successfully");
         }
       } catch (error) {
         console.error("Error fetching QR code:", error);
         if (error.response?.status === 404) {
-          console.log("QR code not yet available, retrying...");
+          console.info("QR code not yet available, retrying...");
         }
       }
     },
@@ -307,10 +306,10 @@ export default {
           }
 
           this.showStatus("WhatsApp connected successfully!", "success");
-          console.log("WhatsApp connected successfully!");
+          console.info("WhatsApp connected successfully!");
         } else if (response.data.status === "initializing") {
           this.isLoading = true;
-          console.log("WhatsApp is still initializing...");
+          console.info("WhatsApp is still initializing...");
         }
       } catch (error) {
         console.error("Error checking WhatsApp status:", error);
@@ -336,7 +335,6 @@ export default {
       try {
         this.isFetching = true;
         this.offset = 0;
-        console.log("Selected chat:", chat);
         const chatId = chat.id || chat.conversation_id;
         if (!chatId) {
           console.error("No chat ID found!");
@@ -365,7 +363,6 @@ export default {
     async getMoreMessages() {
       if (!this.isFetching) {
         this.isFetching = true;
-        console.log("get more");
         this.offset = this.selectedChat.messages.length;
         const messages = await this.fetchMessages(this.selectedChat.id);
         this.selectedChat.messages = [
@@ -374,7 +371,7 @@ export default {
         ];
         this.isFetching = false;
       } else {
-        console.log("Already fetching messages");
+        console.info("Already fetching messages");
       }
     },
 
@@ -429,7 +426,6 @@ export default {
         (chat) => chat.isActive
       );
       if (activeChat) {
-        console.log("activeChat", activeChat);
         changePinStatus(activeChat.id);
         this.$refs.leftSidebar.pinChat(activeChat);
       }
@@ -452,7 +448,6 @@ export default {
         this.selectedChat &&
         this.selectedChat.id == new_message.conversation_id
       ) {
-        console.log("chat opened", this.selectedChat, new_message);
         this.handleNewMessage({
           id: new_message.id || Date.now(),
           type: "msg-frnd",
@@ -476,7 +471,7 @@ export default {
           status: new_message.status,
         });
       } else {
-        console.log("chat not opened", this.selectedChat, new_message);
+        console.error("chat not opened", this.selectedChat, new_message);
       }
     },
 
@@ -485,7 +480,6 @@ export default {
         const messageIndex = this.selectedChat.messages.findIndex(
           (msg) => msg.id == data.id
         );
-        console.log("messageIndex", messageIndex);
         if (messageIndex !== -1) {
           const updated_data = {
             text: data.text_body,
@@ -495,16 +489,11 @@ export default {
             ...this.selectedChat.messages[messageIndex],
             ...updated_data,
           };
-          console.log(
-            "Updated message:",
-            this.selectedChat.messages[messageIndex]
-          );
         }
       }
     },
     closeRightSidebarChat() {
       this.selectedChat = null;
-      console.log("WhatsApp right sidebar closed");
     },
   },
   watch: {

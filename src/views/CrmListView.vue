@@ -438,9 +438,7 @@ const bulkMergeItems = async () => {
       reverseButtons: true,
     });
     if (result.isConfirmed) {
-      console.log("IDs to merge:", ids);
       const response = await mergeDeals(ids);
-      console.log("Merge response:", response);
 
       if (response.status === 200) {
         selectedRows.value = [];
@@ -763,7 +761,6 @@ const openDealModal = () => {
 };
 
 const resetFilter = () => {
-  console.log("Resetting filters to default values");
   filters.value = {
     source: "",
     stage: "",
@@ -813,7 +810,6 @@ const handleRightClick = (event) => {
 const fetchStages = async () => {
   try {
     if (stages.value.length === 0) {
-      console.log("Fetching stages");
       const stageRes = await getAvailableStages(
         user_role.value == "after-sales" ? "after-sales" : "deals"
       );
@@ -849,9 +845,6 @@ const handleBulkUpdate = async (key, value) => {
       toast.error(t("error.noItemsSelected"), { timeout: 3000 });
       return;
     }
-
-    console.log("key, value:", key, value);
-
     const response = await bulkUpdateDeals(selectedIds, String(key), value);
 
     if (
@@ -924,9 +917,7 @@ const bulkDeleteItems = async () => {
     });
 
     if (result.isConfirmed) {
-      console.log("IDs to delete:", ids);
       const response = await bulkDeleteDeals(ids);
-      console.log("Delete response:", response);
 
       if (response.status === 200) {
         selectedRows.value = [];

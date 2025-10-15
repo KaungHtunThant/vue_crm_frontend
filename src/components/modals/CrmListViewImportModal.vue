@@ -91,7 +91,6 @@ export default {
       try {
         loading.value = true;
         if (importFormRef.value) {
-          console.log("ImportForm Data:", importFormRef.value);
           // Access fields from ImportForm
           const fields = {
             file: importFormRef.value.fileInput,

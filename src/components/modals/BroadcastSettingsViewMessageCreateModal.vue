@@ -61,7 +61,6 @@ export default {
       this.$emit("submit", this.description);
     },
     closeModal() {
-      console.log("close modal");
       this.$emit("close-modal");
     },
   },

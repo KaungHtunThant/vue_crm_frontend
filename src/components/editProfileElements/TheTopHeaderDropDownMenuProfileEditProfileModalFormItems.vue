@@ -98,7 +98,6 @@ export default {
   },
   watch: {
     userData(newVal) {
-      console.log("User Data Updated:", newVal);
       this.localName = newVal.name;
       this.localEmail = newVal.email;
       this.localImage =

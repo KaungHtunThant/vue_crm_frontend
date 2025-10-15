@@ -517,7 +517,6 @@ export default {
         );
         try {
           const formattedFilters = formatFilters();
-          console.log("filters applied ", formatFilters);
           const parentStageDeals = await fetchAdditionalDealsByStageId(
             parentStage.id,
             10,
@@ -1013,7 +1012,6 @@ export default {
     };
 
     const handleWhatsappMessageCreateEvent = (data) => {
-      console.log("handleWhatsappMessageCreateEvent", data);
       if (data.status == "sent") {
         IncreaseUnreadCount(data.deal_id);
       }
@@ -1025,7 +1023,6 @@ export default {
     };
 
     const openWhatsappModal = (conversation, id) => {
-      console.log("openWhatsappModal in kanban comp", conversation);
       emit("open-whatsapp-modal", conversation);
       DecreaseUnreadCount(id);
     };
@@ -1078,7 +1075,6 @@ export default {
     };
 
     const IncreaseUnreadCount = (dealId) => {
-      console.log("IncreaseUnreadCount", dealId);
       for (const stage of displayStages.value) {
         if (stage.deals) {
           const deal = stage.deals.find((d) => d.id === dealId);
@@ -1132,13 +1128,10 @@ export default {
           const oldStage = ref(
             stages.value.find((stage) => stage.id == oldStageId)
           );
-          console.log("newStage", newStage.value);
           const deal =
             newStage?.value?.deals.find((d) => d.id == dealId) ??
             oldStage?.value?.deals.find((d) => d.id == dealId);
-          console.log("deal", deal);
           const response = await updateDealStage(dealId, newStageId);
-          console.log("response", response.status);
           if (response.status !== 200) {
             console.error("Error updating deal stage:", response.data.message);
             toast.error(response.data.message);
@@ -1232,7 +1225,7 @@ export default {
 
     const disconnectWebSocket = () => {
       window.Echo.disconnect();
-      console.log("WebSocket disconnected due to inactivity");
+      console.info("WebSocket disconnected due to inactivity");
     };
 
     const reconnectWebSocket = () => {
@@ -1257,7 +1250,7 @@ export default {
         );
       }
 
-      console.log("WebSocket reconnected on user activity");
+      console.info("WebSocket reconnected on user activity");
       kanbanStore.setHasNewChanges(true);
     };
 
@@ -1367,23 +1360,18 @@ export default {
         if (window.Echo && userChannel) {
           window.Echo.channel(userChannel)
             .listen(".DealEvent", (event) => {
-              console.log("DealEvent received:", event);
               handleDealEvent(event);
             })
             .listen(".TaskEvent", (event) => {
-              console.log("TaskEvent received:", event);
               handleTaskEvent(event);
             })
             .listen(".CommentEvent", (event) => {
-              console.log("CommentEvent received:", event);
               handleCommentEvent(event);
             })
             .listen(".LogEvent", (event) => {
-              console.log("LogEvent received:", event);
               handleLogEvent(event);
             })
             .listen(".WhatsappEvent", (event) => {
-              console.log("WhatsappEvent received:", event);
               handleWhatsappEvent(event);
             });
         }
@@ -1444,7 +1432,6 @@ export default {
     };
 
     const updateDeal = (data) => {
-      console.log("updateDeal in kanban comp", data);
       dealUpdateEvent(data, "Deal updated successfully");
     };
     const handleHighlight = async (deal_id) => {
@@ -1496,16 +1483,13 @@ export default {
       const todayStr = today.toISOString().slice(0, 10);
 
       if (!duedate) {
-        console.log("Idle");
         stage_id = props.stages.find((s) => s.name_key === "Idle")?.id;
       } else {
         const duedateStr = duedate.toISOString().slice(0, 10);
 
         if (duedateStr < todayStr) {
-          console.log("Overdue");
           stage_id = props.stages.find((s) => s.name_key === "Overdue")?.id;
         } else if (duedateStr === todayStr) {
-          console.log("Due Today");
           stage_id = props.stages.find((s) => s.name_key === "Due Today")?.id;
         } else {
           // Calculate date ranges for tomorrow, this week, next week
@@ -1526,22 +1510,18 @@ export default {
           const twoWeeksStr = twoWeeks.toISOString().slice(0, 10);
 
           if (duedateStr === tomorrowStr) {
-            console.log("Due Tomorrow");
             stage_id = props.stages.find(
               (s) => s.name_key === "Due This Week"
             )?.id;
           } else if (duedateStr > todayStr && duedateStr < nextWeekStr) {
-            console.log("Due This Week");
             stage_id = props.stages.find(
               (s) => s.name_key === "Due This Week"
             )?.id;
           } else if (duedateStr >= nextWeekStr && duedateStr < twoWeeksStr) {
-            console.log("Due Next Week");
             stage_id = props.stages.find(
               (s) => s.name_key === "Due Next Week"
             )?.id;
           } else if (duedateStr >= twoWeeksStr) {
-            console.log("Due Later");
             stage_id = props.stages.find((s) => s.name_key === "Due Later")?.id;
           } else {
             console.error("No matching stage found for due date");
@@ -1577,16 +1557,13 @@ export default {
     };
 
     const handleTaskViewTaskUpdate = (data) => {
-      console.log("handleTaskViewTaskUpdate in kanban comp", data);
       const deal_id = selectedDeal.value.id;
       const stageId = getTaskStageId(data.new_duedate);
-      console.log("new stage ID for updated task:", stageId);
       const stage = ref(displayStages.value.find((s) => s.id === stageId));
       const oldStageId = getTaskStageId(data.old_duedate);
       const old_stage = ref(
         displayStages.value.find((s) => s.id === oldStageId)
       );
-      console.log("old stage ID for updated task:", oldStageId);
       if (stage.value && old_stage.value) {
         const deal = displayStages.value
           .flatMap((s) => s.deals)

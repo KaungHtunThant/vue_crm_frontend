@@ -120,8 +120,6 @@ export default {
         localStorage.setItem("backgroundImage", imageUrl);
         localStorage.setItem("backgroundImage_id", response.data.data.id);
 
-        console.log("API response:", response);
-
         if (response.status === 200 || response.status === 201) {
           toast.success(response.data.message, {
             timeout: 3000,

@@ -186,8 +186,6 @@ export default {
 
     const handleFolderSubmit = async (folderData) => {
       try {
-        // console.log("📤 بيانات المجلد المرسلة:", folderData);
-
         let response;
         if (folderData.id) {
           response = await updateDocuments(folderData.id, {
@@ -211,25 +209,9 @@ export default {
 
         folderFormModal.value.hide();
       } catch (error) {
-        // console.error("❌ خطأ أثناء تعديل المجلد:", error);
         toast.error(t("error.saveFailed"), { timeout: 3000 });
       }
     };
-
-    // const handleFolderImport = async (files) => {
-    //   try {
-    //     console.log("Importing files:", files);
-    //     importFolderModal.value.hide();
-    //     toast.success(t("success.imported"), {
-    //       timeout: 3000,
-    //     });
-    //   } catch (error) {
-    //     toast.error(t("error.importFailed"), {
-    //       timeout: 3000,
-    //     });
-    //     console.error("Error importing files:", error);
-    //   }
-    // };
 
     const deleteFolder = async (id) => {
       try {
@@ -262,7 +244,7 @@ export default {
 
     const downloadFolder = async (folderId) => {
       try {
-        console.log("Downloading folder:", folderId);
+        console.info("Downloading folder:", folderId);
         await new Promise((resolve) => setTimeout(resolve, 1000));
         toast.success(t("success.downloadStarted"), {
           timeout: 3000,
@@ -296,7 +278,6 @@ export default {
       }
 
       try {
-        console.log("Row clicked:", item);
         const folders = items.value;
         const currentFolder = folders.find((folder) => folder.id === item.id);
         if (currentFolder && currentFolder.full_path) {

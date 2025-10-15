@@ -113,7 +113,6 @@ export default {
     },
     async handleRequestDeal() {
       try {
-        console.log(this.search_val);
         const response = await createApproval(this.search_val);
         if (response.status === 200 || response.status === 201) {
           this.toast.success(response.data.message);

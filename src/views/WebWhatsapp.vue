@@ -228,12 +228,12 @@ export default {
             this.qrCode
           )}`;
           this.isLoading = false;
-          console.log("QR Code retrieved successfully");
+          console.info("QR Code retrieved successfully");
         }
       } catch (error) {
         console.error("Error fetching QR code:", error);
         if (error.response?.status === 404) {
-          console.log("QR code not yet available, retrying...");
+          console.info("QR code not yet available, retrying...");
         }
       }
     },
@@ -260,10 +260,10 @@ export default {
           }
 
           this.showStatus("WhatsApp connected successfully!", "success");
-          console.log("WhatsApp connected successfully!");
+          console.info("WhatsApp connected successfully!");
         } else if (response.data.status === "initializing") {
           this.isLoading = true;
-          console.log("WhatsApp is still initializing...");
+          console.info("WhatsApp is still initializing...");
         }
       } catch (error) {
         console.error("Error checking WhatsApp status:", error);

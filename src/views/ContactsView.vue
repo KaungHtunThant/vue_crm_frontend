@@ -443,7 +443,7 @@ export default {
     watch(
       tableData,
       (newValue) => {
-        console.log("Items changed:", newValue);
+        console.info("Items changed:", newValue);
       },
       { immediate: true, deep: true }
     );
@@ -451,7 +451,7 @@ export default {
     watch(
       filteredItems,
       (newFilteredItems) => {
-        console.log("Filtered items:", {
+        console.info("Filtered items:", {
           length: newFilteredItems?.length,
           items: newFilteredItems,
         });

@@ -252,7 +252,6 @@ export default {
     async fetchMessages(conversationId, chatObj) {
       try {
         const response = await getMessageConv(conversationId);
-        console.log("Messages response:", response.data);
         if (response.data && response.data.data) {
           chatObj.messages = response.data.data.map((msg) => ({
             id: msg.id,
@@ -285,7 +284,6 @@ export default {
 
           this.chats[index].isActive = true;
           this.chats[index].unread_count = 0;
-          console.log("opening chat:", chat);
           this.$emit("select-chat", {
             ...chat,
             id: chat.id,
@@ -394,14 +392,11 @@ export default {
           conversation_id: chat.id,
           phone: chat.phone.phone || chat.phone,
         };
-        console.log("Processed chat:", processed_chat);
         this.chats.unshift(processed_chat);
         chatIndex = this.chats.length - 1;
       } else {
         processed_chat = this.chats[chatIndex];
-        console.log("Chat already exists:", processed_chat);
       }
-      console.log("final processed chat and index", processed_chat, chatIndex);
       this.openChat(processed_chat, chatIndex);
     },
     openFilterModal() {
@@ -465,7 +460,6 @@ export default {
           this.isLoading = false;
         }
         this.offset += 10;
-        console.log("Updated chats:", this.chats);
         // Add logic here to load more chats or perform any desired action
       }
     },

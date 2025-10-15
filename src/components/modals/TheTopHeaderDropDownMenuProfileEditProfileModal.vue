@@ -131,7 +131,6 @@ export default {
           throw new Error(response.data.message);
         }
         this.userData = response.data.data;
-        console.log("User Data:", this.userData);
       } catch (error) {
         this.toast.error(error.message, {
           timeout: 3000,

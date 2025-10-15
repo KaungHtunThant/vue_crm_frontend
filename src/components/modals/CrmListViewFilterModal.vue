@@ -131,7 +131,6 @@ export default {
     const updateFilters = (newFilters) => {
       if (newFilters) {
         filters.value = { ...newFilters };
-        console.log("Updated filters:", filters.value);
         emit("update:modelValue", { ...filters.value });
       }
     };
@@ -173,7 +172,6 @@ export default {
       () => props.stages,
       (newStages) => {
         local_stages.value = newStages;
-        console.log("filters local_stages", local_stages.value);
       },
       { deep: true }
     );
@@ -182,7 +180,6 @@ export default {
       () => props.sources,
       (newSources) => {
         local_sources.value = newSources;
-        console.log("filters local_sources", local_sources.value);
       },
       { deep: true }
     );
@@ -190,7 +187,6 @@ export default {
     watch(
       () => props.users,
       (newUsers) => {
-        console.log("filters new users", newUsers);
         local_users.value = newUsers;
       },
       { deep: true }

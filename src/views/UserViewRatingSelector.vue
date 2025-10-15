@@ -30,7 +30,6 @@ export default {
     const local_rating_id = ref(props.rating_id);
     const ratingStore = useRatingStore();
     watch(local_rating_id, (newVal) => {
-      console.log("updating", newVal, props.user_id);
       emit("rating-changed", newVal, props.user_id);
     });
 

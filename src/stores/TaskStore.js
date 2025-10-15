@@ -27,7 +27,6 @@ export const useTaskStore = defineStore("task", {
       try {
         const task_stages = ["Overdue", "Today", "Tomorrow", "Idle"];
         for (const stage of task_stages) {
-          console.log(`Fetching count for stage: ${stage}`);
           await fetchTasksCountByStageName(stage).then((res) => {
             if (res.status !== 200) {
               throw new Error(res.data.message);

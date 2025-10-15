@@ -236,7 +236,6 @@ export default {
 
     const toggleStatus = async (event) => {
       try {
-        console.log("event target:", event);
         const newStatus = event.status ? "active" : "inactive";
         const response = await updateUser(event.id, { status: newStatus });
         if (response.status !== 200) {

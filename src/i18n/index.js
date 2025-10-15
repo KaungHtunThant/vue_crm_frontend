@@ -18,7 +18,6 @@ async function loadTranslationsFromAPI(locale) {
   try {
     const token = Cookies.get("authToken");
     if (!token) {
-      console.log("Not authenticated.");
       return null;
     }
     const response = await getTranslations(locale);

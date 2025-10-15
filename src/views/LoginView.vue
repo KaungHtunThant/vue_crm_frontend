@@ -133,7 +133,6 @@ export default {
           );
           localStorage.setItem("locale", response.data.user.locale);
           const locale = localStorage.getItem("locale") || "en";
-          console.log("Locale:", locale);
           await initializeTranslations(locale);
           this.$i18n.locale = locale;
           this.email = "";
@@ -143,7 +142,6 @@ export default {
             response.data.user.role === "after-sales"
               ? "/crm-after-sales"
               : "/crm-kanban";
-          console.log("Default Redirect:", defaultRedirect);
           this.permissionStore.setPermissions(response.data.user.permissions);
           this.$emit("loginSuccess");
           let bg_fetch = await getBackgroundId(response.data.user.bg_image_id);

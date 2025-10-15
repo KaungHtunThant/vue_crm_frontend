@@ -902,7 +902,6 @@ export default {
 
     const OpenCreateModal = () => {
       const item = document.getElementById("broadcastMessageCreateModal");
-      console.log(item);
       if (!item) {
         console.error("Modal element not found");
         return;
@@ -1089,8 +1088,6 @@ export default {
             return;
           }
         }
-
-        console.log("Settings saved:", this.settings);
         this.toast.success(this.$t("success.saved"), {
           timeout: 3000,
         });

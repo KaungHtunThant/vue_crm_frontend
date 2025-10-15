@@ -346,7 +346,6 @@ export default {
       modal.show();
     };
     const handleFilters = (filters) => {
-      console.log("TopHeader2 emits filter-applied", filters);
       emit("filter-applied", filters);
     };
 
@@ -385,7 +384,6 @@ export default {
     });
     const setConversation = (data) => {
       conversation.value = data;
-      console.log("setConversation in Top header 2 comp", conversation.value);
     };
     const setNewMessage = (data) => {
       local_new_message.value = data;
@@ -411,7 +409,6 @@ export default {
       }
     };
     const handleSearch = () => {
-      console.log("Search triggered with text:", searchText.value);
       const search = searchText.value.trim();
       emit("search-deals", search);
     };

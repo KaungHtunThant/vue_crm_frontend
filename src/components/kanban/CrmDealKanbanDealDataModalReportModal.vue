@@ -113,7 +113,6 @@ export default {
       });
       const response = await updateAnswersByDealId(this.deal_id, formData);
       if (response.status === 200) {
-        console.log("Answers updated successfully");
         this.toast.success(response.data.message, {
           timeout: 3000,
         });

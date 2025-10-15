@@ -28,7 +28,6 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      console.log("Unauthorized access - redirecting to login");
       Cookies.remove("authToken");
       Cookies.remove("name");
       Cookies.remove("email");

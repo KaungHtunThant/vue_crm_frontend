@@ -100,7 +100,6 @@ export default {
     },
     handleCheckboxChange(event) {
       const choiceId = event.target.value;
-      console.log("Checkbox changed:", choiceId);
       if (!this.local_question.answers) {
         this.local_question.answers = [];
       }
@@ -118,7 +117,6 @@ export default {
         this.local_question.answers[0] = {};
       }
       this.local_question.answers[0].extra = event.target.value;
-      console.log("Text input changed:", this.local_question.answers[0].extra);
     },
   },
 };

@@ -1678,17 +1678,20 @@
                   <div
                     class="row bg-input-subtle border-top border-bottom py-1"
                   >
-                    <div class="col-4">
+                    <div class="col-4 text-center">
                       {{ t("kanban-modal-edit-tasks-table-description") }}
                     </div>
-                    <div class="col-3">
+                    <div class="col-2 text-center">
                       {{ t("kanban-modal-edit-tasks-table-due-date") }}
                     </div>
-                    <div class="col-3">
+                    <div class="col-2 text-center">
                       {{ t("kanban-modal-edit-tasks-table-due-time") }}
                     </div>
-                    <div class="col-2">
+                    <div class="col-2 text-center">
                       {{ t("kanban-modal-edit-tasks-table-status") }}
+                    </div>
+                    <div class="col-2 text-center">
+                      {{ t("kanban-modal-edit-tasks-table-actions") }}
                     </div>
                   </div>
                   <!-- data Tasks -->
@@ -1701,7 +1704,7 @@
                     <div class="col-4">
                       {{ task.description }}
                     </div>
-                    <div class="col-3">
+                    <div class="col-2">
                       <input
                         type="date"
                         lang="en"
@@ -1713,7 +1716,7 @@
                         @change="taskDataModified = true"
                       />
                     </div>
-                    <div class="col-3">
+                    <div class="col-2">
                       <input
                         type="time"
                         class="form-control bg-secondary-subtle text-secondary py-2 me-1"
@@ -1722,22 +1725,32 @@
                         @change="taskDataModified = true"
                       />
                     </div>
+                    <div class="col-2 text-center">
+                      <span
+                        class="badge"
+                        :style="{
+                          fontSize: '12px',
+                          backgroundColor: task.stage?.color,
+                        }"
+                        >{{ t("tasks-status-" + task.stage?.name) }}</span
+                      >
+                    </div>
                     <div class="col-2">
+                      <input
+                        type="button"
+                        class="btn btn-sm btn-dark align-middle me-2"
+                        @click="handleTaskCompletion(task.id)"
+                        :value="t('kanban-modal-edit-tasks-button-complete')"
+                      />
                       <button
                         v-show="taskDataModified"
-                        class="btn btn-sm btn-primary text-light align-middle me-2"
+                        class="btn btn-sm btn-primary text-light align-middle"
                         @click="
                           handleTaskUpdate(task.id, task.duedate, task.duetime)
                         "
                       >
                         <i class="fa-solid fa-check"></i>
                       </button>
-                      <input
-                        type="checkbox"
-                        class="custom-checkbox align-middle"
-                        v-model="task.status"
-                        @change="() => handleTaskCompletion(task.id)"
-                      />
                     </div>
                   </div>
                 </div>
@@ -3102,8 +3115,6 @@ export default {
           phones.push(customerData.phone2);
         }
 
-        console.log("file", customerData.ticket);
-
         const formData = {
           name: customerData.name,
           nationality: customerData.nationality,
@@ -3314,18 +3325,13 @@ export default {
       isEditMode.value = true;
     };
     const openWhatsappModal = async (id) => {
-      console.log("deal data modal emit start");
       try {
         let conversation = await fetchConversationByDealId(id);
         if (!conversation.data?.data) {
           conversation = await createConversation(id);
         }
-        console.log("conversation", conversation);
-
         selected_conversation.value = conversation.data.data;
-        console.log("selected_conversation.value", selected_conversation.value);
         await nextTick();
-
         const modalElement = document.getElementById("whatsappModal");
         if (modalElement) {
           const modal = new Modal(modalElement);
@@ -3380,7 +3386,6 @@ export default {
           text_body: customerData.comment,
           deal_id: props.deal?.id,
         };
-        console.log(formData);
         const response = await createComment(formData);
         if (response.status === 200 || response.status === 201) {
           const newComment = {
@@ -3445,6 +3450,7 @@ export default {
             duedate: customerData.date,
             duetime: customerData.time,
             status: "active",
+            stage: getTaskStageName(customerData.date),
           });
           toast.success(response.data.message, {
             timeout: 3000,
@@ -3642,7 +3648,6 @@ export default {
           modalElement.__cancelEditHandler
         );
       }
-      console.log("viewType", props.viewType);
       if (props.viewType == "after-sales") {
         getAvailableAfterSalesStages().then((response) => {
           if (response.data && response.data.data) {
@@ -3693,10 +3698,8 @@ export default {
       }
     };
     const handleTicketUpload = (event) => {
-      console.log("File upload event start");
       const file = event.target.files[0];
       if (file) {
-        console.log("Selected file:", file);
         customerData.ticket = file;
         toast.success(t("success.fileUploaded"), {
           timeout: 3000,
@@ -3704,10 +3707,8 @@ export default {
       }
     };
     const handlePassportUpload = (event) => {
-      console.log("File upload event start");
       const passport = event.target.files[0];
       if (passport) {
-        console.log("Selected file:", passport);
         customerData.passport = passport;
         toast.success(t("success.fileUploaded"), {
           timeout: 3000,
@@ -3747,7 +3748,6 @@ export default {
       if (old_task_id.value !== task_id) {
         old_duedate.value = duedate;
         old_task_id.value = task_id;
-        console.log("storing old duedate", old_duedate.value);
       }
     };
     const handleTaskUpdate = async (taskId, duedate, duetime) => {
@@ -3777,6 +3777,11 @@ export default {
               old_duedate: old_duedate.value,
             });
           }
+          const stage = getTaskStageName(duedate);
+          const task = customerData.tasks.find((t) => t.id === taskId);
+          if (task) {
+            task.stage = stage;
+          }
         } else {
           toast.error(response.data.message, {
             timeout: 3000,
@@ -3788,6 +3793,62 @@ export default {
           timeout: 3000,
         });
       }
+    };
+
+    const getTaskStageName = (due_date) => {
+      let name = "";
+      let color = "";
+      const duedate = due_date ? new Date(due_date) : null;
+      const today = new Date();
+      const todayStr = today.toISOString().slice(0, 10);
+      if (!duedate) {
+        name = name + "idle";
+        color = "#1c6ab8";
+      } else {
+        const duedateStr = duedate.toISOString().slice(0, 10);
+
+        if (duedateStr < todayStr) {
+          name = name + "overdue";
+          color = "#b80f0f";
+        } else if (duedateStr === todayStr) {
+          name = name + "due-today";
+          color = "#bf6811";
+        } else {
+          // Calculate date ranges for tomorrow, this week, next week
+          const tomorrow = new Date(today);
+          tomorrow.setDate(today.getDate() + 1);
+          const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+
+          const nextWeek = new Date(today);
+          // Set nextWeek to the start of next week (Monday)
+          const dayOfWeek = today.getDay(); // 0 (Sun) - 6 (Sat)
+          const daysUntilNextMonday = (8 - dayOfWeek) % 7 || 7;
+          nextWeek.setDate(today.getDate() + daysUntilNextMonday);
+          const nextWeekStr = nextWeek.toISOString().slice(0, 10);
+
+          const twoWeeks = new Date(today);
+          const daysUntilSecondMonday = daysUntilNextMonday + 7;
+          twoWeeks.setDate(today.getDate() + daysUntilSecondMonday);
+          const twoWeeksStr = twoWeeks.toISOString().slice(0, 10);
+
+          if (duedateStr === tomorrowStr) {
+            name = name + "due-tomorrow";
+            color = "#bf6811";
+          } else if (duedateStr > todayStr && duedateStr < nextWeekStr) {
+            name = name + "due-this-week";
+            color = "#b8b818";
+          } else if (duedateStr >= nextWeekStr && duedateStr < twoWeeksStr) {
+            name = name + "due-next-week";
+            color = "#15ad71";
+          } else if (duedateStr >= twoWeeksStr) {
+            name = name + "due-later";
+            color = "#12a193";
+          } else {
+            console.error("No matching stage found for due date");
+          }
+        }
+      }
+      return { name: name, color: color };
     };
 
     const toggleIsLocal = (value) => {

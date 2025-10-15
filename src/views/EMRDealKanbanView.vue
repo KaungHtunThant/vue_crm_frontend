@@ -189,7 +189,6 @@ export default {
       eventClick: async (info) => {
         const ticketId = info.event.extendedProps.ticketId;
         if (ticketId) {
-          console.log("Opening deal with ID:", ticketId);
           await openDealDataCard(ticketId);
         } else {
           toast.error("لم يتم العثور على رقم التذكرة لفتح بياناتها");

@@ -292,7 +292,6 @@ const sortedUserOptions = computed(() => {
 // Options for dropdowns
 const fetchStages = async () => {
   try {
-    console.log("User role:", user_role.value);
     const response = await getAvailableStages(
       user_role.value == "after-sales" ? "after-sales" : "deals"
     );

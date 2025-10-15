@@ -223,7 +223,6 @@ export default {
 
     const OpenCreateModal = () => {
       const item = document.getElementById("broadcastMessageCreateModal");
-      console.log(item);
       if (!item) {
         console.error("Modal element not found");
         return;

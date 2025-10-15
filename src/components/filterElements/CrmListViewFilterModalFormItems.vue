@@ -1187,7 +1187,6 @@ export default {
     watch(
       () => localFilters.value,
       (newFilters) => {
-        console.log("filter reset", newFilters);
         emit("update:filters", newFilters);
       },
       { deep: true }

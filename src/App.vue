@@ -125,7 +125,7 @@ export default {
         if (bg_id) {
           let response = await getBackgroundId(bg_id);
           if (!response) {
-            console.log("No background image found");
+            console.error("No background image found");
             return;
           }
           const savedImage = response.data.data.url;

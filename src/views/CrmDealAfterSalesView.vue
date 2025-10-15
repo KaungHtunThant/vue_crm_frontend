@@ -102,7 +102,6 @@ export default {
     };
 
     const applyFilters = async (newFilters) => {
-      console.log("applyFilters called with:", newFilters);
       filters.value = { ...newFilters };
       try {
         const formattedFilters = {};
@@ -221,10 +220,6 @@ export default {
     };
 
     const openWhatsappModal = (conversation) => {
-      console.log(
-        "selected conversation in Crm kanban component",
-        conversation
-      );
       selected_conversation.value = conversation;
     };
 

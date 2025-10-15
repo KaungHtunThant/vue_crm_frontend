@@ -15,7 +15,6 @@ export const useWhatsAppStore = defineStore("whatsapp", {
       this.isLoading = true;
       try {
         const response = await expressApi.get(`/client-status/${userId}`);
-        console.log("this is response", response);
         this.isConnected = response.data.isConnected;
         this.connectedUser = response.data.user;
         this.Status = response.data.status;

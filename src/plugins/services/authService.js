@@ -454,7 +454,6 @@ export const getKanbanQuestions = async (deal_id) => {
 };
 
 export const updateAnswersByDealId = async (deal_id, formData) => {
-  console.log("formData", formData);
   return await axios.put(`/answers/${deal_id}`, { answers: formData });
 };
 

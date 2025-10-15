@@ -338,15 +338,6 @@ export default {
     };
 
     const checkLastMessageTime = () => {
-      // console.log("Checking last message time...", props.lastMessageDate);
-      // if (props.lastMessageDate) {
-      //   const lastMessageTime = new Date(props.lastMessageDate).getTime();
-      //   const currentTime = new Date().getTime();
-      //   const hoursDiff = (currentTime - lastMessageTime) / (1000 * 60 * 60);
-      //   showWarning.value = hoursDiff >= 24;
-      // } else {
-      //   showWarning.value = true;
-      // }
       if (!props.lastMessageDate) {
         showWarning.value = true;
       } else {
@@ -358,7 +349,6 @@ export default {
       const response = await getInitMessages();
       if (response.data && response.data.data) {
         init_messages.value = response.data.data;
-        console.log("Init messages:", init_messages.value);
       }
     };
 
@@ -482,7 +472,6 @@ export default {
           }
         }
       } else {
-        console.log("No files were selected.");
         this.selectedFiles = [];
         this.isProcessing = false;
       }

@@ -106,7 +106,6 @@ export default {
           this.clearForm();
           this.closeDealModal();
         }
-        console.log("dealData being sent:", JSON.stringify(dealData, null, 2));
       } catch (error) {
         this.toast.error(
           error.response?.data?.message || this.t("error.createDeal"),

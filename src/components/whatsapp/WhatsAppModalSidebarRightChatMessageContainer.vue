@@ -161,7 +161,6 @@ export default {
       });
     },
     scrollToBottom() {
-      console.log("scrollToBottom triggered");
       const chatBox = this.$parent.$refs.chatBox;
       chatBox.scrollTo({
         top: chatBox.scrollHeight,

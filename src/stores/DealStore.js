@@ -132,17 +132,13 @@ export const useDealStore = defineStore("deal", {
       return this.getDynamicDealsByStage(stage).length;
     },
     getDynamicDealsByStage(stage) {
-      console.log("getDynamicDealsByStage");
       let deals = [];
-      console.log("rules", stage);
       if (stage.rules?.includes(rules.OLD_DEALS_ONLY)) {
-        console.log("OLD_DEALS_ONLY");
         deals = this.deals.filter(
           (deal) => deal.stage_id === stage.parent_id && deal.old_deal
         );
       }
       if (stage.rules?.includes(rules.NEW_DEALS_ONLY)) {
-        console.log("NEW_DEALS_ONLY");
         deals = [
           ...deals,
           ...this.deals.filter(

@@ -101,7 +101,6 @@ export default {
     };
 
     const applyFilters = async (newFilters) => {
-      console.log("applyFilters called with:", newFilters);
       filters.value = { ...newFilters };
       try {
         const formattedFilters = {};
@@ -194,7 +193,6 @@ export default {
           sort_order: "",
         };
         await fetchStages();
-        // console.log("reset filter kanban");
 
         toast.success(t("success.resetFilters"), {
           timeout: 3000,
@@ -221,10 +219,6 @@ export default {
     };
 
     const openWhatsappModal = (conversation) => {
-      console.log(
-        "selected conversation in Crm kanban component",
-        conversation
-      );
       selected_conversation.value = conversation;
     };
 

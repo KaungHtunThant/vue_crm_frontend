@@ -289,7 +289,6 @@ export default {
     const fetchStages = async () => {
       try {
         if (stages.value.length === 0) {
-          console.log("Fetching stages...");
           const stageRes = await getAvailableStages();
 
           stages.value = stageRes.data.data.map((stage) => ({

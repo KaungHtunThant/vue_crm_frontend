@@ -221,7 +221,6 @@ export default {
       return this.selectedChat?.messages || [];
     },
     lastMessageDate() {
-      console.log("lastMessageDate", this.selectedChat.created_at_last_message);
       return this.selectedChat.created_at_last_message;
     },
   },
@@ -278,7 +277,6 @@ export default {
     },
     async WhatasppLogout() {
       const response = await weblogout();
-      console.log(response);
       if (response.success) {
         this.isConnected = false;
         this.handleLoginClick();
@@ -298,7 +296,6 @@ export default {
           }
 
           const response = await sendMessage(messageToSend);
-          console.log("Message sent:", response);
           const newMessage = {
             id: response.data?.data?.id || Date.now(),
             type: "msg-me",
