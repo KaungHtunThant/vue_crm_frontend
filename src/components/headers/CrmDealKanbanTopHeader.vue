@@ -27,6 +27,16 @@
               </button>
               <button
                 class="btn text-white me-2 fs-7 btnKanban btn-hover"
+                @click="openAfterSalesKanban"
+                v-if="
+                  permissionStore.hasPermission(PERMISSIONS.AFTER_SALES_KANBAN)
+                "
+                style="padding: 0.5rem 2rem"
+              >
+                {{ t("header-subnav-item-kanban-after-sales") }}
+              </button>
+              <button
+                class="btn text-white me-2 fs-7 btnKanban btn-hover"
                 @click="openCrmTasks"
                 v-if="permissionStore.hasPermission(PERMISSIONS.TASKS_KANBAN)"
                 style="padding: 0.5rem 2rem"
@@ -359,6 +369,9 @@ export default {
     const openCrmKanban = () => {
       router.push({ name: "CrmDealKanbanView" });
     };
+    const openAfterSalesKanban = () => {
+      router.push({ name: "CrmDealAfterSalesView" });
+    };
     const isSmallScreen = ref(window.innerWidth < 1050);
     const handleResize = () => {
       isSmallScreen.value = window.innerWidth < 1050;
@@ -451,6 +464,7 @@ export default {
       computed_notasks_count,
       showSearchInput,
       headerSelectedStatuses,
+      openAfterSalesKanban,
     };
   },
 
