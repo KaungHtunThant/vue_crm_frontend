@@ -1727,10 +1727,9 @@
                     </div>
                     <div class="col-2 text-center">
                       <span
-                        class="badge"
+                        class="fs-8"
                         :style="{
-                          fontSize: '12px',
-                          backgroundColor: task.stage?.color,
+                          color: task.stage?.color,
                         }"
                         >{{ t("tasks-status-" + task.stage?.name) }}</span
                       >
@@ -1738,13 +1737,13 @@
                     <div class="col-2">
                       <input
                         type="button"
-                        class="btn btn-sm btn-dark align-middle me-2"
+                        class="btn btn-sm btn-dark align-middle me-2 fs-7"
                         @click="handleTaskCompletion(task.id)"
                         :value="t('kanban-modal-edit-tasks-button-complete')"
                       />
                       <button
                         v-show="taskDataModified"
-                        class="btn btn-sm btn-primary text-light align-middle"
+                        class="btn btn-sm btn-primary text-light align-middle fs-7"
                         @click="
                           handleTaskUpdate(task.id, task.duedate, task.duetime)
                         "
@@ -4358,5 +4357,8 @@ label {
   background-color: var(--bs-dark);
   border-color: var(--bs-dark-subtle);
   accent-color: var(--bs-blue);
+}
+.fs-7 {
+  font-size: 0.9rem !important;
 }
 </style>
