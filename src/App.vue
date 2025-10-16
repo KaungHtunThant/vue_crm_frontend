@@ -176,10 +176,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
-.Vue-Toastification__container {
-  max-width: 320px !important;
-  z-index: 999;
-}
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

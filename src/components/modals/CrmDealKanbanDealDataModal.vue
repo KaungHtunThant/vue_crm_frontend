@@ -1713,7 +1713,10 @@
                         :placeholder="t('modals.selectDate')"
                         @mousedown="dateTaskClick"
                         @click="storeOldValue(task.id, task.duedate)"
-                        @change="taskDataModified = true"
+                        @change="
+                          taskDataModified = true;
+                          modified_id = task.id;
+                        "
                       />
                     </div>
                     <div class="col-2">
@@ -1722,7 +1725,10 @@
                         class="form-control bg-secondary-subtle text-secondary py-2 me-1"
                         v-model="task.duetime"
                         :placeholder="t('modals.selectTime')"
-                        @change="taskDataModified = true"
+                        @change="
+                          taskDataModified = true;
+                          modified_id = task.id;
+                        "
                       />
                     </div>
                     <div class="col-2 text-center">
@@ -1734,19 +1740,22 @@
                         >{{ t("tasks-status-" + task.stage?.name) }}</span
                       >
                     </div>
-                    <div class="col-2">
-                      <input
-                        type="button"
-                        class="btn btn-sm btn-dark align-middle me-2 fs-7"
-                        @click="handleTaskCompletion(task.id)"
-                        :value="t('kanban-modal-edit-tasks-button-complete')"
-                      />
+                    <div class="col-2 text-center">
                       <button
-                        v-show="taskDataModified"
-                        class="btn btn-sm btn-primary text-light align-middle fs-7"
+                        v-show="taskDataModified && modified_id === task.id"
+                        class="btn btn-sm btn-outline-warning align-middle fs-7 me-1"
                         @click="
                           handleTaskUpdate(task.id, task.duedate, task.duetime)
                         "
+                        :title="t('kanban-modal-edit-tasks-button-update')"
+                      >
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button
+                        v-show="task.status !== 'completed'"
+                        class="btn btn-sm btn-outline-success align-middle fs-7"
+                        @click="handleTaskCompletion(task.id)"
+                        :title="t('kanban-modal-edit-tasks-button-complete')"
                       >
                         <i class="fa-solid fa-check"></i>
                       </button>
@@ -1894,6 +1903,7 @@ export default {
     const dataDealCopy = (obj) => JSON.parse(JSON.stringify(obj));
 
     const taskDataModified = ref(false);
+    const modified_id = ref(null);
 
     const resizeDisplayedCommentWidth = (commentId) => {
       nextTick(() => {
@@ -3911,7 +3921,9 @@ export default {
       packageStore.fetchAll();
       user_role.value = Cookies.get("user_role");
     });
+
     return {
+      modified_id,
       getStageColor,
       getStageName,
       toggleIsLocal,
