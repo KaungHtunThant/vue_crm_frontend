@@ -1355,7 +1355,9 @@ export default {
         const userRole = Cookies.get("user_role");
         const user_id = Cookies.get("user_id");
         let userChannel =
-          userRole === "super-admin" ? userRole : `${userRole}-${user_id}`;
+          userRole === "super-admin" || userRole === "after-sales"
+            ? userRole
+            : `${userRole}-${user_id}`;
 
         if (window.Echo && userChannel) {
           window.Echo.channel(userChannel)
