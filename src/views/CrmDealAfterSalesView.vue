@@ -74,6 +74,7 @@ export default {
       try {
         searching.value = true;
         searchVal.value = searchText || "";
+        console.log("Fetching stages with search:", searchText);
         const response = await getAfterSalesKanban(searchText);
         if (response.status == 200) {
           stages.value = response.data.data.map((stage) => ({

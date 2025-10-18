@@ -1,15 +1,15 @@
 <template>
   <div class="mt-2">
     <crm-kanban-header
-      :initialFilters="filters"
+      :initial-filters="filters"
       @filter-applied="applyFilters"
       @reset-filter="resetFilter"
       @search-deals="HandleSearch"
       :selected_conversation="selected_conversation"
       :new_message="new_message"
       :update_message="update_message"
-      :applyActualFiltersProp="applyFilters"
-      :resetActualFiltersProp="resetFilter"
+      :apply-actual-filters-prop="applyFilters"
+      :reset-actual-filters-prop="resetFilter"
     />
   </div>
   <crm-kanban-kanban-board
