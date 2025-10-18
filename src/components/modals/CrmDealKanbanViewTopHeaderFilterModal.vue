@@ -118,6 +118,7 @@ export default {
         // emit("apply-filters", { ...headerFilterData.value });
         closeFilterModal();
       } catch (error) {
+        console.log("Error applying filters:", error);
         toast.error(error.message, { timeout: 3000 });
       } finally {
         isApplyingFilters.value = false;

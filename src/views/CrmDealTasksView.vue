@@ -8,6 +8,8 @@
       :selected_conversation="selected_conversation"
       :new_message="new_message"
       :update_message="update_message"
+      :apply-actual-filters-prop="applyFilters"
+      :reset-actual-filters-prop="resetFilter"
     />
   </div>
   <!-- <div class="watsappIcon position-absolute z-3">
@@ -82,7 +84,7 @@ export default {
             formattedFilters["filters[stage_id]"] = filters.value.stage_id;
           }
           if (filters.value.user_id) {
-            formattedFilters["filters[assigned_to_id]"] = filters.value.user_id;
+            formattedFilters["filters[user_id]"] = filters.value.user_id;
           }
           if (filters.value.created_at_start) {
             formattedFilters["filters[created_date_start]"] =
