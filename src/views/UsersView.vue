@@ -66,14 +66,14 @@
 
       <Column :header="t('users-table-header-fullname')">
         <template #body="slotProps">
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center py-1">
             <img
               :src="
                 slotProps.data.image ||
                 require('@/assets/default-avatar-profile.webp')
               "
               alt="User Image"
-              class="rounded-circle me-2"
+              class="rounded-circle me-3"
               style="width: 45px; height: 45px"
             />
             <div>
