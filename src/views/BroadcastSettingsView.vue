@@ -121,7 +121,7 @@ import {
   getBroadcasts,
   updateBroadcast,
   updateBroadcastPosition,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/broadcastsService";
 import BroadcastMessageCreateModal from "@/components/modals/BroadcastSettingsViewMessageCreateModal.vue";
 import { Modal } from "bootstrap";
 

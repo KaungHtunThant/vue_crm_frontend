@@ -310,18 +310,22 @@ import TicketCard from "@/components/kanban/CrmDealKanbanBoardDealsTicketCard.vu
 import { Modal } from "bootstrap";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
+
 import {
   updateDealStage,
   showDeal,
   fetchAdditionalDealsByStageId,
   addViewCount,
-  getStagesChildren,
-  getAllPackages,
-  getAvailableStages,
-  createApproval,
   toggleHighlight,
   pullDealsFromOldSystem,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/dealsService";
+
+import { getStagesChildren } from "@/plugins/services/stagesService";
+import { getAllPackages } from "@/plugins/services/packagesService";
+
+import { createApproval } from "@/plugins/services/approvalsService";
+
+import { getAvailableStages } from "@/plugins/services/stagesService";
 import { useI18n } from "vue-i18n";
 import Cookies from "js-cookie";
 import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";

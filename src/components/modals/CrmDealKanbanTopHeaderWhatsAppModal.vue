@@ -101,11 +101,15 @@ import expressApi from "@/plugins/expressApi";
 import {
   changePinStatus,
   getMessageConv,
+} from "@/plugins/services/whatsappService";
+
+import {
   webstart,
   webqrcode,
-  getUserId,
   checkstatus,
-} from "@/plugins/services/authService";
+  getUserId,
+} from "@/plugins/services/webClientService";
+
 import ChatNameModal from "@/components/whatsapp/WhatsAppModalChatNameModal.vue";
 import Cookies from "js-cookie";
 

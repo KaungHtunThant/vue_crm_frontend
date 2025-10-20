@@ -232,11 +232,9 @@
 import { onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePermissionStore, PERMISSIONS } from "@/stores/permissionStore";
-import {
-  getSources,
-  getUser,
-  getAvailableStages,
-} from "@/plugins/services/authService";
+import { getSources } from "@/plugins/services/dealsService";
+import { getUser } from "@/plugins/services/userService";
+import { getAvailableStages } from "@/plugins/services/stagesService";
 
 export default {
   name: "CrmDealKanbanViewTopHeaderFilterModalFormItems",

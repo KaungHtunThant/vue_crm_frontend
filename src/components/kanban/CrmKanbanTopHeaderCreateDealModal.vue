@@ -215,11 +215,10 @@
 <script>
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
-import {
-  createDeal,
-  getUser,
-  getSources,
-} from "@/plugins/services/authService";
+
+import { createDeal } from "@/plugins/services/dealsService";
+import { getUser } from "@/plugins/services/userService";
+import { getSources } from "@/plugins/services/dealsService";
 export default {
   name: "CrmKanbanTopHeaderCreateDealModal",
   setup() {

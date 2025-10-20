@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { getUserById } from "@/plugins/services/authService";
+import { getUserById } from "@/plugins/services/userService";
 
 export default {
   name: "UserViewActionButtons",

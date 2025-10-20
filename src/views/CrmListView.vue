@@ -305,14 +305,19 @@ import {
   getDeals,
   showDeal,
   deleteDeals,
-  getSources,
   bulkUpdateDeals,
   bulkDeleteDeals,
-  getAllUsers,
   updateDealStage,
-  getAvailableStages,
-  getAllPackages,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/dealsService";
+
+import { getSources } from "@/plugins/services/dealsService";
+
+import { getAllUsers } from "@/plugins/services/userService";
+
+import { getAvailableStages } from "@/plugins/services/stagesService";
+
+import { getAllPackages } from "@/plugins/services/packagesService";
+
 import CrmListViewActionsDealModal from "@/components/modals/CrmListViewActionsDealModal.vue";
 import CrmListViewFilterModal from "@/components/modals/CrmListViewFilterModal.vue";
 import CrmListCreateDealModal from "@/components/modals/CrmListViewCreateDealModal.vue";

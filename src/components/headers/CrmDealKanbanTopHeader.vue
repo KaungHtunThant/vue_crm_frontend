@@ -218,10 +218,8 @@ import { usePermissionStore, PERMISSIONS } from "@/stores/permissionStore";
 import { useI18n } from "vue-i18n";
 import WhatsAppModal from "@/components/modals/CrmDealKanbanTopHeaderWhatsAppModal.vue";
 import SearchModalIpad from "@/components/headers/CrmKanbanTopHeaderSearchModalIpad.vue";
-import {
-  fetchTasksCountByStageName,
-  getconversations,
-} from "@/plugins/services/authService";
+import { getconversations } from "@/plugins/services/whatsappService";
+import { fetchTasksCountByStageName } from "@/plugins/services/tasksService";
 import Cookies from "js-cookie";
 
 export default {

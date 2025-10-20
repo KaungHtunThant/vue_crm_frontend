@@ -57,7 +57,7 @@
 import {
   getKanbanQuestions,
   updateAnswersByDealId,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/logsService";
 import { useI18n } from "vue-i18n";
 import QuestionsDiv from "./CrmDealKanbanDealDataModalReportModalQuestions.vue";
 import { useToast } from "vue-toastification";

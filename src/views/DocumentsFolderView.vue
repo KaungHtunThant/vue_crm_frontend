@@ -132,7 +132,7 @@ import {
   createDocuments,
   updateDocuments,
   deleteDocuments,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/documentsService";
 import { usePermissionStore, PERMISSIONS } from "@/stores/permissionStore";
 export default {
   name: "DocumentsFolderView",

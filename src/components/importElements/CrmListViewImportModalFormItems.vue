@@ -160,7 +160,7 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import { getSources } from "@/plugins/services/authService";
+import { getSources } from "@/plugins/services/dealsService";
 import * as XLSX from "xlsx";
 import { useI18n } from "vue-i18n";
 export default {

@@ -1,4 +1,7 @@
-import { getApprovals, updateApproval } from "@/plugins/services/authService";
+import {
+  getApprovals,
+  updateApproval,
+} from "@/plugins/services/approvalsService";
 import { defineStore } from "pinia";
 
 export const useApprovalStore = defineStore("approval", {

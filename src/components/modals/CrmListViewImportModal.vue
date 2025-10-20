@@ -42,7 +42,7 @@ import ImportForm from "@/components/importElements/CrmListViewImportModalFormIt
 import ImportButtons from "@/components/importElements/CrmListViewImportModalButtonsItems.vue";
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
-import { importDeals } from "@/plugins/services/authService";
+import { importDeals } from "@/plugins/services/dealsService";
 
 export default {
   name: "CrmListViewImportModal",

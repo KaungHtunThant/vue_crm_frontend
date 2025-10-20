@@ -171,14 +171,16 @@ import ShowData from "@/components/modals/CrmListViewShowDataModal.vue";
 import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
 import { useToast } from "vue-toastification";
-import {
-  updateApproval,
-  showDeal,
-  getAvailableStages,
-  getSources,
-  getAllUsers,
-  updateDealStage,
-} from "@/plugins/services/authService";
+import { updateApproval } from "@/plugins/services/approvalsService";
+
+import { showDeal, updateDealStage } from "@/plugins/services/dealsService";
+
+import { getAvailableStages } from "@/plugins/services/stagesService";
+
+import { getSources } from "@/plugins/services/dealsService";
+
+import { getAllUsers } from "@/plugins/services/userService";
+
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Swal from "sweetalert2";
 import { ref, onMounted, onUnmounted, nextTick, computed } from "vue";

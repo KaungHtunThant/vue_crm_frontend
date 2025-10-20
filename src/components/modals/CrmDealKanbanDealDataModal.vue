@@ -1741,21 +1741,26 @@ import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 import TrashDeal from "@/components/modals/CrmDealKanbanDealDataModalTrashDealModal.vue";
 import SuggestUserModal from "@/components/modals/SuggestUserModal.vue";
+
 import {
   fetchConversationByDealId,
-  getSources,
+  createConversation,
+} from "@/plugins/services/whatsappService";
+
+import { getSources } from "@/plugins/services/dealsService";
+
+import {
   createComment,
   updateComments,
-  createTask,
-  updateTask,
-  updateDealStage,
-  updateDeal,
-  createConversation,
-  // getLogsByDealId,
-  // getUser,
-  getAvailableStages,
   toggleCommentPin,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/commentsService";
+
+import { createTask, updateTask } from "@/plugins/services/tasksService";
+
+import { updateDealStage, updateDeal } from "@/plugins/services/dealsService";
+
+import { getAvailableStages } from "@/plugins/services/stagesService";
+
 import { PERMISSIONS, usePermissionStore } from "@/stores/permissionStore";
 import moveCardSound from "@/assets/move-card.wav";
 import { useLogStore } from "@/stores/logStore";

@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { getRoles } from "@/plugins/services/authService";
+import { getRoles } from "@/plugins/services/rolesService";
 import { useI18n } from "vue-i18n";
 export default {
   name: "UserViewFilterModalFormItems",
