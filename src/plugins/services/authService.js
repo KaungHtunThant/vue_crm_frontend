@@ -15,10 +15,16 @@ export const logout = () => {
   });
 };
 // get All users
-export const getUser = (filters) => {
+export const getUser = async (params = {}) => {
   const token = Cookies.get("authToken");
   return axios.get("/users", {
-    params: filters,
+    params: {
+      page: params.page || 1,
+      per_page: params.per_page || 10,
+      sort_by: params.sort_by || "id",
+      sort_type: params.sort_type || "desc",
+      ...params,
+    },
     headers: {
       Authorization: `Bearer ${token}`,
     },
