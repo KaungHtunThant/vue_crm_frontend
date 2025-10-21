@@ -1,7 +1,7 @@
 <template>
   <select v-model="local_rating_id" class="form-select">
     <option value="" disabled>
-      {{ t("users-table-rating-placeholder") }}
+      {{ t("users-table-rating-norating") }}
     </option>
     <option v-for="rating in ratings" :key="rating.id" :value="rating.id">
       {{ rating.name }}
