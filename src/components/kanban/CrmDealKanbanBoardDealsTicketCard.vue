@@ -46,8 +46,18 @@
           />
           {{ deal.name.length > 20 ? deal.name.slice(0, 20) + "…" : deal.name }}
         </span>
-        <span class="text-dark fs-7">
+        <!-- <span class="text-dark fs-7">
           {{ deal.view_count }} <i class="fa-solid fa-eye"></i>
+        </span> -->
+        <span class="d-flex align-items-center" v-if="!showCalendarDrag">
+          <button class="btn btn-link m-0 p-0" @click.stop="handleHighlight">
+            <!-- <i class="fa-solid fa-star text-warning"></i> -->
+            <i
+              class="fa-solid fa-bookmark position-absolute"
+              :class="deal.highlighted ? 'text-white' : 'text-warning'"
+              style="right: 8px; top: 1px; font-size: 18px"
+            ></i>
+          </button>
         </span>
       </div>
 
@@ -66,9 +76,13 @@
           </span>
           <i class="fa-solid fa-copy ms-1"></i>
         </span>
-        <span class="fw-normal text-dark">
+        <span class="fw-normal text-dark fs-7">
           <i :class="getIcon(deal.source_id)"></i>
         </span>
+
+        <!-- <span class="text-dark" style="font-size: 12px">
+          {{ deal.view_count }} <i class="fa-solid fa-eye"></i>
+        </span> -->
       </div>
 
       <!-- النجوم -->
@@ -88,14 +102,20 @@
             ></i>
           </template>
         </div>
-        <div class="d-flex align-items-center" v-if="!showCalendarDrag">
+        <!-- <div class="d-flex align-items-center" v-if="!showCalendarDrag">
           <button
             class="btn btn-link fs-7 m-0 p-0"
             @click.stop="handleHighlight"
           >
             <i class="fa-solid fa-star text-warning"></i>
           </button>
-        </div>
+        </div> -->
+        <span class="text-dark fs-7">
+          {{ deal.view_count }} <i class="fa-solid fa-eye"></i>
+        </span>
+        <!-- <span class="fw-normal text-dark">
+          <i :class="getIcon(deal.source_id)"></i>
+        </span> -->
         <span
           v-if="showCalendarDrag"
           class="deal-card-calendar"
