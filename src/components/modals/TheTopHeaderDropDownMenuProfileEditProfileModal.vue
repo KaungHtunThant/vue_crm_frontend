@@ -38,7 +38,7 @@ import ProfileForm from "@/components/editProfileElements/TheTopHeaderDropDownMe
 import ProfileButtons from "@/components/editProfileElements/TheTopHeaderDropDownMenuProfileEditProfileModalButtonsItems.vue";
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
-import { getUserById, updateUser } from "@/plugins/services/authService";
+import { getUserById, updateUser } from "@/plugins/services/userService";
 import Cookies from "js-cookie";
 export default {
   name: "TheTopHeaderDropDownMenuProfileEditProfileModal",

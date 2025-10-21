@@ -94,7 +94,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
 import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";
 import { Modal } from "bootstrap";
-import { showDeal } from "@/plugins/services/authService";
+import { showDeal } from "@/plugins/services/dealService";
 
 export default {
   name: "EmrDealKanbanView",

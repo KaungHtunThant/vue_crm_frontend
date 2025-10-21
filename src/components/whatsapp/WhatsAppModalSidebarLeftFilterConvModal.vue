@@ -63,7 +63,7 @@
 
 <script>
 import RatingStars from "@/components/CreateDealElements/CrmDealKanbanDealDataModalRatingStars.vue";
-import { getStagesTasks } from "@/plugins/services/authService";
+import { getStagesTasks } from "@/plugins/services/stageService";
 // import bootstrap from "bootstrap";
 export default {
   name: "WhatsAppModalSidebarLeftFilterConvModal",

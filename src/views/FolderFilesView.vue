@@ -304,7 +304,7 @@ import {
   showDocuments,
   uploadFiles,
   deleteDocuments,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/documentService";
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 
 export default {

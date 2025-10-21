@@ -1,4 +1,4 @@
-import { getAllRatings } from "@/plugins/services/authService";
+import { getAllRatings } from "@/plugins/services/ratingService";
 import { defineStore } from "pinia";
 
 export const useRatingStore = defineStore("rating", {

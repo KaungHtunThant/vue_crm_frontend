@@ -207,7 +207,7 @@ import {
   updateUser,
   getUser,
   getRoles,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/userService";
 
 export default {
   name: "UserViewAddEditUserModal",

@@ -3,7 +3,7 @@ import {
   getUser,
   updateUser,
   deleteUser,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/userService";
 
 export const useUserStore = defineStore("userStore", {
   state: () => ({

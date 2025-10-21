@@ -275,7 +275,7 @@
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { ref, computed } from "vue";
-import { showDeal } from "@/plugins/services/authService";
+import { showDeal } from "@/plugins/services/dealService";
 
 export default {
   data() {

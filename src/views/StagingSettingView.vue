@@ -54,7 +54,7 @@
 <script>
 import { useI18n } from "vue-i18n";
 import { useToast } from "vue-toastification";
-import { getStageTimers, updateStage } from "@/plugins/services/authService";
+import { getStageTimers, updateStage } from "@/plugins/services/stageService";
 import { ref, onMounted } from "vue";
 
 export default {

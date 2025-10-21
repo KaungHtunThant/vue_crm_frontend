@@ -105,7 +105,8 @@
 <script>
 import { Modal } from "bootstrap";
 import { useToast } from "vue-toastification";
-import { createComment, getTrashStages } from "@/plugins/services/authService";
+import { createComment } from "@/plugins/services/commentService";
+import { getTrashStages } from "@/plugins/services/stageService";
 import Cookies from "js-cookie";
 
 export default {

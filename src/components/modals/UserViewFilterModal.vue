@@ -45,7 +45,7 @@
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import FilterForm from "@/components/filterElements/UserViewFilterModalFormItems.vue";
 import FilterButtons from "@/components/filterElements/UserViewFilterModalButtonsItems.vue";
-import { getRoles } from "@/plugins/services/authService";
+import { getRoles } from "@/plugins/services/userService";
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 

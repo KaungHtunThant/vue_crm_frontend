@@ -289,7 +289,7 @@
 <script>
 import { onMounted, ref, watch } from "vue";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { getInitMessages } from "@/plugins/services/authService";
+import { getInitMessages } from "@/plugins/services/whatsappService";
 import { useI18n } from "vue-i18n";
 export default {
   name: "WhatsAppModalSidebarRightMessageInput",

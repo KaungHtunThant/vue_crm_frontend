@@ -105,7 +105,7 @@ import {
   webqrcode,
   getUserId,
   checkstatus,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/whatsappService";
 import ChatNameModal from "@/components/whatsapp/WhatsAppModalChatNameModal.vue";
 import Cookies from "js-cookie";
 

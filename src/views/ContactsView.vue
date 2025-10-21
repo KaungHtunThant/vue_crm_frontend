@@ -146,7 +146,7 @@ import {
   getContacts,
   deleteContact,
   showContact,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/contactService";
 import ContactsViewCreateModal from "@/components/ContactModals/ContactsViewCreateModal.vue";
 import ContactsViewFilterModal from "@/components/ContactModals/ContactsViewFilterModal.vue";
 import { useToast } from "vue-toastification";

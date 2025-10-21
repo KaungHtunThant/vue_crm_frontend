@@ -34,7 +34,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
-import { getTasksKanban } from "@/plugins/services/authService";
+import { getTasksKanban } from "@/plugins/services/kanbanService";
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 import Cookies from "js-cookie";

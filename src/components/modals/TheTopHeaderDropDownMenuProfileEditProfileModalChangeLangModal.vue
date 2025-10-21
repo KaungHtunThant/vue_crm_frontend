@@ -54,7 +54,7 @@ import { changeLanguage } from "@/i18n";
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 import { useLoadingStore } from "@/plugins/loadingStore";
-import { saveUserLanguage } from "@/plugins/services/authService";
+import { saveUserLanguage } from "@/plugins/services/languageService";
 
 export default {
   name: "TheTopHeaderDropDownMenuProfileEditProfileModalChangeLangModal",

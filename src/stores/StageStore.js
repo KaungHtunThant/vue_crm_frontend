@@ -3,7 +3,7 @@ import {
   deleteStage,
   getAllStages,
   updateStage,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/stageService";
 import { defineStore } from "pinia";
 
 export const useStageStore = defineStore("stage", {

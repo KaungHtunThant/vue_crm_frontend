@@ -4,7 +4,7 @@ import {
   fetchAdditionalDealsByStageId,
   showDeal,
   updateDeal,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/dealService";
 import { defineStore } from "pinia";
 import { rules } from "@/enums/StageRulesEnum";
 

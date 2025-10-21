@@ -1818,19 +1818,22 @@ import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 import TrashDeal from "@/components/modals/CrmDealKanbanDealDataModalTrashDealModal.vue";
 import SuggestUserModal from "@/components/modals/SuggestUserModal.vue";
+import { updateDealStage, updateDeal } from "@/plugins/services/dealService";
+import {
+  getAvailableStages,
+  getAvailableAfterSalesStages,
+} from "@/plugins/services/stageService";
 import {
   fetchConversationByDealId,
+  createConversation,
+} from "@/plugins/services/whatsappService";
+import {
   createComment,
   updateComments,
-  createTask,
-  updateTask,
-  updateDealStage,
-  updateDeal,
-  createConversation,
-  getAvailableStages,
   toggleCommentPin,
-  getAvailableAfterSalesStages,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/commentService";
+import { createTask, updateTask } from "@/plugins/services/taskService";
+
 import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import moveCardSound from "@/assets/move-card.wav";
 import { useLogStore } from "@/stores/LogStore";

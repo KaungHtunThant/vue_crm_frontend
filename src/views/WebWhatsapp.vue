@@ -84,7 +84,7 @@ import {
   webqrcode,
   getUserId,
   checkstatus,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/whatsappService";
 
 export default {
   data() {

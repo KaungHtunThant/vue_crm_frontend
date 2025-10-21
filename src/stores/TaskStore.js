@@ -1,9 +1,9 @@
 import {
   createTask,
-  fetchTasksCountByStageName,
   getTasksByDealId,
   updateTask,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/taskService";
+import { fetchTasksCountByStageName } from "@/plugins/services/stageService";
 import { defineStore } from "pinia";
 
 export const useTaskStore = defineStore("task", {

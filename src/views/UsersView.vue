@@ -170,7 +170,7 @@ import { useUserStore } from "@/stores/UserStore";
 import { useI18n } from "vue-i18n";
 import RatingSelector from "@/views/UserViewRatingSelector.vue";
 import { useRatingStore } from "@/stores/RatingStore";
-import { updateUserRating } from "@/plugins/services/authService";
+import { updateUserRating } from "@/plugins/services/userService";
 export default {
   name: "UsersView",
   components: {

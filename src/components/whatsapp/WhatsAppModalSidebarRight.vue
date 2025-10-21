@@ -181,7 +181,7 @@ import {
   sendMessage,
   checkstatus,
   weblogout,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/whatsappService";
 export default {
   emits: [
     "mark-as-unread",

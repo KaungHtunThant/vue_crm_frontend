@@ -34,7 +34,7 @@
 import { Modal } from "bootstrap";
 import DealForm from "@/components/CreateDealElements/CrmListViewCreateDealModalFormItems.vue";
 import DealButtons from "@/components/CreateDealElements/CrmListViewCreateDealModalButtonsItems.vue";
-import { createDeal } from "@/plugins/services/authService";
+import { createDeal } from "@/plugins/services/dealService";
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 export default {
