@@ -34,3 +34,8 @@ export const updateStage = async (id, params) => {
 export const getStagesTasks = async () => {
   return await axios.get("/stages/tasks");
 };
+export const getAfterSalesKanban = async (params = {}) => {
+  return axios.get("/kanban/after-sales", {
+    params,
+  });
+};

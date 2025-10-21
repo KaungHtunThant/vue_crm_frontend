@@ -1836,7 +1836,7 @@ import { updateDealStage, updateDeal } from "@/plugins/services/dealsService";
 
 import { getAvailableStages } from "@/plugins/services/stagesService";
 
-import { getAvailableAfterSalesStages } from "@/plugins/services/authService";
+import { getAvailableAfterSalesStages } from "@/plugins/services/stagesService";
 import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import moveCardSound from "@/assets/move-card.wav";
 import { useLogStore } from "@/stores/LogStore";

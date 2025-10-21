@@ -130,3 +130,9 @@ export const getTasksKanban = async (params) => {
 
 // Get All Sources
 export const getSources = () => axios.get("/sources");
+
+export const mergeDeals = async (ids) => {
+  return await axios.post("/deals/merge", {
+    ids: ids,
+  });
+};

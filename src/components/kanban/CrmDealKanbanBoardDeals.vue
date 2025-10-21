@@ -329,7 +329,7 @@ import { getStagesChildren } from "@/plugins/services/stagesService";
 import { createApproval } from "@/plugins/services/approvalsService";
 
 import { getAvailableStages } from "@/plugins/services/stagesService";
-import { getAvailableAfterSalesStages } from "@/plugins/services/authService";
+import { getAvailableAfterSalesStages } from "@/plugins/services/stagesService";
 import { useI18n } from "vue-i18n";
 import Cookies from "js-cookie";
 import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";

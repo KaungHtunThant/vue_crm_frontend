@@ -4,5 +4,5 @@ export const getAllPackages = async () => {
   return await axios.get("/packages");
 };
 export const getAllPackageCategories = async () => {
-  return await axios.get("/package-categories");
+  return await axios.get("/package-categories/all");
 };
