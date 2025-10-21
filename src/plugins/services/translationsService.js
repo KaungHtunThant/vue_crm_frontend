@@ -1,13 +1,10 @@
 import axios from "@/plugins/axios";
 import Cookies from "js-cookie";
-// login
-export const login = (credentials) => {
-  return axios.post("/login", credentials);
-};
-// logout
-export const logout = () => {
+
+// Get All Translations
+export const getTranslations = (locale) => {
   const token = Cookies.get("authToken");
-  axios.post("/logout", {
+  return axios.get(`/translations/all?locale=${locale}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

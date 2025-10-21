@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getSources } from "@/plugins/services/authService";
+import { getSources } from "@/plugins/services/dealsService";
 
 export const useSourceStore = defineStore("source", {
   state: () => ({

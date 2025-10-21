@@ -67,7 +67,7 @@ import { useI18n } from "vue-i18n";
 import {
   getBackgroundImages,
   saveBackgroundId,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/backgroundService";
 
 export default {
   name: "TheTopHeaderDropDownMenuProfileEditProfileModalCustmBackgroundModal",

@@ -186,7 +186,7 @@
                 </div>
                 <div class="row mt-2 pe-0">
                   <div class="col-2"></div>
-                  <div class="col" @dblclick="handleDoubleClick">
+                  <div class="col mt-2" @dblclick="handleDoubleClick">
                     <label class="form-label" for="date_of_birth"
                       ><i class="fa-solid fa-calendar-days"></i>
                       {{ t("kanban-modal-edit-label-dob")
@@ -208,7 +208,7 @@
                     />
                   </div>
                   <!-- maritalStatus -->
-                  <div class="col">
+                  <div class="col mt-2">
                     <label class="form-label" for="maritalStatus"
                       ><i class="fa-solid fa-heart"></i>
                       {{ t("kanban-modal-edit-label-maritalstatus") }}
@@ -241,7 +241,7 @@
                     </select>
                   </div>
                   <!-- Personal Companion -->
-                  <div class="col p-0">
+                  <div class="col p-0 mt-2">
                     <label class="form-label" for="personalCompanion"
                       ><i class="fa-solid fa-person-circle-plus"></i>
                       {{ t("kanban-modal-edit-label-personal-companion") }}
@@ -1818,19 +1818,25 @@ import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 import TrashDeal from "@/components/modals/CrmDealKanbanDealDataModalTrashDealModal.vue";
 import SuggestUserModal from "@/components/modals/SuggestUserModal.vue";
+
 import {
   fetchConversationByDealId,
+  createConversation,
+} from "@/plugins/services/whatsappService";
+
+import {
   createComment,
   updateComments,
-  createTask,
-  updateTask,
-  updateDealStage,
-  updateDeal,
-  createConversation,
-  getAvailableStages,
   toggleCommentPin,
-  getAvailableAfterSalesStages,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/commentsService";
+
+import { createTask, updateTask } from "@/plugins/services/tasksService";
+
+import { updateDealStage, updateDeal } from "@/plugins/services/dealsService";
+
+import { getAvailableStages } from "@/plugins/services/stagesService";
+
+import { getAvailableAfterSalesStages } from "@/plugins/services/authService";
 import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import moveCardSound from "@/assets/move-card.wav";
 import { useLogStore } from "@/stores/LogStore";

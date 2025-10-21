@@ -1,7 +1,7 @@
 import { createI18n } from "vue-i18n";
-import { getTranslations } from "@/plugins/services/authService";
+import { getTranslations } from "@/plugins/services/translationsService";
+import { saveUserLanguage } from "@/plugins/services/userService";
 import Cookies from "js-cookie";
-import { saveUserLanguage } from "@/plugins/services/authService";
 
 const i18n = createI18n({
   legacy: false,

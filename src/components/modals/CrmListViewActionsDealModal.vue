@@ -242,10 +242,10 @@
 <script setup>
 import { ref, defineProps, defineEmits, onMounted, computed } from "vue";
 import { Modal } from "bootstrap";
-import {
-  getAvailableStages,
-  getAllUsers,
-} from "@/plugins/services/authService";
+import { getAvailableStages } from "@/plugins/services/stagesService";
+
+import { getAllUsers } from "@/plugins/services/userService";
+
 import { useI18n } from "vue-i18n";
 import { useToast } from "vue-toastification";
 import { useSourceStore } from "@/stores/SourceStore";

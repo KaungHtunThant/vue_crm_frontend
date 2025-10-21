@@ -306,11 +306,15 @@ import {
   deleteDeals,
   bulkUpdateDeals,
   bulkDeleteDeals,
-  getAllUsers,
   updateDealStage,
-  getAvailableStages,
-  mergeDeals,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/dealsService";
+
+import { mergeDeals } from "@/plugins/services/authService";
+
+import { getAllUsers } from "@/plugins/services/userService";
+
+import { getAvailableStages } from "@/plugins/services/stagesService";
+
 import CrmListViewActionsDealModal from "@/components/modals/CrmListViewActionsDealModal.vue";
 import CrmListViewFilterModal from "@/components/modals/CrmListViewFilterModal.vue";
 import CrmListCreateDealModal from "@/components/modals/CrmListViewCreateDealModal.vue";

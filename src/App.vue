@@ -39,7 +39,8 @@ import Cookies from "js-cookie";
 import TheLoaderComponent from "@/components/TheLoaderComponent.vue";
 import TheNewsBar from "@/components/TheNewsBar.vue";
 import { useLoadingStore } from "@/plugins/loadingStore";
-import { logout, getBackgroundId } from "@/plugins/services/authService";
+import { logout } from "@/plugins/services/authService";
+import { getBackgroundId } from "@/plugins/services/backgroundService";
 import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 
 export default {

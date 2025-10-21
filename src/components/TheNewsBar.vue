@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { getKanbanBroadcasts } from "@/plugins/services/authService";
+import { getKanbanBroadcasts } from "@/plugins/services/broadcastsService";
 import { ref, onMounted, onUnmounted, computed, nextTick } from "vue";
 
 export default {
@@ -45,7 +45,7 @@ export default {
     const translateX = ref(0);
     let animationFrame = null;
     let contentWidth = 0;
-    const speed = 1;
+    const speed = 0.5;
     const isNewsBarVisible = ref(true);
     const isPaused = ref(false);
 

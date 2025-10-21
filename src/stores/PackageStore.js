@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import {
   getAllPackages,
   getAllPackageCategories,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/packagesService";
 
 export const usePackageStore = defineStore("package", {
   state: () => ({

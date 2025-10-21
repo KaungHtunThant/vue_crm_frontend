@@ -136,10 +136,7 @@
 
 <script>
 import { ref, onMounted, watch } from "vue";
-import {
-  getAllUsers,
-  getAvailableStages,
-} from "@/plugins/services/authService";
+import { getAllUsers } from "@/plugins/services/userService";
 import RatingStars from "@/components/CreateDealElements/CrmDealKanbanDealDataModalRatingStars.vue";
 import { useI18n } from "vue-i18n";
 import { useSourceStore } from "@/stores/SourceStore";

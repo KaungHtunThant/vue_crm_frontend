@@ -65,7 +65,8 @@
 </template>
 
 <script>
-import { getBackgroundId, login } from "@/plugins/services/authService";
+import { login } from "@/plugins/services/authService";
+import { getBackgroundId } from "@/plugins/services/backgroundService";
 import Cookies from "js-cookie";
 import { usePermissionStore } from "@/stores/PermissionStore";
 import { useRouter } from "vue-router";
