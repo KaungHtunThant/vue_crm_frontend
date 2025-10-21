@@ -13,3 +13,12 @@ export const logout = () => {
     },
   });
 };
+export const getRatings = async () => {
+  return await axios.get("/ratings");
+};
+export const getAllRatings = async () => {
+  return await axios.get("/ratings/all");
+};
+export const updateUserRating = async (userId, ratingId) => {
+  return await axios.patch(`/users/${userId}/rating`, { rating_id: ratingId });
+};

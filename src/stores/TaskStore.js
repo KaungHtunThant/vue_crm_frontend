@@ -3,7 +3,7 @@ import {
   fetchTasksCountByStageName,
   getTasksByDealId,
   updateTask,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/tasksService";
 import { defineStore } from "pinia";
 
 export const useTaskStore = defineStore("task", {
