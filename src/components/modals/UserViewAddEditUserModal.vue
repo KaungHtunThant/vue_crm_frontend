@@ -200,7 +200,10 @@
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
+
 import { useI18n } from "vue-i18n";
 import {
   createUser,
@@ -213,9 +216,10 @@ export default {
   name: "UserViewAddEditUserModal",
   components: { Multiselect },
   setup() {
+    const notificationStore = useNotificationStore();
     const { t } = useI18n();
-    const toast = useToast();
-    return { t, toast };
+    // const toast = useToast();
+    return { t, notificationStore };
   },
   data() {
     return {
@@ -331,13 +335,13 @@ export default {
         if (this.isEditMode) {
           formData.append("phones", [this.formData.phoneNumber]);
           response = await updateUser(this.formData.id, formData);
-          this.toast.success(this.t("success.updateUser"), {
+          this.notificationStore.success(this.t("success.updateUser"), {
             timeout: 3000,
           });
         } else {
           formData.append("phone", this.formData.phoneNumber);
           response = await createUser(formData);
-          this.toast.success(this.t("success.createUser"), {
+          this.notificationStore.success(this.t("success.createUser"), {
             timeout: 3000,
           });
         }
@@ -345,7 +349,7 @@ export default {
         if (response.status === 200 || response.status === 201) {
           const user = response.data.data || response.data;
           localStorage.setItem(`user_${user.id}_color`, this.formData.color);
-          this.toast.success(response.data.message, {
+          this.notificationStore.success(response.data.message, {
             timeout: 3000,
           });
           this.$emit("user-updated", user);
@@ -354,12 +358,12 @@ export default {
             this.closeModal();
           }, 1000);
         } else {
-          this.toast.error(response.data.message, {
+          this.notificationStore.error(response.data.message, {
             timeout: 3000,
           });
         }
       } catch (error) {
-        this.toast.error(
+        this.notificationStore.error(
           error.response?.data?.message || this.t("error.saveFailed"),
           {
             timeout: 3000,

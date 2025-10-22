@@ -29,10 +29,17 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 import { getDealsKanban } from "@/plugins/services/kanbanService";
 import { useSourceStore } from "@/stores/SourceStore";
+// import {
+//   showSuccess,
+//   showError,
+//   showInfo,
+// } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
+
 export default {
   name: "CrmDealKanbanView",
 
@@ -43,7 +50,8 @@ export default {
 
   setup() {
     const { t } = useI18n();
-    const toast = useToast();
+    // const toast = useToast();
+    const notificationStore = useNotificationStore();
     const stages = ref([]);
     const selected_conversation = ref(null);
     const searchVal = ref("");
@@ -88,14 +96,14 @@ export default {
             parent_id: stage.parent_id || null,
             has_children: stage.has_children,
           }));
-          toast.success(response.data.message);
+          notificationStore.success(response.data.message);
           search_result.value = response.data.search_result || null;
         } else {
-          toast.error(response.data.message);
+          notificationStore.error(response.data.message);
         }
       } catch (error) {
         console.error("Error fetching stages:", error);
-        toast.error(error.message);
+        notificationStore.error(error.message);
       }
       searching.value = false;
     };
@@ -160,7 +168,7 @@ export default {
         const response = await getDealsKanban(formattedFilters);
 
         if (!response?.data?.data) {
-          toast.info(t("noDealsFound"));
+          notificationStore.info(t("noDealsFound"));
           stages.value = [];
           search_result.value = response?.data?.search_result || null;
           return;
@@ -168,10 +176,10 @@ export default {
         stages.value = response.data.data;
         search_result.value = response.data.search_result || null;
 
-        toast.success(t("success.applyFilters"), { timeout: 3000 });
+        notificationStore.success(t("success.applyFilters"), { timeout: 3000 });
       } catch (error) {
         console.error("Filter Error:", error);
-        toast.error(error.message, { timeout: 3000 });
+        notificationStore.error(error.message, { timeout: 3000 });
         stages.value = [];
       }
     };
@@ -194,12 +202,12 @@ export default {
         };
         await fetchStages();
 
-        toast.success(t("success.resetFilters"), {
+        notificationStore.success(t("success.resetFilters"), {
           timeout: 3000,
         });
       } catch (error) {
         console.error("Error resetting filters:", error);
-        toast.error(t("error.resetFilters"), {
+        notificationStore.error(t("error.resetFilters"), {
           timeout: 3000,
         });
       }
@@ -250,7 +258,7 @@ export default {
           stages.value[oldStageIndex].deals.splice(oldDealIndex, 1);
           stages.value[oldStageIndex].deal_count -= 1;
           stages.value[newStageIndex].deal_count += 1;
-          toast.success(t("success.dealMoved"));
+          notificationStore.success(t("success.dealMoved"));
         } else {
           console.error("Deal not found in the old stage");
         }
@@ -265,7 +273,7 @@ export default {
         await fetchStages();
         window.addEventListener("contextmenu", handleRightClick);
       } catch (error) {
-        toast.error(t("error.loadKanban"), {
+        notificationStore.error(t("error.loadKanban"), {
           timeout: 3000,
         });
       }

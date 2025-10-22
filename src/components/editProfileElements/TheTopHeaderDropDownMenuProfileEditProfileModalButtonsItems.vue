@@ -28,13 +28,17 @@
 
 <script>
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+// import { showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
+
 import { useI18n } from "vue-i18n";
 export default {
   name: "TheTopHeaderDropDownMenuProfileEditProfileModalButtonsItems",
   props: ["loading"],
   setup() {
-    const toast = useToast();
+    // const toast = useToast();
+    const notificationStore = useNotificationStore();
     const { t } = useI18n();
     const handleClose = () => {
       try {
@@ -46,7 +50,7 @@ export default {
           document.body.classList.remove("modal-open");
         }
       } catch (error) {
-        toast.error(t("errors.profileClosedError"), {
+        notificationStore.error(t("errors.profileClosedError"), {
           timeout: 3000,
         });
       }

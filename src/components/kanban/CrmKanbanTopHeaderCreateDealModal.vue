@@ -213,7 +213,15 @@
 </template>
 
 <script>
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+// import {
+//   showSuccess,
+//   showError,
+//   showInfo,
+//   showWarning,
+// } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
+
 import { useI18n } from "vue-i18n";
 import { getUser } from "@/plugins/services/userService";
 import { createDeal } from "@/plugins/services/dealService";
@@ -222,8 +230,9 @@ export default {
   name: "CrmKanbanTopHeaderCreateDealModal",
   setup() {
     const { t } = useI18n();
-    const toast = useToast();
-    return { t, toast };
+    const notificationStore = useNotificationStore();
+    // const toast = useToast();
+    return { t, notificationStore };
   },
   data() {
     return {
@@ -291,15 +300,17 @@ export default {
 
         const response = await createDeal(dealData);
         if (response.data) {
-          this.toast.success(response.data.message, { timeout: 3000 });
+          this.notificationStore.success(response.data.message, {
+            timeout: 3000,
+          });
           this.resetForm();
         } else {
-          this.toast.error(response.data.message, {
+          this.notificationStore.error(response.data.message, {
             timeout: 3000,
           });
         }
       } catch (error) {
-        this.toast.error(this.t("error.deal_not_created"), {
+        this.notificationStore.error(this.t("error.deal_not_created"), {
           timeout: 3000,
         });
         console.error("Error submitting form:", error);
@@ -308,9 +319,12 @@ export default {
     addPackage() {
       try {
         if (this.form.packages.length >= 5) {
-          this.toast.warning(this.t("error.cannot_add_more_than_5_packages"), {
-            timeout: 3000,
-          });
+          this.notificationStore.warning(
+            this.t("error.cannot_add_more_than_5_packages"),
+            {
+              timeout: 3000,
+            }
+          );
           return;
         }
         this.form.packages.push({
@@ -318,10 +332,12 @@ export default {
           quantity: "",
           id: Date.now(),
         });
-        this.toast.info(this.t("success.package_added"), { timeout: 3000 });
+        this.notificationStore.info(this.t("success.package_added"), {
+          timeout: 3000,
+        });
       } catch (error) {
         console.error("Error adding package:", error);
-        this.toast.error(this.t("error.error_adding_package"), {
+        this.notificationStore.error(this.t("error.error_adding_package"), {
           timeout: 3000,
         });
       }
@@ -329,12 +345,12 @@ export default {
     removePackage(id) {
       try {
         this.form.packages = this.form.packages.filter((pkg) => pkg.id !== id);
-        this.toast.success(this.t("success.package_removed"), {
+        this.notificationStore.success(this.t("success.package_removed"), {
           timeout: 3000,
         });
       } catch (error) {
         console.error("Error removing package:", error);
-        this.toast.error(this.t("error.removing_package"), {
+        this.notificationStore.error(this.t("error.removing_package"), {
           timeout: 3000,
         });
       }

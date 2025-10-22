@@ -114,7 +114,10 @@
 import { onMounted, onUnmounted, ref } from "vue";
 import EasyDataTable from "vue3-easy-data-table";
 import "vue3-easy-data-table/dist/style.css";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
+
 import { useI18n } from "vue-i18n";
 import {
   createBroadcast,
@@ -135,7 +138,8 @@ export default {
 
   setup() {
     const { t } = useI18n();
-    const toast = useToast();
+    const notificationStore = useNotificationStore();
+    // const toast = useToast();
     const items = ref([]);
 
     const headers = ref([
@@ -170,10 +174,10 @@ export default {
           is_first: index === 0,
           is_last: index === response.data.data.length - 1,
         }));
-        toast.success(response.data.message);
+        notificationStore.success(response.data.message);
       } else {
         // Handle error response
-        toast.error("Failed to fetch broadcasts");
+        notificationStore.error("Failed to fetch broadcasts");
       }
     };
 
@@ -181,10 +185,10 @@ export default {
       // Logic to update position
       const response = await updateBroadcastPosition(id, direction);
       if (response.status === 200) {
-        toast.success(response.data.message);
+        notificationStore.success(response.data.message);
         fetchBroadcasts();
       } else {
-        toast.error("Failed to update position");
+        notificationStore.error("Failed to update position");
       }
     };
 
@@ -195,9 +199,9 @@ export default {
         broadcast.status = broadcast.status ? 0 : 1;
         const response = await updateBroadcast(id, null, broadcast.status);
         if (response.status === 200) {
-          toast.success(response.data.message);
+          notificationStore.success(response.data.message);
         } else {
-          toast.error("Failed to update status");
+          notificationStore.error("Failed to update status");
         }
       }
     };
@@ -214,9 +218,9 @@ export default {
           broadcast.important
         );
         if (response.status === 200) {
-          toast.success(response.data.message);
+          notificationStore.success(response.data.message);
         } else {
-          toast.error("Failed to update important status");
+          notificationStore.error("Failed to update important status");
         }
       }
     };
@@ -249,10 +253,10 @@ export default {
       // Logic to submit the form
       const response = await createBroadcast(description);
       if (response.status === 200) {
-        toast.success(response.data.message);
+        notificationStore.success(response.data.message);
         fetchBroadcasts();
       } else {
-        toast.error("Failed to create broadcast");
+        notificationStore.error("Failed to create broadcast");
       }
       closeCreateModal();
     };
@@ -261,9 +265,7 @@ export default {
       fetchBroadcasts();
     });
 
-    onUnmounted(() => {
-      // Clean up if necessary
-    });
+    onUnmounted(() => {});
     const logo = require("@/assets/" + process.env.VUE_APP_LOGO_NAME);
 
     return {
@@ -278,6 +280,7 @@ export default {
       OpenCreateModal,
       closeCreateModal,
       submit,
+      notificationStore,
     };
   },
 };

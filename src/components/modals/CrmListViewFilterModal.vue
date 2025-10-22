@@ -47,7 +47,10 @@ import { ref, watch } from "vue";
 import { Modal } from "bootstrap";
 import CrmListViewFilterModalForm from "@/components/filterElements/CrmListViewFilterModalFormItems.vue";
 import CrmListViewFilterModalButtons from "@/components/filterElements/CrmListViewFilterModalButtonsItems.vue";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
+
 import { useI18n } from "vue-i18n";
 
 export default {
@@ -63,8 +66,9 @@ export default {
   emits: ["update:modelValue", "apply-filters", "reset-filter"],
 
   setup(props, { emit }) {
+    const notificationStore = useNotificationStore();
     const { t } = useI18n();
-    const toast = useToast();
+    // const toast = useToast();
     const filters = ref({ ...props.modelValue });
     const localSelectedStatuses = ref([...props.selectedStatuses]);
     const local_stages = ref([]);
@@ -108,7 +112,7 @@ export default {
           }
         }
       } catch (error) {
-        toast.error(t("error.closeModal"), { timeout: 3000 });
+        notificationStore.error(t("error.closeModal"), { timeout: 3000 });
         console.error("Error closing modal:", error);
       }
     };
@@ -121,10 +125,10 @@ export default {
         emit("update:modelValue", { ...filters.value });
         emit("apply-filters", { ...filters.value });
 
-        toast.success(t("success.applyFilters"), { timeout: 3000 });
+        notificationStore.success(t("success.applyFilters"), { timeout: 3000 });
         closeFilterModal();
       } catch (error) {
-        toast.error(t("error.applyFilters"), { timeout: 3000 });
+        notificationStore.error(t("error.applyFilters"), { timeout: 3000 });
       }
     };
 
@@ -153,10 +157,10 @@ export default {
         localSelectedStatuses.value = [];
         emit("update:modelValue", emptyFilters);
         emit("reset-filter");
-        toast.success(t("success.resetFilters"), { timeout: 3000 });
+        notificationStore.success(t("success.resetFilters"), { timeout: 3000 });
         closeFilterModal();
       } catch (error) {
-        toast.error(t("error.resetFilters"), { timeout: 3000 });
+        notificationStore.error(t("error.resetFilters"), { timeout: 3000 });
       }
     };
 

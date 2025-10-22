@@ -37,7 +37,7 @@
       </div>
       <div class="form-check form-switch" @click.stop>
         <input
-          ref="isNotificationsEnabled"
+          ref="notificationSwitch"
           type="checkbox"
           v-model="isNotificationsEnabled"
           class="form-check-input shadow-none custom-switch"
@@ -98,10 +98,20 @@ import ChangePassword from "@/components/modals/TheTopHeaderDropDownMenuProfileE
 import ChangeLang from "@/components/modals/TheTopHeaderDropDownMenuProfileEditProfileModalChangeLangModal.vue";
 import CalenderModal from "@/components/modals/TheTopHeaderDropDownMenuProfileEditProfileModalCalenderModal.vue";
 import CustomBackground from "@/components/headers/sub-menu/profileMenuItems/TheTopHeaderDropDownMenuProfileEditProfileModalCustmBackgroundModal.vue";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+
 import { useI18n } from "vue-i18n";
 import { Modal } from "bootstrap";
-import { ref, onMounted, onUnmounted, onBeforeUnmount, nextTick } from "vue";
+import {
+  ref,
+  onMounted,
+  onUnmounted,
+  onBeforeUnmount,
+  nextTick,
+  watch,
+} from "vue";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 export default {
   name: "TheTopHeaderDropDownMenuProfile",
@@ -114,28 +124,52 @@ export default {
     CustomBackground,
   },
   setup() {
-    const toast = useToast();
+    const notificationStore = useNotificationStore();
+    const isNotificationsEnabled = ref(notificationStore.enabled);
     const { t } = useI18n();
 
-    const customSwitchInput = ref(null);
-    const isNotificationsEnabled = ref(null);
+    const handleNotificationSwitchClick = async () => {
+      try {
+        notificationStore.set(isNotificationsEnabled.value);
+        if (isNotificationsEnabled.value) {
+          notificationStore.success(t("notifications.enabled"));
+        } else {
+          notificationStore.info(t("notifications.disabled"));
+        }
+      } catch (err) {
+        console.error(err);
+        notificationStore.error(t("notifications.error"));
+      }
+    };
+
+    watch(
+      () => notificationStore.enabled,
+      (newVal) => {
+        isNotificationsEnabled.value = newVal;
+      }
+    );
+    // const toast = useToast();
+    // const { t } = useI18n();
+    const notificationSwitch = ref(null);
+    // const customSwitchInput = ref(null);
+    // const isNotificationsEnabled = ref(null);
 
     const handleSwitchClick = () => {
       nextTick(() => {
-        if (customSwitchInput.value) {
-          customSwitchInput.value.blur();
+        if (notificationSwitch.value) {
+          notificationSwitch.value.blur();
         }
       });
     };
-    const handleNotificationSwitchClick = () => {
-      nextTick(() => {
-        if (isNotificationsEnabled.value) {
-          isNotificationsEnabled.value.blur();
-        }
-      });
-    };
+    // const handleNotificationSwitchClick = () => {
+    //   nextTick(() => {
+    //     if (isNotificationsEnabled.value) {
+    //       isNotificationsEnabled.value.blur();
+    //     }
+    //   });
+    // };
     onMounted(() => {
-      // ... باقي الـ onMounted
+      isNotificationsEnabled.value = notificationStore.enabled;
     });
 
     onUnmounted(() => {
@@ -147,11 +181,11 @@ export default {
     });
 
     return {
-      toast,
       t,
-      customSwitchInput,
-      handleSwitchClick,
+      isNotificationsEnabled,
       handleNotificationSwitchClick,
+      handleSwitchClick,
+      notificationSwitch,
     };
   },
   data() {
@@ -159,6 +193,7 @@ export default {
       name: Cookies.get("name") || "User",
       userEmail: Cookies.get("email") || "test@email",
       userImage: Cookies.get("image") || "",
+      notificationStore: useNotificationStore(),
       images: [
         "/images/bg1.jpg",
         "/images/bg2.jpg",
@@ -181,7 +216,7 @@ export default {
         this.$emit("logout");
       } catch (error) {
         console.error("Error logging out:", error);
-        this.toast.error(this.t("topHeader.logoutError"), {
+        this.notificationStore.error(this.t("topHeader.logoutError"), {
           timeout: 3000,
         });
       }

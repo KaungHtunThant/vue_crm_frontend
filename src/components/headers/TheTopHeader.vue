@@ -348,6 +348,8 @@ import {
 import { useRoute } from "vue-router";
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import { useI18n } from "vue-i18n";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 export default {
   name: "TheTopHeader",
@@ -369,6 +371,7 @@ export default {
     };
   },
   setup() {
+    const notificationStore = useNotificationStore();
     const kanbanStore = useKanbanStore();
     const hasNewChanges = computed(() => kanbanStore.hasNewChanges);
     const user_role = Cookies.get("user_role");
@@ -450,6 +453,7 @@ export default {
       hasNewChanges,
       t,
       locale,
+      notificationStore,
     };
   },
   methods: {
@@ -464,13 +468,17 @@ export default {
           localStorage.setItem("locale", newLang);
           this.currentLanguage = newLang;
 
-          this.toast.success(response.data.message, { timeout: 3000 });
+          this.notificationStore.success(response.data.message, {
+            timeout: 3000,
+          });
         } else {
           throw new Error("Error fetching language change");
         }
       } catch (error) {
         console.error("Error changing language:", error);
-        this.toast.error("حدث خطأ أثناء حفظ اللغة!", { timeout: 3000 });
+        this.notificationStore.error("حدث خطأ أثناء حفظ اللغة!", {
+          timeout: 3000,
+        });
       }
     },
     toggleMenu(menu) {

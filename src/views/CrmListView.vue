@@ -296,7 +296,13 @@
 </template>
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick, computed } from "vue";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+// import {
+//   showSuccess,
+//   showError,
+//   showInfo,
+// } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
@@ -326,9 +332,9 @@ import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CountryFlagAvatar from "@/components/whatsapp/WhatsAppModalSidebarLeftCountryFlagAvatar.vue";
 import { useSourceStore } from "@/stores/SourceStore";
 const { t } = useI18n();
-const toast = useToast();
+// const toast = useToast();
 const permissionStore = usePermissionStore();
-
+const notificationStore = useNotificationStore();
 // Table state
 const rows = ref([]);
 const loading = ref(false);
@@ -424,7 +430,7 @@ const bulkMergeItems = async () => {
   try {
     const ids = selectedRows.value.map((row) => row.id);
     if (ids.length === 0) {
-      toast.error(t("error.noItemsSelected"), { timeout: 3000 });
+      notificationStore.error(t("error.noItemsSelected"), { timeout: 3000 });
       return;
     }
     const result = await Swal.fire({
@@ -445,14 +451,14 @@ const bulkMergeItems = async () => {
         selectedRows.value = [];
         selectedAction.value = "";
         fetchData();
-        toast.success(response.data.message, { timeout: 3000 });
+        notificationStore.success(response.data.message, { timeout: 3000 });
       } else {
         throw new Error(response.data.message);
       }
     }
   } catch (error) {
     console.error("Bulk Merge Error:", error);
-    toast.error(error.message, {
+    notificationStore.error(error.message, {
       timeout: 3000,
     });
   }
@@ -534,7 +540,7 @@ const fetchData = async () => {
       filters: formattedFilters,
     });
     if (!dealsRes?.data?.data) {
-      toast.info(dealsRes.data.message || t("noDealsFound"));
+      notificationStore.info(dealsRes.data.message || t("noDealsFound"));
       rows.value = [];
       totalRows.value = 0;
       return;
@@ -568,7 +574,7 @@ const fetchData = async () => {
     totalRows.value = dealsRes.data.meta.total;
   } catch (error) {
     console.error("Error fetching data:", error);
-    toast.error(error.message, { timeout: 3000 });
+    notificationStore.error(error.message, { timeout: 3000 });
     rows.value = [];
     totalRows.value = 0;
   } finally {
@@ -601,13 +607,13 @@ const deleteItem = async (id) => {
       const response = await deleteDeals([id]);
       if (response.status === 204 || response.status === 200) {
         fetchData();
-        toast.success(response.data.message, { timeout: 3000 });
+        notificationStore.success(response.data.message, { timeout: 3000 });
       } else {
         throw new Error(response.data.message || t("error-default"));
       }
     }
   } catch (error) {
-    toast.error(error.message, { timeout: 3000 });
+    notificationStore.error(error.message, { timeout: 3000 });
     console.error("Delete Error:", error);
   }
 };
@@ -718,7 +724,7 @@ const applyFilters = async (newFilters) => {
     });
 
     if (!response?.data?.data) {
-      toast.info(t("noDealsFound"));
+      notificationStore.info(t("noDealsFound"));
       rows.value = [];
       totalRows.value = 0;
       return;
@@ -751,10 +757,10 @@ const applyFilters = async (newFilters) => {
     });
 
     totalRows.value = response.data.meta.total;
-    toast.success(t("success.applyFilters"), { timeout: 3000 });
+    notificationStore.success(t("success.applyFilters"), { timeout: 3000 });
   } catch (error) {
     console.error("Filter Error:", error);
-    toast.error(t("error.applyFilters"), { timeout: 3000 });
+    notificationStore.error(t("error.applyFilters"), { timeout: 3000 });
     rows.value = [];
     totalRows.value = 0;
   } finally {
@@ -827,7 +833,7 @@ const fetchStages = async () => {
     }
   } catch (error) {
     console.error("Error fetching stages:", error);
-    toast.error(t("error.fetchFailed"));
+    notificationStore.error(t("error.fetchFailed"));
   }
 };
 
@@ -851,7 +857,7 @@ const handleBulkUpdate = async (key, value) => {
     const selectedIds = selectedRows.value.map((row) => row.id);
 
     if (selectedIds.length === 0) {
-      toast.error(t("error.noItemsSelected"), { timeout: 3000 });
+      notificationStore.error(t("error.noItemsSelected"), { timeout: 3000 });
       return;
     }
     const response = await bulkUpdateDeals(selectedIds, String(key), value);
@@ -889,7 +895,7 @@ const handleBulkUpdate = async (key, value) => {
         }
       }
 
-      toast.success(response.data.message, { timeout: 3000 });
+      notificationStore.success(response.data.message, { timeout: 3000 });
     } else {
       console.error(
         "Error updating stage:",
@@ -897,7 +903,7 @@ const handleBulkUpdate = async (key, value) => {
       );
     }
   } catch (error) {
-    toast.error(error.response?.data?.message || error.message, {
+    notificationStore.error(error.response?.data?.message || error.message, {
       timeout: 3000,
     });
     console.error("Bulk Update Error:", error);
@@ -909,7 +915,7 @@ const bulkDeleteItems = async () => {
     const ids = selectedRows.value.map((row) => row.id);
 
     if (ids.length === 0) {
-      toast.error(t("error.noItemsSelected"), { timeout: 3000 });
+      notificationStore.error(t("error.noItemsSelected"), { timeout: 3000 });
       return;
     }
 
@@ -932,16 +938,21 @@ const bulkDeleteItems = async () => {
         selectedRows.value = [];
         selectedAction.value = "";
         fetchData();
-        toast.success(t("success.deleteSuccess"), { timeout: 3000 });
+        notificationStore.success(t("success.deleteSuccess"), {
+          timeout: 3000,
+        });
       } else {
         throw new Error(response.data.message || t("error.deleteFailed"));
       }
     }
   } catch (error) {
     console.error("Bulk Delete Error:", error);
-    toast.error(error.response?.data?.message || t("error.deleteFailed"), {
-      timeout: 3000,
-    });
+    notificationStore.error(
+      error.response?.data?.message || t("error.deleteFailed"),
+      {
+        timeout: 3000,
+      }
+    );
   }
 };
 
@@ -984,14 +995,14 @@ const changeDealStage = async (dealId, newStageId) => {
   try {
     const response = await updateDealStage(dealId, newStageId);
     if (response.status === 200) {
-      toast.success(response.data.message, { timeout: 3000 });
+      notificationStore.success(response.data.message, { timeout: 3000 });
       fetchData();
     } else {
-      toast.error(t("error.stageChangeFailed"), { timeout: 3000 });
+      notificationStore.error(t("error.stageChangeFailed"), { timeout: 3000 });
     }
   } catch (error) {
     console.error("Error changing deal stage:", error);
-    toast.error(t("error.stageChangeFailed"), { timeout: 3000 });
+    notificationStore.error(t("error.stageChangeFailed"), { timeout: 3000 });
   }
 };
 

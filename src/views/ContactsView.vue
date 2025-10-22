@@ -149,7 +149,14 @@ import {
 } from "@/plugins/services/contactService";
 import ContactsViewCreateModal from "@/components/ContactModals/ContactsViewCreateModal.vue";
 import ContactsViewFilterModal from "@/components/ContactModals/ContactsViewFilterModal.vue";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+// import {
+//   showSuccess,
+//   showError,
+//   showInfo,
+// } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
+
 import Swal from "sweetalert2";
 import { useI18n } from "vue-i18n";
 import DataTable from "primevue/datatable";
@@ -170,8 +177,8 @@ export default {
 
   setup() {
     const { t } = useI18n();
-    const toast = useToast();
-
+    // const toast = useToast();
+    const notificationStore = useNotificationStore();
     // Table state
     const tableData = ref([]);
     const loading = ref(false);
@@ -256,7 +263,7 @@ export default {
         totalRows.value = data.meta.total;
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error(t("error.fetchFailed"));
+        notificationStore.error(t("error.fetchFailed"));
         rows.value = [];
         totalRows.value = 0;
       } finally {
@@ -281,7 +288,7 @@ export default {
         if (index !== -1) {
           rows.value.splice(index, 1, updatedContact);
         } else {
-          toast.error("There item not found");
+          notificationStore.error("There item not found");
         }
       }
     };
@@ -320,7 +327,7 @@ export default {
         }
       } catch (error) {
         console.error("Error fetching contact details:", error);
-        toast.error(t("error.fetchContactDetails"));
+        notificationStore.error(t("error.fetchContactDetails"));
       }
     };
 
@@ -342,10 +349,10 @@ export default {
           await deleteContact(id);
           rows.value = rows.value.filter((item) => item.id !== id);
           totalRows.value -= 1;
-          toast.success(t("success.deleteSuccess"));
+          notificationStore.success(t("success.deleteSuccess"));
         }
       } catch (error) {
-        toast.error(t("error.deleteFailed"));
+        notificationStore.error(t("error.deleteFailed"));
       }
     };
 
@@ -363,7 +370,7 @@ export default {
           if (
             new Date(filters.created_at_from) > new Date(filters.created_at_to)
           ) {
-            toast.error(t("error.invalidDateRange"));
+            notificationStore.error(t("error.invalidDateRange"));
             return;
           }
         }
@@ -385,15 +392,15 @@ export default {
           rows.value = data.data;
           totalRows.value = data.meta.total;
           currentPage.value = 0;
-          toast.success(t("success.filterSuccess"));
+          notificationStore.success(t("success.filterSuccess"));
         } else {
           rows.value = [];
           totalRows.value = 0;
-          toast.info(t("info.noFilterResults"));
+          notificationStore.info(t("info.noFilterResults"));
         }
       } catch (error) {
         console.error("Filter application failed:", error);
-        toast.error(t("error.filterFailed"));
+        notificationStore.error(t("error.filterFailed"));
         rows.value = [];
         totalRows.value = 0;
       } finally {
@@ -409,10 +416,10 @@ export default {
 
         await fetchData(0, rowsPerPage.value);
 
-        toast.success(t("success.filterReset"));
+        notificationStore.success(t("success.filterReset"));
       } catch (error) {
         console.error("Reset filters failed:", error);
-        toast.error(t("error.filterFailed"));
+        notificationStore.error(t("error.filterFailed"));
       } finally {
         loading.value = false;
       }
@@ -481,11 +488,11 @@ export default {
         } else {
           rows.value = [];
           totalRows.value = 0;
-          toast.info(t("info.noSearchResults"));
+          notificationStore.info(t("info.noSearchResults"));
         }
       } catch (error) {
         console.error("Error searching data:", error);
-        toast.error(t("error.searchFailed"));
+        notificationStore.error(t("error.searchFailed"));
         rows.value = [];
         totalRows.value = 0;
       } finally {
@@ -531,6 +538,7 @@ export default {
       onPageChange,
       handleSearch,
       resetSearch,
+      notificationStore,
     };
   },
 };

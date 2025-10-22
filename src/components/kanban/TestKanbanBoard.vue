@@ -29,7 +29,9 @@
 import { useStageStore } from "@/stores/StageStore";
 import { useDealStore } from "@/stores/DealStore";
 import { usePermissionStore } from "@/stores/PermissionStore";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+// import { showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 import moveCardSound from "@/assets/move-card.wav";
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import TestKanbanStage from "@/components/kanban/TestKanbanStage.vue";
@@ -42,6 +44,7 @@ export default {
     ScrollButton,
   },
   setup() {
+    const notificationStore = useNotificationStore();
     const moveSound = new Audio(moveCardSound);
     const stage_store = useStageStore();
     const stages = computed(() => stage_store.getAllStages);
@@ -52,7 +55,7 @@ export default {
     );
     const deal_store = useDealStore();
     const permissionStore = usePermissionStore();
-    const toast = useToast();
+    // const toast = useToast();
     const resizeObserver = new ResizeObserver(() => updateArrowVisibility());
     const dealsContainer = ref(null);
     const showLeft = ref(false);
@@ -104,7 +107,9 @@ export default {
             .filter((stage) => stage.deals_count > 0)
             .forEach((element) => {
               deal_store.fetchDealsByStageId(element.id).catch((error) => {
-                toast.error(error.message || "Failed to fetch deals for stage");
+                notificationStore.error(
+                  error.message || "Failed to fetch deals for stage"
+                );
               });
             });
         })
@@ -113,7 +118,9 @@ export default {
             .filter((stage) => stage.deals_count > 0)
             .forEach((element) => {
               deal_store.fetchDealsByStageId(element.id).catch((error) => {
-                toast.error(error.message || "Failed to fetch deals for stage");
+                notificationStore.error(
+                  error.message || "Failed to fetch deals for stage"
+                );
               });
             });
         })
@@ -122,12 +129,14 @@ export default {
             .filter((stage) => stage.deals_count > 0)
             .forEach((element) => {
               deal_store.fetchDealsByStageId(element.id).catch((error) => {
-                toast.error(error.message || "Failed to fetch deals for stage");
+                notificationStore.error(
+                  error.message || "Failed to fetch deals for stage"
+                );
               });
             });
         })
         .catch((error) => {
-          toast.error(error.message || "Failed to fetch stages");
+          notificationStore.error(error.message || "Failed to fetch stages");
         });
     });
     onUnmounted(() => {
@@ -148,7 +157,7 @@ export default {
       deal_store,
       stage_store,
       permissionStore,
-      toast,
+      // toast,
       showLeft,
       showRight,
       dealsContainer,
