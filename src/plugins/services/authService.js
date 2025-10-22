@@ -551,3 +551,13 @@ export const updateUserRating = async (userId, ratingId) => {
 export const getAllPackageCategories = async () => {
   return await axios.get("/package-categories/all");
 };
+export const downloadDealPdf = async (dealId, locale) => {
+  const token = Cookies.get("authToken");
+  return await axios.get(`/deals/${dealId}/pdf/download?locale=${locale}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/pdf",
+    },
+    responseType: "blob",
+  });
+};

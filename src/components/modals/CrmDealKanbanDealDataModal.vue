@@ -1787,7 +1787,7 @@ import {
   watch,
   onBeforeUnmount,
 } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import RatingStars from "@/components/CreateDealElements/CrmDealKanbanDealDataModalRatingStars.vue";
 import ViewReport from "@/components/kanban/CrmDealKanbanDealDataModalReportModal.vue";
 import { Modal } from "bootstrap";
@@ -1806,6 +1806,7 @@ import {
   createConversation,
   getAvailableStages,
   toggleCommentPin,
+  downloadDealPdf,
 } from "@/plugins/services/authService";
 import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import moveCardSound from "@/assets/move-card.wav";
@@ -1846,7 +1847,6 @@ export default {
     const logStore = useLogStore();
     const packageStore = usePackageStore();
     const route = useRoute();
-    const router = useRouter();
     const permissionStore = usePermissionStore();
     const selected_conversation = ref(null);
     const { t, locale } = useI18n();
@@ -3820,45 +3820,60 @@ export default {
         customerData.is_local = false;
       }
     };
-    const PrintCase = () => {
+    const PrintCase = async () => {
       try {
-        const routeData = router.resolve({
-          path: "/CompleteCase",
-          query: { dealId: props.deal?.id },
-        });
-        const printWindow = window.open(
-          routeData.href,
-          "_blank",
-          "width=800,height=600"
-        );
-        printWindow.onload = () => {
-          setTimeout(() => {
-            const style = printWindow.document.createElement("style");
-            style.innerHTML = `
-          @page {
-            size: A4;
-          }
-          body {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;       
-            padding: 0;
-          }
-          .top-bar {
-            display: none;
-          }
-        `;
-            printWindow.document.head.appendChild(style);
+        const locale = localStorage.getItem("locale") || "en";
+        const dealId = props.deal?.id;
 
-            printWindow.focus();
-            printWindow.print();
-            printWindow.close();
-          }, 5000);
-        };
+        if (!dealId) {
+          toast.error(t("error.NoDealData"), { timeout: 3000 });
+          return;
+        }
+        toast.info(t("info.GeneratingPDF"), { timeout: 2000 });
+        const response = await downloadDealPdf(dealId, locale);
+        const blob = new Blob([response.data], { type: "application/pdf" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `Case_${
+          props.deal?.contact?.name || "Patient"
+        }_${Date.now()}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        toast.success(t("success.PDFGenerated"), { timeout: 3000 });
       } catch (error) {
-        console.error("Error printing the Documents", error);
-        toast.error(t("error.PrintCase"), {
-          timeout: 3000,
-        });
+        console.error("Error generating PDF:", error);
+        if (error.response) {
+          console.error("Response status:", error.response.status);
+          console.error("Response data:", error.response.data);
+          if (error.response.data instanceof Blob) {
+            const text = await error.response.data.text();
+            console.error("Error details:", text);
+            try {
+              const errorJson = JSON.parse(text);
+              toast.error(errorJson.message || t("error.PrintCase"), {
+                timeout: 3000,
+              });
+            } catch (e) {
+              toast.error(text || t("error.PrintCase"), { timeout: 3000 });
+            }
+          } else {
+            toast.error(error.response.data.message || t("error.PrintCase"), {
+              timeout: 3000,
+            });
+          }
+        } else if (error.request) {
+          console.error("No response received");
+          toast.error(t("error.NetworkError") || "Network error", {
+            timeout: 3000,
+          });
+        } else {
+          console.error("Error:", error.message);
+          toast.error(t("error.PrintCase"), { timeout: 3000 });
+        }
       }
     };
     const getStageName = (stageId) => {

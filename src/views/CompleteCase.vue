@@ -1,5 +1,5 @@
 <template>
-  <div class="print-area py-4 mt-4" :dir="direction">
+  <div class="print-area py-4 mt-2" :dir="direction">
     <!-- Header with Logo and Clinic Info -->
     <div class="d-flex justify-content-between align-items-start pb-1 mb-2">
       <div>
