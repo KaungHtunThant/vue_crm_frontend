@@ -77,7 +77,8 @@
 </template>
 
 <script>
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+
 import { useI18n } from "vue-i18n";
 import { Modal } from "bootstrap";
 
@@ -90,7 +91,7 @@ export default {
     },
   },
   setup() {
-    const toast = useToast();
+    // const toast = useToast();
     const { t } = useI18n();
     const getContrastColor = (hexColor) => {
       const r = parseInt(hexColor.slice(1, 3), 16);
@@ -99,7 +100,7 @@ export default {
       const brightness = (r * 299 + g * 587 + b * 114) / 1000;
       return brightness > 170 ? "#000000" : "#FFFFFF";
     };
-    return { toast, t, getContrastColor };
+    return { t, getContrastColor };
   },
   methods: {
     filterStage() {

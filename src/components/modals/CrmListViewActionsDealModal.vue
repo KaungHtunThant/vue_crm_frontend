@@ -245,7 +245,9 @@ import { Modal } from "bootstrap";
 import { getAllUsers } from "@/plugins/services/userService";
 import { getAvailableStages } from "@/plugins/services/stageService";
 import { useI18n } from "vue-i18n";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showError } from "@/plugins/services/toastService";
+
 import { useSourceStore } from "@/stores/SourceStore";
 import Cookies from "js-cookie";
 const { t } = useI18n();
@@ -255,7 +257,7 @@ const props = defineProps({
     required: true,
   },
 });
-const toast = useToast();
+// const toast = useToast();
 
 // Define emits properly
 const emits = defineEmits([
@@ -417,7 +419,7 @@ const confirmMultiAction = async () => {
     newSource.value = "";
   } catch (error) {
     console.error(error.message);
-    toast.error(error.message, {
+    showError(error.message, {
       timeout: 3000,
     });
   } finally {

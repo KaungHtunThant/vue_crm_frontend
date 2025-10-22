@@ -149,7 +149,13 @@ import {
 } from "@/plugins/services/contactService";
 import ContactsViewCreateModal from "@/components/ContactModals/ContactsViewCreateModal.vue";
 import ContactsViewFilterModal from "@/components/ContactModals/ContactsViewFilterModal.vue";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import {
+  showSuccess,
+  showError,
+  showInfo,
+} from "@/plugins/services/toastService";
+
 import Swal from "sweetalert2";
 import { useI18n } from "vue-i18n";
 import DataTable from "primevue/datatable";
@@ -170,7 +176,7 @@ export default {
 
   setup() {
     const { t } = useI18n();
-    const toast = useToast();
+    // const toast = useToast();
 
     // Table state
     const tableData = ref([]);
@@ -256,7 +262,7 @@ export default {
         totalRows.value = data.meta.total;
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error(t("error.fetchFailed"));
+        showError(t("error.fetchFailed"));
         rows.value = [];
         totalRows.value = 0;
       } finally {
@@ -281,7 +287,7 @@ export default {
         if (index !== -1) {
           rows.value.splice(index, 1, updatedContact);
         } else {
-          toast.error("There item not found");
+          showError("There item not found");
         }
       }
     };
@@ -320,7 +326,7 @@ export default {
         }
       } catch (error) {
         console.error("Error fetching contact details:", error);
-        toast.error(t("error.fetchContactDetails"));
+        showError(t("error.fetchContactDetails"));
       }
     };
 
@@ -342,10 +348,10 @@ export default {
           await deleteContact(id);
           rows.value = rows.value.filter((item) => item.id !== id);
           totalRows.value -= 1;
-          toast.success(t("success.deleteSuccess"));
+          showSuccess(t("success.deleteSuccess"));
         }
       } catch (error) {
-        toast.error(t("error.deleteFailed"));
+        showError(t("error.deleteFailed"));
       }
     };
 
@@ -363,7 +369,7 @@ export default {
           if (
             new Date(filters.created_at_from) > new Date(filters.created_at_to)
           ) {
-            toast.error(t("error.invalidDateRange"));
+            showError(t("error.invalidDateRange"));
             return;
           }
         }
@@ -385,15 +391,15 @@ export default {
           rows.value = data.data;
           totalRows.value = data.meta.total;
           currentPage.value = 0;
-          toast.success(t("success.filterSuccess"));
+          showSuccess(t("success.filterSuccess"));
         } else {
           rows.value = [];
           totalRows.value = 0;
-          toast.info(t("info.noFilterResults"));
+          showInfo(t("info.noFilterResults"));
         }
       } catch (error) {
         console.error("Filter application failed:", error);
-        toast.error(t("error.filterFailed"));
+        showError(t("error.filterFailed"));
         rows.value = [];
         totalRows.value = 0;
       } finally {
@@ -409,10 +415,10 @@ export default {
 
         await fetchData(0, rowsPerPage.value);
 
-        toast.success(t("success.filterReset"));
+        showSuccess(t("success.filterReset"));
       } catch (error) {
         console.error("Reset filters failed:", error);
-        toast.error(t("error.filterFailed"));
+        showError(t("error.filterFailed"));
       } finally {
         loading.value = false;
       }
@@ -481,11 +487,11 @@ export default {
         } else {
           rows.value = [];
           totalRows.value = 0;
-          toast.info(t("info.noSearchResults"));
+          showInfo(t("info.noSearchResults"));
         }
       } catch (error) {
         console.error("Error searching data:", error);
-        toast.error(t("error.searchFailed"));
+        showError(t("error.searchFailed"));
         rows.value = [];
         totalRows.value = 0;
       } finally {

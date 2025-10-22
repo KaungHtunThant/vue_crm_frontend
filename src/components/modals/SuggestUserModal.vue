@@ -88,7 +88,9 @@
 
 <script>
 import { Modal } from "bootstrap";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showSuccess, showError } from "@/plugins/services/toastService";
+
 import { createComment } from "@/plugins/services/commentService";
 import { createApproval } from "@/plugins/services/approvalService";
 import { ref } from "vue";
@@ -110,7 +112,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const toast = useToast();
+    // const toast = useToast();
     const showModal2 = ref(false);
     const comment = ref("");
     // const selected_user_id = ref(null);
@@ -137,7 +139,7 @@ export default {
       if (selected_user_id.value && comment.value) {
         try {
           if (!selected_user_id.value || !comment.value) {
-            toast.error(t("error.requiredFields"), {
+            showError(t("error.requiredFields"), {
               timeout: 3000,
             });
             return;
@@ -153,24 +155,24 @@ export default {
               selected_user_id.value
             );
             if (approvalResponsive.data) {
-              toast.success(approvalResponsive.data.message, {
+              showSuccess(approvalResponsive.data.message, {
                 timeout: 3000,
               });
             } else {
-              toast.error(approvalResponsive.data.message, {
+              showError(approvalResponsive.data.message, {
                 timeout: 3000,
               });
             }
             emit("suggest-user", selected_user_id.value);
           } else {
-            toast.error(commentResponse.data.message, {
+            showError(commentResponse.data.message, {
               timeout: 3000,
             });
           }
           closeSuggestUserModal();
         } catch (error) {
           console.error("Error updating deal:", error);
-          toast.error(error.message, {
+          showError(error.message, {
             timeout: 3000,
           });
         }
@@ -191,7 +193,6 @@ export default {
       closeSuggestUserModal,
       handleSuggestUserSubmit,
       resetModal,
-      toast,
       local_dealId,
     };
   },

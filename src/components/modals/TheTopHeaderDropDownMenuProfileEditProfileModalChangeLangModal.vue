@@ -51,7 +51,9 @@
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { ref, onMounted } from "vue";
 import { changeLanguage } from "@/i18n";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showSuccess, showError } from "@/plugins/services/toastService";
+
 import { useI18n } from "vue-i18n";
 import { useLoadingStore } from "@/plugins/loadingStore";
 import { saveUserLanguage } from "@/plugins/services/languageService";
@@ -60,7 +62,7 @@ export default {
   name: "TheTopHeaderDropDownMenuProfileEditProfileModalChangeLangModal",
   setup() {
     const { t } = useI18n();
-    const toast = useToast();
+    // const toast = useToast();
     const loadingStore = useLoadingStore();
     const selectedLang = ref(localStorage.getItem("locale") || "en");
     const modalInstance = ref(null);
@@ -74,7 +76,7 @@ export default {
       try {
         modalInstance.value.show();
       } catch (error) {
-        toast.error(t("error.openModal"), {
+        showError(t("error.openModal"), {
           timeout: 3000,
           id: "change-lang-open-error",
           singleton: true,
@@ -91,13 +93,13 @@ export default {
         const response = await saveUserLanguage(selectedLang.value);
         if (response.status === 200) {
           localStorage.setItem("locale", selectedLang.value);
-          toast.success(t("languageChanged"), { timeout: 3000 });
+          showSuccess(t("languageChanged"), { timeout: 3000 });
         } else {
           throw new Error("Failed to save language in API");
         }
       } catch (error) {
         console.error("Error changing language:", error);
-        toast.error(t("error.savingLanguage"), { timeout: 3000 });
+        showError(t("error.savingLanguage"), { timeout: 3000 });
       } finally {
         loadingStore.stopLoading();
       }

@@ -60,7 +60,9 @@
 <script>
 import { ref, onMounted } from "vue";
 import { Modal } from "bootstrap";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showSuccess, showError } from "@/plugins/services/toastService";
+
 import { useI18n } from "vue-i18n";
 
 export default {
@@ -68,7 +70,7 @@ export default {
   emits: ["apply-filters", "reset-filters"],
 
   setup(props, { emit }) {
-    const toast = useToast();
+    // const toast = useToast();
     const modalInstance = ref(null);
     const { t } = useI18n();
 
@@ -83,7 +85,7 @@ export default {
           !filterData.value.created_at_from ||
           !filterData.value.created_at_to
         ) {
-          toast.error(t("error.selectDateRange"));
+          showError(t("error.selectDateRange"));
           return;
         }
 
@@ -94,7 +96,7 @@ export default {
         emit("apply-filters", filters);
         modalInstance.value.hide();
       } catch (error) {
-        toast.error(t("error.applyFilters"));
+        showError(t("error.applyFilters"));
       }
     };
 
@@ -106,10 +108,10 @@ export default {
         };
         emit("reset-filters");
         modalInstance.value.hide();
-        toast.success(t("success.filtersCleared"));
+        showSuccess(t("success.filtersCleared"));
       } catch (error) {
         console.error("Error resetting filters:", error);
-        toast.error(t("error.resetFilters"));
+        showSuccess(t("error.resetFilters"));
       }
     };
 

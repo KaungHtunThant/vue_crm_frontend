@@ -157,7 +157,9 @@ import draggable from "vuedraggable";
 import TicketCard from "@/components/kanban/CrmDealKanbanBoardDealsTicketCard.vue";
 import { ref } from "vue";
 import { usePermissionStore } from "@/stores/PermissionStore";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showError } from "@/plugins/services/toastService";
+
 import { useI18n } from "vue-i18n";
 import MinimizedStage from "@/components/kanban/TestKanbanMinimizedStage.vue";
 import { computed } from "vue";
@@ -179,7 +181,7 @@ export default {
     const deal_store = useDealStore();
     const local_stage = ref(props.stage);
     const permissionStore = usePermissionStore();
-    const toast = useToast();
+    // const toast = useToast();
     const { t } = useI18n();
     const reachedBottom = ref(false);
     const deals = computed(() => {
@@ -211,7 +213,7 @@ export default {
           })
           .catch((error) => {
             console.error("Error fetching deals:", error);
-            toast.error(t("error-fetching-deals"));
+            showError(t("error-fetching-deals"));
             reachedBottom.value = false;
           });
       }
@@ -222,7 +224,7 @@ export default {
       local_stage,
       permissionStore,
       deals,
-      toast,
+      // toast,
       t,
       handleDealContainerScroll,
     };

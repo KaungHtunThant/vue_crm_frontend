@@ -26,14 +26,16 @@
 
 <script>
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showError } from "@/plugins/services/toastService";
+
 import { useI18n } from "vue-i18n";
 export default {
   name: "TheTopHeaderDropDownMenuProfileEditProfileModalChangePasswordModalButtonsItems",
   props: ["loading"],
   emits: ["close"],
   setup(props, { emit }) {
-    const toast = useToast();
+    // const toast = useToast();
     const { t } = useI18n();
     const handleClose = () => {
       try {
@@ -46,7 +48,7 @@ export default {
           emit("close");
         }
       } catch (error) {
-        toast.error(error.message, {
+        showError(error.message, {
           timeout: 3000,
         });
       }

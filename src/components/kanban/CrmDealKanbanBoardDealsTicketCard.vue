@@ -238,7 +238,9 @@
 
 <script>
 import { useI18n } from "vue-i18n";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showSuccess, showError } from "@/plugins/services/toastService";
+
 import { computed } from "vue";
 import CountryFlagAvatar from "@/components/whatsapp/WhatsAppModalSidebarLeftCountryFlagAvatar.vue";
 import Cookies from "js-cookie";
@@ -269,7 +271,7 @@ export default {
   setup(props, { emit }) {
     const userRole = Cookies.get("user_role");
     const { t } = useI18n();
-    const toast = useToast();
+    // const toast = useToast();
 
     const formatDate = (dateString) => {
       if (!dateString) return "";
@@ -377,9 +379,9 @@ export default {
     const copyPhoneNumber = async () => {
       try {
         await navigator.clipboard.writeText(props.deal.phone);
-        toast.success(t("phone-copied"));
+        showSuccess(t("phone-copied"));
       } catch (err) {
-        toast.error(t("copy-failed"));
+        showError(t("copy-failed"));
       }
     };
     const getPersuasionColorClass = (persuasion_status) => {

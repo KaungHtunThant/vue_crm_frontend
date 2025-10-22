@@ -40,7 +40,13 @@ import { Modal } from "bootstrap";
 
 import ImportForm from "@/components/importElements/CrmListViewImportModalFormItems.vue";
 import ImportButtons from "@/components/importElements/CrmListViewImportModalButtonsItems.vue";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import {
+  showSuccess,
+  showError,
+  showInfo,
+} from "@/plugins/services/toastService";
+
 import { useI18n } from "vue-i18n";
 import { importDeals } from "@/plugins/services/dealService";
 
@@ -49,7 +55,7 @@ export default {
   components: { ImportButtons, ImportForm },
   props: ["modelValue"],
   setup(props, { emit }) {
-    const toast = useToast();
+    // const toast = useToast();
     const { t } = useI18n();
     const importModalRef = ref(null);
     const importFormRef = ref(null);
@@ -61,12 +67,12 @@ export default {
         if (importModalRef.value) {
           modalInstance = new Modal(importModalRef.value);
           modalInstance.show();
-          toast.info(t("modals.importModalInfo"), {
+          showInfo(t("modals.importModalInfo"), {
             timeout: 3000,
           });
         }
       } catch (error) {
-        toast.error(t("error.importModalError"), {
+        showError(t("error.importModalError"), {
           timeout: 3000,
         });
         console.error("Error opening modal:", error);
@@ -80,7 +86,7 @@ export default {
           modalInstance.hide();
         }
       } catch (error) {
-        toast.error(t("error.closeModal"), {
+        showError(t("error.closeModal"), {
           timeout: 3000,
         });
         console.error("Error closing modal:", error);
@@ -103,18 +109,18 @@ export default {
           };
           const response = await importDeals(fields);
           if (response.status === 200) {
-            toast.success(t("success.importModalSuccess"), {
+            showSuccess(t("success.importModalSuccess"), {
               timeout: 3000,
             });
             emit("import-complete");
           }
         }
-        toast.success(t("success.importModalSuccess"), {
+        showSuccess(t("success.importModalSuccess"), {
           timeout: 3000,
         });
         closeImportModal();
       } catch (error) {
-        toast.error(
+        showError(
           error.response?.data?.message || t("error.importModalError"),
           {
             timeout: 3000,

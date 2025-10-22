@@ -124,7 +124,13 @@ import EasyDataTable from "vue3-easy-data-table";
 import DocumentsFolderViewAddEditFolderModal from "@/components/modals/DocumentsFolderViewAddEditFolderModal.vue";
 // import ImportFolder from "@/components/modals/ImportFolder.vue";
 import Modal from "bootstrap/js/dist/modal";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import {
+  showSuccess,
+  showError,
+  showWarning,
+} from "@/plugins/services/toastService";
+
 import Swal from "sweetalert2";
 import { useI18n } from "vue-i18n";
 import {
@@ -144,7 +150,7 @@ export default {
   },
 
   setup() {
-    const toast = useToast();
+    // const toast = useToast();
     const router = useRouter();
     const tableLoading = ref(false);
     const items = ref([]);
@@ -201,7 +207,7 @@ export default {
 
           if (response && response.data.result) {
             items.value.push(response.data.result);
-            toast.success(response.data.message, { timeout: 3000 });
+            showSuccess(response.data.message, { timeout: 3000 });
           } else {
             throw new Error("❌ استجابة غير صالحة من السيرفر");
           }
@@ -209,7 +215,7 @@ export default {
 
         folderFormModal.value.hide();
       } catch (error) {
-        toast.error(t("error.saveFailed"), { timeout: 3000 });
+        showError(t("error.saveFailed"), { timeout: 3000 });
       }
     };
 
@@ -230,12 +236,12 @@ export default {
         if (result.isConfirmed) {
           await deleteDocuments(id);
           items.value = items.value.filter((folder) => folder.id !== id);
-          toast.success(t("success.deleteSuccess"), {
+          showSuccess(t("success.deleteSuccess"), {
             timeout: 3000,
           });
         }
       } catch (error) {
-        toast.error(t("error.deleteFailed"), {
+        showError(t("error.deleteFailed"), {
           timeout: 3000,
         });
         console.error("Error deleting folder:", error);
@@ -246,11 +252,11 @@ export default {
       try {
         console.info("Downloading folder:", folderId);
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        toast.success(t("success.downloadStarted"), {
+        showSuccess(t("success.downloadStarted"), {
           timeout: 3000,
         });
       } catch (error) {
-        toast.error(t("error.downloadFailed"), {
+        showError(t("error.downloadFailed"), {
           timeout: 3000,
         });
         console.error("Error downloading folder:", error);
@@ -263,7 +269,7 @@ export default {
         const response = await getDocuments();
         items.value = response.data.folders;
       } catch (error) {
-        toast.error(t("error.fetchFailed"), {
+        showError(t("error.fetchFailed"), {
           timeout: 3000,
         });
         console.error("Error fetching folders:", error);
@@ -294,10 +300,10 @@ export default {
             },
           });
         } else {
-          toast.warning("invalidFolderPath");
+          showWarning("invalidFolderPath");
         }
       } catch (error) {
-        toast.error("Error navigating to folder");
+        showError("Error navigating to folder");
       }
     };
 

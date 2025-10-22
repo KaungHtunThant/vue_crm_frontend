@@ -44,7 +44,8 @@
 import { createApproval } from "@/plugins/services/approvalService";
 import { Modal } from "bootstrap";
 import { computed } from "vue";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showSuccess, showError } from "@/plugins/services/toastService";
 
 export default {
   name: "RequestDealModal",
@@ -71,7 +72,7 @@ export default {
           return "kanban-modal-request-sub-heading-default";
       }
     });
-    const toast = useToast();
+    // const toast = useToast();
     const getContrastColor = (color) => {
       const r = parseInt(color.slice(1, 3), 16);
       const g = parseInt(color.slice(3, 5), 16);
@@ -79,7 +80,7 @@ export default {
       const brightness = (r * 299 + g * 587 + b * 114) / 1000;
       return brightness > 125 ? "#000000" : "#FFFFFF";
     };
-    return { toast, getContrastColor, search_type_value };
+    return { getContrastColor, search_type_value };
   },
   data() {
     return {
@@ -115,13 +116,13 @@ export default {
       try {
         const response = await createApproval(this.search_val);
         if (response.status === 200 || response.status === 201) {
-          this.toast.success(response.data.message);
+          showSuccess(response.data.message);
         } else {
-          this.toast.error(response.data.message);
+          showError(response.data.message);
         }
         this.closeRequestDealModal();
       } catch (error) {
-        this.toast.error(error.message);
+        showError(error.message);
       }
     },
   },

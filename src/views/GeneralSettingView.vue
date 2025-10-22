@@ -540,7 +540,9 @@
 </template>
 
 <script>
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showSuccess, showError } from "@/plugins/services/toastService";
+
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
 import defaultImage from "@/assets/new-nokta-logo.png";
@@ -569,7 +571,7 @@ export default {
 
   setup() {
     const { t } = useI18n();
-    const toast = useToast();
+    // const toast = useToast();
     const search = ref("");
     // const tableLoading = ref(false);
     const items = ref([]);
@@ -661,7 +663,7 @@ export default {
         // });
       } catch (error) {
         console.error("Error loading roles:", error);
-        toast.error(t("error.loadFailedRoles"), {
+        showError(t("error.loadFailedRoles"), {
           timeout: 3000,
         });
         items.value = [];
@@ -717,7 +719,7 @@ export default {
         modal.value?.show();
       } catch (error) {
         console.error("Error opening modal:", error);
-        toast.error(t("error.openModal"), {
+        showError(t("error.openModal"), {
           timeout: 3000,
         });
       }
@@ -726,14 +728,14 @@ export default {
     const saveRole = async (role) => {
       try {
         if (!role.name?.trim()) {
-          toast.error(t("roleSettings.requiredRoleName"), {
+          showError(t("roleSettings.requiredRoleName"), {
             timeout: 3000,
           });
           return;
         }
 
         if (role.permissions.length === 0) {
-          toast.error(t("roleSettings.requiredPermission"), {
+          showError(t("roleSettings.requiredPermission"), {
             timeout: 3000,
           });
           return;
@@ -747,7 +749,7 @@ export default {
               ...role,
               permissions: [...role.permissions],
             };
-            toast.success(t("success.updated"), {
+            showSuccess(t("success.updated"), {
               timeout: 3000,
             });
           }
@@ -758,14 +760,14 @@ export default {
             ...role,
             permissions: [...role.permissions],
           });
-          toast.success(t("success.saved"), {
+          showSuccess(t("success.saved"), {
             timeout: 3000,
           });
         }
         modal.value?.hide();
       } catch (error) {
         console.error("Error saving role:", error);
-        toast.error(t("error.saveFailed"), {
+        showError(t("error.saveFailed"), {
           timeout: 3000,
         });
       }
@@ -789,14 +791,14 @@ export default {
           const index = items.value.findIndex((r) => r.id === id);
           if (index !== -1) {
             items.value.splice(index, 1);
-            toast.success(t("success.deleted"), {
+            showSuccess(t("success.deleted"), {
               timeout: 3000,
             });
           }
         }
       } catch (error) {
         console.error("Error deleting role:", error);
-        toast.error(t("error.deleteFailed"), {
+        showError(t("error.deleteFailed"), {
           timeout: 3000,
         });
       }
@@ -804,7 +806,7 @@ export default {
 
     const editRole = (role) => {
       if (role.name === "Admin") {
-        toast.error(t("roleSettings.cannotEditAdmin"), {
+        showError(t("roleSettings.cannotEditAdmin"), {
           timeout: 3000,
         });
         return;
@@ -849,10 +851,10 @@ export default {
           is_first: index === 0,
           is_last: index === response.data.data.length - 1,
         }));
-        toast.success(response.data.message);
+        showSuccess(response.data.message);
       } else {
         // Handle error response
-        toast.error("Failed to fetch broadcasts");
+        showError("Failed to fetch broadcasts");
       }
     };
 
@@ -860,10 +862,10 @@ export default {
       // Logic to update position
       const response = await updateBroadcastPosition(id, direction);
       if (response.status === 200) {
-        toast.success(response.data.message);
+        showSuccess(response.data.message);
         fetchBroadcasts();
       } else {
-        toast.error("Failed to update position");
+        showError("Failed to update position");
       }
     };
 
@@ -874,9 +876,9 @@ export default {
         broadcast.status = broadcast.status ? 0 : 1;
         const response = await updateBroadcast(id, null, broadcast.status);
         if (response.status === 200) {
-          toast.success(response.data.message);
+          showSuccess(response.data.message);
         } else {
-          toast.error("Failed to update status");
+          showError("Failed to update status");
         }
       }
     };
@@ -893,9 +895,9 @@ export default {
           broadcast.important
         );
         if (response.status === 200) {
-          toast.success(response.data.message);
+          showSuccess(response.data.message);
         } else {
-          toast.error("Failed to update important status");
+          showError("Failed to update important status");
         }
       }
     };
@@ -928,10 +930,10 @@ export default {
       // Logic to submit the form
       const response = await createBroadcast(description);
       if (response.status === 200) {
-        toast.success(response.data.message);
+        showSuccess(response.data.message);
         fetchBroadcasts();
       } else {
-        toast.error("Failed to create broadcast");
+        showError("Failed to create broadcast");
       }
       closeCreateModal();
     };
@@ -956,7 +958,7 @@ export default {
       closeModal,
       loadData,
       t,
-      toast,
+      // toast,
       itemsBroadcast,
       fetchBroadcasts,
       headersBroadcast,
@@ -1047,28 +1049,28 @@ export default {
     saveSettings() {
       try {
         if (!this.settings.appName?.trim()) {
-          this.toast.error(this.$t("error.required"), {
+          showError(this.$t("error.required"), {
             timeout: 3000,
           });
           return;
         }
 
         if (!this.settings.planExpireDays) {
-          this.toast.error(this.$t("error.requiredplanExpireDays"), {
+          showError(this.$t("error.requiredplanExpireDays"), {
             timeout: 3000,
           });
           return;
         }
 
         if (!this.settings.defaultCountry) {
-          this.toast.error(this.$t("error.requiredDefaultCountry"), {
+          showError(this.$t("error.requiredDefaultCountry"), {
             timeout: 3000,
           });
           return;
         }
 
         if (!this.settings.currency) {
-          this.toast.error(this.$t("error.requiredCurrency"), {
+          showError(this.$t("error.requiredCurrency"), {
             timeout: 3000,
           });
           return;
@@ -1076,24 +1078,24 @@ export default {
 
         if (this.settings.enableRecaptcha) {
           if (!this.settings.googleCaptchaKey?.trim()) {
-            this.toast.error(this.$t("error.requiredGoogleCaptchaKey"), {
+            showError(this.$t("error.requiredGoogleCaptchaKey"), {
               timeout: 3000,
             });
             return;
           }
           if (!this.settings.googleCaptchaSecret?.trim()) {
-            this.toast.error(this.$t("error.requiredGoogleCaptchaSecret"), {
+            showError(this.$t("error.requiredGoogleCaptchaSecret"), {
               timeout: 3000,
             });
             return;
           }
         }
-        this.toast.success(this.$t("success.saved"), {
+        showSuccess(this.$t("success.saved"), {
           timeout: 3000,
         });
       } catch (error) {
         console.error("Error saving settings:", error);
-        this.toast.error(this.$t("error.saveFailed"), {
+        showError(this.$t("error.saveFailed"), {
           timeout: 3000,
         });
       }
@@ -1104,19 +1106,19 @@ export default {
         const file = event.target.files[0];
         if (file) {
           if (!file.type.startsWith("image/")) {
-            this.toast.error(this.$t("error.invalidFile"), {
+            showError(this.$t("error.invalidFile"), {
               timeout: 3000,
             });
             return;
           }
           this.settings.appLogo = URL.createObjectURL(file);
-          this.toast.success(this.$t("success.updatedAppLogo"), {
+          showSuccess(this.$t("success.updatedAppLogo"), {
             timeout: 3000,
           });
         }
       } catch (error) {
         console.error("Error uploading logo:", error);
-        this.toast.error(this.$t("error.uploadFailed"), {
+        showError(this.$t("error.uploadFailed"), {
           timeout: 3000,
         });
       }
@@ -1127,19 +1129,19 @@ export default {
         const file = event.target.files[0];
         if (file) {
           if (!file.type.startsWith("image/")) {
-            this.toast.error(this.$t("error.invalidFile"), {
+            showError(this.$t("error.invalidFile"), {
               timeout: 3000,
             });
             return;
           }
           this.settings.favicon = URL.createObjectURL(file);
-          this.toast.success(this.$t("success.updatedFavicon"), {
+          showSuccess(this.$t("success.updatedFavicon"), {
             timeout: 3000,
           });
         }
       } catch (error) {
         console.error("Error uploading favicon:", error);
-        this.toast.error(this.$t("error.uploadFaviconFailed"), {
+        showError(this.$t("error.uploadFaviconFailed"), {
           timeout: 3000,
         });
       }

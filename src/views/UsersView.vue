@@ -162,7 +162,9 @@ import UserViewAddEditUserModal from "@/components/modals/UserViewAddEditUserMod
 import UserViewActionButtons from "@/components/usersElements/UserViewActionButtons.vue";
 import UserViewStatusAccount from "@/components/usersElements/UserViewStatusAccount.vue";
 import UserViewFilterModal from "@/components/modals/UserViewFilterModal.vue";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showSuccess, showError } from "@/plugins/services/toastService";
+
 import Swal from "sweetalert2";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
@@ -185,7 +187,7 @@ export default {
 
   setup() {
     const { t } = useI18n();
-    const toast = useToast();
+    // const toast = useToast();
     const ratingStore = useRatingStore();
     const store = useUserStore();
 
@@ -198,10 +200,10 @@ export default {
       };
       try {
         await store.applyFilters(mapped);
-        toast.success(t("success.filterSuccess"));
+        showSuccess(t("success.filterSuccess"));
       } catch (e) {
         console.error(t("error.filterFailed"), e);
-        toast.error(t("error.filterFailed"));
+        showError(t("error.filterFailed"));
       }
     };
 
@@ -218,11 +220,11 @@ export default {
     const onToggleStatus = async (row) => {
       const result = await store.toggleStatus(row);
       if (result.success) {
-        toast.success(result.message || t("success.updateUser"), {
+        showSuccess(result.message || t("success.updateUser"), {
           timeout: 3000,
         });
       } else {
-        toast.error(result.message || t("error.updateFailed"), {
+        showError(result.message || t("error.updateFailed"), {
           timeout: 3000,
         });
       }
@@ -266,11 +268,11 @@ export default {
         if (result.isConfirmed) {
           const res = await store.removeUser(id);
           if (res.success)
-            toast.success(res.message || t("success.deleteSuccess"));
-          else toast.error(res.message || t("error.deleteFailed"));
+            showSuccess(res.message || t("success.deleteSuccess"));
+          else showError(res.message || t("error.deleteFailed"));
         }
       } catch (error) {
-        toast.error(t("error.deleteFailed"), {
+        showError(t("error.deleteFailed"), {
           timeout: 3000,
         });
         console.error("Delete User Is Failed:", error);
@@ -322,16 +324,16 @@ export default {
 
         const response = await updateUserRating(user_id, rating_id);
         if (response.status === 200) {
-          toast.success(response.data.message || t("success.updateUser"), {
+          showSuccess(response.data.message || t("success.updateUser"), {
             timeout: 3000,
           });
         } else {
-          toast.error(response.data.message || t("error.updateFailed"), {
+          showError(response.data.message || t("error.updateFailed"), {
             timeout: 3000,
           });
         }
       } catch (error) {
-        toast.error(error.message || t("error.updateFailed"), {
+        showError(error.message || t("error.updateFailed"), {
           timeout: 3000,
         });
       }

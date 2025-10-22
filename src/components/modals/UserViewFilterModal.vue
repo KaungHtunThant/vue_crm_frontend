@@ -46,16 +46,18 @@ import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import FilterForm from "@/components/filterElements/UserViewFilterModalFormItems.vue";
 import FilterButtons from "@/components/filterElements/UserViewFilterModalButtonsItems.vue";
 import { getRoles } from "@/plugins/services/userService";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showSuccess, showError } from "@/plugins/services/toastService";
+
 import { useI18n } from "vue-i18n";
 
 export default {
   name: "UserViewFilterModal",
   components: { FilterForm, FilterButtons },
   setup() {
-    const toast = useToast();
+    // const toast = useToast();
     const { t } = useI18n();
-    return { toast, t };
+    return { t };
   },
   data() {
     return {
@@ -79,7 +81,7 @@ export default {
       this.loading = true;
       try {
         this.$emit("apply-filters", filters);
-        this.toast.success(this.$t("success.applyFilters"), {
+        showSuccess(this.$t("success.applyFilters"), {
           timeout: 3000,
         });
         setTimeout(() => {
@@ -87,7 +89,7 @@ export default {
           this.closeFilterModal();
         }, 1000);
       } catch (error) {
-        this.toast.error(this.$t("error.applyFilters"), {
+        showError(this.$t("error.applyFilters"), {
           timeout: 3000,
         });
         this.loading = false;
@@ -109,7 +111,7 @@ export default {
           createdAt: this.createdAt,
           perPage: this.perPage,
         });
-        this.toast.success(this.$t("success.applyFilters"), {
+        showSuccess(this.$t("success.applyFilters"), {
           timeout: 3000,
         });
         setTimeout(() => {
@@ -117,7 +119,7 @@ export default {
           this.closeFilterModal();
         }, 1000);
       } catch (error) {
-        this.toast.error(this.$t("error.applyFilters"), {
+        showError(this.$t("error.applyFilters"), {
           timeout: 3000,
         });
         this.loading = false;
@@ -131,12 +133,12 @@ export default {
         this.perPage = "10";
 
         this.$emit("reset-filters");
-        this.toast.success(this.$t("success.resetFilters"), {
+        showSuccess(this.$t("success.resetFilters"), {
           timeout: 3000,
         });
         this.closeFilterModal();
       } catch (error) {
-        this.toast.error(this.$t("error.resetFilters"), {
+        showError(this.$t("error.resetFilters"), {
           timeout: 3000,
         });
       }
@@ -146,7 +148,7 @@ export default {
         const response = await getRoles();
         this.roles = response.data.data;
       } catch (error) {
-        this.toast.error(this.$t("error.fetchRoles"), {
+        showError(this.$t("error.fetchRoles"), {
           timeout: 3000,
         });
         console.error("Error fetching roles:", error);

@@ -205,7 +205,9 @@ import {
   createContact,
   updateContact,
 } from "@/plugins/services/contactService";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showError } from "@/plugins/services/toastService";
+
 import { useI18n } from "vue-i18n";
 export default {
   name: "ContactsViewCreateModal",
@@ -218,7 +220,7 @@ export default {
   emits: ["contact-updated"],
   setup(props, { emit }) {
     const { t } = useI18n();
-    const toast = useToast();
+    // const toast = useToast();
     const modalInstance = ref(null);
     const isEditing = ref(false);
     const isSubmitting = ref(false);
@@ -267,7 +269,7 @@ export default {
         }
         modalInstance.value.show();
       } catch (error) {
-        toast.error(error.message, {
+        showError(error.message, {
           timeout: 3000,
         });
         console.error("Error opening modal:", error);
@@ -334,7 +336,7 @@ export default {
         if (error.response?.data?.errors) {
           errors.value = error.response.data.errors;
         }
-        toast.error(error.message || t("error.saveContact"), {
+        showError(error.message || t("error.saveContact"), {
           timeout: 3000,
         });
       } finally {
@@ -352,7 +354,7 @@ export default {
           document.getElementById("contactCreateModal")
         );
       } catch (error) {
-        toast.error(t("error.closeModal"), {
+        showError(t("error.closeModal"), {
           timeout: 3000,
         });
       }

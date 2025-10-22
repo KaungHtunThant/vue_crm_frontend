@@ -60,19 +60,21 @@
 <script>
 import { ref } from "vue";
 import { Modal } from "bootstrap";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showSuccess, showError } from "@/plugins/services/toastService";
+
 import { useI18n } from "vue-i18n";
 export default {
   name: "CrmKanbanTopHeaderExportModal",
   setup() {
     const { t } = useI18n();
-    const toast = useToast();
+    // const toast = useToast();
     const exportFormat = ref("");
 
     const handleExport = () => {
       try {
         if (!exportFormat.value) {
-          toast.error(t("error.chooseExportFormat"), {
+          showError(t("error.chooseExportFormat"), {
             timeout: 3000,
           });
           return;
@@ -81,14 +83,14 @@ export default {
         const modal = Modal.getInstance(document.getElementById("exportModal"));
         modal?.hide();
 
-        toast.success(t("success.exportData"), {
+        showSuccess(t("success.exportData"), {
           timeout: 3000,
         });
 
         exportFormat.value = "";
       } catch (error) {
         console.error("Error during export:", error);
-        toast.error(t("error.exportData"), {
+        showError(t("error.exportData"), {
           timeout: 3000,
         });
       }

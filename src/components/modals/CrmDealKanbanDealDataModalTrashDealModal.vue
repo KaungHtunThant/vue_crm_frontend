@@ -104,7 +104,9 @@
 
 <script>
 import { Modal } from "bootstrap";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showInfo, showError } from "@/plugins/services/toastService";
+
 import { createComment } from "@/plugins/services/commentService";
 import { getTrashStages } from "@/plugins/services/stageService";
 import Cookies from "js-cookie";
@@ -118,7 +120,7 @@ export default {
     },
   },
   setup() {
-    const toast = useToast();
+    // const toast = useToast();
     const getContrastColor = (color) => {
       const r = parseInt(color.slice(1, 3), 16);
       const g = parseInt(color.slice(3, 5), 16);
@@ -126,7 +128,7 @@ export default {
       const brightness = (r * 299 + g * 587 + b * 114) / 1000;
       return brightness > 125 ? "#000000" : "#FFFFFF";
     };
-    return { toast, getContrastColor };
+    return { getContrastColor };
   },
   data() {
     return {
@@ -172,7 +174,7 @@ export default {
     async handleTrashDeal() {
       try {
         if (!this.selected_stage_id || !this.comment) {
-          this.toast.error(this.t("error.requiredFields"), {
+          showError(this.t("error.requiredFields"), {
             timeout: 3000,
           });
           return;
@@ -187,14 +189,14 @@ export default {
         if (commentResponse.data) {
           this.$emit("deal-trashed", this.dealId, selected_stage_id, true);
         } else {
-          this.toast.error(commentResponse.data.message, {
+          showError(commentResponse.data.message, {
             timeout: 3000,
           });
         }
         this.closeTrashDealModal();
       } catch (error) {
         console.error("Error updating deal:", error);
-        this.toast.error(error.message, {
+        showError(error.message, {
           timeout: 3000,
         });
       }
@@ -206,18 +208,18 @@ export default {
         if (response.status === 200) {
           this.trash_stages = response.data?.data;
           if (this.trash_stages.length < 1) {
-            this.toast.info(response.data.message, {
+            showInfo(response.data.message, {
               timeout: 3000,
             });
           }
         } else {
-          this.toast.error(response.data.message, {
+          showError(response.data.message, {
             timeout: 3000,
           });
         }
       } catch (error) {
         console.error("Error fetching trash stages:", error);
-        this.toast.error(error.message, {
+        showError(error.message, {
           timeout: 3000,
         });
       }

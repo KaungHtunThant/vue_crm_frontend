@@ -96,7 +96,9 @@ import EasyDataTable from "vue3-easy-data-table";
 import "vue3-easy-data-table/dist/style.css";
 import { Modal } from "bootstrap";
 import RoleSettingsViewAddEditRoleModal from "@/components/modals/RoleSettingsViewAddEditRoleModal.vue";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showSuccess, showError } from "@/plugins/services/toastService";
+
 import Swal from "sweetalert2";
 import { useI18n } from "vue-i18n";
 // import { useLoadingStore } from "@/plugins/loadingStore";
@@ -115,7 +117,7 @@ export default {
   },
   setup() {
     const { t } = useI18n();
-    const toast = useToast();
+    // const toast = useToast();
     const search = ref("");
     // const tableLoading = ref(false);
     const items = ref([]);
@@ -208,7 +210,7 @@ export default {
         // });
       } catch (error) {
         console.error("Error loading roles:", error);
-        toast.error(t("error.loadFailedRoles"), {
+        showError(t("error.loadFailedRoles"), {
           timeout: 3000,
         });
         items.value = [];
@@ -264,7 +266,7 @@ export default {
         modal.value?.show();
       } catch (error) {
         console.error("Error opening modal:", error);
-        toast.error(t("error.openModal"), {
+        showError(t("error.openModal"), {
           timeout: 3000,
         });
       }
@@ -273,14 +275,14 @@ export default {
     const saveRole = async (role) => {
       try {
         if (!role.name?.trim()) {
-          toast.error(t("roleSettings.requiredRoleName"), {
+          showError(t("roleSettings.requiredRoleName"), {
             timeout: 3000,
           });
           return;
         }
 
         if (role.permissions.length === 0) {
-          toast.error(t("roleSettings.requiredPermission"), {
+          showError(t("roleSettings.requiredPermission"), {
             timeout: 3000,
           });
           return;
@@ -294,7 +296,7 @@ export default {
               ...role,
               permissions: [...role.permissions],
             };
-            toast.success(t("success.updated"), {
+            showSuccess(t("success.updated"), {
               timeout: 3000,
             });
           }
@@ -305,14 +307,14 @@ export default {
             ...role,
             permissions: [...role.permissions],
           });
-          toast.success(t("success.saved"), {
+          showSuccess(t("success.saved"), {
             timeout: 3000,
           });
         }
         modal.value?.hide();
       } catch (error) {
         console.error("Error saving role:", error);
-        toast.error(t("error.saveFailed"), {
+        showError(t("error.saveFailed"), {
           timeout: 3000,
         });
       }
@@ -336,14 +338,14 @@ export default {
           const index = items.value.findIndex((r) => r.id === id);
           if (index !== -1) {
             items.value.splice(index, 1);
-            toast.success(t("success.deleted"), {
+            showSuccess(t("success.deleted"), {
               timeout: 3000,
             });
           }
         }
       } catch (error) {
         console.error("Error deleting role:", error);
-        toast.error(t("error.deleteFailed"), {
+        showError(t("error.deleteFailed"), {
           timeout: 3000,
         });
       }
@@ -351,7 +353,7 @@ export default {
 
     const editRole = (role) => {
       if (role.name === "Admin") {
-        toast.error(t("roleSettings.cannotEditAdmin"), {
+        showError(t("roleSettings.cannotEditAdmin"), {
           timeout: 3000,
         });
         return;

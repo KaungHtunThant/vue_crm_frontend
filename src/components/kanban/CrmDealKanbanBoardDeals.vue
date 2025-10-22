@@ -313,7 +313,8 @@ import draggable from "vuedraggable";
 import TicketCard from "@/components/kanban/CrmDealKanbanBoardDealsTicketCard.vue";
 import { Modal } from "bootstrap";
 import { useRoute } from "vue-router";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showSuccess, showError } from "@/plugins/services/toastService";
 
 import {
   updateDealStage,
@@ -389,7 +390,7 @@ export default {
     const comments = ref([]);
     const isTasksView = computed(() => route.path === "/crm-tasks");
     const tasks = ref([]);
-    const toast = useToast();
+    // const toast = useToast();
     const { t } = useI18n();
     const selectedDeal = ref(null);
     const reachedBottom = ref(false);
@@ -534,7 +535,7 @@ export default {
           }
         } catch (error) {
           console.error("Error fetching parent stage deals:", error);
-          toast.error("Failed to load parent stage deals");
+          showError("Failed to load parent stage deals");
         }
       } else {
         expandedStages.value[parentStage.id] = true;
@@ -551,7 +552,7 @@ export default {
           }
         } catch (error) {
           expandedStages.value[parentStage.id] = false;
-          toast.error(error.message);
+          showError(error.message);
         }
       }
     };
@@ -579,7 +580,7 @@ export default {
           const request = await updateDealStage(deal.id, newStageId);
           if (request.status !== 200) {
             console.error("Error updating deal stage:", request.data.message);
-            toast.error(request.data.message);
+            showError(request.data.message);
             const newStageInDisplay = displayStages.value.find(
               (s) => s.id === newStageId
             );
@@ -667,7 +668,7 @@ export default {
               }
             }
           }
-          toast.error(error.message);
+          showError(error.message);
         }
       }
     };
@@ -747,7 +748,7 @@ export default {
         }
       } catch (error) {
         console.error("Error fetching deal data:", error);
-        toast.error("something went wrong");
+        showError("something went wrong");
       }
     };
 
@@ -860,7 +861,7 @@ export default {
         displayStages.value[stageIndex].deals.unshift(newDeal);
         displayStages.value[stageIndex].deal_count =
           (displayStages.value[stageIndex].deal_count || 0) + 1;
-        toast.success(message);
+        showSuccess(message);
       }
     };
 
@@ -939,7 +940,7 @@ export default {
           );
         }
       }
-      toast.success(message);
+      showSuccess(message);
     };
 
     const dealDeleteEvent = (deal, message) => {
@@ -957,7 +958,7 @@ export default {
             0,
             displayStages.value[stageIndex].deal_count - 1
           );
-          toast.success(message);
+          showSuccess(message);
         }
       } else if (stageIndex !== -1 && expandedStages.value[deal.stage_id]) {
         displayStages.value[stageIndex].deal_count = Math.max(
@@ -1117,7 +1118,7 @@ export default {
           const response = await updateDealStage(dealId, newStageId);
           if (response.status !== 200) {
             console.error("Error updating deal stage:", response.data.message);
-            toast.error(response.data.message);
+            showError(response.data.message);
             return;
           }
           for (const stage of stages.value) {
@@ -1126,7 +1127,7 @@ export default {
             }
           }
           displayStages.value = stages.value;
-          toast.success(response.data.message);
+          showSuccess(response.data.message);
         } else {
           const newStage = ref(
             stages.value.find((stage) => stage.id == newStageId)
@@ -1140,7 +1141,7 @@ export default {
           const response = await updateDealStage(dealId, newStageId);
           if (response.status !== 200) {
             console.error("Error updating deal stage:", response.data.message);
-            toast.error(response.data.message);
+            showError(response.data.message);
             return;
           } else {
             deal.stage_id = newStageId;
@@ -1153,7 +1154,7 @@ export default {
               );
               if (newStage.value) newStage.value.deals.unshift(deal);
             }
-            toast.success(response.data.message);
+            showSuccess(response.data.message);
             playSound();
           }
         }
@@ -1189,7 +1190,7 @@ export default {
             newStageAfterRevertInDisplay.deal_count - 1
           );
 
-        toast.error(error.message);
+        showError(error.message);
       }
     };
     const refreshPage = () => {
@@ -1305,7 +1306,7 @@ export default {
         }
       } catch (error) {
         console.error("Error filtering deals:", error);
-        toast.error(t("error.filterFailed"));
+        showError(t("error.filterFailed"));
       }
     };
 
@@ -1320,12 +1321,12 @@ export default {
       try {
         const response = await createApproval(props.searchVal);
         if (response.status === 200 || response.status === 201) {
-          toast.success(response.data.message);
+          showSuccess(response.data.message);
         } else {
-          toast.error(response.data.message);
+          showError(response.data.message);
         }
       } catch (error) {
-        toast.error(error.response?.data?.message);
+        showError(error.response?.data?.message);
       }
     };
 
@@ -1456,9 +1457,9 @@ export default {
       }
       const response = await toggleHighlight(deal_id);
       if (response.status === 200) {
-        toast.success(response.data.message);
+        showSuccess(response.data.message);
       } else {
-        toast.error(response.data.message);
+        showError(response.data.message);
       }
     };
     // making a request to pull deals from old system
@@ -1475,12 +1476,12 @@ export default {
             displayStages.value[stageIndex].deal_count += deals.length;
           }
         } else {
-          toast.error(response.data.message);
+          showError(response.data.message);
         }
-        toast.success(response.data.message);
+        showSuccess(response.data.message);
       } catch (error) {
         console.error("Error pulling deals from old system:", error.message);
-        toast.error(error.message);
+        showError(error.message);
       }
     };
 
@@ -1559,7 +1560,7 @@ export default {
         if (deal) {
           stage.value.deals.push(deal);
           stage.value.deal_count = (stage.value.deal_count || 0) + 1;
-          toast.success("Task added successfully");
+          showSuccess("Task added successfully");
         }
       }
     };
@@ -1585,7 +1586,7 @@ export default {
             old_stage.value.deal_count -= 1;
             stage.value.deals.unshift(deal);
             stage.value.deal_count += 1;
-            toast.success("Task updated successfully");
+            showSuccess("Task updated successfully");
           }
         }
       }

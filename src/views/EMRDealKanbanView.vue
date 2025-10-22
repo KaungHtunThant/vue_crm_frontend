@@ -87,7 +87,13 @@
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import {
+  showSuccess,
+  showError,
+  showInfo,
+} from "@/plugins/services/toastService";
+
 import { useI18n } from "vue-i18n";
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -105,7 +111,7 @@ export default {
     DealDataCard,
   },
   setup() {
-    const toast = useToast();
+    // const toast = useToast();
     const { t } = useI18n();
     const fullCalendarRef = ref(null);
     const currentView = ref("dayGridMonth");
@@ -175,7 +181,7 @@ export default {
           },
         };
         calendarEvents.value.push(newEvent);
-        toast.success("تمت إضافة الموعد للتقويم");
+        showSuccess("تمت إضافة الموعد للتقويم");
       },
       eventDrop: (info) => {
         const idx = calendarEvents.value.findIndex(
@@ -184,14 +190,14 @@ export default {
         if (idx !== -1) {
           calendarEvents.value[idx].start = info.event.startStr;
         }
-        toast.info("تم تغيير موعد المريض");
+        showInfo("تم تغيير موعد المريض");
       },
       eventClick: async (info) => {
         const ticketId = info.event.extendedProps.ticketId;
         if (ticketId) {
           await openDealDataCard(ticketId);
         } else {
-          toast.error("لم يتم العثور على رقم التذكرة لفتح بياناتها");
+          showError("لم يتم العثور على رقم التذكرة لفتح بياناتها");
         }
       },
       headerToolbar: false,
@@ -325,7 +331,7 @@ export default {
           stages.value[oldStageIndex].deals.splice(oldDealIndex, 1);
           stages.value[oldStageIndex].deal_count -= 1;
           stages.value[newStageIndex].deal_count += 1;
-          toast.success(t("success.dealMoved"));
+          showSuccess(t("success.dealMoved"));
         } else {
           console.error("Deal not found in the old stage");
         }

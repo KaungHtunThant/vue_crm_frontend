@@ -25,6 +25,11 @@
 import { changeLanguage } from "@/i18n";
 import { useLoadingStore } from "@/plugins/loadingStore";
 import { saveUserLanguage } from "@/plugins/services/languageService";
+import {
+  showSuccess,
+  showError,
+  showInfo,
+} from "@/plugins/services/toastService";
 
 export default {
   name: "TheTopHeaderListLangModal",
@@ -35,7 +40,7 @@ export default {
   methods: {
     async handleLanguageChange(lang) {
       if (lang === localStorage.getItem("locale")) {
-        this.toast.info("تم تحديد هذه اللغة بالفعل!", { timeout: 2000 });
+        showInfo("تم تحديد هذه اللغة بالفعل!", { timeout: 2000 });
         return;
       }
 
@@ -48,13 +53,13 @@ export default {
         if (response.status === 200) {
           localStorage.setItem("locale", lang);
 
-          this.toast.success(response.data.message, { timeout: 3000 });
+          showSuccess(response.data.message, { timeout: 3000 });
         } else {
           throw new Error(response.data.message);
         }
       } catch (error) {
         console.error("Error changing language:", error);
-        this.toast.error(error.message, { timeout: 3000 });
+        showError(error.message, { timeout: 3000 });
       } finally {
         this.loadingStore.stopLoading();
       }

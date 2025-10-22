@@ -53,7 +53,9 @@
 
 <script>
 import { useI18n } from "vue-i18n";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showSuccess, showError } from "@/plugins/services/toastService";
+
 import { getStageTimers, updateStage } from "@/plugins/services/stageService";
 import { ref, onMounted } from "vue";
 
@@ -61,7 +63,7 @@ export default {
   name: "StageingSettingsView",
   setup() {
     const { t } = useI18n();
-    const toast = useToast();
+    // const toast = useToast();
     const stages = ref([]);
 
     const getAllStages = async () => {
@@ -69,7 +71,7 @@ export default {
         const response = await getStageTimers();
         stages.value = response.data.data;
       } catch (error) {
-        toast.error("Error loading stages");
+        showError("Error loading stages");
       }
     };
 
@@ -79,10 +81,10 @@ export default {
         if (stage) {
           stage.timer_status = stage.timer_status ? 0 : 1;
           await updateStage(id, { timer_status: stage.timer_status });
-          toast.success("Stage status updated successfully");
+          showSuccess("Stage status updated successfully");
         }
       } catch (error) {
-        toast.error("Error updating stage status");
+        showError("Error updating stage status");
       }
     };
 
@@ -91,10 +93,10 @@ export default {
         const stage = stages.value.find((stage) => stage.id == id);
         if (stage) {
           await updateStage(id, { timer_allowed: stage.timer_allowed });
-          toast.success("Stage timer updated successfully");
+          showSuccess("Stage timer updated successfully");
         }
       } catch (error) {
-        toast.error("Error updating stage timer");
+        showError("Error updating stage timer");
       }
     };
 
@@ -104,7 +106,7 @@ export default {
 
     return {
       t,
-      toast,
+      // toast,
       stages,
       getAllStages,
       changeStageStatus,

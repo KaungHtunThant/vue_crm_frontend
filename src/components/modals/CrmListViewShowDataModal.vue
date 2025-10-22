@@ -144,7 +144,9 @@
 <script>
 import { ref, watch } from "vue";
 import { Modal } from "bootstrap";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
+import { showSuccess, showError } from "@/plugins/services/toastService";
+
 import { useI18n } from "vue-i18n";
 export default {
   name: "CrmListViewShowDataModal",
@@ -155,7 +157,7 @@ export default {
     },
   },
   setup(props) {
-    const toast = useToast();
+    // const toast = useToast();
     const { t } = useI18n();
     const showDataModalRef = ref(null);
     const dealData = ref(null);
@@ -165,7 +167,7 @@ export default {
       (newData) => {
         if (newData) {
           dealData.value = newData;
-          toast.success(t("success.showData"), {
+          showSuccess(t("success.showData"), {
             timeout: 3000,
           });
         }
@@ -184,7 +186,7 @@ export default {
         const modal = new Modal(modalElement);
         modal.show();
       } catch (error) {
-        toast.error(t("error.showData"), {
+        showError(t("error.showData"), {
           timeout: 3000,
         });
         console.error("Error opening modal:", error);
@@ -199,7 +201,7 @@ export default {
           modal.hide();
         }
       } catch (error) {
-        toast.error(t("error.closeModal"), {
+        showError(t("error.closeModal"), {
           timeout: 3000,
         });
         console.error("Error closing modal:", error);
