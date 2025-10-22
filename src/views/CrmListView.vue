@@ -681,6 +681,14 @@ const applyFilters = async (newFilters) => {
       formattedFilters["filters[created_at_end]"] =
         apiFilters.filters.created_at_end;
     }
+    if (apiFilters.filters.updated_at_start) {
+      formattedFilters["filters[updated_at_start]"] =
+        apiFilters.filters.updated_at_start;
+    }
+    if (apiFilters.filters.updated_at_end) {
+      formattedFilters["filters[updated_at_end]"] =
+        apiFilters.filters.updated_at_end;
+    }
 
     if (Array.isArray(apiFilters.filters.status)) {
       if (apiFilters.filters.status.includes("unassigned")) {
