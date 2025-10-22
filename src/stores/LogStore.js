@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { getLogsByDealId, getUser } from "@/plugins/services/authService";
+import { getUser } from "@/plugins/services/userService";
+import { getLogsByDealId } from "@/plugins/services/logService";
 
 export const useLogStore = defineStore("log", () => {
   const logs = ref([]);

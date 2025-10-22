@@ -29,8 +29,13 @@ export default {
     const { t } = useI18n();
     const local_rating_id = ref(props.rating_id);
     const ratingStore = useRatingStore();
-    watch(local_rating_id, (newVal) => {
-      emit("rating-changed", newVal, props.user_id);
+    // watch(local_rating_id, (newVal) => {
+    //   emit("rating-changed", newVal, props.user_id);
+    // });
+    watch(local_rating_id, (newVal, oldVal) => {
+      if (newVal !== oldVal) {
+        emit("rating-changed", newVal, props.user_id);
+      }
     });
 
     watch(

@@ -556,7 +556,7 @@ import {
   getBroadcasts,
   updateBroadcast,
   updateBroadcastPosition,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/broadcastService";
 import BroadcastMessageCreateModal from "@/components/modals/BroadcastSettingsViewMessageCreateModal.vue";
 export default {
   name: "GeneralSettingView",

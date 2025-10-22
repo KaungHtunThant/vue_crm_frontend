@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { createApproval } from "@/plugins/services/authService";
+import { createApproval } from "@/plugins/services/approvalService";
 import { Modal } from "bootstrap";
 import { computed } from "vue";
 import { useToast } from "vue-toastification";

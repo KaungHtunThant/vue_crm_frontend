@@ -201,7 +201,10 @@
 <script>
 import { ref, onMounted } from "vue";
 import { Modal } from "bootstrap";
-import { createContact, updateContact } from "@/plugins/services/authService";
+import {
+  createContact,
+  updateContact,
+} from "@/plugins/services/contactService";
 import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 export default {

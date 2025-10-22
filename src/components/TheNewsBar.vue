@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { getKanbanBroadcasts } from "@/plugins/services/authService";
+import { getKanbanBroadcasts } from "@/plugins/services/kanbanService";
 import { ref, onMounted, onUnmounted, computed, nextTick } from "vue";
 
 export default {

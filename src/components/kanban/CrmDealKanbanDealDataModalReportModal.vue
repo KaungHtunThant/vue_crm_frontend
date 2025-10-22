@@ -54,10 +54,8 @@
 </template>
 
 <script>
-import {
-  getKanbanQuestions,
-  updateAnswersByDealId,
-} from "@/plugins/services/authService";
+import { updateAnswersByDealId } from "@/plugins/services/answerService";
+import { getKanbanQuestions } from "@/plugins/services/kanbanService";
 import { useI18n } from "vue-i18n";
 import QuestionsDiv from "./CrmDealKanbanDealDataModalReportModalQuestions.vue";
 import { useToast } from "vue-toastification";

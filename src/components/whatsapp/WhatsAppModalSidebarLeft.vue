@@ -181,7 +181,7 @@ import {
   getconversations,
   getMessageConv,
   getMoreConversations,
-} from "@/plugins/services/authService";
+} from "@/plugins/services/whatsappService";
 export default {
   name: "WhatsAppModalSidebarLeft",
   components: {

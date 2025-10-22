@@ -89,7 +89,8 @@
 <script>
 import { Modal } from "bootstrap";
 import { useToast } from "vue-toastification";
-import { createApproval, createComment } from "@/plugins/services/authService";
+import { createComment } from "@/plugins/services/commentService";
+import { createApproval } from "@/plugins/services/approvalService";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 export default {
