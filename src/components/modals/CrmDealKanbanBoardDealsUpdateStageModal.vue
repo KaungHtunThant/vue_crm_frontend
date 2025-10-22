@@ -75,7 +75,8 @@
 <script>
 import { Modal } from "bootstrap";
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
 export default {
@@ -89,7 +90,8 @@ export default {
   setup() {
     // const toast = useToast();
     const { t } = useI18n();
-    return { t };
+    const notificationStore = useNotificationStore();
+    return { t, notificationStore };
   },
   data() {
     return {
@@ -108,7 +110,7 @@ export default {
           }
         } catch (error) {
           console.error("Error updating stage data:", error);
-          showError(this.$t("error.updateStage"), {
+          this.notificationStore.error(this.$t("error.updateStage"), {
             timeout: 3000,
           });
         }
@@ -122,7 +124,7 @@ export default {
     updateStage() {
       try {
         if (!this.stageName.trim()) {
-          showError(this.$t("error.stageNameRequired"), {
+          this.notificationStore.error(this.$t("error.stageNameRequired"), {
             timeout: 3000,
           });
           return;
@@ -140,12 +142,12 @@ export default {
           modal.hide();
         }
 
-        showSuccess(this.$t("success.stageUpdated"), {
+        this.notificationStore.success(this.$t("success.stageUpdated"), {
           timeout: 3000,
         });
       } catch (error) {
         console.error("Error updating stage:", error);
-        showError(this.$t("error.updateStage"), {
+        this.notificationStore.error(this.$t("error.updateStage"), {
           timeout: 3000,
         });
       }
@@ -158,12 +160,12 @@ export default {
         if (modal) {
           modal.hide();
         }
-        showSuccess(this.$t("success.stageDeleted"), {
+        this.notificationStore.success(this.$t("success.stageDeleted"), {
           timeout: 3000,
         });
       } catch (error) {
-        showError("Error deleting stage:", error);
-        showError(this.$t("error.deleteStage"), {
+        this.notificationStore.error("Error deleting stage:", error);
+        this.notificationStore.error(this.$t("error.deleteStage"), {
           timeout: 3000,
         });
       }

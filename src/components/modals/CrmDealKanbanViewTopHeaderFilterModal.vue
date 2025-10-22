@@ -46,7 +46,8 @@ import { Modal } from "bootstrap";
 import FilterModalFormItems from "@/components/filterElements/CrmDealKanbanViewTopHeaderFilterModalFormItems.vue";
 import FilterModalButtonsItems from "@/components/filterElements/CrmDealKanbanViewTopHeaderFilterModalButtonsItems.vue";
 // import { useToast } from "vue-toastification";
-import { showError } from "@/plugins/services/toastService";
+// import { showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
 
@@ -63,6 +64,7 @@ export default {
   // emits: ["update:modelValue", "apply-filters", "reset-filter"],
   setup(props, { emit }) {
     const { t } = useI18n();
+    const notificationStore = useNotificationStore();
     // const toast = useToast();
     const headerFilterData = ref({ ...props.modelValue });
     const headerSelectedStatuses = ref([]);
@@ -102,7 +104,7 @@ export default {
         document.querySelector(".modal-backdrop")?.remove();
         document.body.classList.remove("modal-open");
       } catch (error) {
-        showError(t("error.closeModal"), { timeout: 3000 });
+        notificationStore.error(t("error.closeModal"), { timeout: 3000 });
         console.error("Error closing modal:", error);
       }
     };
@@ -121,7 +123,7 @@ export default {
         closeFilterModal();
       } catch (error) {
         console.log("Error applying filters:", error);
-        showError(error.message, { timeout: 3000 });
+        notificationStore.error(error.message, { timeout: 3000 });
       } finally {
         isApplyingFilters.value = false;
       }
@@ -156,7 +158,7 @@ export default {
         emit("update:modelValue", emptyFilters);
         closeFilterModal();
       } catch (error) {
-        showError(t("error.resetFilters"), { timeout: 3000 });
+        notificationStore.error(t("error.resetFilters"), { timeout: 3000 });
       } finally {
         isResettingFilters.value = false;
       }

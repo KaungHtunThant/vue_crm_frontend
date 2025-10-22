@@ -1815,11 +1815,12 @@ import RatingStars from "@/components/CreateDealElements/CrmDealKanbanDealDataMo
 import ViewReport from "@/components/kanban/CrmDealKanbanDealDataModalReportModal.vue";
 import { Modal } from "bootstrap";
 // import { useToast } from "vue-toastification";
-import {
-  showSuccess,
-  showError,
-  showInfo,
-} from "@/plugins/services/toastService";
+// import {
+//   showSuccess,
+//   showError,
+//   showInfo,
+// } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
 import TrashDeal from "@/components/modals/CrmDealKanbanDealDataModalTrashDealModal.vue";
@@ -1881,6 +1882,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const notificationStore = useNotificationStore();
     const logStore = useLogStore();
     const packageStore = usePackageStore();
     const route = useRoute();
@@ -2964,7 +2966,7 @@ export default {
     };
     const openTrashDealModal = () => {
       if (!props.deal?.id) {
-        showError(t("error.dealNotFound"), {
+        notificationStore.error(t("error.dealNotFound"), {
           timeout: 3000,
         });
         return;
@@ -2987,14 +2989,14 @@ export default {
         document.body.appendChild(modalBackdrop);
       } catch (error) {
         console.error("Error opening trash modal:", error);
-        showError(t("error.openTrashModal"), {
+        notificationStore.error(t("error.openTrashModal"), {
           timeout: 3000,
         });
       }
     };
     const openSuggestApprovalModal = () => {
       if (!props.deal?.id) {
-        showError(t("error.dealNotFound"), {
+        notificationStore.error(t("error.dealNotFound"), {
           timeout: 3000,
         });
         return;
@@ -3017,7 +3019,7 @@ export default {
         document.body.appendChild(modalBackdrop);
       } catch (error) {
         console.error("Error opening suggest user modal:", error);
-        showError(t("error.openSuggestUserModal"), {
+        notificationStore.error(t("error.openSuggestUserModal"), {
           timeout: 3000,
         });
       }
@@ -3055,14 +3057,14 @@ export default {
         if (response.status === 200) {
           emit("stage-change", props.deal.id, stageId, props.deal.stage_id, 0);
           playSound();
-          showSuccess(response.data.message, {
+          notificationStore.success(response.data.message, {
             timeout: 3000,
           });
         } else {
           throw new Error(response.data.message);
         }
       } catch (error) {
-        showError(error.message, {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -3105,7 +3107,7 @@ export default {
       return brightness > 170 ? "#000000" : "#FFFFFF";
     };
     const startCall = () => {
-      showInfo(t("success.startCall"), {
+      notificationStore.info(t("success.startCall"), {
         timeout: 3000,
       });
     };
@@ -3116,14 +3118,14 @@ export default {
     };
 
     const sendEmail = () => {
-      showInfo(t("success.sendEmail"), {
+      notificationStore.info(t("success.sendEmail"), {
         timeout: 3000,
       });
     };
     const confirm = async () => {
       try {
         if (originalDataValue.value.phone && !customerData.phone) {
-          showError("Phone is required.", {
+          notificationStore.error("Phone is required.", {
             timeout: 3000,
           });
           return;
@@ -3170,19 +3172,19 @@ export default {
 
         const response = await updateDeal(props.deal.id, formData);
         if (response.data) {
-          showSuccess(response.data.message, {
+          notificationStore.success(response.data.message, {
             timeout: 3000,
           });
           isEditMode.value = false;
           emit("update-deal", formData);
         } else {
-          showError(response.data.message, {
+          notificationStore.error(response.data.message, {
             timeout: 3000,
           });
         }
       } catch (error) {
         console.error("Error saving changes:", error);
-        showError(error.message, {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -3194,12 +3196,12 @@ export default {
     const updateRating = (newRating) => {
       try {
         rating.value = newRating;
-        showSuccess(t("success.updateRating"), {
+        notificationStore.error(t("success.updateRating"), {
           timeout: 3000,
         });
       } catch (error) {
         console.error("Error updating rating:", error);
-        showError(t("error.updateRating"), {
+        notificationStore.error(t("error.updateRating"), {
           timeout: 3000,
         });
       }
@@ -3233,12 +3235,12 @@ export default {
     const removeKanbanPackage = (index) => {
       try {
         customerData.kanban_packages.splice(index, 1);
-        showSuccess(t("success.removePackage"), {
+        notificationStore.success(t("success.removePackage"), {
           timeout: 3000,
         });
       } catch (error) {
         console.error("Error removing package:", error);
-        showError(t("error.removePackage"), {
+        notificationStore.error(t("error.removePackage"), {
           timeout: 3000,
         });
       }
@@ -3247,12 +3249,12 @@ export default {
     const removeHospitalPackage = (index) => {
       try {
         customerData.hospital_packages.splice(index, 1);
-        showSuccess(t("success.removePackage"), {
+        notificationStore.success(t("success.removePackage"), {
           timeout: 3000,
         });
       } catch (error) {
         console.error("Error removing package:", error);
-        showError(t("error.removePackage"), {
+        notificationStore.error(t("error.removePackage"), {
           timeout: 3000,
         });
       }
@@ -3268,12 +3270,12 @@ export default {
     const removePatientProblem = (index) => {
       try {
         customerData.patient_problems.splice(index, 1);
-        showSuccess(t("success.removePatientProblem"), {
+        notificationStore.success(t("success.removePatientProblem"), {
           timeout: 3000,
         });
       } catch (error) {
         console.error("Error removing patient problem:", error);
-        showSuccess(t("error.removePatientProblem"), {
+        notificationStore.success(t("error.removePatientProblem"), {
           timeout: 3000,
         });
       }
@@ -3291,7 +3293,7 @@ export default {
         customerData.additional_services.splice(index, 1);
       } catch (error) {
         console.error("Error removing additional service:", error);
-        showError(t("error.removeAdditionalService"), {
+        notificationStore.error(t("error.removeAdditionalService"), {
           timeout: 3000,
         });
       }
@@ -3307,18 +3309,18 @@ export default {
         const response = await updateTask(task.id, formData);
         if (response.data) {
           task.status = "completed";
-          showSuccess(t("success.taskCompleted"), {
+          notificationStore.success(t("success.taskCompleted"), {
             timeout: 3000,
           });
           emit("task-finish", task.duedate);
         } else {
-          showError(t("error.completingTask"), {
+          notificationStore.error(t("error.completingTask"), {
             timeout: 3000,
           });
         }
       } catch (error) {
         console.error("Error completing task:", error);
-        showError(t("error.completingTask"), {
+        notificationStore.error(t("error.completingTask"), {
           timeout: 3000,
         });
       }
@@ -3329,7 +3331,7 @@ export default {
         modal.show();
       } catch (error) {
         console.error("Error opening questions modal:", error);
-        showError(t("error.openQuestionsModal"), {
+        notificationStore.error(t("error.openQuestionsModal"), {
           timeout: 3000,
         });
       }
@@ -3373,7 +3375,7 @@ export default {
         );
       } catch (error) {
         console.error("Error opening WhatsApp modal:", error);
-        showError(t("error.openWhatsappModal"), {
+        notificationStore.error(t("error.openWhatsappModal"), {
           timeout: 3000,
         });
       }
@@ -3415,7 +3417,7 @@ export default {
           };
           customerData.comments.unshift(newComment);
 
-          showSuccess(response.data.message, {
+          notificationStore.success(response.data.message, {
             timeout: 3000,
           });
           customerData.comment = "";
@@ -3427,13 +3429,13 @@ export default {
             resizeDisplayedCommentWidth(newComment.id);
           });
         } else {
-          showError(response.data.message, {
+          notificationStore.error(response.data.message, {
             timeout: 3000,
           });
         }
       } catch (error) {
         console.error("Error adding comment:", error);
-        showError(error.message, {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -3470,7 +3472,7 @@ export default {
             status: "active",
             stage: getTaskStageName(customerData.date),
           });
-          showSuccess(response.data.message, {
+          notificationStore.success(response.data.message, {
             timeout: 3000,
           });
           if (route.path === "/crm-tasks") {
@@ -3484,13 +3486,13 @@ export default {
           customerData.date = "";
           customerData.time = "";
         } else {
-          showError(response.data.message, {
+          notificationStore.error(response.data.message, {
             timeout: 3000,
           });
         }
       } catch (error) {
         console.error("Error adding task:", error);
-        showError(error.message, {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -3500,7 +3502,7 @@ export default {
     });
     const handleStageUpdate = (deal_id, new_stage_id, is_trash = false) => {
       if (!props.deal?.id) {
-        showError(t("error.dealNotFound"), {
+        notificationStore.error(t("error.dealNotFound"), {
           timeout: 3000,
         });
         return;
@@ -3552,7 +3554,7 @@ export default {
     const copyComment = (text) => {
       navigator.clipboard.writeText(text);
       activeMenu.value = null;
-      showSuccess?.("Copied!");
+      notificationStore?.success?.("Copied!");
     };
     const editingCommentId = ref(null);
     const editingCommentText = ref("");
@@ -3586,18 +3588,18 @@ export default {
           if (idx !== -1) {
             customerData.comments[idx].text_body = editingCommentText.value;
           }
-          showSuccess(t("success.commentUpdated"));
+          notificationStore.success(t("success.commentUpdated"));
           editingCommentId.value = null;
           editingCommentText.value = "";
           nextTick(() => {
             resizeDisplayedCommentWidth(comment.id);
           });
         } else {
-          showError(t("error.updatingComment"));
+          notificationStore.error(t("error.updatingComment"));
         }
       } catch (error) {
         console.error("Error updating comment:", error);
-        showError(t("error.updatingComment"));
+        notificationStore.error(t("error.updatingComment"));
       }
     };
     const togglePin = async (comment) => {
@@ -3612,7 +3614,7 @@ export default {
             const [pinnedComment] = customerData.comments.splice(idx, 1);
             customerData.comments.unshift(pinnedComment);
           }
-          showSuccess(response.data.message, {
+          notificationStore.success(response.data.message, {
             timeout: 3000,
           });
         } else {
@@ -3621,7 +3623,7 @@ export default {
       } catch (error) {
         console.error("Error updating comment pin status:", error);
         comment.isPinned = !comment.isPinned;
-        showError(error.message, {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -3719,7 +3721,7 @@ export default {
       const file = event.target.files[0];
       if (file) {
         customerData.ticket = file;
-        showSuccess(t("success.fileUploaded"), {
+        notificationStore.success(t("success.fileUploaded"), {
           timeout: 3000,
         });
       }
@@ -3728,7 +3730,7 @@ export default {
       const passport = event.target.files[0];
       if (passport) {
         customerData.passport = passport;
-        showSuccess(t("success.fileUploaded"), {
+        notificationStore.success(t("success.fileUploaded"), {
           timeout: 3000,
         });
       }
@@ -3741,19 +3743,19 @@ export default {
     };
     const removeTicket = () => {
       customerData.ticket = null;
-      showSuccess(t("success.fileRemoved"), {
+      notificationStore.success(t("success.fileRemoved"), {
         timeout: 3000,
       });
     };
     const removePassport = (index) => {
       customerData.passports.splice(index, 1);
-      showSuccess(t("success.fileRemoved"), {
+      notificationStore.success(t("success.fileRemoved"), {
         timeout: 3000,
       });
     };
     const handleDealSuggestion = () => {
       if (!props.deal?.id) {
-        showError(t("error.dealNotFound"), {
+        notificationStore.error(t("error.dealNotFound"), {
           timeout: 3000,
         });
         return;
@@ -3786,7 +3788,7 @@ export default {
         };
         const response = await updateTask(taskId, formData);
         if (response.status === 200 || response.status === 201) {
-          showSuccess(response.data.message, {
+          notificationStore.success(response.data.message, {
             timeout: 3000,
           });
           if (route.path === "/crm-tasks") {
@@ -3801,13 +3803,13 @@ export default {
             task.stage = stage;
           }
         } else {
-          showError(response.data.message, {
+          notificationStore.error(response.data.message, {
             timeout: 3000,
           });
         }
       } catch (error) {
         console.error("Error updating task:", error);
-        showError(t("error.updatingTask"), {
+        notificationStore.error(t("error.updatingTask"), {
           timeout: 3000,
         });
       }
@@ -3913,7 +3915,7 @@ export default {
         };
       } catch (error) {
         console.error("Error printing the Documents", error);
-        showError(t("error.PrintCase"), {
+        notificationStore.error(t("error.PrintCase"), {
           timeout: 3000,
         });
       }

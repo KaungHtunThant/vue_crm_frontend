@@ -45,7 +45,8 @@ import { createApproval } from "@/plugins/services/approvalService";
 import { Modal } from "bootstrap";
 import { computed } from "vue";
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 export default {
   name: "RequestDealModal",
@@ -80,7 +81,8 @@ export default {
       const brightness = (r * 299 + g * 587 + b * 114) / 1000;
       return brightness > 125 ? "#000000" : "#FFFFFF";
     };
-    return { getContrastColor, search_type_value };
+    const notificationStore = useNotificationStore();
+    return { getContrastColor, search_type_value, notificationStore };
   },
   data() {
     return {
@@ -116,13 +118,13 @@ export default {
       try {
         const response = await createApproval(this.search_val);
         if (response.status === 200 || response.status === 201) {
-          showSuccess(response.data.message);
+          this.notificationStore.success(response.data.message);
         } else {
-          showError(response.data.message);
+          this.notificationStore.error(response.data.message);
         }
         this.closeRequestDealModal();
       } catch (error) {
-        showError(error.message);
+        this.notificationStore.error(error.message);
       }
     },
   },

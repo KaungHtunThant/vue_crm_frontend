@@ -314,7 +314,8 @@ import TicketCard from "@/components/kanban/CrmDealKanbanBoardDealsTicketCard.vu
 import { Modal } from "bootstrap";
 import { useRoute } from "vue-router";
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import {
   updateDealStage,
@@ -378,6 +379,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const notificationStore = useNotificationStore();
     const isIdle = ref(false);
     const route = useRoute();
     const dealsContainer = ref(null);
@@ -535,7 +537,7 @@ export default {
           }
         } catch (error) {
           console.error("Error fetching parent stage deals:", error);
-          showError("Failed to load parent stage deals");
+          notificationStore.error("Failed to load parent stage deals");
         }
       } else {
         expandedStages.value[parentStage.id] = true;
@@ -552,7 +554,7 @@ export default {
           }
         } catch (error) {
           expandedStages.value[parentStage.id] = false;
-          showError(error.message);
+          notificationStore.error(error.message);
         }
       }
     };
@@ -580,7 +582,7 @@ export default {
           const request = await updateDealStage(deal.id, newStageId);
           if (request.status !== 200) {
             console.error("Error updating deal stage:", request.data.message);
-            showError(request.data.message);
+            notificationStore.error(request.data.message);
             const newStageInDisplay = displayStages.value.find(
               (s) => s.id === newStageId
             );
@@ -668,7 +670,7 @@ export default {
               }
             }
           }
-          showError(error.message);
+          notificationStore.error(error.message);
         }
       }
     };
@@ -748,7 +750,7 @@ export default {
         }
       } catch (error) {
         console.error("Error fetching deal data:", error);
-        showError("something went wrong");
+        notificationStore.error("something went wrong");
       }
     };
 
@@ -861,7 +863,7 @@ export default {
         displayStages.value[stageIndex].deals.unshift(newDeal);
         displayStages.value[stageIndex].deal_count =
           (displayStages.value[stageIndex].deal_count || 0) + 1;
-        showSuccess(message);
+        notificationStore.success(message);
       }
     };
 
@@ -940,7 +942,7 @@ export default {
           );
         }
       }
-      showSuccess(message);
+      notificationStore.success(message);
     };
 
     const dealDeleteEvent = (deal, message) => {
@@ -958,7 +960,7 @@ export default {
             0,
             displayStages.value[stageIndex].deal_count - 1
           );
-          showSuccess(message);
+          notificationStore.success(message);
         }
       } else if (stageIndex !== -1 && expandedStages.value[deal.stage_id]) {
         displayStages.value[stageIndex].deal_count = Math.max(
@@ -1118,7 +1120,7 @@ export default {
           const response = await updateDealStage(dealId, newStageId);
           if (response.status !== 200) {
             console.error("Error updating deal stage:", response.data.message);
-            showError(response.data.message);
+            notificationStore.error(response.data.message);
             return;
           }
           for (const stage of stages.value) {
@@ -1127,7 +1129,7 @@ export default {
             }
           }
           displayStages.value = stages.value;
-          showSuccess(response.data.message);
+          notificationStore.success(response.data.message);
         } else {
           const newStage = ref(
             stages.value.find((stage) => stage.id == newStageId)
@@ -1141,7 +1143,7 @@ export default {
           const response = await updateDealStage(dealId, newStageId);
           if (response.status !== 200) {
             console.error("Error updating deal stage:", response.data.message);
-            showError(response.data.message);
+            notificationStore.error(response.data.message);
             return;
           } else {
             deal.stage_id = newStageId;
@@ -1154,7 +1156,7 @@ export default {
               );
               if (newStage.value) newStage.value.deals.unshift(deal);
             }
-            showSuccess(response.data.message);
+            notificationStore.success(response.data.message);
             playSound();
           }
         }
@@ -1190,7 +1192,7 @@ export default {
             newStageAfterRevertInDisplay.deal_count - 1
           );
 
-        showError(error.message);
+        notificationStore.error(error.message);
       }
     };
     const refreshPage = () => {
@@ -1306,7 +1308,7 @@ export default {
         }
       } catch (error) {
         console.error("Error filtering deals:", error);
-        showError(t("error.filterFailed"));
+        notificationStore.error(t("error.filterFailed"));
       }
     };
 
@@ -1321,12 +1323,12 @@ export default {
       try {
         const response = await createApproval(props.searchVal);
         if (response.status === 200 || response.status === 201) {
-          showSuccess(response.data.message);
+          notificationStore.success(response.data.message);
         } else {
-          showError(response.data.message);
+          notificationStore.error(response.data.message);
         }
       } catch (error) {
-        showError(error.response?.data?.message);
+        notificationStore.error(error.response?.data?.message);
       }
     };
 
@@ -1457,9 +1459,9 @@ export default {
       }
       const response = await toggleHighlight(deal_id);
       if (response.status === 200) {
-        showSuccess(response.data.message);
+        notificationStore.success(response.data.message);
       } else {
-        showError(response.data.message);
+        notificationStore.error(response.data.message);
       }
     };
     // making a request to pull deals from old system
@@ -1476,12 +1478,12 @@ export default {
             displayStages.value[stageIndex].deal_count += deals.length;
           }
         } else {
-          showError(response.data.message);
+          notificationStore.error(response.data.message);
         }
-        showSuccess(response.data.message);
+        notificationStore.success(response.data.message);
       } catch (error) {
         console.error("Error pulling deals from old system:", error.message);
-        showError(error.message);
+        notificationStore.error(error.message);
       }
     };
 
@@ -1560,7 +1562,7 @@ export default {
         if (deal) {
           stage.value.deals.push(deal);
           stage.value.deal_count = (stage.value.deal_count || 0) + 1;
-          showSuccess("Task added successfully");
+          notificationStore.success("Task added successfully");
         }
       }
     };
@@ -1586,7 +1588,7 @@ export default {
             old_stage.value.deal_count -= 1;
             stage.value.deals.unshift(deal);
             stage.value.deal_count += 1;
-            showSuccess("Task updated successfully");
+            notificationStore.success("Task updated successfully");
           }
         }
       }

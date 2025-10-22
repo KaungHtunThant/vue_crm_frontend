@@ -89,7 +89,8 @@
 <script>
 import { Modal } from "bootstrap";
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { createComment } from "@/plugins/services/commentService";
 import { createApproval } from "@/plugins/services/approvalService";
@@ -112,6 +113,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const notificationStore = useNotificationStore();
     // const toast = useToast();
     const showModal2 = ref(false);
     const comment = ref("");
@@ -139,7 +141,7 @@ export default {
       if (selected_user_id.value && comment.value) {
         try {
           if (!selected_user_id.value || !comment.value) {
-            showError(t("error.requiredFields"), {
+            notificationStore.error(t("error.requiredFields"), {
               timeout: 3000,
             });
             return;
@@ -155,24 +157,24 @@ export default {
               selected_user_id.value
             );
             if (approvalResponsive.data) {
-              showSuccess(approvalResponsive.data.message, {
+              notificationStore.success(approvalResponsive.data.message, {
                 timeout: 3000,
               });
             } else {
-              showError(approvalResponsive.data.message, {
+              notificationStore.error(approvalResponsive.data.message, {
                 timeout: 3000,
               });
             }
             emit("suggest-user", selected_user_id.value);
           } else {
-            showError(commentResponse.data.message, {
+            notificationStore.error(commentResponse.data.message, {
               timeout: 3000,
             });
           }
           closeSuggestUserModal();
         } catch (error) {
           console.error("Error updating deal:", error);
-          showError(error.message, {
+          notificationStore.error(error.message, {
             timeout: 3000,
           });
         }

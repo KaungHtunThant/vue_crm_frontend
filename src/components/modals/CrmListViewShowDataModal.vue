@@ -145,7 +145,8 @@
 import { ref, watch } from "vue";
 import { Modal } from "bootstrap";
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
 export default {
@@ -157,6 +158,7 @@ export default {
     },
   },
   setup(props) {
+    const notificationStore = useNotificationStore();
     // const toast = useToast();
     const { t } = useI18n();
     const showDataModalRef = ref(null);
@@ -167,7 +169,7 @@ export default {
       (newData) => {
         if (newData) {
           dealData.value = newData;
-          showSuccess(t("success.showData"), {
+          notificationStore.success(t("success.showData"), {
             timeout: 3000,
           });
         }
@@ -186,7 +188,7 @@ export default {
         const modal = new Modal(modalElement);
         modal.show();
       } catch (error) {
-        showError(t("error.showData"), {
+        notificationStore.error(t("error.showData"), {
           timeout: 3000,
         });
         console.error("Error opening modal:", error);
@@ -201,7 +203,7 @@ export default {
           modal.hide();
         }
       } catch (error) {
-        showError(t("error.closeModal"), {
+        notificationStore.error(t("error.closeModal"), {
           timeout: 3000,
         });
         console.error("Error closing modal:", error);

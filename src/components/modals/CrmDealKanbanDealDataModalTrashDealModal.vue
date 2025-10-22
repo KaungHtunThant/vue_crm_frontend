@@ -105,7 +105,8 @@
 <script>
 import { Modal } from "bootstrap";
 // import { useToast } from "vue-toastification";
-import { showInfo, showError } from "@/plugins/services/toastService";
+// import { showInfo, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { createComment } from "@/plugins/services/commentService";
 import { getTrashStages } from "@/plugins/services/stageService";
@@ -121,6 +122,7 @@ export default {
   },
   setup() {
     // const toast = useToast();
+    const notificationStore = useNotificationStore();
     const getContrastColor = (color) => {
       const r = parseInt(color.slice(1, 3), 16);
       const g = parseInt(color.slice(3, 5), 16);
@@ -128,7 +130,7 @@ export default {
       const brightness = (r * 299 + g * 587 + b * 114) / 1000;
       return brightness > 125 ? "#000000" : "#FFFFFF";
     };
-    return { getContrastColor };
+    return { getContrastColor, notificationStore };
   },
   data() {
     return {
@@ -174,7 +176,7 @@ export default {
     async handleTrashDeal() {
       try {
         if (!this.selected_stage_id || !this.comment) {
-          showError(this.t("error.requiredFields"), {
+          this.notificationStore.error(this.t("error.requiredFields"), {
             timeout: 3000,
           });
           return;
@@ -189,14 +191,14 @@ export default {
         if (commentResponse.data) {
           this.$emit("deal-trashed", this.dealId, selected_stage_id, true);
         } else {
-          showError(commentResponse.data.message, {
+          this.notificationStore.error(commentResponse.data.message, {
             timeout: 3000,
           });
         }
         this.closeTrashDealModal();
       } catch (error) {
         console.error("Error updating deal:", error);
-        showError(error.message, {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -208,18 +210,18 @@ export default {
         if (response.status === 200) {
           this.trash_stages = response.data?.data;
           if (this.trash_stages.length < 1) {
-            showInfo(response.data.message, {
+            this.notificationStore.info(response.data.message, {
               timeout: 3000,
             });
           }
         } else {
-          showError(response.data.message, {
+          this.notificationStore.error(response.data.message, {
             timeout: 3000,
           });
         }
       } catch (error) {
         console.error("Error fetching trash stages:", error);
-        showError(error.message, {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
       }

@@ -41,7 +41,8 @@ import ChangePasswordForm from "@/components/changePasswordElements/TheTopHeader
 import ChangePasswordButtons from "@/components/changePasswordElements/TheTopHeaderDropDownMenuProfileEditProfileModalChangePasswordModalButtonsItems.vue";
 import { ref } from "vue";
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
 export default {
@@ -49,6 +50,7 @@ export default {
   components: { ChangePasswordForm, ChangePasswordButtons },
   setup() {
     const { t } = useI18n();
+    const notificationStore = useNotificationStore();
     // const toast = useToast();
     const password = ref("");
     const loading = ref(false);
@@ -64,7 +66,7 @@ export default {
         //   singleton: true,
         // });
       } catch (error) {
-        showError(t("error.openChangePassword"), {
+        notificationStore.error(t("error.openChangePassword"), {
           timeout: 3000,
           id: "change-password-error",
           singleton: true,
@@ -83,7 +85,7 @@ export default {
           password.value = "";
         }
       } catch (error) {
-        showError(t("error.closeChangePassword"), {
+        notificationStore.error(t("error.closeChangePassword"), {
           timeout: 3000,
           id: "change-password-close-error",
           singleton: true,
@@ -95,7 +97,7 @@ export default {
       try {
         loading.value = true;
         if (!password.value) {
-          showError(t("error.passwordRequired"), {
+          notificationStore.error(t("error.passwordRequired"), {
             timeout: 3000,
             id: "change-password-validation",
             singleton: true,
@@ -105,14 +107,14 @@ export default {
 
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        showSuccess(t("success.changePassword"), {
+        notificationStore.success(t("success.changePassword"), {
           timeout: 3000,
           id: "change-password-success",
           singleton: true,
         });
         closeChangePassword();
       } catch (error) {
-        showError(t("error.changePassword"), {
+        notificationStore.error(t("error.changePassword"), {
           timeout: 3000,
           id: "change-password-submit-error",
           singleton: true,

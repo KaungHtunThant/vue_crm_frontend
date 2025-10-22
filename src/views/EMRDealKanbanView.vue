@@ -88,12 +88,12 @@ import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
 // import { useToast } from "vue-toastification";
-import {
-  showSuccess,
-  showError,
-  showInfo,
-} from "@/plugins/services/toastService";
-
+// import {
+//   showSuccess,
+//   showError,
+//   showInfo,
+// } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -111,6 +111,7 @@ export default {
     DealDataCard,
   },
   setup() {
+    const notificationStore = useNotificationStore();
     // const toast = useToast();
     const { t } = useI18n();
     const fullCalendarRef = ref(null);
@@ -181,7 +182,7 @@ export default {
           },
         };
         calendarEvents.value.push(newEvent);
-        showSuccess("تمت إضافة الموعد للتقويم");
+        notificationStore.success("تمت إضافة الموعد للتقويم");
       },
       eventDrop: (info) => {
         const idx = calendarEvents.value.findIndex(
@@ -190,14 +191,16 @@ export default {
         if (idx !== -1) {
           calendarEvents.value[idx].start = info.event.startStr;
         }
-        showInfo("تم تغيير موعد المريض");
+        notificationStore.info("تم تغيير موعد المريض");
       },
       eventClick: async (info) => {
         const ticketId = info.event.extendedProps.ticketId;
         if (ticketId) {
           await openDealDataCard(ticketId);
         } else {
-          showError("لم يتم العثور على رقم التذكرة لفتح بياناتها");
+          notificationStore.error(
+            "لم يتم العثور على رقم التذكرة لفتح بياناتها"
+          );
         }
       },
       headerToolbar: false,
@@ -331,7 +334,7 @@ export default {
           stages.value[oldStageIndex].deals.splice(oldDealIndex, 1);
           stages.value[oldStageIndex].deal_count -= 1;
           stages.value[newStageIndex].deal_count += 1;
-          showSuccess(t("success.dealMoved"));
+          notificationStore.success(t("success.dealMoved"));
         } else {
           console.error("Deal not found in the old stage");
         }

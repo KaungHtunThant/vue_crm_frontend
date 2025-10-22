@@ -59,7 +59,8 @@ import { getKanbanQuestions } from "@/plugins/services/kanbanService";
 import { useI18n } from "vue-i18n";
 import QuestionsDiv from "./CrmDealKanbanDealDataModalReportModalQuestions.vue";
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 export default {
   name: "CrmDealKanbanDealDataModalReportModal",
@@ -71,7 +72,8 @@ export default {
   },
   setup() {
     const { t } = useI18n();
-    return { t };
+    const notificationStore = useNotificationStore();
+    return { t, notificationStore };
   },
   components: {
     QuestionsDiv,
@@ -113,12 +115,12 @@ export default {
       });
       const response = await updateAnswersByDealId(this.deal_id, formData);
       if (response.status === 200) {
-        showSuccess(response.data.message, {
+        this.notificationStore.success(response.data.message, {
           timeout: 3000,
         });
       } else {
         console.error("Failed to update answers: ", response.data.message);
-        showError(response.data.message, {
+        this.notificationStore.error(response.data.message, {
           timeout: 3000,
         });
       }

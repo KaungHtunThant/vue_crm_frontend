@@ -36,11 +36,12 @@ import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
 import { getTasksKanban } from "@/plugins/services/kanbanService";
 // import { useToast } from "vue-toastification";
-import {
-  showSuccess,
-  showError,
-  showInfo,
-} from "@/plugins/services/toastService";
+// import {
+//   showSuccess,
+//   showError,
+//   showInfo,
+// } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
 import Cookies from "js-cookie";
@@ -56,6 +57,7 @@ export default {
 
   setup() {
     // const toast = useToast();
+    const notificationStore = useNotificationStore();
     const { t } = useI18n();
     const stages = ref([]);
 
@@ -138,16 +140,18 @@ export default {
           const response = await getTasksKanban(formattedFilters);
 
           if (!response?.data?.data) {
-            showInfo(t("noDealsFound"));
+            notificationStore.info(t("noDealsFound"));
             stages.value = [];
             return;
           }
           stages.value = response.data.data;
 
-          showSuccess(t("success.applyFilters"), { timeout: 3000 });
+          notificationStore.success(t("success.applyFilters"), {
+            timeout: 3000,
+          });
         } catch (error) {
           console.error("Filter Error:", error);
-          showError(error.message, { timeout: 3000 });
+          notificationStore.error(error.message, { timeout: 3000 });
           stages.value = [];
         }
       } catch (error) {
@@ -196,12 +200,12 @@ export default {
             deals: stage.deals || [],
             deal_count: stage.deal_count,
           }));
-          showSuccess(t("success.loadKanban"));
+          notificationStore.success(t("success.loadKanban"));
         } else {
-          showError(t("error.loadKanban"));
+          notificationStore.error(t("error.loadKanban"));
         }
       } catch (error) {
-        showError(t("error.loadKanban"));
+        notificationStore.error(t("error.loadKanban"));
       }
     };
 
@@ -240,7 +244,7 @@ export default {
           stages.value[oldStageIndex].deals.splice(oldDealIndex, 1);
           stages.value[oldStageIndex].deal_count -= 1;
           stages.value[newStageIndex].deal_count += 1;
-          showSuccess(t("success.dealMoved"));
+          notificationStore.success(t("success.dealMoved"));
         } else {
           console.error("Deal not found in the old stage");
         }

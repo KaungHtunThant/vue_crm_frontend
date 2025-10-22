@@ -296,11 +296,7 @@ import { useRoute, useRouter } from "vue-router";
 import DocumentsFolderViewAddEditFolderModal from "@/components/modals/DocumentsFolderViewAddEditFolderModal.vue";
 import Modal from "bootstrap/js/dist/modal";
 // import { useToast } from "vue-toastification";
-import {
-  showSuccess,
-  showError,
-  showWarning,
-} from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import Swal from "sweetalert2";
 import { useI18n } from "vue-i18n";
@@ -321,6 +317,7 @@ export default {
   },
 
   setup() {
+    const notificationStore = useNotificationStore();
     const { t } = useI18n();
     // const toast = useToast();
     const route = useRoute();
@@ -385,7 +382,7 @@ export default {
         }
       } catch (error) {
         console.error("Error fetching folder contents:", error);
-        showError(t("error.fetchFailed"), { timeout: 3000 });
+        notificationStore.error(t("error.fetchFailed"), { timeout: 3000 });
       }
     };
 
@@ -413,7 +410,7 @@ export default {
         }
       } catch (error) {
         console.error("Error uploading file:", error);
-        showError(t("error.uploadFailed"), {
+        notificationStore.error(t("error.uploadFailed"), {
           timeout: 3000,
         });
       }
@@ -453,12 +450,12 @@ export default {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
 
-        showSuccess(t("success.downloadStarted"), {
+        notificationStore.success(t("success.downloadStarted"), {
           timeout: 3000,
         });
       } catch (error) {
         console.error("Error downloading file:", error);
-        showError(t("error.downloadFailed"), {
+        notificationStore.error(t("error.downloadFailed"), {
           timeout: 3000,
         });
       }
@@ -489,12 +486,12 @@ export default {
         if (result.isConfirmed) {
           await deleteFiles(fileId);
           files.value = files.value.filter((file) => file.id !== fileId);
-          showSuccess(t("success.deleteSuccess"), {
+          notificationStore.success(t("success.deleteSuccess"), {
             timeout: 3000,
           });
         }
       } catch (error) {
-        showError(t("error.deleteFailed"), {
+        notificationStore.error(t("error.deleteFailed"), {
           timeout: 3000,
         });
         console.error("Error deleting file:", error);
@@ -503,7 +500,7 @@ export default {
 
     const handleFolderSubmit = async (folderData) => {
       if (!folderData.name?.trim()) {
-        showError(t("error.required"), { timeout: 3000 });
+        notificationStore.error(t("error.required"), { timeout: 3000 });
         return;
       }
 
@@ -517,7 +514,9 @@ export default {
 
         if (createResponse.data && createResponse.data.result) {
           fetchFiles();
-          showSuccess(createResponse.data.message, { timeout: 3000 });
+          notificationStore.success(createResponse.data.message, {
+            timeout: 3000,
+          });
         } else {
           throw new Error(createResponse.data.message);
         }
@@ -526,7 +525,7 @@ export default {
         selectedFolder.value = null;
       } catch (error) {
         console.error("Error creating folder:", error);
-        showError(t("error.saveFailed"), { timeout: 3000 });
+        notificationStore.error(t("error.saveFailed"), { timeout: 3000 });
       }
     };
 
@@ -542,12 +541,12 @@ export default {
       try {
         console.info("Downloading folder:", folderId);
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        showSuccess(t("success.downloadStarted"), {
+        notificationStore.success(t("success.downloadStarted"), {
           timeout: 3000,
         });
       } catch (error) {
         console.error("Error downloading folder:", error);
-        showError(t("error.downloadFailed"), {
+        notificationStore.error(t("error.downloadFailed"), {
           timeout: 3000,
         });
       }
@@ -572,12 +571,12 @@ export default {
           folders.value = folders.value.filter(
             (folder) => folder.id !== folderId
           );
-          showSuccess(t("success.deleteSuccess"), {
+          notificationStore.success(t("success.deleteSuccess"), {
             timeout: 3000,
           });
         }
       } catch (error) {
-        showError(t("error.deleteFailed"), {
+        notificationStore.error(t("error.deleteFailed"), {
           timeout: 3000,
         });
         console.error("Error deleting file:", error);
@@ -602,10 +601,10 @@ export default {
               fetchFiles();
             });
         } else {
-          showWarning(t("error.invalidFolderPath"));
+          notificationStore.warning(t("error.invalidFolderPath"));
         }
       } catch (error) {
-        showError(t("error.fetchFailed"));
+        notificationStore.error(t("error.fetchFailed"));
         console.error("❌ Error navigating to folder:", error);
       }
     };

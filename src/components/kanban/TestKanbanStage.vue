@@ -158,7 +158,8 @@ import TicketCard from "@/components/kanban/CrmDealKanbanBoardDealsTicketCard.vu
 import { ref } from "vue";
 import { usePermissionStore } from "@/stores/PermissionStore";
 // import { useToast } from "vue-toastification";
-import { showError } from "@/plugins/services/toastService";
+// import { showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
 import MinimizedStage from "@/components/kanban/TestKanbanMinimizedStage.vue";
@@ -181,6 +182,7 @@ export default {
     const deal_store = useDealStore();
     const local_stage = ref(props.stage);
     const permissionStore = usePermissionStore();
+    const notificationStore = useNotificationStore();
     // const toast = useToast();
     const { t } = useI18n();
     const reachedBottom = ref(false);
@@ -213,7 +215,7 @@ export default {
           })
           .catch((error) => {
             console.error("Error fetching deals:", error);
-            showError(t("error-fetching-deals"));
+            notificationStore.error(t("error-fetching-deals"));
             reachedBottom.value = false;
           });
       }

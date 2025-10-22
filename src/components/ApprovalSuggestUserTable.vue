@@ -158,7 +158,8 @@ import ShowData from "@/components/modals/CrmListViewShowDataModal.vue";
 import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { updateApproval } from "@/plugins/services/approvalService";
 import { showDeal, updateDealStage } from "@/plugins/services/dealService";
@@ -182,6 +183,7 @@ export default {
   setup() {
     const permissionStore = usePermissionStore();
     const { t } = useI18n();
+    const notificationStore = useNotificationStore();
     // const toast = useToast();
     const approvalStore = useApprovalStore();
     const approvals = computed(() =>
@@ -220,7 +222,7 @@ export default {
         );
       } catch (error) {
         console.error("Error fetching data:", error);
-        showError(t("error.fetchFailed"));
+        notificationStore.error(t("error.fetchFailed"));
       } finally {
         loading.value = false;
       }
@@ -286,7 +288,7 @@ export default {
         }
       } catch (error) {
         console.error("Error fetching stages and sources:", error);
-        showError(t("error.fetchFailed"));
+        notificationStore.error(t("error.fetchFailed"));
       }
     };
 
@@ -313,14 +315,18 @@ export default {
       try {
         const response = await updateDealStage(dealId, newStageId);
         if (response.status === 200) {
-          showSuccess(response.data.message, { timeout: 3000 });
+          notificationStore.success(response.data.message, { timeout: 3000 });
           fetchData();
         } else {
-          showError(t("error.stageChangeFailed"), { timeout: 3000 });
+          notificationStore.error(t("error.stageChangeFailed"), {
+            timeout: 3000,
+          });
         }
       } catch (error) {
         console.error("Error changing deal stage:", error);
-        showError(t("error.stageChangeFailed"), { timeout: 3000 });
+        notificationStore.error(t("error.stageChangeFailed"), {
+          timeout: 3000,
+        });
       }
     };
 
@@ -341,7 +347,7 @@ export default {
         const response = await updateApproval(id, approval);
         if (response.status === 204 || response.status === 200) {
           fetchData();
-          showSuccess(response.data.message, { timeout: 3000 });
+          notificationStore.success(response.data.message, { timeout: 3000 });
         } else {
           throw new Error(response.data.message || t("error-default"));
         }

@@ -99,7 +99,7 @@ import ChangeLang from "@/components/modals/TheTopHeaderDropDownMenuProfileEditP
 import CalenderModal from "@/components/modals/TheTopHeaderDropDownMenuProfileEditProfileModalCalenderModal.vue";
 import CustomBackground from "@/components/headers/sub-menu/profileMenuItems/TheTopHeaderDropDownMenuProfileEditProfileModalCustmBackgroundModal.vue";
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
 
 import { useI18n } from "vue-i18n";
 import { Modal } from "bootstrap";
@@ -132,13 +132,13 @@ export default {
       try {
         notificationStore.set(isNotificationsEnabled.value);
         if (isNotificationsEnabled.value) {
-          showSuccess(t("notifications.enabled")); // أو نص ثابت
+          notificationStore.success(t("notifications.enabled"));
         } else {
-          showError(t("notifications.disabled"));
+          notificationStore.info(t("notifications.disabled"));
         }
       } catch (err) {
         console.error(err);
-        showError(t("notifications.error"));
+        notificationStore.error(t("notifications.error"));
       }
     };
 
@@ -193,6 +193,7 @@ export default {
       name: Cookies.get("name") || "User",
       userEmail: Cookies.get("email") || "test@email",
       userImage: Cookies.get("image") || "",
+      notificationStore: useNotificationStore(),
       images: [
         "/images/bg1.jpg",
         "/images/bg2.jpg",
@@ -215,7 +216,7 @@ export default {
         this.$emit("logout");
       } catch (error) {
         console.error("Error logging out:", error);
-        showError(this.t("topHeader.logoutError"), {
+        this.notificationStore.error(this.t("topHeader.logoutError"), {
           timeout: 3000,
         });
       }

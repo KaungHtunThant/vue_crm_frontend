@@ -36,7 +36,8 @@ import DealForm from "@/components/CreateDealElements/CrmListViewCreateDealModal
 import DealButtons from "@/components/CreateDealElements/CrmListViewCreateDealModalButtonsItems.vue";
 import { createDeal } from "@/plugins/services/dealService";
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
 export default {
@@ -45,8 +46,9 @@ export default {
   emits: ["add-deal"],
   setup() {
     const { t } = useI18n();
+    const notificationStore = useNotificationStore();
     // const toast = useToast();
-    return { t };
+    return { t, notificationStore };
   },
   data() {
     return {
@@ -73,7 +75,7 @@ export default {
     async submitForm() {
       try {
         if (!this.formData.contact.name || !this.formData.contact.phone1) {
-          showError(this.t("error.requiredFields"), {
+          this.notificationStore.error(this.t("error.requiredFields"), {
             timeout: 3000,
           });
           return;
@@ -101,7 +103,7 @@ export default {
         const response = await createDeal(dealData);
 
         if (response.data) {
-          showSuccess(this.t("success.createDeal"), {
+          this.notificationStore.success(this.t("success.createDeal"), {
             timeout: 3000,
           });
           this.$emit("add-deal", response.data);
@@ -109,9 +111,12 @@ export default {
           this.closeDealModal();
         }
       } catch (error) {
-        showError(error.response?.data?.message || this.t("error.createDeal"), {
-          timeout: 3000,
-        });
+        this.notificationStore.error(
+          error.response?.data?.message || this.t("error.createDeal"),
+          {
+            timeout: 3000,
+          }
+        );
         console.error("Error:", error);
       }
     },

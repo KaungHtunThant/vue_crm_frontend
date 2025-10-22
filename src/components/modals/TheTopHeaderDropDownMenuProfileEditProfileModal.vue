@@ -37,7 +37,8 @@ import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import ProfileForm from "@/components/editProfileElements/TheTopHeaderDropDownMenuProfileEditProfileModalFormItems.vue";
 import ProfileButtons from "@/components/editProfileElements/TheTopHeaderDropDownMenuProfileEditProfileModalButtonsItems.vue";
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
 import { getUserById, updateUser } from "@/plugins/services/userService";
@@ -47,8 +48,9 @@ export default {
   components: { ProfileForm, ProfileButtons },
   setup() {
     const { t } = useI18n();
+    const notificationStore = useNotificationStore();
     // const toast = useToast();
-    return { t };
+    return { t, notificationStore };
   },
   data() {
     return {
@@ -64,7 +66,7 @@ export default {
         this.modalInstance.show();
       } catch (error) {
         console.error("Error opening modal:", error);
-        showError(this.t("error.closeModal"), {
+        this.notificationStore.error(this.t("error.closeModal"), {
           timeout: 3000,
           id: "edit-profile-error",
           singleton: true,
@@ -83,7 +85,7 @@ export default {
         });
         document.body.classList.remove("modal-open");
       } catch (error) {
-        showError(this.t("error.closeModal"), {
+        this.notificationStore.error(this.t("error.closeModal"), {
           timeout: 3000,
           id: "edit-profile-close-error",
           singleton: true,
@@ -109,14 +111,14 @@ export default {
         if (response.status !== 200) {
           throw new Error(response.data.message);
         }
-        showSuccess(response.data.message, {
+        this.notificationStore.success(response.data.message, {
           timeout: 3000,
           id: "edit-profile-success",
           singleton: true,
         });
         this.closeEditProfile();
       } catch (error) {
-        showError(error.message, {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
           id: "edit-profile-submit-error",
           singleton: true,
@@ -133,7 +135,7 @@ export default {
         }
         this.userData = response.data.data;
       } catch (error) {
-        showError(error.message, {
+        this.notificationStore.success(error.message, {
           timeout: 3000,
           id: "fetch-user-data-error",
           singleton: true,

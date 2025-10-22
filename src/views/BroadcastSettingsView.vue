@@ -115,7 +115,8 @@ import { onMounted, onUnmounted, ref } from "vue";
 import EasyDataTable from "vue3-easy-data-table";
 import "vue3-easy-data-table/dist/style.css";
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
 import {
@@ -137,6 +138,7 @@ export default {
 
   setup() {
     const { t } = useI18n();
+    const notificationStore = useNotificationStore();
     // const toast = useToast();
     const items = ref([]);
 
@@ -172,10 +174,10 @@ export default {
           is_first: index === 0,
           is_last: index === response.data.data.length - 1,
         }));
-        showSuccess(response.data.message);
+        notificationStore.success(response.data.message);
       } else {
         // Handle error response
-        showError("Failed to fetch broadcasts");
+        notificationStore.error("Failed to fetch broadcasts");
       }
     };
 
@@ -183,10 +185,10 @@ export default {
       // Logic to update position
       const response = await updateBroadcastPosition(id, direction);
       if (response.status === 200) {
-        showSuccess(response.data.message);
+        notificationStore.success(response.data.message);
         fetchBroadcasts();
       } else {
-        showError("Failed to update position");
+        notificationStore.error("Failed to update position");
       }
     };
 
@@ -197,9 +199,9 @@ export default {
         broadcast.status = broadcast.status ? 0 : 1;
         const response = await updateBroadcast(id, null, broadcast.status);
         if (response.status === 200) {
-          showSuccess(response.data.message);
+          notificationStore.success(response.data.message);
         } else {
-          showError("Failed to update status");
+          notificationStore.error("Failed to update status");
         }
       }
     };
@@ -216,9 +218,9 @@ export default {
           broadcast.important
         );
         if (response.status === 200) {
-          showSuccess(response.data.message);
+          notificationStore.success(response.data.message);
         } else {
-          showError("Failed to update important status");
+          notificationStore.error("Failed to update important status");
         }
       }
     };
@@ -251,10 +253,10 @@ export default {
       // Logic to submit the form
       const response = await createBroadcast(description);
       if (response.status === 200) {
-        showSuccess(response.data.message);
+        notificationStore.success(response.data.message);
         fetchBroadcasts();
       } else {
-        showError("Failed to create broadcast");
+        notificationStore.error("Failed to create broadcast");
       }
       closeCreateModal();
     };
@@ -278,6 +280,7 @@ export default {
       OpenCreateModal,
       closeCreateModal,
       submit,
+      notificationStore,
     };
   },
 };

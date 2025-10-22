@@ -30,8 +30,8 @@ import { useStageStore } from "@/stores/StageStore";
 import { useDealStore } from "@/stores/DealStore";
 import { usePermissionStore } from "@/stores/PermissionStore";
 // import { useToast } from "vue-toastification";
-import { showError } from "@/plugins/services/toastService";
-
+// import { showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 import moveCardSound from "@/assets/move-card.wav";
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import TestKanbanStage from "@/components/kanban/TestKanbanStage.vue";
@@ -44,6 +44,7 @@ export default {
     ScrollButton,
   },
   setup() {
+    const notificationStore = useNotificationStore();
     const moveSound = new Audio(moveCardSound);
     const stage_store = useStageStore();
     const stages = computed(() => stage_store.getAllStages);
@@ -106,7 +107,9 @@ export default {
             .filter((stage) => stage.deals_count > 0)
             .forEach((element) => {
               deal_store.fetchDealsByStageId(element.id).catch((error) => {
-                showError(error.message || "Failed to fetch deals for stage");
+                notificationStore.error(
+                  error.message || "Failed to fetch deals for stage"
+                );
               });
             });
         })
@@ -115,7 +118,9 @@ export default {
             .filter((stage) => stage.deals_count > 0)
             .forEach((element) => {
               deal_store.fetchDealsByStageId(element.id).catch((error) => {
-                showError(error.message || "Failed to fetch deals for stage");
+                notificationStore.error(
+                  error.message || "Failed to fetch deals for stage"
+                );
               });
             });
         })
@@ -124,12 +129,14 @@ export default {
             .filter((stage) => stage.deals_count > 0)
             .forEach((element) => {
               deal_store.fetchDealsByStageId(element.id).catch((error) => {
-                showError(error.message || "Failed to fetch deals for stage");
+                notificationStore.error(
+                  error.message || "Failed to fetch deals for stage"
+                );
               });
             });
         })
         .catch((error) => {
-          showError(error.message || "Failed to fetch stages");
+          notificationStore.error(error.message || "Failed to fetch stages");
         });
     });
     onUnmounted(() => {

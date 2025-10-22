@@ -63,7 +63,8 @@
 import { ref, computed, onMounted } from "vue";
 import { Modal } from "bootstrap";
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
 import {
@@ -74,6 +75,7 @@ import {
 export default {
   name: "TheTopHeaderDropDownMenuProfileEditProfileModalCustmBackgroundModal",
   setup() {
+    const notificationStore = useNotificationStore();
     const { t } = useI18n();
     // const toast = useToast();
     const images = ref([]);
@@ -94,7 +96,7 @@ export default {
         images.value = [...response.data.data]; // Ensure reactivity by spreading the array
       } catch (error) {
         console.error("Error fetching background images:", error);
-        showError(t("error.fetchBackgroundImages"), {
+        notificationStore.error(t("error.fetchBackgroundImages"), {
           timeout: 3000,
         });
       } finally {
@@ -123,17 +125,17 @@ export default {
         localStorage.setItem("backgroundImage_id", response.data.data.id);
 
         if (response.status === 200 || response.status === 201) {
-          showSuccess(response.data.message, {
+          notificationStore.success(response.data.message, {
             timeout: 3000,
           });
         } else {
-          showError(response.data.message, {
+          notificationStore.error(response.data.message, {
             timeout: 3000,
           });
         }
       } catch (error) {
         console.error("Error saving background ID:", error);
-        showError(t("error.default"), {
+        notificationStore.error(t("error.default"), {
           timeout: 3000,
         });
       }

@@ -61,7 +61,8 @@
 import { ref, onMounted } from "vue";
 import { Modal } from "bootstrap";
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
 
@@ -71,6 +72,7 @@ export default {
 
   setup(props, { emit }) {
     // const toast = useToast();
+    const notificationStore = useNotificationStore();
     const modalInstance = ref(null);
     const { t } = useI18n();
 
@@ -85,7 +87,7 @@ export default {
           !filterData.value.created_at_from ||
           !filterData.value.created_at_to
         ) {
-          showError(t("error.selectDateRange"));
+          notificationStore.error(t("error.selectDateRange"));
           return;
         }
 
@@ -96,7 +98,7 @@ export default {
         emit("apply-filters", filters);
         modalInstance.value.hide();
       } catch (error) {
-        showError(t("error.applyFilters"));
+        notificationStore.error(t("error.applyFilters"));
       }
     };
 
@@ -108,10 +110,10 @@ export default {
         };
         emit("reset-filters");
         modalInstance.value.hide();
-        showSuccess(t("success.filtersCleared"));
+        notificationStore.success(t("success.filtersCleared"));
       } catch (error) {
         console.error("Error resetting filters:", error);
-        showSuccess(t("error.resetFilters"));
+        notificationStore.success(t("error.resetFilters"));
       }
     };
 

@@ -541,7 +541,8 @@
 
 <script>
 // import { useToast } from "vue-toastification";
-import { showSuccess, showError } from "@/plugins/services/toastService";
+// import { showSuccess, showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
@@ -572,6 +573,7 @@ export default {
   setup() {
     const { t } = useI18n();
     // const toast = useToast();
+    const notificationStore = useNotificationStore();
     const search = ref("");
     // const tableLoading = ref(false);
     const items = ref([]);
@@ -663,7 +665,7 @@ export default {
         // });
       } catch (error) {
         console.error("Error loading roles:", error);
-        showError(t("error.loadFailedRoles"), {
+        notificationStore.error(t("error.loadFailedRoles"), {
           timeout: 3000,
         });
         items.value = [];
@@ -719,7 +721,7 @@ export default {
         modal.value?.show();
       } catch (error) {
         console.error("Error opening modal:", error);
-        showError(t("error.openModal"), {
+        notificationStore.error(t("error.openModal"), {
           timeout: 3000,
         });
       }
@@ -728,14 +730,14 @@ export default {
     const saveRole = async (role) => {
       try {
         if (!role.name?.trim()) {
-          showError(t("roleSettings.requiredRoleName"), {
+          notificationStore.error(t("roleSettings.requiredRoleName"), {
             timeout: 3000,
           });
           return;
         }
 
         if (role.permissions.length === 0) {
-          showError(t("roleSettings.requiredPermission"), {
+          notificationStore.error(t("roleSettings.requiredPermission"), {
             timeout: 3000,
           });
           return;
@@ -749,7 +751,7 @@ export default {
               ...role,
               permissions: [...role.permissions],
             };
-            showSuccess(t("success.updated"), {
+            notificationStore.success(t("success.updated"), {
               timeout: 3000,
             });
           }
@@ -760,14 +762,14 @@ export default {
             ...role,
             permissions: [...role.permissions],
           });
-          showSuccess(t("success.saved"), {
+          notificationStore.success(t("success.saved"), {
             timeout: 3000,
           });
         }
         modal.value?.hide();
       } catch (error) {
         console.error("Error saving role:", error);
-        showError(t("error.saveFailed"), {
+        notificationStore.error(t("error.saveFailed"), {
           timeout: 3000,
         });
       }
@@ -791,14 +793,14 @@ export default {
           const index = items.value.findIndex((r) => r.id === id);
           if (index !== -1) {
             items.value.splice(index, 1);
-            showSuccess(t("success.deleted"), {
+            notificationStore.success(t("success.deleted"), {
               timeout: 3000,
             });
           }
         }
       } catch (error) {
         console.error("Error deleting role:", error);
-        showError(t("error.deleteFailed"), {
+        notificationStore.error(t("error.deleteFailed"), {
           timeout: 3000,
         });
       }
@@ -806,7 +808,7 @@ export default {
 
     const editRole = (role) => {
       if (role.name === "Admin") {
-        showError(t("roleSettings.cannotEditAdmin"), {
+        notificationStore.error(t("roleSettings.cannotEditAdmin"), {
           timeout: 3000,
         });
         return;
@@ -851,10 +853,10 @@ export default {
           is_first: index === 0,
           is_last: index === response.data.data.length - 1,
         }));
-        showSuccess(response.data.message);
+        notificationStore.success(response.data.message);
       } else {
         // Handle error response
-        showError("Failed to fetch broadcasts");
+        notificationStore.error("Failed to fetch broadcasts");
       }
     };
 
@@ -862,10 +864,10 @@ export default {
       // Logic to update position
       const response = await updateBroadcastPosition(id, direction);
       if (response.status === 200) {
-        showSuccess(response.data.message);
+        notificationStore.success(response.data.message);
         fetchBroadcasts();
       } else {
-        showError("Failed to update position");
+        notificationStore.error("Failed to update position");
       }
     };
 
@@ -876,9 +878,9 @@ export default {
         broadcast.status = broadcast.status ? 0 : 1;
         const response = await updateBroadcast(id, null, broadcast.status);
         if (response.status === 200) {
-          showSuccess(response.data.message);
+          notificationStore.success(response.data.message);
         } else {
-          showError("Failed to update status");
+          notificationStore.error("Failed to update status");
         }
       }
     };
@@ -895,9 +897,9 @@ export default {
           broadcast.important
         );
         if (response.status === 200) {
-          showSuccess(response.data.message);
+          notificationStore.success(response.data.message);
         } else {
-          showError("Failed to update important status");
+          notificationStore.error("Failed to update important status");
         }
       }
     };
@@ -930,10 +932,10 @@ export default {
       // Logic to submit the form
       const response = await createBroadcast(description);
       if (response.status === 200) {
-        showSuccess(response.data.message);
+        notificationStore.success(response.data.message);
         fetchBroadcasts();
       } else {
-        showError("Failed to create broadcast");
+        notificationStore.error("Failed to create broadcast");
       }
       closeCreateModal();
     };
@@ -1049,28 +1051,34 @@ export default {
     saveSettings() {
       try {
         if (!this.settings.appName?.trim()) {
-          showError(this.$t("error.required"), {
+          this.notificationStore.error(this.$t("error.required"), {
             timeout: 3000,
           });
           return;
         }
 
         if (!this.settings.planExpireDays) {
-          showError(this.$t("error.requiredplanExpireDays"), {
-            timeout: 3000,
-          });
+          this.notificationStore.error(
+            this.$t("error.requiredplanExpireDays"),
+            {
+              timeout: 3000,
+            }
+          );
           return;
         }
 
         if (!this.settings.defaultCountry) {
-          showError(this.$t("error.requiredDefaultCountry"), {
-            timeout: 3000,
-          });
+          this.notificationStore.error(
+            this.$t("error.requiredDefaultCountry"),
+            {
+              timeout: 3000,
+            }
+          );
           return;
         }
 
         if (!this.settings.currency) {
-          showError(this.$t("error.requiredCurrency"), {
+          this.notificationStore.error(this.$t("error.requiredCurrency"), {
             timeout: 3000,
           });
           return;
@@ -1078,24 +1086,30 @@ export default {
 
         if (this.settings.enableRecaptcha) {
           if (!this.settings.googleCaptchaKey?.trim()) {
-            showError(this.$t("error.requiredGoogleCaptchaKey"), {
-              timeout: 3000,
-            });
+            this.notificationStore.error(
+              this.$t("error.requiredGoogleCaptchaKey"),
+              {
+                timeout: 3000,
+              }
+            );
             return;
           }
           if (!this.settings.googleCaptchaSecret?.trim()) {
-            showError(this.$t("error.requiredGoogleCaptchaSecret"), {
-              timeout: 3000,
-            });
+            this.notificationStore.error(
+              this.$t("error.requiredGoogleCaptchaSecret"),
+              {
+                timeout: 3000,
+              }
+            );
             return;
           }
         }
-        showSuccess(this.$t("success.saved"), {
+        this.notificationStore.success(this.$t("success.saved"), {
           timeout: 3000,
         });
       } catch (error) {
         console.error("Error saving settings:", error);
-        showError(this.$t("error.saveFailed"), {
+        this.notificationStore.error(this.$t("error.saveFailed"), {
           timeout: 3000,
         });
       }
@@ -1106,19 +1120,19 @@ export default {
         const file = event.target.files[0];
         if (file) {
           if (!file.type.startsWith("image/")) {
-            showError(this.$t("error.invalidFile"), {
+            this.notificationStore.error(this.$t("error.invalidFile"), {
               timeout: 3000,
             });
             return;
           }
           this.settings.appLogo = URL.createObjectURL(file);
-          showSuccess(this.$t("success.updatedAppLogo"), {
+          this.notificationStore.success(this.$t("success.updatedAppLogo"), {
             timeout: 3000,
           });
         }
       } catch (error) {
         console.error("Error uploading logo:", error);
-        showError(this.$t("error.uploadFailed"), {
+        this.notificationStore.error(this.$t("error.uploadFailed"), {
           timeout: 3000,
         });
       }
@@ -1129,19 +1143,19 @@ export default {
         const file = event.target.files[0];
         if (file) {
           if (!file.type.startsWith("image/")) {
-            showError(this.$t("error.invalidFile"), {
+            this.notificationStore.error(this.$t("error.invalidFile"), {
               timeout: 3000,
             });
             return;
           }
           this.settings.favicon = URL.createObjectURL(file);
-          showSuccess(this.$t("success.updatedFavicon"), {
+          this.notificationStore.success(this.$t("success.updatedFavicon"), {
             timeout: 3000,
           });
         }
       } catch (error) {
         console.error("Error uploading favicon:", error);
-        showError(this.$t("error.uploadFaviconFailed"), {
+        this.notificationStore.error(this.$t("error.uploadFaviconFailed"), {
           timeout: 3000,
         });
       }

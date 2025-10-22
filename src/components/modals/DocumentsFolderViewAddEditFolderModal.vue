@@ -64,7 +64,8 @@
 import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 // import { useToast } from "vue-toastification";
-import { showError } from "@/plugins/services/toastService";
+// import { showError } from "@/plugins/services/toastService";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 export default {
   name: "DocumentsFolderViewAddEditFolderModal",
@@ -77,6 +78,7 @@ export default {
   },
   emits: ["submit"],
   setup(props, { emit }) {
+    const notificationStore = useNotificationStore();
     const { t } = useI18n();
     // const toast = useToast();
     const folderData = ref({ name: "" });
@@ -94,7 +96,7 @@ export default {
 
     const handleSubmit = async () => {
       if (!folderData.value.name.trim()) {
-        showError(t("error.emptyFolderName"), { timeout: 3000 });
+        notificationStore.error(t("error.emptyFolderName"), { timeout: 3000 });
         return;
       }
 
@@ -102,7 +104,7 @@ export default {
       try {
         emit("submit", folderData.value);
       } catch (error) {
-        showError(t("error.saveFailed"), { timeout: 3000 });
+        notificationStore.error(t("error.saveFailed"), { timeout: 3000 });
       } finally {
         isSubmitting.value = false;
       }
