@@ -38,8 +38,14 @@ export const createUser = (formData) => {
 };
 
 // Update User
-export const updateUser = (userId, userData) =>
-  axios.patch(`/users/${userId}`, userData);
+export const updateUser = (userId, userData) => {
+  const token = Cookies.get("authToken");
+  return axios.patch(`/users/${userId}`, userData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 
 // Delete User
 export const deleteUser = (userId) => {
