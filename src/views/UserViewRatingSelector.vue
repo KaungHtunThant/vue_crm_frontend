@@ -1,5 +1,9 @@
 <template>
-  <select v-model="local_rating_id" class="form-select">
+  <select
+    v-model="local_rating_id"
+    @change="onChangeRating"
+    class="form-select"
+  >
     <option value="" disabled>
       {{ t("users-table-rating-placeholder") }}
     </option>
@@ -29,19 +33,17 @@ export default {
     const { t } = useI18n();
     const local_rating_id = ref(props.rating_id);
     const ratingStore = useRatingStore();
-    // watch(local_rating_id, (newVal) => {
-    //   emit("rating-changed", newVal, props.user_id);
-    // });
-    watch(local_rating_id, (newVal, oldVal) => {
-      if (newVal !== oldVal) {
-        emit("rating-changed", newVal, props.user_id);
-      }
-    });
+
+    const onChangeRating = () => {
+      emit("rating-changed", local_rating_id.value, props.user_id);
+    };
 
     watch(
       () => props.rating_id,
       (newVal) => {
-        local_rating_id.value = newVal;
+        if (newVal !== local_rating_id.value) {
+          local_rating_id.value = newVal;
+        }
       }
     );
 
@@ -53,6 +55,7 @@ export default {
       local_rating_id,
       ratings,
       t,
+      onChangeRating,
     };
   },
 };
