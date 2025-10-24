@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div
     class="modal-footer btns d-flex justify-content-between align-items-center"
   >
@@ -62,4 +62,4 @@ export default {
     };
   },
 };
-</script>
+</script> -->

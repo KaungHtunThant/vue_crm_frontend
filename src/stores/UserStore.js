@@ -109,5 +109,34 @@ export const useUserStore = defineStore("userStore", {
       }
       return { success: false, message: response.data?.message || "" };
     },
+    async changePassword(userId, oldPassword, newPassword, confirmPassword) {
+      try {
+        const payload = {
+          old_password: oldPassword,
+          password: newPassword,
+          password_confirmation: confirmPassword,
+        };
+
+        const response = await updateUser(userId, payload);
+
+        if (response.status === 200) {
+          return {
+            success: true,
+            message: response.data?.message || "تم تحديث كلمة المرور بنجاح",
+          };
+        } else {
+          return {
+            success: false,
+            message: response.data?.message || "فشل تحديث كلمة المرور",
+          };
+        }
+      } catch (error) {
+        return {
+          success: false,
+          message:
+            error.response?.data?.message || "حدث خطأ أثناء تحديث كلمة المرور",
+        };
+      }
+    },
   },
 });
