@@ -122,19 +122,18 @@ export const useUserStore = defineStore("userStore", {
         if (response.status === 200) {
           return {
             success: true,
-            message: response.data?.message || "تم تحديث كلمة المرور بنجاح",
+            message: response.data?.message,
           };
         } else {
           return {
             success: false,
-            message: response.data?.message || "فشل تحديث كلمة المرور",
+            message: response.data?.message,
           };
         }
       } catch (error) {
         return {
           success: false,
-          message:
-            error.response?.data?.message || "حدث خطأ أثناء تحديث كلمة المرور",
+          message: error.message,
         };
       }
     },

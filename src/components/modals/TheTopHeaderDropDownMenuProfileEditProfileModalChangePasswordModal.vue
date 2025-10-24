@@ -27,40 +27,46 @@
               <!-- الحقول -->
               <div class="mb-3">
                 <label for="oldPassword" class="form-label">
-                  {{ t("modals.oldPassword") }}
+                  {{ t("change-password-modal-old-password") }}
                 </label>
                 <input
                   type="password"
                   id="oldPassword"
                   class="form-control"
                   v-model="password.old"
-                  placeholder="Old Password"
+                  :placeholder="
+                    t('change-password-modal-old-password-placeholder')
+                  "
                 />
               </div>
 
               <div class="mb-3">
                 <label for="newPassword" class="form-label">
-                  {{ t("modals.newPassword") }}
+                  {{ t("change-password-modal-new-password") }}
                 </label>
                 <input
                   type="password"
                   id="newPassword"
                   class="form-control"
                   v-model="password.new"
-                  placeholder="New Password"
+                  :placeholder="
+                    t('change-password-modal-new-password-placeholder')
+                  "
                 />
               </div>
 
               <div class="mb-3">
                 <label for="confirmPassword" class="form-label">
-                  {{ t("modals.confirmPassword") }}
+                  {{ t("change-password-modal-confirm-password") }}
                 </label>
                 <input
                   type="password"
                   id="confirmPassword"
                   class="form-control"
                   v-model="password.confirm"
-                  placeholder="Confirm Password"
+                  :placeholder="
+                    t('change-password-modal-confirm-password-placeholder')
+                  "
                 />
               </div>
             </div>
@@ -122,14 +128,13 @@ export default {
         document.querySelector(".modal-backdrop")?.remove();
         document.body.classList.remove("modal-open");
         password.value = { old: "", new: "", confirm: "" };
+      } else {
+        console.error("Modal instance not found.");
       }
     };
 
     const submitForm = async () => {
       loading.value = true;
-      console.log("submitForm called!");
-      console.log("Password values entered by user:", password.value);
-
       if (
         !password.value.old ||
         !password.value.new ||
@@ -142,6 +147,12 @@ export default {
 
       if (password.value.new !== password.value.confirm) {
         notificationStore.error(t("error.passwordMismatch"));
+        loading.value = false;
+        return;
+      }
+
+      if (password.value.new === password.value.old) {
+        notificationStore.error(t("error.samePassword"));
         loading.value = false;
         return;
       }
@@ -159,12 +170,12 @@ export default {
         if (result.success) {
           notificationStore.success(result.message);
           password.value = { old: "", new: "", confirm: "" };
-          setTimeout(() => closeChangePassword(), 500);
+          closeChangePassword();
         } else {
           notificationStore.error(result.message);
         }
       } catch (error) {
-        notificationStore.error(t("error.changePassword"));
+        notificationStore.error(error.message);
       } finally {
         loading.value = false;
       }
