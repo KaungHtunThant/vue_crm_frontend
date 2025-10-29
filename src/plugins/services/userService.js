@@ -40,11 +40,19 @@ export const createUser = (formData) => {
 // Update User
 export const updateUser = (userId, userData) => {
   const token = Cookies.get("authToken");
-  return axios.patch(`/users/${userId}`, userData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
+  return axios.post(
+    `/users/${userId}`,
+    {
+      ...userData,
+      _method: "PUT",
     },
-  });
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
 };
 
 // Delete User

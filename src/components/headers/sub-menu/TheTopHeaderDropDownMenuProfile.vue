@@ -226,7 +226,8 @@ export default {
       modal.show();
     },
     openEditProfileModal() {
-      this.$refs.editProfileModal.openEditProfile();
+      const modal = new Modal(document.getElementById("EditProfileModal"));
+      modal.show();
     },
     openChangePasswordModal() {
       this.$refs.changePasswordModal.openChangePassword();

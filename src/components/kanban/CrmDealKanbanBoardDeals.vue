@@ -313,8 +313,6 @@ import draggable from "vuedraggable";
 import TicketCard from "@/components/kanban/CrmDealKanbanBoardDealsTicketCard.vue";
 import { Modal } from "bootstrap";
 import { useRoute } from "vue-router";
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 
 import {

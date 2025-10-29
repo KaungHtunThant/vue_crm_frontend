@@ -23,7 +23,64 @@
         </div>
         <form @submit.prevent="submitForm" ref="EditProfileForm">
           <div class="modal-body">
-            <profile-form :userData="userData" />
+            <!-- <profile-form :userData="userData" /> -->
+            <div class="mb-3">
+              <div class="my-2 text-center">
+                <img
+                  :src="
+                    userData.image ||
+                    require('@/assets/default-avatar-profile.webp')
+                  "
+                  class="img-fluid rounded"
+                  width="100"
+                  alt="Profile Image"
+                />
+              </div>
+              <input
+                type="file"
+                class="form-control"
+                id="profileImage"
+                name="image"
+                @change="updateImage"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="name" class="form-label">{{
+                t("header-user-menu-item-profile-modal-label-name")
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Name in English"
+                name="name_en"
+                v-model="userData.name_en"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="name" class="form-label">{{
+                t("header-user-menu-item-profile-modal-label-name")
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Name in Arabic"
+                name="name_ar"
+                v-model="userData.name_ar"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">{{
+                t("header-user-menu-item-profile-modal-label-email")
+              }}</label>
+              <input
+                type="email"
+                class="form-control"
+                placeholder="Email"
+                name="email"
+                v-model="userData.email"
+                readonly
+              />
+            </div>
           </div>
           <profile-buttons :loading="loading" @close="closeEditProfile" />
         </form>
@@ -34,18 +91,14 @@
 
 <script>
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
-import ProfileForm from "@/components/editProfileElements/TheTopHeaderDropDownMenuProfileEditProfileModalFormItems.vue";
 import ProfileButtons from "@/components/editProfileElements/TheTopHeaderDropDownMenuProfileEditProfileModalButtonsItems.vue";
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
-import { getUserById, updateUser } from "@/plugins/services/userService";
-import Cookies from "js-cookie";
+import { useUserStore } from "@/stores/UserStore";
 export default {
   name: "TheTopHeaderDropDownMenuProfileEditProfileModal",
-  components: { ProfileForm, ProfileButtons },
+  components: { ProfileButtons },
   setup() {
     const { t } = useI18n();
     const notificationStore = useNotificationStore();
@@ -56,34 +109,28 @@ export default {
     return {
       modalInstance: null,
       loading: false,
+      userStore: null,
+      userData: {
+        name_en: "",
+        name_ar: "",
+        email: "",
+        image: null,
+      },
+      image_bin: null,
     };
   },
   methods: {
-    openEditProfile() {
-      try {
-        const modal = this.$refs.EditProfileModal;
-        this.modalInstance = new Modal(modal);
-        this.modalInstance.show();
-      } catch (error) {
-        console.error("Error opening modal:", error);
-        this.notificationStore.error(this.t("error.closeModal"), {
-          timeout: 3000,
-          id: "edit-profile-error",
-          singleton: true,
-        });
-      }
-    },
     closeEditProfile() {
       try {
-        const modal = this.$refs.EditProfileModal;
+        const modal = document.getElementById("EditProfileModal");
         const modalInstance = Modal.getInstance(modal);
         if (modalInstance) {
           modalInstance.hide();
+          document.querySelector(".modal-backdrop")?.remove();
+          document.body.classList.remove("modal-open");
+        } else {
+          console.log("No modal instance found for EditProfileModal", modal);
         }
-        document.querySelectorAll(".modal-backdrop").forEach((backdrop) => {
-          backdrop.remove();
-        });
-        document.body.classList.remove("modal-open");
       } catch (error) {
         this.notificationStore.error(this.t("error.closeModal"), {
           timeout: 3000,
@@ -94,24 +141,18 @@ export default {
     },
     async submitForm() {
       try {
+        const id = this.userData.id;
         this.loading = true;
-        const form = this.$refs.EditProfileForm;
-        const formData = new FormData(form);
-        const name_en = formData.get("name_en");
-        const name_ar = formData.get("name_ar");
-        const email = formData.get("email");
-        const image = formData.get("image");
-
-        const response = await updateUser({
-          name_en,
-          name_ar,
-          email,
-          image,
+        const response = await this.userStore.updateUser(id, {
+          name_en: this.userData.name_en,
+          name_ar: this.userData.name_ar,
+          email: this.userData.email,
+          image: this.image_bin,
         });
-        if (response.status !== 200) {
-          throw new Error(response.data.message);
+        if (response.success === false) {
+          throw new Error(response.message || "Failed to update profile");
         }
-        this.notificationStore.success(response.data.message, {
+        this.notificationStore.success(response.message, {
           timeout: 3000,
           id: "edit-profile-success",
           singleton: true,
@@ -127,24 +168,24 @@ export default {
         this.loading = false;
       }
     },
-    async fetchUserData() {
-      try {
-        const response = await getUserById(Cookies.get("user_id"));
-        if (response.status !== 200) {
-          throw new Error(response.data.message);
-        }
-        this.userData = response.data.data;
-      } catch (error) {
-        this.notificationStore.success(error.message, {
-          timeout: 3000,
-          id: "fetch-user-data-error",
-          singleton: true,
-        });
+    updateImage(event) {
+      const file = event.target.files[0];
+      if (file?.type?.startsWith("image/")) {
+        this.image_bin = file;
+        console.log("Selected image file:", this.image_bin);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.userData.image = e.target.result;
+          this.$forceUpdate();
+        };
+        reader.readAsDataURL(file);
       }
     },
   },
-  mounted() {
-    this.fetchUserData();
+  async mounted() {
+    this.userStore = useUserStore();
+    this.userData = await this.userStore.fetchCurrentUser();
+    console.log("User Data in Edit Profile Modal:", this.userData);
   },
 };
 </script>

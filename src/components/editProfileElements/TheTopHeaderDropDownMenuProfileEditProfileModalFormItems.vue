@@ -25,11 +25,21 @@
       class="form-control"
       placeholder="User Name"
       id="name"
-      v-model="localName"
-      readonly
+      v-model="localNameEn"
     />
   </div>
-
+  <div class="mb-3">
+    <label for="name" class="form-label">{{
+      t("header-user-menu-item-profile-modal-label-name")
+    }}</label>
+    <input
+      type="text"
+      class="form-control"
+      placeholder="User Name"
+      id="name"
+      v-model="localNameAr"
+    />
+  </div>
   <div class="mb-3">
     <label for="email" class="form-label">{{
       t("header-user-menu-item-profile-modal-label-email")
@@ -70,7 +80,8 @@ export default {
   },
   data() {
     return {
-      localName: "",
+      localNameEn: "",
+      localNameAr: "",
       localEmail: "",
       localImage: require("@/assets/default-avatar-profile.webp"),
     };
@@ -90,7 +101,8 @@ export default {
   },
   mounted() {
     // Set initial values from cookies
-    this.localName = this.localUserData?.name;
+    this.localNameEn = this.localUserData?.name_en;
+    this.localNameAr = this.localUserData?.name_ar;
     this.localEmail = this.localUserData?.email;
     this.localImage =
       this.localUserData?.image ||
@@ -98,7 +110,9 @@ export default {
   },
   watch: {
     userData(newVal) {
-      this.localName = newVal.name;
+      console.log("userData prop changed:", newVal);
+      this.localNameEn = newVal.name_en;
+      this.localNameAr = newVal.name_ar;
       this.localEmail = newVal.email;
       this.localImage =
         newVal.image || require("@/assets/default-avatar-profile.webp");

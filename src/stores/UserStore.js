@@ -1,9 +1,11 @@
 import { defineStore } from "pinia";
 import {
   getUser,
+  getUserById,
   updateUser,
   deleteUser,
 } from "@/plugins/services/userService";
+import Cookies from "js-cookie";
 
 export const useUserStore = defineStore("userStore", {
   state: () => ({
@@ -14,6 +16,7 @@ export const useUserStore = defineStore("userStore", {
     loading: false,
     search: "",
     filters: {},
+    current_user: null,
   }),
   getters: {
     getUserById: (state) => (id) => {
@@ -21,6 +24,9 @@ export const useUserStore = defineStore("userStore", {
     },
     getAllUsers: (state) => {
       return state.rows;
+    },
+    getCurrentUser: (state) => {
+      return state.current_user;
     },
   },
   actions: {
@@ -84,6 +90,17 @@ export const useUserStore = defineStore("userStore", {
       }
     },
 
+    async updateUser(id, data) {
+      const response = await updateUser(id, data);
+      if (response.status === 200) {
+        this.updateUserLocal(response.data.data);
+      }
+      return {
+        success: response.status === 200,
+        message: response.data?.message,
+      };
+    },
+
     async toggleStatus(user) {
       const newStatus = user.status ? "active" : "inactive";
       const response = await updateUser(user.id, { status: newStatus });
@@ -96,7 +113,7 @@ export const useUserStore = defineStore("userStore", {
       }
       return {
         success: response.status === 200,
-        message: response.data?.message || "",
+        message: response.data?.message,
       };
     },
 
@@ -136,6 +153,17 @@ export const useUserStore = defineStore("userStore", {
           message: error.message,
         };
       }
+    },
+    setCurrentUser(user) {
+      this.current_user = user;
+    },
+    async fetchCurrentUser() {
+      if (this.current_user) {
+        return this.current_user;
+      }
+      const response = await getUserById(Cookies.get("user_id"));
+      this.current_user = response.data.data;
+      return this.current_user;
     },
   },
 });
