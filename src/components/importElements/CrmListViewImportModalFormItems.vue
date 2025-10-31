@@ -118,11 +118,11 @@
         <div class="col-12">
           <div class="mb-3">
             <label for="origin" class="form-label">
-              {{ t("modals.origin") }}
+              {{ t("kanban-modal-import-label-origin") }}
             </label>
             <select v-model="origin" class="text-secondary form-select">
               <option value="" disabled selected>
-                {{ t("modals.select_header") }}
+                {{ t("kanban-modal-import-placeholder-origin") }}
               </option>
               <option
                 v-for="origin in origins"
