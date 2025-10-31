@@ -242,6 +242,24 @@
                   </div>
                 </div>
               </router-link>
+              <router-link
+                v-if="
+                  permissionStore.hasPermission(PERMISSIONS.GENERAL_SETTINGS)
+                "
+                to="/users-salary"
+                class="text-decoration-none text-black mb-2"
+                @click="closeDropdown"
+              >
+                <div class="dropdown-link">
+                  <div
+                    class="sidebar-item d-flex align-items-center"
+                    title="Salary"
+                  >
+                    <i class="fa-solid fa-money-check-dollar fs-5 me-2"></i>
+                    <span>Salary</span>
+                  </div>
+                </div>
+              </router-link>
             </div>
           </transition>
         </div>

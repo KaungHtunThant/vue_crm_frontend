@@ -22,6 +22,7 @@ import CompleteCase from "@/views/CompleteCase.vue";
 import EMRDealKanbanView from "@/views/EMRDealKanbanView.vue";
 import TestKanbanView from "@/views/TestKanbanView.vue";
 import CrmDealAfterSalesView from "@/views/CrmDealAfterSalesView.vue";
+import UsersSalaryView from "@/views/UsersSalaryView.vue";
 
 const routes = [
   {
@@ -255,6 +256,16 @@ const routes = [
       title: "EMR Kanban",
     },
     beforeEnter: requirePermission(PERMISSIONS.ROLES_SETTINGS),
+  },
+  {
+    path: "/users-salary",
+    name: "UsersSalaryView",
+    component: UsersSalaryView,
+    meta: {
+      requiresAuth: true,
+      title: "Users Salary",
+    },
+    beforeEnter: requirePermission(PERMISSIONS.USERS),
   },
 ];
 
