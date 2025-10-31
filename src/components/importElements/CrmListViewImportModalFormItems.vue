@@ -115,25 +115,25 @@
             </select>
           </div>
         </div>
-        <!-- <div class="col-12">
+        <div class="col-12">
           <div class="mb-3">
-            <label for="address" class="form-label">
-              {{ t("modals.address") }}
+            <label for="origin" class="form-label">
+              {{ t("modals.origin") }}
             </label>
-            <select v-model="address" class="text-secondary form-select">
+            <select v-model="origin" class="text-secondary form-select">
               <option value="" disabled selected>
                 {{ t("modals.select_header") }}
               </option>
               <option
-                v-for="option in options"
-                :key="option.value"
-                :value="option.value"
+                v-for="origin in origins"
+                :key="origin.id"
+                :value="origin.id"
               >
-                {{ option.label }}
+                {{ origin.name }}
               </option>
             </select>
           </div>
-        </div> -->
+        </div>
         <div class="col-12">
           <div class="mb-3">
             <label for="email" class="form-label">
@@ -159,11 +159,12 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import * as XLSX from "xlsx";
 import { useI18n } from "vue-i18n";
 import { useSourceStore } from "@/stores/SourceStore";
 import { computed } from "vue";
+import { useOriginStore } from "@/stores/OriginStore";
 export default {
   name: "CrmListViewImportModalFormItems",
   setup() {
@@ -182,6 +183,8 @@ export default {
     const email = ref("");
     const options = ref([]);
     const fileInput = ref(null);
+    const originStore = useOriginStore();
+    const origins = computed(() => originStore.getAllOrigins);
 
     // handle file change
     const handleFileChange = async (event) => {
@@ -263,6 +266,10 @@ export default {
       });
     };
 
+    onMounted(async () => {
+      await originStore.fetchOrigins();
+    });
+
     return {
       fileInput,
       fileError,
@@ -279,6 +286,7 @@ export default {
       email,
       handleFileChange,
       t,
+      origins,
     };
   },
 };
