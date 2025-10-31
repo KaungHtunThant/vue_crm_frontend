@@ -102,6 +102,7 @@ export default {
             phone: importFormRef.value.phone,
             comment: importFormRef.value.comment,
             email: importFormRef.value.email,
+            origin_id: importFormRef.value.origin,
           };
           const response = await importDeals(fields);
           if (response.status === 200) {

@@ -162,7 +162,6 @@
 import { onMounted, ref } from "vue";
 import * as XLSX from "xlsx";
 import { useI18n } from "vue-i18n";
-import { useSourceStore } from "@/stores/SourceStore";
 import { computed } from "vue";
 import { useOriginStore } from "@/stores/OriginStore";
 export default {
@@ -171,8 +170,6 @@ export default {
     const { t } = useI18n();
     const fileError = ref("");
     const isFileValid = ref(false);
-    const sourceStore = useSourceStore();
-    const sources = computed(() => sourceStore.getAllSources);
     const source = ref("");
     const name = ref("");
     const description = ref("");
@@ -185,6 +182,7 @@ export default {
     const fileInput = ref(null);
     const originStore = useOriginStore();
     const origins = computed(() => originStore.getAllOrigins);
+    const origin = ref(null);
 
     // handle file change
     const handleFileChange = async (event) => {
@@ -267,14 +265,14 @@ export default {
     };
 
     onMounted(async () => {
-      await originStore.fetchOrigins();
+      await originStore.fetchAllOrigins();
+      console.log("Origins fetched:", origins.value);
     });
 
     return {
       fileInput,
       fileError,
       isFileValid,
-      sources,
       options,
       source,
       name,
@@ -287,6 +285,7 @@ export default {
       handleFileChange,
       t,
       origins,
+      origin,
     };
   },
 };
