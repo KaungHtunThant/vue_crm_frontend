@@ -16,16 +16,65 @@
           <button
             type="button"
             class="btn-close"
+            @click="closeEditProfile"
             data-bs-dismiss="modal"
             aria-label="Close"
-            @click="closeEditProfile"
           ></button>
         </div>
+
         <form @submit.prevent="submitForm" ref="EditProfileForm">
           <div class="modal-body">
-            <profile-form :userData="userData" />
+            <div class="text-center mb-3">
+              <img
+                :src="localImage"
+                class="img-fluid rounded"
+                width="100"
+                height="100"
+                style="object-fit: cover"
+                alt="Profile Image"
+              />
+            </div>
+
+            <input
+              type="file"
+              class="form-control mb-3"
+              accept="image/*"
+              @change="updateImage"
+            />
+
+            <div class="mb-3">
+              <label class="form-label">
+                {{ t("header-user-menu-item-profile-modal-label-name-en") }}
+              </label>
+              <input type="text" class="form-control" v-model="localNameEn" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">
+                {{ t("header-user-menu-item-profile-modal-label-name-ar") }}
+              </label>
+              <input type="text" class="form-control" v-model="localNameAr" />
+            </div>
           </div>
-          <profile-buttons :loading="loading" @close="closeEditProfile" />
+
+          <div class="modal-footer d-flex justify-content-between">
+            <button type="submit" class="btn btn-success" :disabled="loading">
+              <span v-if="loading">
+                <i class="fas fa-spinner fa-spin"></i> {{ t("modals.editing") }}
+              </span>
+              <span v-else>
+                {{ t("header-user-menu-item-profile-modal-button-confirm") }}
+              </span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-bs-dismiss="modal"
+              @click="closeEditProfile"
+            >
+              {{ t("buttons.close") }}
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -34,33 +83,36 @@
 
 <script>
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
-import ProfileForm from "@/components/editProfileElements/TheTopHeaderDropDownMenuProfileEditProfileModalFormItems.vue";
-import ProfileButtons from "@/components/editProfileElements/TheTopHeaderDropDownMenuProfileEditProfileModalButtonsItems.vue";
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
-
 import { useI18n } from "vue-i18n";
 import { getUserById, updateUser } from "@/plugins/services/userService";
 import Cookies from "js-cookie";
+
 export default {
   name: "TheTopHeaderDropDownMenuProfileEditProfileModal",
-  components: { ProfileForm, ProfileButtons },
+
   setup() {
     const { t } = useI18n();
     const notificationStore = useNotificationStore();
-    // const toast = useToast();
     return { t, notificationStore };
   },
+
   data() {
     return {
       modalInstance: null,
       loading: false,
+      localNameEn: "",
+      localNameAr: "",
+      localImage: require("@/assets/default-avatar-profile.webp"),
+      imageFile: null,
+      userData: null,
     };
   },
+
   methods: {
     openEditProfile() {
       try {
+        this.fetchUserData();
         const modal = this.$refs.EditProfileModal;
         this.modalInstance = new Modal(modal);
         this.modalInstance.show();
@@ -68,81 +120,94 @@ export default {
         console.error("Error opening modal:", error);
         this.notificationStore.error(this.t("error.closeModal"), {
           timeout: 3000,
-          id: "edit-profile-error",
-          singleton: true,
         });
       }
     },
+
     closeEditProfile() {
       try {
         const modal = this.$refs.EditProfileModal;
         const modalInstance = Modal.getInstance(modal);
-        if (modalInstance) {
-          modalInstance.hide();
-        }
-        document.querySelectorAll(".modal-backdrop").forEach((backdrop) => {
-          backdrop.remove();
-        });
+        if (modalInstance) modalInstance.hide();
+        document.querySelectorAll(".modal-backdrop").forEach((b) => b.remove());
         document.body.classList.remove("modal-open");
       } catch (error) {
         this.notificationStore.error(this.t("error.closeModal"), {
           timeout: 3000,
-          id: "edit-profile-close-error",
-          singleton: true,
         });
       }
     },
+
+    async fetchUserData() {
+      try {
+        const response = await getUserById(Cookies.get("user_id"));
+        if (response.status !== 200) throw new Error(response.data.message);
+
+        this.userData = response.data.data;
+        this.localNameEn = this.userData.name_en || "";
+        this.localNameAr = this.userData.name_ar || "";
+        this.localImage =
+          this.userData.image && this.userData.image.trim() !== ""
+            ? this.userData.image
+            : require("@/assets/default-avatar-profile.webp");
+      } catch (error) {
+        this.notificationStore.error(error.message, { timeout: 3000 });
+      }
+    },
+
+    updateImage(event) {
+      const file = event.target.files[0];
+      if (file?.type?.startsWith("image/")) {
+        this.imageFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.localImage = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        this.notificationStore.error(this.t("errors.invalidImageFormat"), {
+          timeout: 3000,
+        });
+      }
+    },
+
     async submitForm() {
       try {
         this.loading = true;
-        const form = this.$refs.EditProfileForm;
-        const formData = new FormData(form);
-        const name_en = formData.get("name_en");
-        const name_ar = formData.get("name_ar");
-        const email = formData.get("email");
-        const image = formData.get("image");
 
-        const response = await updateUser({
-          name_en,
-          name_ar,
-          email,
-          image,
-        });
-        if (response.status !== 200) {
-          throw new Error(response.data.message);
+        const userId = Cookies.get("user_id");
+        const formData = new FormData();
+        formData.append("name_en", this.localNameEn || "");
+        formData.append("name_ar", this.localNameAr || "");
+        if (this.imageFile) {
+          formData.append("image", this.imageFile);
         }
-        this.notificationStore.success(response.data.message, {
-          timeout: 3000,
-          id: "edit-profile-success",
-          singleton: true,
-        });
-        this.closeEditProfile();
+
+        const response = await updateUser(userId, formData);
+        if (response.status !== 200) throw new Error(response.data.message);
+
+        this.notificationStore.success(
+          this.t("header-user-menu-item-profile-modal-success")
+        );
+
+        if (this.modalInstance) {
+          this.modalInstance.hide();
+          document
+            .querySelectorAll(".modal-backdrop")
+            .forEach((el) => el.remove());
+          document.body.classList.remove("modal-open");
+        }
       } catch (error) {
-        this.notificationStore.error(error.message, {
-          timeout: 3000,
-          id: "edit-profile-submit-error",
-          singleton: true,
-        });
+        console.error("Error updating user profile:", error);
+        this.notificationStore.error(
+          error.message || this.t("errors.updateFailed")
+        );
       } finally {
         this.loading = false;
       }
     },
-    async fetchUserData() {
-      try {
-        const response = await getUserById(Cookies.get("user_id"));
-        if (response.status !== 200) {
-          throw new Error(response.data.message);
-        }
-        this.userData = response.data.data;
-      } catch (error) {
-        this.notificationStore.success(error.message, {
-          timeout: 3000,
-          id: "fetch-user-data-error",
-          singleton: true,
-        });
-      }
-    },
   },
+
   mounted() {
     this.fetchUserData();
   },

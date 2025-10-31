@@ -147,6 +147,16 @@
               <label for="image" class="form-label">
                 {{ t("users-modal-add-label-image") }}
               </label>
+              <div v-if="hasImagePreview" class="text-center mb-2">
+                <img
+                  :src="imagePreview"
+                  class="img-fluid rounded"
+                  width="100"
+                  height="100"
+                  style="object-fit: cover"
+                  alt="Profile Image Preview"
+                />
+              </div>
               <input
                 type="file"
                 class="form-control"
@@ -226,7 +236,8 @@ export default {
       isEditMode: false,
       formData: {
         id: null,
-        username: "",
+        username_en: "",
+        username_ar: "",
         email: "",
         password: "",
         password_confirmation: "",
@@ -236,6 +247,7 @@ export default {
         image: null,
         color: null,
       },
+      imagePreview: null,
       users: [],
       roles: [],
       loading: false,
@@ -262,7 +274,20 @@ export default {
     },
     handleImageUpload(event) {
       const file = event.target.files[0];
-      this.formData.image = file ? file : null;
+      if (file?.type?.startsWith("image/")) {
+        this.formData.image = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.imagePreview = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        this.formData.image = null;
+        this.imagePreview = null;
+        this.notificationStore.error(this.t("errors.invalidImageFormat"), {
+          timeout: 3000,
+        });
+      }
     },
 
     openModal(user = null) {
@@ -273,20 +298,23 @@ export default {
         this.isEditMode = true;
         this.formData = {
           id: user.id,
-          username_en: user.name_en,
-          username_ar: user.name_ar,
-          email: user.email,
-          role: user.role?.id || user.role,
-          reportTo: user.report_to_id,
-          phoneNumber: user.phones[0]?.phone,
-          image: user.image,
-          color: user.color_code,
+          username: "",
+          username_en: user.name_en || "",
+          username_ar: user.name_ar || "",
+          email: user.email || "",
+          role: user.role?.name || user.role?.id || user.role || "",
+          reportTo: user.report_to_id || user.parent_id || "",
+          phoneNumber: user.phones?.[0]?.phone || user.phone || "",
+          image: user.image || null,
+          color: user.color_code || user.color || "#292929",
         };
       } else {
         this.isEditMode = false;
         this.formData = {
           id: null,
           username: "",
+          username_en: "",
+          username_ar: "",
           email: "",
           password: "",
           password_confirmation: "",
@@ -307,52 +335,62 @@ export default {
         this.loading = true;
 
         const formData = new FormData();
-        formData.append("name_en", this.formData.username_en);
-        formData.append("name_ar", this.formData.username_ar);
-        formData.append("email", this.formData.email);
-        formData.append("role", this.formData.role);
-        formData.append(
-          "image",
-          this.formData.image ? this.formData.image : ""
-        );
+        formData.append("name_en", this.formData.username_en || "");
+        formData.append("name_ar", this.formData.username_ar || "");
+        formData.append("email", this.formData.email || "");
+        formData.append("role", this.formData.role || "");
         formData.append(
           "parent_id",
           this.formData.reportTo?.id || this.formData.reportTo || ""
         );
-        formData.append("color_code", this.formData.color);
+        formData.append("color_code", this.formData.color || "");
+
         if (!this.isEditMode) {
-          formData.append("password", this.formData.password);
+          formData.append("password", this.formData.password || "");
           formData.append(
             "password_confirmation",
-            this.formData.password_confirmation
+            this.formData.password_confirmation || ""
           );
+          formData.append("phone", this.formData.phoneNumber || "");
+        } else {
+          if (this.formData.phoneNumber) {
+            formData.append("phones", this.formData.phoneNumber);
+          }
         }
+        console.log(this.formData.image);
+        // formData.append("image", this.formData.image);
         if (this.formData.image) {
-          formData.append("image", this.formData.image);
+          if (this.formData.image instanceof File) {
+            formData.append("image", this.formData.image);
+          } else if (this.formData.image.startsWith("data:image")) {
+            const blob = await fetch(this.formData.image).then((r) => r.blob());
+            formData.append("image", blob, "profile.png");
+          }
         }
 
         let response;
         if (this.isEditMode) {
-          formData.append("phones", [this.formData.phoneNumber]);
           response = await updateUser(this.formData.id, formData);
-          this.notificationStore.success(this.t("success.updateUser"), {
-            timeout: 3000,
-          });
         } else {
-          formData.append("phone", this.formData.phoneNumber);
           response = await createUser(formData);
-          this.notificationStore.success(this.t("success.createUser"), {
-            timeout: 3000,
-          });
         }
 
         if (response.status === 200 || response.status === 201) {
           const user = response.data.data || response.data;
+          const updatedUser = {
+            ...user,
+            name_en: this.formData.username_en,
+            name_ar: this.formData.username_ar,
+            email: this.formData.email,
+            role: this.formData.role,
+            color_code: this.formData.color,
+          };
+
           localStorage.setItem(`user_${user.id}_color`, this.formData.color);
           this.notificationStore.success(response.data.message, {
             timeout: 3000,
           });
-          this.$emit("user-updated", user);
+          this.$emit("user-updated", updatedUser);
           setTimeout(() => {
             this.clearForm();
             this.closeModal();
@@ -379,6 +417,8 @@ export default {
       this.formData = {
         id: null,
         username: "",
+        username_en: "",
+        username_ar: "",
         email: "",
         password: "",
         password_confirmation: "",
@@ -388,6 +428,7 @@ export default {
         image: null,
         color: "#292929",
       };
+      this.imagePreview = null;
     },
 
     closeModal() {
@@ -415,6 +456,9 @@ export default {
       return this.users.filter(
         (user) => user.role === selectedRole.parent_role
       );
+    },
+    hasImagePreview() {
+      return this.imagePreview !== null;
     },
   },
 };

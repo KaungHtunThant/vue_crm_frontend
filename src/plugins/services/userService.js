@@ -39,9 +39,14 @@ export const createUser = (formData) => {
 
 // Update User
 export const updateUser = (userId, userData) => {
+  const data = {
+    ...userData,
+    _method: "PUT",
+  };
   const token = Cookies.get("authToken");
-  return axios.patch(`/users/${userId}`, userData, {
+  return axios.post(`/users/${userId}`, data, {
     headers: {
+      "Content-Type": "multipart/form-data",
       Authorization: `Bearer ${token}`,
     },
   });
