@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 
 export const useUserStore = defineStore("userStore", {
   state: () => ({
+    all: [],
     rows: [],
     totalRows: 0,
     currentPage: 0,
@@ -17,6 +18,7 @@ export const useUserStore = defineStore("userStore", {
     search: "",
     filters: {},
     current_user: null,
+    selected_user: null,
   }),
   getters: {
     getUserById: (state) => (id) => {
@@ -27,6 +29,12 @@ export const useUserStore = defineStore("userStore", {
     },
     getCurrentUser: (state) => {
       return state.current_user;
+    },
+    getSelectedUser: (state) => {
+      return state.selected_user;
+    },
+    getUsersWithRole: (state) => (role) => {
+      return state.rows.filter((user) => user.role === role);
     },
   },
   actions: {
@@ -63,6 +71,15 @@ export const useUserStore = defineStore("userStore", {
         this.totalRows = 0;
       } finally {
         this.loading = false;
+      }
+    },
+
+    async fetchAllUsers() {
+      try {
+        const response = await getUser({ per_page: 1000 });
+        this.all = response.data.data;
+      } catch (error) {
+        this.all = [];
       }
     },
 
@@ -164,6 +181,11 @@ export const useUserStore = defineStore("userStore", {
       const response = await getUserById(Cookies.get("user_id"));
       this.current_user = response.data.data;
       return this.current_user;
+    },
+    async fetchSelectedUser(userId) {
+      const response = await getUserById(userId);
+      this.selected_user = response.data.data;
+      return this.selected_user;
     },
   },
 });

@@ -246,9 +246,9 @@ export default {
     };
 
     const adminModalRef = ref(null);
-    const editItem = (item) => {
+    const editItem = () => {
       if (adminModalRef.value) {
-        adminModalRef.value.openModal(item);
+        adminModalRef.value.openModal(true);
       }
     };
 

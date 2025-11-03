@@ -7,7 +7,7 @@
     aria-hidden="true"
     ref="adminModal"
   >
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="adminModalLabel">
@@ -28,135 +28,176 @@
         <form @submit.prevent="submitForm">
           <div class="modal-body">
             <div class="mb-3">
-              <label for="username" class="form-label">
-                {{ t("users-modal-add-label-fullname-en") }}
-              </label>
-              <input
-                type="text"
-                class="form-control"
-                id="username"
-                :placeholder="t('users-modal-add-placeholder-fullname-en')"
-                v-model="formData.username_en"
-                required
-              />
+              <div class="row">
+                <div class="col-6">
+                  <label for="username" class="form-label">
+                    {{ t("users-modal-add-label-fullname-en") }}
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="username"
+                    :placeholder="t('users-modal-add-placeholder-fullname-en')"
+                    v-model="form.name_en"
+                    required
+                  />
+                </div>
+                <div class="col-6">
+                  <label for="username" class="form-label">
+                    {{ t("users-modal-add-label-fullname-ar") }}
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="username"
+                    :placeholder="t('users-modal-add-placeholder-fullname-ar')"
+                    v-model="form.name_ar"
+                    required
+                  />
+                </div>
+              </div>
             </div>
             <div class="mb-3">
-              <label for="username" class="form-label">
-                {{ t("users-modal-add-label-fullname-ar") }}
-              </label>
-              <input
-                type="text"
-                class="form-control"
-                id="username"
-                :placeholder="t('users-modal-add-placeholder-fullname-ar')"
-                v-model="formData.username_ar"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">
-                {{ t("users-modal-add-label-email") }}
-              </label>
-              <input
-                type="email"
-                class="form-control"
-                id="email"
-                :placeholder="t('users-modal-add-placeholder-email')"
-                v-model="formData.email"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label for="phoneNumber" class="form-label">
-                {{ t("users-modal-add-label-phone") }}
-              </label>
-              <input
-                type="text"
-                class="form-control"
-                id="phoneNumber"
-                :placeholder="t('users-modal-add-placeholder-phone')"
-                v-model="formData.phoneNumber"
-              />
-            </div>
-
-            <div v-if="!isEditMode" class="mb-3">
-              <label for="password" class="form-label">
-                {{ t("users-modal-add-label-password") }}
-              </label>
-              <input
-                type="password"
-                class="form-control"
-                id="password"
-                :placeholder="t('users-modal-add-placeholder-password')"
-                v-model="formData.password"
-                required
-              />
+              <div class="row">
+                <div class="col-6">
+                  <label for="email" class="form-label">
+                    {{ t("users-modal-add-label-email") }}
+                  </label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    :placeholder="t('users-modal-add-placeholder-email')"
+                    v-model="form.email"
+                    required
+                  />
+                </div>
+                <div class="col-6">
+                  <label for="phoneNumber" class="form-label">
+                    {{ t("users-modal-add-label-phone") }}
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="phoneNumber"
+                    :placeholder="t('users-modal-add-placeholder-phone')"
+                    v-model="form.phoneNumber"
+                  />
+                </div>
+              </div>
             </div>
             <div v-if="!isEditMode" class="mb-3">
-              <label for="password_confirmation" class="form-label">{{
-                t("users-modal-add-label-passwordconfirm")
-              }}</label>
-              <input
-                type="password"
-                class="form-control"
-                id="password_confirmation"
-                v-model="formData.password_confirmation"
-                required
-              />
-            </div>
-
-            <div class="mb-3">
-              <label for="role" class="form-label">
-                {{ t("users-modal-add-label-role") }}
-              </label>
-              <select class="form-control" id="role" v-model="formData.role">
-                <option v-if="!isEditMode" value="" disabled selected>
-                  {{ t("users-modal-add-label-role") }}
-                </option>
-                <option v-for="role in roles" :key="role.id" :value="role.name">
-                  {{ role.name }}
-                </option>
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label for="reportTo" class="form-label">
-                {{ t("users-modal-add-label-reportto") }}
-              </label>
-              <Multiselect
-                v-model="formData.reportTo"
-                :options="filteredUsers"
-                label="name"
-                track-by="id"
-                :placeholder="t('users-modal-add-placeholder-reportto')"
-                :searchable="true"
-              />
+              <div class="row">
+                <div class="col-6">
+                  <label for="password" class="form-label">
+                    {{ t("users-modal-add-label-password") }}
+                  </label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    :placeholder="t('users-modal-add-placeholder-password')"
+                    v-model="form.password"
+                    required
+                  />
+                </div>
+                <div class="col-6">
+                  <label for="password_confirmation" class="form-label">{{
+                    t("users-modal-add-label-passwordconfirm")
+                  }}</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password_confirmation"
+                    v-model="form.password_confirmation"
+                    required
+                  />
+                </div>
+              </div>
             </div>
             <div class="mb-3">
-              <label for="color" class="form-label">
-                {{ t("users-modal-add-label-color") }}
-              </label>
-              <input
-                type="color"
-                class="form-control"
-                id="color"
-                v-model="formData.color"
-              />
+              <div class="row">
+                <div class="col-6">
+                  <label for="role" class="form-label">
+                    {{ t("users-modal-add-label-role") }}
+                  </label>
+                  <select class="form-control" id="role" v-model="form.role">
+                    <option v-if="!isEditMode" value="" disabled selected>
+                      {{ t("users-modal-add-label-role") }}
+                    </option>
+                    <option
+                      v-for="role in roles"
+                      :key="role.id"
+                      :value="role.name"
+                    >
+                      {{ role.name }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label for="origin_id" class="form-label">
+                    {{ t("users-modal-add-label-origin") }}
+                  </label>
+                  <select
+                    class="form-control"
+                    id="origin_id"
+                    v-model="form.origin_id"
+                  >
+                    <option v-if="!isEditMode" value="" disabled selected>
+                      {{ t("users-modal-add-label-origin") }}
+                    </option>
+                    <option
+                      v-for="origin in origins"
+                      :key="origin.id"
+                      :value="origin.name"
+                    >
+                      {{ origin.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
             </div>
             <div class="mb-3">
-              <label for="image" class="form-label">
-                {{ t("users-modal-add-label-image") }}
-              </label>
-              <input
-                type="file"
-                class="form-control"
-                id="image"
-                :placeholder="t('users-modal-add-placeholder-image')"
-                @change="handleImageUpload"
-                accept="image/*"
-              />
+              <div class="row">
+                <div class="col-6">
+                  <label for="parent_id" class="form-label">
+                    {{ t("users-modal-add-label-reportto") }}
+                  </label>
+                  <Multiselect
+                    v-model="form.parent_id"
+                    :options="filteredUsers"
+                    label="name"
+                    track-by="id"
+                    :placeholder="t('users-modal-add-placeholder-reportto')"
+                    :searchable="true"
+                  />
+                </div>
+                <div class="col-1 d-inline-grid">
+                  <label for="color" class="form-label">
+                    {{ t("users-modal-add-label-color") }}
+                  </label>
+                  <input
+                    type="color"
+                    class="form-control"
+                    id="color"
+                    v-model="form.color"
+                  />
+                </div>
+                <div class="col d-inline-grid">
+                  <label for="image" class="form-label">
+                    {{ t("users-modal-add-label-image") }}
+                  </label>
+                  <input
+                    type="file"
+                    class="form-control"
+                    id="image"
+                    :placeholder="t('users-modal-add-placeholder-image')"
+                    @change="handleImageUpload"
+                    accept="image/*"
+                  />
+                </div>
+              </div>
             </div>
-
             <div v-if="errorMessage" class="alert alert-danger">
               {{ errorMessage }}
             </div>
@@ -205,162 +246,75 @@ import "vue-multiselect/dist/vue-multiselect.css";
 import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
-import {
-  createUser,
-  updateUser,
-  getUser,
-  getRoles,
-} from "@/plugins/services/userService";
+import { onMounted, computed, ref, watch } from "vue";
+import { useOriginStore } from "@/stores/OriginStore";
+import { useUserStore } from "@/stores/UserStore";
+import { useRoleStore } from "@/stores/RoleStore";
 
 export default {
   name: "UserViewAddEditUserModal",
   components: { Multiselect },
   setup() {
     const notificationStore = useNotificationStore();
+    const userStore = useUserStore();
+    const originStore = useOriginStore();
+    const roleStore = useRoleStore();
+    const user = computed(() => userStore.getSelectedUser);
+    const users = computed(() => userStore.getAllUsers);
+    const origins = computed(() => originStore.getAllOrigins);
+    const roles = computed(() => roleStore.getAllRoles);
+    const filteredUsers = computed(() => {
+      if (!user.value) return users.value;
+      return users.value.filter((u) => isParentRole(user.value.role, u.role));
+    });
     const { t } = useI18n();
-    // const toast = useToast();
-    return { t, notificationStore };
-  },
-  data() {
-    return {
-      isEditMode: false,
-      formData: {
-        id: null,
-        username: "",
-        email: "",
-        password: "",
-        password_confirmation: "",
-        role: "",
-        reportTo: null,
-        phoneNumber: "",
-        image: null,
-        color: null,
-      },
-      users: [],
-      roles: [],
-      loading: false,
-      successMessage: "",
-      errorMessage: "",
-    };
-  },
-  methods: {
-    async fetchUsers() {
-      try {
-        const response = await getUser();
-        this.users = response.data.data;
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    },
-    async fetchRoles() {
-      try {
-        const response = await getRoles();
-        this.roles = response.data.data;
-      } catch (error) {
-        console.error("Error fetching roles:", error);
-      }
-    },
-    handleImageUpload(event) {
-      const file = event.target.files[0];
-      this.formData.image = file ? file : null;
-    },
+    const form = ref({
+      id: null,
+      name_en: "",
+      name_ar: "",
+      email: "",
+      password: "",
+      password_confirmation: "",
+      role: "",
+      reportTo: null,
+      phoneNumber: "",
+      image: null,
+      color: null,
+    });
+    const isEditMode = ref(false);
 
-    openModal(user = null) {
-      this.fetchUsers();
-      this.fetchRoles();
-
-      if (user) {
-        this.isEditMode = true;
-        this.formData = {
-          id: user.id,
-          username_en: user.name_en,
-          username_ar: user.name_ar,
-          email: user.email,
-          role: user.role?.id || user.role,
-          reportTo: user.report_to_id,
-          phoneNumber: user.phones[0]?.phone,
-          image: user.image,
-          color: user.color_code,
-        };
-      } else {
-        this.isEditMode = false;
-        this.formData = {
-          id: null,
-          username: "",
-          email: "",
-          password: "",
-          password_confirmation: "",
-          role: "",
-          reportTo: "",
-          phoneNumber: "",
-          image: null,
-          color: null,
-        };
-      }
-
-      const modal = new Modal(document.getElementById("adminModal"));
-      modal.show();
-    },
-
-    async submitForm() {
+    const submitForm = () => {
       try {
         this.loading = true;
 
         const formData = new FormData();
-        formData.append("name_en", this.formData.username_en);
-        formData.append("name_ar", this.formData.username_ar);
-        formData.append("email", this.formData.email);
-        formData.append("role", this.formData.role);
-        formData.append(
-          "image",
-          this.formData.image ? this.formData.image : ""
-        );
+        formData.append("name_en", form.value.username_en);
+        formData.append("name_ar", form.value.username_ar);
+        formData.append("email", form.value.email);
+        formData.append("role", form.value.role);
+        formData.append("origin_id", form.value.origin_id);
+        formData.append("image", form.value.image ? form.value.image : "");
         formData.append(
           "parent_id",
-          this.formData.reportTo?.id || this.formData.reportTo || ""
+          form.value.reportTo?.id || form.value.reportTo || ""
         );
-        formData.append("color_code", this.formData.color);
+        formData.append("color_code", form.value.color);
         if (!this.isEditMode) {
-          formData.append("password", this.formData.password);
+          formData.append("password", form.value.password);
           formData.append(
             "password_confirmation",
-            this.formData.password_confirmation
+            form.value.password_confirmation
           );
         }
-        if (this.formData.image) {
-          formData.append("image", this.formData.image);
+        if (form.value.image) {
+          formData.append("image", form.value.image);
         }
-
-        let response;
         if (this.isEditMode) {
-          formData.append("phones", [this.formData.phoneNumber]);
-          response = await updateUser(this.formData.id, formData);
-          this.notificationStore.success(this.t("success.updateUser"), {
-            timeout: 3000,
-          });
+          formData.append("phones", [form.value.phoneNumber]);
+          this.userStore.updateUser(form.value.id, formData);
         } else {
-          formData.append("phone", this.formData.phoneNumber);
-          response = await createUser(formData);
-          this.notificationStore.success(this.t("success.createUser"), {
-            timeout: 3000,
-          });
-        }
-
-        if (response.status === 200 || response.status === 201) {
-          const user = response.data.data || response.data;
-          localStorage.setItem(`user_${user.id}_color`, this.formData.color);
-          this.notificationStore.success(response.data.message, {
-            timeout: 3000,
-          });
-          this.$emit("user-updated", user);
-          setTimeout(() => {
-            this.clearForm();
-            this.closeModal();
-          }, 1000);
-        } else {
-          this.notificationStore.error(response.data.message, {
-            timeout: 3000,
-          });
+          formData.append("phone", form.value.phoneNumber);
+          this.userStore.createUser(formData);
         }
       } catch (error) {
         this.notificationStore.error(
@@ -373,12 +327,25 @@ export default {
       } finally {
         this.loading = false;
       }
-    },
+    };
 
-    clearForm() {
-      this.formData = {
+    const openModal = (edit = false) => {
+      isEditMode.value = edit;
+      const modal = new Modal(document.getElementById("adminModal"));
+      modal.show();
+    };
+
+    const handleImageUpload = (e) => {
+      const file = e.target.files[0];
+      form.value.image = file ? file : null;
+    };
+
+    const clearForm = () => {
+      form.value = {
         id: null,
         username: "",
+        name_en: "",
+        name_ar: "",
         email: "",
         password: "",
         password_confirmation: "",
@@ -387,35 +354,69 @@ export default {
         phoneNumber: "",
         image: null,
         color: "#292929",
+        origin_id: null,
       };
-    },
+    };
 
-    closeModal() {
+    const closeModal = () => {
       const modal = document.getElementById("adminModal");
       const modalInstance = Modal.getInstance(modal);
       if (modalInstance) modalInstance.hide();
       document.querySelector(".modal-backdrop")?.remove();
       document.body.classList.remove("modal-open");
-    },
+    };
 
-    isParentRole(parentRole, childRole) {
-      const childRoleData = this.roles.find((role) => role.name === childRole);
+    const isParentRole = (parentRole, childRole) => {
+      const childRoleData = roles.value.find((role) => role.name === childRole);
       return childRoleData && childRoleData.parent_role === parentRole;
-    },
+    };
+
+    onMounted(() => {
+      originStore.fetchAllOrigins();
+    });
+
+    watch(user, (newUser) => {
+      if (newUser) {
+        console.log("New user data:", newUser);
+        form.value = {
+          id: newUser.id,
+          name_en: newUser.name_en || "",
+          name_ar: newUser.name_ar || "",
+          email: newUser.email || "",
+          password: "",
+          password_confirmation: "",
+          role: newUser.role || "",
+          reportTo: newUser.parent_id || null,
+          phoneNumber: newUser.phones?.[0] || "",
+          image: null,
+          color: newUser.color_code || "#292929",
+          origin_id: newUser.origin_id || null,
+        };
+      }
+    });
+    return {
+      t,
+      notificationStore,
+      origins,
+      users,
+      submitForm,
+      openModal,
+      user,
+      form,
+      handleImageUpload,
+      clearForm,
+      closeModal,
+      isParentRole,
+      filteredUsers,
+    };
   },
-  computed: {
-    filteredUsers() {
-      if (!this.formData.role) return [];
-
-      const selectedRole = this.roles.find(
-        (role) => role.name === this.formData.role
-      );
-      if (!selectedRole || !selectedRole.parent_role) return [];
-
-      return this.users.filter(
-        (user) => user.role === selectedRole.parent_role
-      );
-    },
+  data() {
+    return {
+      isEditMode: false,
+      loading: false,
+      successMessage: "",
+      errorMessage: "",
+    };
   },
 };
 </script>

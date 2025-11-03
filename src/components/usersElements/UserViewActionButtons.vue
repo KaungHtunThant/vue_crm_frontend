@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { getUserById } from "@/plugins/services/userService";
+import { useUserStore } from "@/stores/UserStore";
 
 export default {
   name: "UserViewActionButtons",
@@ -20,17 +20,18 @@ export default {
       required: true,
     },
   },
+  setup(props, { emit }) {
+    const userStore = useUserStore();
+    const editItem = () => {
+      userStore.fetchSelectedUser(props.item.id);
+      emit("edit", props.item.id);
+    };
+    return {
+      editItem,
+    };
+  },
   emits: ["edit", "remove"],
   methods: {
-    async editItem() {
-      const response = await getUserById(this.item.id);
-      if (response.status !== 200) {
-        this.$emit("error", response.data.message);
-        return;
-      } else {
-        this.$emit("edit", response.data.data);
-      }
-    },
     removeItem() {
       this.$emit("remove", this.item.id);
     },
