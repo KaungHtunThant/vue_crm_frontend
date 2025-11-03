@@ -1482,7 +1482,7 @@
                   >
                     <div class="pe-0">
                       <img
-                        src="@/assets/default-avatar-profile.webp"
+                        :src="comment.image"
                         class="rounded-5"
                         alt="Seals Image"
                         width="45"
@@ -2007,6 +2007,7 @@ export default {
           text_body: comment.text_body || "No text",
           created_at: comment.created_at || "No date",
           username: comment.user?.name || "No user",
+          image: comment.user?.image_url,
           isAdmin:
             (comment.user && comment.user.role === "super-admin") ||
             (comment.user && comment.user.role === "crm-admin")
