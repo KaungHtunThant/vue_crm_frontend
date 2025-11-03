@@ -122,13 +122,13 @@
                     {{ t("users-modal-add-label-role") }}
                   </label>
                   <select class="form-control" id="role" v-model="form.role">
-                    <option v-if="!isEditMode" value="" disabled selected>
+                    <option value="" disabled selected>
                       {{ t("users-modal-add-label-role") }}
                     </option>
                     <option
                       v-for="role in roles"
                       :key="role.id"
-                      :value="role.name"
+                      :value="role.slug"
                     >
                       {{ role.name }}
                     </option>
@@ -143,7 +143,7 @@
                     id="origin_id"
                     v-model="form.origin_id"
                   >
-                    <option v-if="!isEditMode" value="" disabled selected>
+                    <option value="" disabled selected>
                       {{ t("users-modal-add-label-origin") }}
                     </option>
                     <option
@@ -241,8 +241,6 @@
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
@@ -283,6 +281,8 @@ export default {
     });
     const isEditMode = ref(true);
     const loading = ref(false);
+    const successMessage = ref("");
+    const errorMessage = ref("");
 
     const submitForm = () => {
       try {
@@ -347,7 +347,12 @@ export default {
     };
 
     onMounted(() => {
-      originStore.fetchAllOrigins();
+      if (!originStore.getAllOrigins?.length) {
+        originStore.fetchAllOrigins();
+      }
+      if (!roleStore.getAllRoles?.length) {
+        roleStore.fetchAllRoles();
+      }
     });
 
     watch(user, (newUser) => {
@@ -386,12 +391,8 @@ export default {
       isEditMode,
       roles,
       loading,
-    };
-  },
-  data() {
-    return {
-      successMessage: "",
-      errorMessage: "",
+      successMessage,
+      errorMessage,
     };
   },
 };

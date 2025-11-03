@@ -23,7 +23,15 @@ export const useRoleStore = defineStore("roleStore", {
       return state.rows;
     },
     getAllRoles: (state) => {
-      return state.all;
+      return state.all.map((role) => {
+        return {
+          id: role.id,
+          slug: role.name,
+          name:
+            role.name.trim().charAt(0).toUpperCase() +
+            role.name.slice(1).replace(/-/g, " "),
+        };
+      });
     },
     getCurrentRole: (state) => {
       return state.currentRow;
