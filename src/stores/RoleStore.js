@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import {
   getIndex,
-  getAll,
   getRoleById,
   createRole,
   updateRole,
@@ -10,7 +9,6 @@ import {
 
 export const useRoleStore = defineStore("roleStore", {
   state: () => ({
-    all: [],
     rows: [],
     totalRows: 0,
     currentPage: 0,
@@ -23,7 +21,7 @@ export const useRoleStore = defineStore("roleStore", {
       return state.rows;
     },
     getAllRoles: (state) => {
-      return state.all.map((role) => {
+      return state.rows.map((role) => {
         return {
           id: role.id,
           slug: role.name,
@@ -39,8 +37,24 @@ export const useRoleStore = defineStore("roleStore", {
     getRoleById: (state) => (id) => {
       return state.rows.find((role) => role.id === id);
     },
+    getRoleByName: (state) => (name) => {
+      const role = state.rows.find((role) => role.name === name);
+      return role
+        ? {
+            id: role.id,
+            slug: role.name,
+            name:
+              role.name.trim().charAt(0).toUpperCase() +
+              role.name.slice(1).replace(/-/g, " "),
+          }
+        : null;
+    },
     getByParentId: (state) => (parentId) => {
       return state.rows.filter((role) => role.parent_id === parentId);
+    },
+    getParentRoleByName: (state) => (roleName) => {
+      const role = state.rows.find((role) => role.name === roleName);
+      return role ? state.rows.find((r) => r.id === role.parent_id) : null;
     },
   },
   actions: {
@@ -58,16 +72,6 @@ export const useRoleStore = defineStore("roleStore", {
           this.currentPage = params.page || 1;
           this.rowsPerPage = params.per_page || 10;
           this.filters = params.filters || {};
-        }
-      } catch (error) {
-        console.error(error.message);
-      }
-    },
-    async fetchAllRoles() {
-      try {
-        const response = await getAll();
-        if (response.status === 200) {
-          this.all = response.data.data;
         }
       } catch (error) {
         console.error(error.message);

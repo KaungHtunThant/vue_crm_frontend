@@ -13,6 +13,7 @@ export const useOriginStore = defineStore("origin", {
     origins_index: [],
     currentOrigin: null,
     origins: [],
+    origins_all: [],
   }),
   getters: {
     getOrigins: (state) => {
@@ -23,6 +24,9 @@ export const useOriginStore = defineStore("origin", {
     },
     getCurrentOrigin: (state) => {
       return state.currentOrigin;
+    },
+    getOriginById: (state) => (id) => {
+      return state.origins_all.find((origin) => origin.id === id);
     },
   },
   actions: {

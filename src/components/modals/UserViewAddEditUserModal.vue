@@ -86,85 +86,48 @@
                 </div>
               </div>
             </div>
-            <div v-if="!isEditMode" class="mb-3">
-              <div class="row">
-                <div class="col-6">
-                  <label for="password" class="form-label">
-                    {{ t("users-modal-add-label-password") }}
-                  </label>
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="password"
-                    :placeholder="t('users-modal-add-placeholder-password')"
-                    v-model="form.password"
-                    required
-                  />
-                </div>
-                <div class="col-6">
-                  <label for="password_confirmation" class="form-label">{{
-                    t("users-modal-add-label-passwordconfirm")
-                  }}</label>
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
             <div class="mb-3">
               <div class="row">
                 <div class="col-6">
                   <label for="role" class="form-label">
                     {{ t("users-modal-add-label-role") }}
                   </label>
-                  <select class="form-control" id="role" v-model="form.role">
-                    <option value="" disabled selected>
-                      {{ t("users-modal-add-label-role") }}
-                    </option>
-                    <option
-                      v-for="role in roles"
-                      :key="role.id"
-                      :value="role.slug"
-                    >
-                      {{ role.name }}
-                    </option>
-                  </select>
+                  <multiselect
+                    id="role"
+                    v-model="form.role"
+                    :options="roles"
+                    label="name"
+                    track-by="slug"
+                    :placeholder="t('users-modal-add-placeholder-role')"
+                    :searchable="true"
+                    :allow-empty="false"
+                  />
                 </div>
                 <div class="col-6">
-                  <label for="origin_id" class="form-label">
+                  <label for="origin" class="form-label">
                     {{ t("users-modal-add-label-origin") }}
                   </label>
-                  <select
-                    class="form-control"
-                    id="origin_id"
-                    v-model="form.origin_id"
-                  >
-                    <option value="" disabled selected>
-                      {{ t("users-modal-add-label-origin") }}
-                    </option>
-                    <option
-                      v-for="origin in origins"
-                      :key="origin.id"
-                      :value="origin.id"
-                    >
-                      {{ origin.name }}
-                    </option>
-                  </select>
+                  <multiselect
+                    id="origin"
+                    v-model="form.origin"
+                    :options="origins"
+                    label="name"
+                    track-by="id"
+                    :placeholder="t('users-modal-add-placeholder-origin')"
+                    :searchable="true"
+                  />
                 </div>
               </div>
             </div>
             <div class="mb-3">
               <div class="row">
                 <div class="col-6">
-                  <label for="parent_id" class="form-label">
+                  <label for="parent" class="form-label">
                     {{ t("users-modal-add-label-reportto") }}
                   </label>
                   <Multiselect
-                    v-model="form.parent_id"
+                    id="parent"
+                    v-model="form.parent"
                     :options="filteredUsers"
                     label="name"
                     track-by="id"
@@ -198,11 +161,50 @@
                 </div>
               </div>
             </div>
-            <div v-if="errorMessage" class="alert alert-danger">
-              {{ errorMessage }}
-            </div>
-            <div v-if="successMessage" class="alert alert-success">
-              {{ successMessage }}
+            <div class="mb-3">
+              <hr class="m-4" />
+              <div class="row">
+                <div class="col" v-show="isEditMode">
+                  <label for="old_password" class="form-label">
+                    {{ t("users-modal-add-label-oldpassword") }}
+                  </label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="old_password"
+                    :placeholder="t('users-modal-add-placeholder-oldpassword')"
+                    v-model="form.old_password"
+                    :required="!isEmpty(form.password)"
+                  />
+                </div>
+                <div class="col">
+                  <label for="password" class="form-label">
+                    {{ t("users-modal-add-label-password") }}
+                  </label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    :placeholder="t('users-modal-add-placeholder-password')"
+                    v-model="form.password"
+                  />
+                </div>
+                <div class="col">
+                  <label for="password_confirmation" class="form-label">{{
+                    t("users-modal-add-label-passwordconfirm")
+                  }}</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password_confirmation"
+                    :placeholder="
+                      t('users-modal-add-placeholder-passwordconfirm')
+                    "
+                    v-model="form.password_confirmation"
+                    :required="!isEmpty(form.password)"
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <div
@@ -261,44 +263,65 @@ export default {
     const users = computed(() => userStore.getAllUsers);
     const origins = computed(() => originStore.getAllOrigins);
     const roles = computed(() => roleStore.getAllRoles);
-    const filteredUsers = computed(() => {
-      if (!user.value) return users.value;
-      return users.value.filter((u) => isParentRole(user.value.role, u.role));
-    });
+    const filteredUsers = computed(() =>
+      userStore.getUsersWithRole(
+        roleStore.getRoleByName(form.value.role)?.parent_role
+      )
+    );
     const { t } = useI18n();
     const form = ref({
       id: null,
-      name_en: "",
-      name_ar: "",
-      email: "",
-      password: "",
-      password_confirmation: "",
-      role: "",
-      reportTo: null,
-      phone: "",
+      name_en: null,
+      name_ar: null,
+      email: null,
+      password: null,
+      password_confirmation: null,
+      role: null,
+      parent: null,
+      phone: null,
       image: null,
       color: null,
+      origin: null,
     });
     const isEditMode = ref(true);
     const loading = ref(false);
-    const successMessage = ref("");
-    const errorMessage = ref("");
 
-    const submitForm = () => {
+    const submitForm = async () => {
       try {
         loading.value = true;
+        let response = "";
         if (isEditMode.value) {
-          userStore.updateUser(form.value.id, form.value);
+          response = await userStore.updateUser(form.value.id, {
+            ...form.value,
+            parent: null,
+            origin: null,
+            role: form.value.role ? form.value.role["slug"] : null,
+            origin_id: form.value.origin ? form.value.origin["id"] : null,
+            parent_id: form.value.parent ? form.value.parent["id"] : null,
+            password: !isEmpty(form.value.password)
+              ? form.value.password
+              : null,
+            old_password: !isEmpty(form.value.password)
+              ? form.value.old_password
+              : null,
+            password_confirmation: !isEmpty(form.value.password)
+              ? form.value.password_confirmation
+              : null,
+          });
         } else {
-          userStore.createUser(form.value);
+          response = await userStore.createUser({
+            ...form.value,
+            parent_id: form.value.parent ? form.value.parent["id"] : null,
+          });
         }
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        notificationStore.success(response.message);
       } catch (error) {
-        notificationStore.error(
-          error.response?.data?.message || t("error.saveFailed"),
-          {
-            timeout: 3000,
-          }
-        );
+        notificationStore.error(error.message, {
+          timeout: 3000,
+        });
         console.error("Error:", error);
       } finally {
         loading.value = false;
@@ -319,21 +342,22 @@ export default {
     const clearForm = () => {
       form.value = {
         id: null,
-        name_en: "",
-        name_ar: "",
-        email: "",
-        password: "",
-        password_confirmation: "",
-        role: "",
-        reportTo: "",
-        phone: "",
+        name_en: null,
+        name_ar: null,
+        email: null,
+        password: null,
+        password_confirmation: null,
+        role: null,
+        parent: null,
+        phone: null,
         image: null,
         color: "#292929",
-        origin_id: null,
+        origin: null,
       };
     };
 
     const closeModal = () => {
+      clearForm();
       const modal = document.getElementById("adminModal");
       const modalInstance = Modal.getInstance(modal);
       if (modalInstance) modalInstance.hide();
@@ -341,9 +365,8 @@ export default {
       document.body.classList.remove("modal-open");
     };
 
-    const isParentRole = (parentRole, childRole) => {
-      const childRoleData = roles.value.find((role) => role.name === childRole);
-      return childRoleData && childRoleData.parent_role === parentRole;
+    const isEmpty = (str) => {
+      return !str || str.trim() === "";
     };
 
     onMounted(() => {
@@ -351,26 +374,33 @@ export default {
         originStore.fetchAllOrigins();
       }
       if (!roleStore.getAllRoles?.length) {
-        roleStore.fetchAllRoles();
+        roleStore.fetchRoles();
+      }
+      if (!userStore.getAllUsers?.length) {
+        userStore.fetchAllUsers();
       }
     });
 
     watch(user, (newUser) => {
       if (newUser) {
-        console.log("New user data:", newUser);
         form.value = {
           id: newUser.id,
-          name_en: newUser.name_en || "",
-          name_ar: newUser.name_ar || "",
-          email: newUser.email || "",
-          password: "",
-          password_confirmation: "",
-          role: newUser.role || "",
-          reportTo: newUser.parent_id || null,
-          phone: newUser.phones?.[0] || "",
+          name_en: newUser.name_en || null,
+          name_ar: newUser.name_ar || null,
+          email: newUser.email || null,
+          password: null,
+          password_confirmation: null,
+          role:
+            newUser.role || null ? roleStore.getRoleByName(newUser.role) : null,
+          parent: newUser.parent_id
+            ? userStore.getUserById(newUser.parent_id)
+            : null,
+          phone: newUser.phones[0]?.phone,
           image: null,
-          color: newUser.color_code || "#292929",
-          origin_id: newUser.origin_id || null,
+          color: newUser.color_code || "#000000",
+          origin: newUser.origin_id
+            ? originStore.getOriginById(newUser.origin_id)
+            : null,
         };
       }
     });
@@ -386,13 +416,11 @@ export default {
       handleImageUpload,
       clearForm,
       closeModal,
-      isParentRole,
       filteredUsers,
       isEditMode,
       roles,
       loading,
-      successMessage,
-      errorMessage,
+      isEmpty,
     };
   },
 };

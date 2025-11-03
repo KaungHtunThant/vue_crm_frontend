@@ -23,7 +23,7 @@ export const useUserStore = defineStore("userStore", {
   }),
   getters: {
     getUserById: (state) => (id) => {
-      return state.rows.find((user) => user.id === id);
+      return state.all.find((user) => user.id === id);
     },
     getAllUsers: (state) => {
       return state.all;
@@ -35,7 +35,7 @@ export const useUserStore = defineStore("userStore", {
       return state.selected_user;
     },
     getUsersWithRole: (state) => (role) => {
-      return state.rows.filter((user) => user.role === role);
+      return state.all.filter((user) => user.role === role);
     },
   },
   actions: {
@@ -109,15 +109,22 @@ export const useUserStore = defineStore("userStore", {
     },
 
     async updateUser(id, data) {
-      console.log("Updating user with ID:", id, "Data:", data);
-      const response = await updateUser(id, data);
-      if (response.status === 200) {
-        this.updateUserLocal(response.data.data);
+      try {
+        console.log("Updating user with ID:", id, "Data:", data);
+        const response = await updateUser(id, data);
+        if (response.status === 200) {
+          this.updateUserLocal(response.data.data);
+        }
+        return {
+          success: response.status === 200 || response.status === 204,
+          message: response.data?.message,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          message: error.message,
+        };
       }
-      return {
-        success: response.status === 200,
-        message: response.data?.message,
-      };
     },
 
     async toggleStatus(user) {
