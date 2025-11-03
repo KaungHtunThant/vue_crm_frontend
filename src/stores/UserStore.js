@@ -108,6 +108,7 @@ export const useUserStore = defineStore("userStore", {
     },
 
     async updateUser(id, data) {
+      console.log("Updating user with ID:", id, "Data:", data);
       const response = await updateUser(id, data);
       if (response.status === 200) {
         this.updateUserLocal(response.data.data);

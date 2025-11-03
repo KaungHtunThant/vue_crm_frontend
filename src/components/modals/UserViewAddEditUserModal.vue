@@ -30,26 +30,26 @@
             <div class="mb-3">
               <div class="row">
                 <div class="col-6">
-                  <label for="username" class="form-label">
+                  <label for="name_en" class="form-label">
                     {{ t("users-modal-add-label-fullname-en") }}
                   </label>
                   <input
                     type="text"
                     class="form-control"
-                    id="username"
+                    id="name_en"
                     :placeholder="t('users-modal-add-placeholder-fullname-en')"
                     v-model="form.name_en"
                     required
                   />
                 </div>
                 <div class="col-6">
-                  <label for="username" class="form-label">
+                  <label for="name_ar" class="form-label">
                     {{ t("users-modal-add-label-fullname-ar") }}
                   </label>
                   <input
                     type="text"
                     class="form-control"
-                    id="username"
+                    id="name_ar"
                     :placeholder="t('users-modal-add-placeholder-fullname-ar')"
                     v-model="form.name_ar"
                     required
@@ -73,15 +73,15 @@
                   />
                 </div>
                 <div class="col-6">
-                  <label for="phoneNumber" class="form-label">
+                  <label for="phone" class="form-label">
                     {{ t("users-modal-add-label-phone") }}
                   </label>
                   <input
                     type="text"
                     class="form-control"
-                    id="phoneNumber"
+                    id="phone"
                     :placeholder="t('users-modal-add-placeholder-phone')"
-                    v-model="form.phoneNumber"
+                    v-model="form.phone"
                   />
                 </div>
               </div>
@@ -149,7 +149,7 @@
                     <option
                       v-for="origin in origins"
                       :key="origin.id"
-                      :value="origin.name"
+                      :value="origin.id"
                     >
                       {{ origin.name }}
                     </option>
@@ -277,59 +277,35 @@ export default {
       password_confirmation: "",
       role: "",
       reportTo: null,
-      phoneNumber: "",
+      phone: "",
       image: null,
       color: null,
     });
-    const isEditMode = ref(false);
+    const isEditMode = ref(true);
+    const loading = ref(false);
 
     const submitForm = () => {
       try {
-        this.loading = true;
-
-        const formData = new FormData();
-        formData.append("name_en", form.value.username_en);
-        formData.append("name_ar", form.value.username_ar);
-        formData.append("email", form.value.email);
-        formData.append("role", form.value.role);
-        formData.append("origin_id", form.value.origin_id);
-        formData.append("image", form.value.image ? form.value.image : "");
-        formData.append(
-          "parent_id",
-          form.value.reportTo?.id || form.value.reportTo || ""
-        );
-        formData.append("color_code", form.value.color);
-        if (!this.isEditMode) {
-          formData.append("password", form.value.password);
-          formData.append(
-            "password_confirmation",
-            form.value.password_confirmation
-          );
-        }
-        if (form.value.image) {
-          formData.append("image", form.value.image);
-        }
-        if (this.isEditMode) {
-          formData.append("phones", [form.value.phoneNumber]);
-          this.userStore.updateUser(form.value.id, formData);
+        loading.value = true;
+        if (isEditMode.value) {
+          userStore.updateUser(form.value.id, form.value);
         } else {
-          formData.append("phone", form.value.phoneNumber);
-          this.userStore.createUser(formData);
+          userStore.createUser(form.value);
         }
       } catch (error) {
-        this.notificationStore.error(
-          error.response?.data?.message || this.t("error.saveFailed"),
+        notificationStore.error(
+          error.response?.data?.message || t("error.saveFailed"),
           {
             timeout: 3000,
           }
         );
         console.error("Error:", error);
       } finally {
-        this.loading = false;
+        loading.value = false;
       }
     };
 
-    const openModal = (edit = false) => {
+    const openModal = (edit = true) => {
       isEditMode.value = edit;
       const modal = new Modal(document.getElementById("adminModal"));
       modal.show();
@@ -343,7 +319,6 @@ export default {
     const clearForm = () => {
       form.value = {
         id: null,
-        username: "",
         name_en: "",
         name_ar: "",
         email: "",
@@ -351,7 +326,7 @@ export default {
         password_confirmation: "",
         role: "",
         reportTo: "",
-        phoneNumber: "",
+        phone: "",
         image: null,
         color: "#292929",
         origin_id: null,
@@ -387,7 +362,7 @@ export default {
           password_confirmation: "",
           role: newUser.role || "",
           reportTo: newUser.parent_id || null,
-          phoneNumber: newUser.phones?.[0] || "",
+          phone: newUser.phones?.[0] || "",
           image: null,
           color: newUser.color_code || "#292929",
           origin_id: newUser.origin_id || null,
@@ -408,12 +383,13 @@ export default {
       closeModal,
       isParentRole,
       filteredUsers,
+      isEditMode,
+      roles,
+      loading,
     };
   },
   data() {
     return {
-      isEditMode: false,
-      loading: false,
       successMessage: "",
       errorMessage: "",
     };
