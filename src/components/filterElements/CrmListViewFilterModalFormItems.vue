@@ -288,6 +288,7 @@
 import { onMounted, ref, watch, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
+import { useUserStore } from "@/stores/UserStore";
 
 export default {
   name: "CrmListViewFilterModalFormItems",
@@ -303,11 +304,6 @@ export default {
       default: () => [],
     },
     sources: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
-    users: {
       type: Array,
       required: true,
       default: () => [],
@@ -333,7 +329,8 @@ export default {
     });
     const local_stages = ref(props.stages);
     const local_sources = ref(props.sources);
-    const local_users = ref([]);
+    const userStore = useUserStore();
+    const local_users = computed(() => userStore.getAllUsers);
     const local_packages = ref([]);
     const nationalities_options = {
       afghan: {
@@ -1209,14 +1206,6 @@ export default {
     );
 
     watch(
-      () => props.users,
-      (newUsers) => {
-        local_users.value = newUsers;
-      },
-      { deep: true }
-    );
-
-    watch(
       () => props.packages,
       (newPackages) => {
         local_packages.value = newPackages;
@@ -1225,6 +1214,9 @@ export default {
     );
 
     onMounted(() => {
+      if (!userStore.getAllUsers.length) {
+        userStore.fetchAllUsers();
+      }
       if (permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)) {
         statuses.value.push({
           value: "unassigned",

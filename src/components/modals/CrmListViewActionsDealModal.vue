@@ -242,7 +242,6 @@
 <script setup>
 import { ref, defineProps, defineEmits, onMounted, computed } from "vue";
 import { Modal } from "bootstrap";
-import { getAllUsers } from "@/plugins/services/userService";
 import { getAvailableStages } from "@/plugins/services/stageService";
 import { useI18n } from "vue-i18n";
 // import { useToast } from "vue-toastification";
@@ -251,6 +250,7 @@ import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useSourceStore } from "@/stores/SourceStore";
 import Cookies from "js-cookie";
+import { useUserStore } from "@/stores/UserStore";
 const { t } = useI18n();
 const props = defineProps({
   selectedRows: {
@@ -282,7 +282,13 @@ const sourceOptions = computed(() =>
     label: source.name,
   }))
 );
-const userOptions = ref([]);
+const userStore = useUserStore();
+const userOptions = computed(() =>
+  userStore.getAllUsers.map((user) => ({
+    value: user.id,
+    name: user.name,
+  }))
+);
 
 const sortedUserOptions = computed(() => {
   return [...userOptions.value].sort((a, b) =>
@@ -319,29 +325,12 @@ const fetchStages = async () => {
 //   { value: "rep2", label: "user 2" },
 //   { value: "rep3", label: "user 3" },
 // ];
-const fetchUsers = async () => {
-  try {
-    const response = await getAllUsers();
-    if (response.status === 200) {
-      userOptions.value = [
-        {
-          value: 0,
-          name: t("crmlist-action-unassign"),
-        },
-        ...response.data.data.map((user) => ({
-          value: user.id,
-          name: user.name,
-        })),
-      ];
-    }
-  } catch (error) {
-    console.error("Error fetching sources:", error);
-  }
-};
 onMounted(async () => {
   user_role.value = Cookies.get("user_role");
   await fetchStages();
-  await fetchUsers();
+  if (!userStore.getAllUsers.length) {
+    await userStore.fetchAllUsers();
+  }
 });
 
 // Methods

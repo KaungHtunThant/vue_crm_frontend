@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import {
   getUser,
+  getAllUsers,
   getUserById,
   updateUser,
   deleteUser,
@@ -25,7 +26,7 @@ export const useUserStore = defineStore("userStore", {
       return state.rows.find((user) => user.id === id);
     },
     getAllUsers: (state) => {
-      return state.rows;
+      return state.all;
     },
     getCurrentUser: (state) => {
       return state.current_user;
@@ -76,7 +77,7 @@ export const useUserStore = defineStore("userStore", {
 
     async fetchAllUsers() {
       try {
-        const response = await getUser({ per_page: 1000 });
+        const response = await getAllUsers();
         this.all = response.data.data;
       } catch (error) {
         this.all = [];
