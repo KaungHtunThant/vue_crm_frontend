@@ -27,7 +27,6 @@
             :selectedStatuses="localSelectedStatuses"
             :stages="local_stages"
             :sources="local_sources"
-            :users="local_users"
             @update:filters="updateFilters"
             @update:selectedStatuses="updateSelectedStatuses"
           />
@@ -47,10 +46,7 @@ import { ref, watch } from "vue";
 import { Modal } from "bootstrap";
 import CrmListViewFilterModalForm from "@/components/filterElements/CrmListViewFilterModalFormItems.vue";
 import CrmListViewFilterModalButtons from "@/components/filterElements/CrmListViewFilterModalButtonsItems.vue";
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
-
 import { useI18n } from "vue-i18n";
 
 export default {
@@ -73,7 +69,6 @@ export default {
     const localSelectedStatuses = ref([...props.selectedStatuses]);
     const local_stages = ref([]);
     const local_sources = ref([]);
-    const local_users = ref([]);
     const filterModal = ref(null);
 
     watch(
@@ -188,14 +183,6 @@ export default {
       { deep: true }
     );
 
-    watch(
-      () => props.users,
-      (newUsers) => {
-        local_users.value = newUsers;
-      },
-      { deep: true }
-    );
-
     return {
       filters,
       localSelectedStatuses,
@@ -207,7 +194,6 @@ export default {
       t,
       local_stages,
       local_sources,
-      local_users,
       filterModal,
     };
   },
