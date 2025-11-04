@@ -1,21 +1,17 @@
 <template>
-  <div class="rating-container d-flex align-items-center gap-1">
-    <div class="stars d-flex justify-content-center align-items-center">
-      <span class="fs-6 me-2"
-        >{{ t("kanban-modal-edit-rating-heading") }}:</span
-      >
-      <span
-        v-for="index in 7"
-        :key="index"
-        class="star"
-        :class="{ filled: index <= modelValue, hovered: index <= hoveredStar }"
-        @mouseover="handleHover(index)"
-        @mouseleave="handleLeave"
-        @click="handleClick(index)"
-      >
-        <i class="fa-star" :class="[index <= modelValue ? 'fas' : 'far']"></i>
-      </span>
-    </div>
+  <label class="fs-6">{{ t("kanban-modal-edit-rating-heading") }}</label>
+  <div class="w-100 mt-2">
+    <span
+      v-for="index in 7"
+      :key="index"
+      class="star"
+      :class="{ filled: index <= modelValue, hovered: index <= hoveredStar }"
+      @mouseover="handleHover(index)"
+      @mouseleave="handleLeave"
+      @click="handleClick(index)"
+    >
+      <i class="fa-star" :class="[index <= modelValue ? 'fas' : 'far']"></i>
+    </span>
   </div>
 </template>
 
@@ -46,15 +42,12 @@ export default {
   },
   methods: {
     handleHover(index) {
-      if (!this.isEditable) return;
       this.hoveredStar = index;
     },
     handleLeave() {
-      if (!this.isEditable) return;
       this.hoveredStar = 0;
     },
     handleClick(index) {
-      if (!this.isEditable) return;
       this.$emit("update:modelValue", index);
     },
   },
@@ -62,10 +55,6 @@ export default {
 </script>
 
 <style scoped>
-.stars {
-  gap: 0.35rem;
-}
-
 .star {
   cursor: pointer;
   font-size: 1.3rem;
