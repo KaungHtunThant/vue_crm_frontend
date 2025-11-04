@@ -197,7 +197,7 @@
               :key="option.value"
               :value="option.value"
             >
-              {{ option.name }}
+              {{ option.name }} ({{ option.origin }})
             </option>
           </select>
           <select v-model="newSource" class="form-select">
@@ -287,6 +287,7 @@ const userOptions = computed(() =>
   userStore.getAllUsers.map((user) => ({
     value: user.id,
     name: user.name,
+    origin: user.origin,
   }))
 );
 
