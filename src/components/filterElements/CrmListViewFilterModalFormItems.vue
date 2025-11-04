@@ -107,7 +107,7 @@
                   :key="user.id"
                   :value="user.id"
                 >
-                  {{ user.name }}
+                  {{ user.name }} ({{ user.origin }})
                 </option>
               </select>
             </div>

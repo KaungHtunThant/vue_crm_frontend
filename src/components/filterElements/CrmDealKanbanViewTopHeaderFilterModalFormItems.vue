@@ -103,7 +103,7 @@
                   {{ t("crmlist-modal-filter-all") }}
                 </option>
                 <option v-for="user in users" :key="user.id" :value="user.id">
-                  {{ user.name }}
+                  {{ user.name }} ({{ user.origin }})
                 </option>
               </select>
             </div>

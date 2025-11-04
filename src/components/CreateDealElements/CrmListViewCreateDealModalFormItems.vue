@@ -128,7 +128,7 @@
               user.role
                 .replace(/-/g, " ")
                 .replace(/\b\w/g, (char) => char.toUpperCase())
-            }})
+            }}) ({{ user.origin }})
           </option>
         </select>
       </div>
