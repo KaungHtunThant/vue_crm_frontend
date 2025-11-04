@@ -352,7 +352,9 @@ export default {
 
     onMounted(() => {
       handleFetchStages();
-      userStore.fetchAllUsers();
+      if (!userStore.getAllUsers.length) {
+        userStore.fetchAllUsers();
+      }
 
       if (permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)) {
         statuses.value.push({

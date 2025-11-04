@@ -264,9 +264,10 @@ export default {
       });
     };
 
-    onMounted(async () => {
-      await originStore.fetchAllOrigins();
-      console.log("Origins fetched:", origins.value);
+    onMounted(() => {
+      if (!originStore.getAllOrigins.length) {
+        originStore.fetchAllOrigins();
+      }
     });
 
     return {

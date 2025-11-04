@@ -184,8 +184,9 @@ export default {
   },
   async mounted() {
     this.userStore = useUserStore();
-    this.userData = await this.userStore.fetchCurrentUser();
-    console.log("User Data in Edit Profile Modal:", this.userData);
+    if (!this.userStore.getCurrentUser) {
+      this.userData = await this.userStore.fetchCurrentUser();
+    }
   },
 };
 </script>

@@ -313,27 +313,14 @@ const fetchStages = async () => {
   }
 };
 
-// const supervisorOptions = [
-//   { value: "supervisor1", label: "Supervisor 1" },
-//   { value: "supervisor2", label: "Supervisor 2" },
-//   { value: "eurasia", label: "Eurasia Admin" },
-//   { value: "sup", label: "Sup Sup" },
-// ];
-
-// const userOptions = [
-//   { value: "rep1", label: "user 1" },
-//   { value: "rep2", label: "user 2" },
-//   { value: "rep3", label: "user 3" },
-// ];
 onMounted(async () => {
   user_role.value = Cookies.get("user_role");
   await fetchStages();
   if (!userStore.getAllUsers.length) {
-    await userStore.fetchAllUsers();
+    userStore.fetchAllUsers();
   }
 });
 
-// Methods
 const closeModal = (modalId) => {
   const modal = Modal.getInstance(document.getElementById(modalId));
   if (modal) {
@@ -355,19 +342,6 @@ const confirmChangeStage = async () => {
     isLoading.value = false;
   }
 };
-
-// const confirmAssignSupervisor = async () => {
-//   try {
-//     isLoading.value = true;
-//     await emits("update-supervisor", newSupervisor.value);
-//     closeModal("assignSupervisorModal");
-//     newSupervisor.value = "";
-//   } catch (error) {
-//     console.error("Error assigning supervisor:", error);
-//   } finally {
-//     isLoading.value = false;
-//   }
-// };
 
 const confirmAssignUser = async () => {
   try {
