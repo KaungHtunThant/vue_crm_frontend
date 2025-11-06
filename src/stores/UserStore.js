@@ -36,6 +36,7 @@ export const useUserStore = defineStore("userStore", {
       return state.selected_user;
     },
     getUsersWithRole: (state) => (role) => {
+      console.log("Filtering users with role:", role);
       return state.all.filter((user) => user.role === role);
     },
   },

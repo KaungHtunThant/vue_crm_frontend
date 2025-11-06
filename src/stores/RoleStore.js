@@ -23,7 +23,7 @@ export const useRoleStore = defineStore("roleStore", {
     getAllRoles: (state) => {
       return state.rows.map((role) => {
         return {
-          id: role.id,
+          ...role,
           slug: role.name,
           name:
             role.name.trim().charAt(0).toUpperCase() +
@@ -41,7 +41,7 @@ export const useRoleStore = defineStore("roleStore", {
       const role = state.rows.find((role) => role.name === name);
       return role
         ? {
-            id: role.id,
+            ...role,
             slug: role.name,
             name:
               role.name.trim().charAt(0).toUpperCase() +

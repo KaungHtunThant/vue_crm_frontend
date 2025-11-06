@@ -22,7 +22,9 @@ const toastOptions = {
   hideProgressBar: false,
   closeButton: "button",
   icon: true,
-  rtl: true,
+  rtl:
+    (localStorage.getItem("locale") || "en") === "ar" ||
+    (localStorage.getItem("locale") || "en") === "ur",
   containerClassName: "custom-toast-container",
 };
 

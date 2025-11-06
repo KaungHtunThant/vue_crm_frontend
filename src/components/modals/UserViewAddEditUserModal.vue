@@ -101,6 +101,7 @@
                     :placeholder="t('users-modal-add-placeholder-role')"
                     :searchable="true"
                     :allow-empty="false"
+                    required
                   />
                 </div>
                 <div class="col-6">
@@ -115,6 +116,7 @@
                     track-by="id"
                     :placeholder="t('users-modal-add-placeholder-origin')"
                     :searchable="true"
+                    required
                   />
                 </div>
               </div>
@@ -133,6 +135,7 @@
                     track-by="id"
                     :placeholder="t('users-modal-add-placeholder-reportto')"
                     :searchable="true"
+                    required
                   />
                 </div>
                 <div class="col-1 d-inline-grid">
@@ -237,7 +240,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Multiselect from "vue-multiselect";
@@ -263,9 +265,7 @@ export default {
     const origins = computed(() => originStore.getAllOrigins);
     const roles = computed(() => roleStore.getAllRoles);
     const filteredUsers = computed(() =>
-      userStore.getUsersWithRole(
-        roleStore.getRoleByName(form.value.role)?.parent_role
-      )
+      userStore.getUsersWithRole(form.value.role?.parent_role)
     );
     const { t } = useI18n();
     const form = ref({
