@@ -30,7 +30,11 @@
 
       <div class="col-4 col-md-4 col-lg-4 mb-3">
         <div class="text-end">
-          <button type="button" class="btn btn-primary" @click="openModal">
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="openModal(false)"
+          >
             {{ t("users-button-add-user") }}
           </button>
         </div>
@@ -232,9 +236,9 @@ export default {
       }
     };
 
-    const openModal = () => {
+    const openModal = (editMode = true) => {
       if (adminModalRef.value) {
-        adminModalRef.value.openModal();
+        adminModalRef.value.openModal(editMode);
       }
     };
 

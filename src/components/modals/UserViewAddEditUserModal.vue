@@ -25,7 +25,7 @@
             @click="closeModal"
           ></button>
         </div>
-        <form @submit.prevent="submitForm">
+        <form>
           <div class="modal-body">
             <div class="mb-3">
               <div class="row">
@@ -136,14 +136,14 @@
                   />
                 </div>
                 <div class="col-1 d-inline-grid">
-                  <label for="color" class="form-label">
+                  <label for="color_code" class="form-label">
                     {{ t("users-modal-add-label-color") }}
                   </label>
                   <input
                     type="color"
                     class="form-control"
-                    id="color"
-                    v-model="form.color"
+                    id="color_code"
+                    v-model="form.color_code"
                   />
                 </div>
                 <div class="col d-inline-grid">
@@ -214,12 +214,11 @@
               type="submit"
               class="btn btn-success text-white"
               :disabled="loading"
+              @click="submitForm"
             >
               {{
                 loading
-                  ? isEditMode
-                    ? t("users-modal-edit-button-submit")
-                    : t("users-modal-edit-button-submit")
+                  ? t("users-modal-edit-button-submit")
                   : isEditMode
                   ? t("users-modal-edit-button-submit")
                   : t("users-modal-add-button-submit")
@@ -280,7 +279,7 @@ export default {
       parent: null,
       phone: null,
       image: null,
-      color: null,
+      color_code: null,
       origin: null,
     });
     const isEditMode = ref(true);
@@ -288,31 +287,28 @@ export default {
 
     const submitForm = async () => {
       try {
+        console.log("form submitted");
         loading.value = true;
         let response = "";
+        const formVal = {
+          ...form.value,
+          parent: null,
+          origin: null,
+          role: form.value.role ? form.value.role["slug"] : null,
+          origin_id: form.value.origin ? form.value.origin["id"] : null,
+          parent_id: form.value.parent ? form.value.parent["id"] : null,
+          password: !isEmpty(form.value.password) ? form.value.password : null,
+          old_password: !isEmpty(form.value.password)
+            ? form.value.old_password
+            : null,
+          password_confirmation: !isEmpty(form.value.password)
+            ? form.value.password_confirmation
+            : null,
+        };
         if (isEditMode.value) {
-          response = await userStore.updateUser(form.value.id, {
-            ...form.value,
-            parent: null,
-            origin: null,
-            role: form.value.role ? form.value.role["slug"] : null,
-            origin_id: form.value.origin ? form.value.origin["id"] : null,
-            parent_id: form.value.parent ? form.value.parent["id"] : null,
-            password: !isEmpty(form.value.password)
-              ? form.value.password
-              : null,
-            old_password: !isEmpty(form.value.password)
-              ? form.value.old_password
-              : null,
-            password_confirmation: !isEmpty(form.value.password)
-              ? form.value.password_confirmation
-              : null,
-          });
+          response = await userStore.updateUser(form.value.id, formVal);
         } else {
-          response = await userStore.createUser({
-            ...form.value,
-            parent_id: form.value.parent ? form.value.parent["id"] : null,
-          });
+          response = await userStore.createUser(formVal);
         }
         if (!response.success) {
           throw new Error(response.message);
@@ -351,7 +347,7 @@ export default {
         parent: null,
         phone: null,
         image: null,
-        color: "#292929",
+        color_code: "#292929",
         origin: null,
       };
     };
@@ -397,7 +393,7 @@ export default {
             : null,
           phone: newUser.phones[0]?.phone,
           image: null,
-          color: newUser.color_code || "#000000",
+          color_code: newUser.color_code || "#000000",
           origin: newUser.origin_id
             ? originStore.getOriginById(newUser.origin_id)
             : null,

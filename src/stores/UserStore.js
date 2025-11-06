@@ -5,6 +5,7 @@ import {
   getUserById,
   updateUser,
   deleteUser,
+  createUser,
 } from "@/plugins/services/userService";
 import Cookies from "js-cookie";
 
@@ -195,6 +196,19 @@ export const useUserStore = defineStore("userStore", {
       const response = await getUserById(userId);
       this.selected_user = response.data.data;
       return this.selected_user;
+    },
+    async createUser(data) {
+      try {
+        const response = await createUser(data);
+        if (response.status === 201 || response.status === 200) {
+          this.updateUserLocal(response.data.data);
+        }
+      } catch (error) {
+        return {
+          success: false,
+          message: error.message,
+        };
+      }
     },
   },
 });
