@@ -54,18 +54,15 @@
       scrollable
       scrollHeight="calc(90vh - 120px)"
     >
-      <Column :header="'#'" :style="{ width: '50px', textAlign: 'center' }">
+      <Column :header="'#'">
         <template #body="slotProps">
           {{ slotProps.index + 1 + store.currentPage * store.rowsPerPage }}
         </template>
       </Column>
 
-      <Column
-        :header="t('users-table-header-fullname')"
-        :style="{ width: '200px' }"
-      >
+      <Column :header="t('users-table-header-fullname')">
         <template #body="slotProps">
-          <div class="d-flex align-items-start">
+          <div class="d-flex">
             <img
               :src="
                 slotProps.data.image ||
@@ -77,27 +74,21 @@
             />
             <div>
               <div class="fs-6">{{ slotProps.data.name }}</div>
-              <div class="text-muted">{{ slotProps.data.role }}</div>
+              <div class="text-muted">
+                {{ formatRoleName(slotProps.data.role) }}
+              </div>
             </div>
           </div>
         </template>
       </Column>
 
-      <Column
-        :header="t('users-table-header-email')"
-        :style="{ width: '200px' }"
-      >
+      <Column :header="t('users-table-header-email')">
         <template #body="slotProps">
-          <div class="userEmail text-start">
-            <p class="pt-3">{{ slotProps.data.email }}</p>
-          </div>
+          <span class="fs-6">{{ slotProps.data.email }}</span>
         </template>
       </Column>
 
-      <Column
-        :header="t('users-table-header-rating')"
-        :style="{ width: '120px', textAlign: 'start' }"
-      >
+      <Column :header="t('users-table-header-rating')">
         <template #body="slotProps">
           <div class="d-flex justify-content-center">
             <rating-selector
@@ -109,10 +100,7 @@
         </template>
       </Column>
 
-      <Column
-        :header="t('users-table-header-status')"
-        :style="{ width: '120px', textAlign: 'start' }"
-      >
+      <Column :header="t('users-table-header-status')">
         <template #body="slotProps">
           <user-view-status-account
             v-model="slotProps.data.status"
@@ -121,10 +109,7 @@
         </template>
       </Column>
 
-      <Column
-        :header="t('users-table-header-actions')"
-        :style="{ width: '150px', textAlign: 'start' }"
-      >
+      <Column :header="t('users-table-header-actions')">
         <template #body="slotProps">
           <user-view-action-buttons
             :item="slotProps.data"
@@ -353,6 +338,12 @@ export default {
       }
     };
 
+    const formatRoleName = (name) => {
+      return name
+        ? name.trim().charAt(0).toUpperCase() + name.slice(1).replace(/-/g, " ")
+        : "";
+    };
+
     watch(
       () => store.search,
       async (newValue) => {
@@ -389,6 +380,7 @@ export default {
       handleSearch,
       resetSearch,
       t,
+      formatRoleName,
     };
   },
 };
