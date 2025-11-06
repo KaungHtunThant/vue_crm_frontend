@@ -203,6 +203,10 @@ export const useUserStore = defineStore("userStore", {
         if (response.status === 201 || response.status === 200) {
           this.updateUserLocal(response.data.data);
         }
+        return {
+          success: response.status === 201 || response.status === 200,
+          message: response.data.message,
+        };
       } catch (error) {
         return {
           success: false,
