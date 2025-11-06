@@ -123,7 +123,7 @@
         <div class="text-center loading-container">
           <div class="position-relative d-inline-block">
             <img
-              src="@/assets/new-nokta-logo.png"
+              :src="logo"
               class="loading-logo"
               style="width: 50px; height: 50px"
             />
@@ -181,6 +181,7 @@ export default {
     // const toast = useToast();
     const ratingStore = useRatingStore();
     const store = useUserStore();
+    const logo = require("@/assets/" + process.env.VUE_APP_LOGO_NAME);
 
     // apply Filters
     const applyFilters = async (filters) => {
@@ -381,6 +382,7 @@ export default {
       resetSearch,
       t,
       formatRoleName,
+      logo,
     };
   },
 };
