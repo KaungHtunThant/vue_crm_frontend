@@ -88,7 +88,7 @@
         </template>
       </Column>
 
-      <Column :header="t('users-table-header-rating')">
+      <Column :header="t('users-table-header-rating')" style="width: 15rem">
         <template #body="slotProps">
           <div class="d-flex justify-content-center">
             <rating-selector
