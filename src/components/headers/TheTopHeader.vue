@@ -302,6 +302,7 @@
           <i class="fa-solid fa-calendar-days"></i>
         </div>
         <div
+          v-if="user_role == 'sales'"
           class="col-3 btnHeaderBg text-white d-flex justify-content-center align-items-center rounded-1 mx-2"
         >
           <i class="fa-solid fa-sack-dollar"></i>
@@ -528,13 +529,13 @@ export default {
       const userId = Cookies.get("user_id");
       const commission = await calculatecommission(userId);
       if (commission) {
-        const salaryData = commission.data.data.original.data;
+        const salaryData = commission?.data?.data?.original?.data;
         console.log(salaryData);
         return {
-          finalBasicPay: salaryData.basic_pay || 0,
-          calculatedCommission: salaryData.calculated_commission || 0,
-          totalSalary: salaryData.total_salary || 0,
-          totalDeductions: salaryData.total_deductions || 0,
+          finalBasicPay: salaryData?.basic_pay || 0,
+          calculatedCommission: salaryData?.calculated_commission || 0,
+          totalSalary: salaryData?.total_salary || 0,
+          totalDeductions: salaryData?.total_deductions || 0,
         };
       } else {
         return {
