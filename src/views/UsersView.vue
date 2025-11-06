@@ -42,7 +42,7 @@
     </div>
 
     <!-- Table -->
-    <DataTable
+    <data-table
       :value="store.rows"
       :paginator="true"
       :rows="store.rowsPerPage"
@@ -92,7 +92,7 @@
         <template #body="slotProps">
           <div class="d-flex justify-content-center">
             <rating-selector
-              :rating_id="slotProps.data.rating?.id"
+              :rating="slotProps.data.rating"
               :user_id="slotProps.data.id"
               @rating-changed="handleRatingChange"
             />
@@ -131,7 +131,7 @@
           <div class="mt-2 text-primary">{{ t("tables-loading") }}</div>
         </div>
       </template>
-    </DataTable>
+    </data-table>
 
     <user-view-add-edit-user-modal
       ref="adminModalRef"

@@ -1,58 +1,60 @@
 <template>
-  <select
-    v-model="local_rating_id"
-    @change="onChangeRating"
-    class="form-select"
-  >
-    <option value="" disabled>
-      {{ t("users-table-rating-norating") }}
-    </option>
-    <option v-for="rating in ratings" :key="rating.id" :value="rating.id">
-      {{ rating.name }}
-    </option>
-  </select>
+  <Multiselect
+    name="rating"
+    v-model="local_rating"
+    :options="ratings"
+    label="name"
+    track-by="id"
+    :placeholder="t('users-modal-add-placeholder-reportto')"
+    :searchable="true"
+    required
+    @select="onChangeRating"
+  />
 </template>
 <script>
 import { ref, watch } from "vue";
 import { useRatingStore } from "@/stores/RatingStore";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import Multiselect from "vue-multiselect";
 export default {
   name: "RatingSelector",
+  components: {
+    Multiselect,
+  },
   props: {
     user_id: {
       type: Number,
       required: false,
     },
-    rating_id: {
+    rating: {
       type: Number,
-      required: true,
+      required: false,
+      default: null,
     },
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    const local_rating_id = ref(props.rating_id);
+    const local_rating = ref(props.rating);
     const ratingStore = useRatingStore();
 
     const onChangeRating = () => {
-      emit("rating-changed", local_rating_id.value, props.user_id);
+      emit("rating-changed", local_rating.value["id"], props.user_id);
     };
 
     watch(
-      () => props.rating_id,
+      () => props.rating,
       (newVal) => {
-        if (newVal !== local_rating_id.value) {
-          local_rating_id.value = newVal;
+        if (newVal !== local_rating.value) {
+          local_rating.value = newVal;
         }
       }
     );
 
-    const ratings = computed(() => {
-      return ratingStore.getRatings;
-    });
+    const ratings = computed(() => ratingStore.getRatings);
 
     return {
-      local_rating_id,
+      local_rating,
       ratings,
       t,
       onChangeRating,
