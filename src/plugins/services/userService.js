@@ -69,6 +69,11 @@ export const getAllUsers = async () => {
 export const updateUserRating = async (userId, ratingId) => {
   return await axios.patch(`/users/${userId}/rating`, { rating_id: ratingId });
 };
+export const updateUserPackage = async (user_id, package_id) => {
+  return await axios.patch(`/users/${user_id}/package`, {
+    package_id: package_id,
+  });
+};
 
 // Get All Roles
 export const getRoles = () => axios.get("/roles");

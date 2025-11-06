@@ -104,7 +104,20 @@
           </div>
         </template>
       </Column>
-
+      <Column
+        :header="t('users-table-header-commission-package')"
+        :style="{ width: '120px', textAlign: 'start' }"
+      >
+        <template #body="slotProps">
+          <div class="d-flex justify-content-center">
+            <package-selector
+              :package_id="slotProps.data.commission_package?.package_id"
+              :user_id="slotProps.data.id"
+              @package-changed="handlePackageChange"
+            />
+          </div>
+        </template>
+      </Column>
       <Column
         :header="t('users-table-header-status')"
         :style="{ width: '120px', textAlign: 'start' }"
@@ -172,8 +185,13 @@ import Column from "primevue/column";
 import { useUserStore } from "@/stores/UserStore";
 import { useI18n } from "vue-i18n";
 import RatingSelector from "@/views/UserViewRatingSelector.vue";
+import PackageSelector from "@/views/UserCommissionPackageselector.vue";
 import { useRatingStore } from "@/stores/RatingStore";
-import { updateUserRating } from "@/plugins/services/userService";
+import { usePackageStore } from "@/stores/CommissionPackagesStore";
+import {
+  updateUserRating,
+  updateUserPackage,
+} from "@/plugins/services/userService";
 export default {
   name: "UsersView",
   components: {
@@ -184,6 +202,7 @@ export default {
     UserViewStatusAccount,
     UserViewFilterModal,
     RatingSelector,
+    PackageSelector,
   },
 
   setup() {
@@ -191,6 +210,7 @@ export default {
     const notificationStore = useNotificationStore();
     // const toast = useToast();
     const ratingStore = useRatingStore();
+    const packageStore = usePackageStore();
     const store = useUserStore();
 
     // apply Filters
@@ -348,6 +368,36 @@ export default {
         });
       }
     };
+    const handlePackageChange = async (package_id, user_id) => {
+      try {
+        console.log("package_id", package_id);
+        const user = store.rows.find((u) => u.id === user_id);
+        if (user) {
+          user.package = { id: package_id };
+          store.updateUserLocal(user);
+        }
+        const response = await updateUserPackage(user_id, package_id);
+        if (response.status === 200) {
+          notificationStore.success(
+            response.data.message || t("success.updateUser"),
+            {
+              timeout: 3000,
+            }
+          );
+        } else {
+          notificationStore.error(
+            response.data.message || t("error.updateFailed"),
+            {
+              timeout: 3000,
+            }
+          );
+        }
+      } catch (error) {
+        notificationStore.error(error.message || t("error.updateFailed"), {
+          timeout: 3000,
+        });
+      }
+    };
 
     watch(
       () => store.search,
@@ -360,6 +410,7 @@ export default {
     onMounted(async () => {
       await fetchData(0, 10);
       ratingStore.fetchRatings();
+      packageStore.fetchPackages();
       window.addEventListener("contextmenu", handleRightClick);
     });
 
@@ -369,6 +420,7 @@ export default {
 
     return {
       handleRatingChange,
+      handlePackageChange,
       store,
       adminModalRef,
       filterModalRef,

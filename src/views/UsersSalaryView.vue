@@ -4,27 +4,13 @@
       <li class="nav-item" role="presentation">
         <button
           class="nav-link text-secondary-emphasis active"
-          id="general-tab"
-          data-bs-toggle="tab"
-          data-bs-target="#general"
-          type="button"
-          role="tab"
-          aria-controls="general"
-          aria-selected="true"
-        >
-          Salary & Commissions
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button
-          class="nav-link text-secondary-emphasis"
           id="deductions-tab"
           data-bs-toggle="tab"
           data-bs-target="#deductions"
           type="button"
           role="tab"
           aria-controls="deductions"
-          aria-selected="false"
+          aria-selected="true"
         >
           Deduction
         </button>
@@ -37,102 +23,38 @@
     >
       <div
         class="tab-pane fade show active"
-        id="general"
-        role="tabpanel"
-        aria-labelledby="general-tab"
-      >
-        <form @submit.prevent="submitSalaryForm">
-          <div
-            v-for="(row, index) in salaryRows"
-            :key="index"
-            class="row g-3 mb-3"
-          >
-            <div class="col-md-3">
-              <label class="form-label">Basic Salary</label>
-              <input
-                type="number"
-                class="form-control"
-                v-model="row.basic_salary"
-                required
-              />
-            </div>
-
-            <div class="col-md-3">
-              <label class="form-label">Commission %</label>
-              <input
-                type="number"
-                class="form-control"
-                min="0"
-                max="100"
-                v-model="row.commission_percent"
-                required
-              />
-            </div>
-
-            <div class="col-md-2">
-              <label class="form-label">Min Amount</label>
-              <input
-                type="number"
-                class="form-control"
-                v-model="row.minimum_amount"
-                required
-              />
-            </div>
-
-            <div
-              class="col-md-1 d-flex align-items-end justify-content-center fw-bold"
-            >
-              Upto
-            </div>
-
-            <div class="col-md-3">
-              <label class="form-label">Max Amount</label>
-              <input
-                type="number"
-                class="form-control"
-                v-model="row.maximum_amount"
-                required
-              />
-            </div>
-          </div>
-          <div class="mt-2 mb-3" v-if="!hasData && salaryRows.length < 9">
-            <button class="btn btn-primary" type="button" @click="addRow">
-              + Add More
-            </button>
-          </div>
-
-          <div class="text-end mt-4">
-            <button type="submit" class="btn btn-success px-4">Submit</button>
-          </div>
-        </form>
-      </div>
-      <div
-        class="tab-pane fade"
         style="max-height: 80vh"
         id="deductions"
         role="tabpanel"
         aria-labelledby="deductions-tab"
       >
         <div class="text-end mb-3">
-          <button @click="openModal" class="btn btn-primary">
+          <button @click="openModal(userId.value)" class="btn btn-primary">
             Add Deduction
           </button>
         </div>
         <EasyDataTable
+          v-if="deductions && deductions.length > 0"
           :headers="headers"
-          :items="items"
+          :items="deductions"
+          :key="deductions.length"
           :rows-per-page="10"
           table-class-name="deduction-table"
         >
-          <template #item-id="item">
-            <div class="text-muted fs-6 my-2">{{ item.id }}</div>
-          </template>
-          <template #item-description="item">
-            <div class="fs-6">{{ item.description }}</div>
+          <template #item-id="{ serial }">
+            <div class="text-muted fs-6 my-2">{{ serial }}</div>
           </template>
 
-          <template #item-amount_deducted="item">
-            <div class="fs-6">{{ item.amount_deducted }}</div>
+          <template #item-deduction_type="{ deduction_type }">
+            <div class="fs-6">{{ deduction_type }}</div>
+          </template>
+
+          <template #item-amount="{ amount }">
+            <div class="fs-6">{{ amount }}</div>
+          </template>
+
+          <template #item-created_at="{ created_at }">
+            <div class="fs-6">{{ created_at }}</div>
           </template>
 
           <template #item-actions="item">
@@ -145,13 +67,16 @@
               </button>
               <button
                 class="btn btn-sm btn-danger"
-                @click="deleteDeduction(item.id)"
+                @click="deleteDeductioncall(item.id)"
               >
                 <i class="fas fa-trash"></i>
               </button>
             </div>
           </template>
         </EasyDataTable>
+        <div v-else class="text-center text-muted mt-3">
+          No deductions found
+        </div>
       </div>
     </div>
   </div>
@@ -160,16 +85,22 @@
     @save="handleSaveDeduction"
   />
 </template>
-
 <script>
-import { ref, onMounted } from "vue";
-import { getSalary, createSalary } from "@/plugins/services/salaryService";
+import { ref, onMounted, computed } from "vue";
+import {
+  saveDeduction,
+  getUserDeductions,
+  deleteDeduction,
+} from "@/plugins/services/salaryService";
 import EasyDataTable from "vue3-easy-data-table";
 import "vue3-easy-data-table/dist/style.css";
 import { useI18n } from "vue-i18n";
 import Swal from "sweetalert2";
 import { useNotificationStore } from "@/stores/notificationStore";
 import UsersSalaryViewAddDeductionModal from "@/components/modals/UsersSalaryViewAddDeductionModal.vue";
+import { useRoute } from "vue-router";
+import { Toast } from "bootstrap";
+
 export default {
   name: "UsersSalaryView",
   components: {
@@ -178,85 +109,70 @@ export default {
   },
   setup() {
     const { t } = useI18n();
+    const route = useRoute();
     const notificationStore = useNotificationStore();
-    const salaryRows = ref([]);
-    const hasData = ref(false);
+    const userId = ref(route.params.userId);
+    const validationErrors = ref({});
+    const deductions = ref([]);
 
-    const fetchSalaryData = async () => {
+    const hasValidationErrors = computed(() => {
+      return Object.keys(validationErrors.value).some(
+        (key) => Object.keys(validationErrors.value[key]).length > 0
+      );
+    });
+
+    const fetchDeductions = async () => {
       try {
-        salaryRows.value = [
-          {
-            basic_salary: null,
-            commission_percent: null,
-            minimum_amount: null,
-            maximum_amount: null,
-          },
-        ];
-        hasData.value = false;
-
-        const res = await getSalary();
-
-        if (Array.isArray(res.data) && res.data.length > 0) {
-          salaryRows.value = res.data;
-          hasData.value = true;
-        }
-      } catch (e) {
-        hasData.value = false;
-      }
-    };
-
-    const addRow = () => {
-      if (salaryRows.value.length < 9) {
-        salaryRows.value.push({
-          basic_salary: null,
-          commission_percent: null,
-          minimum_amount: null,
-          maximum_amount: null,
-        });
-        notificationStore.success(t("success.addNewRow"));
-      }
-    };
-
-    const submitSalaryForm = async () => {
-      try {
-        salaryRows.value.sort((a, b) => a.basic_salary - b.basic_salary);
-
-        for (let i = 1; i < salaryRows.value.length; i++) {
-          const prev = salaryRows.value[i - 1];
-          const current = salaryRows.value[i];
-
-          if (current.basic_salary <= prev.basic_salary) {
-            return Swal.fire({
-              icon: "error",
-              title: "Invalid Salary Order",
-              text: `Basic Salary in row ${i + 1} must be higher than row ${i}`,
-            });
-          }
-
-          if (current.minimum_amount <= prev.maximum_amount) {
-            return Swal.fire({
-              icon: "error",
-              title: "Invalid Range",
-              text: `Min Amount in row ${
-                i + 1
-              } must be higher than Max Amount in row ${i}`,
-            });
-          }
+        const res = await getUserDeductions(userId.value);
+        if (!res || !res.data || !res.data.data) {
+          console.warn("No deduction data in response");
+          deductions.value = [];
+          return;
         }
 
-        await createSalary(salaryRows.value);
-        await fetchSalaryData();
-        notificationStore.success(t("success.added"));
+        const rawData = res.data.data;
+        if (!Array.isArray(rawData)) {
+          console.warn("Deduction data is not an array");
+          deductions.value = [];
+          return;
+        }
+        deductions.value = rawData
+          .filter((item) => item != null)
+          .map((item, index) => {
+            return {
+              serial: index + 1,
+              id: item?.id ?? 0,
+              deduction_type: item?.deduction_type?.name ?? "—",
+              deduction_type_id: item?.deduction_type_id ?? null,
+              amount: item?.amount ?? 0,
+              created_at: item?.created_at
+                ? new Date(item.created_at).toLocaleDateString()
+                : "-",
+            };
+          });
+        console.log("Number of deductions:", deductions.value.length);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching deductions:", error);
+        deductions.value = [];
       }
     };
 
-    onMounted(fetchSalaryData);
+    onMounted(async () => {
+      console.log("Component mounted with userId:", userId.value);
+      await fetchDeductions();
+    });
+
     const headers = [
-      { text: "#", value: "id" },
-      { text: t("users-salary-table-header-description"), value: "reason" },
+      { text: "#", value: "serial" },
+      {
+        text: t("users-salary-table-header-description"),
+        value: "deduction_type",
+      },
       { text: t("users-salary-table-header-amount_deducted"), value: "amount" },
+      {
+        text: t("users-salary-table-amount-deduction-date"),
+        value: "created_at",
+      },
       { text: t("users-salary-table-header-actions"), value: "actions" },
     ];
 
@@ -264,7 +180,7 @@ export default {
     const items = ref([]);
 
     const openModal = () => {
-      deductionModal.value?.open();
+      deductionModal.value?.open(userId.value);
     };
     const closeModal = () => {
       if (deductionModal.value) {
@@ -272,27 +188,36 @@ export default {
       }
     };
     const editDeduction = (item) => {
-      deductionModal.value?.open(item);
+      console.log("Editing item:", item);
+      if (deductionModal.value) {
+        const fullItem = deductions.value.find((d) => d.id === item.id);
+        console.log("Full item found:", fullItem);
+        if (fullItem) {
+          const editData = {
+            id: fullItem.id,
+            deduction_type_id: fullItem.deduction_type_id,
+            amount: parseFloat(fullItem.amount),
+            emp_id: userId.value,
+          };
+          console.log("Sending to modal:", editData);
+          deductionModal.value.open(userId.value, editData);
+        }
+      }
     };
 
-    const handleSaveDeduction = (data) => {
-      if (data.id) {
-        const index = items.value.findIndex((i) => i.id === data.id);
-        if (index !== -1) items.value[index] = { ...data };
-        notificationStore.success(t("success.updated"), {
-          timeout: 3000,
-        });
+    const handleSaveDeduction = async (data) => {
+      console.log("Deduction Data:", data);
+      const response = await saveDeduction(data);
+      if (!response) {
+        Toast.notify("error in saving data");
       } else {
-        data.id = items.value.length + 1;
-        items.value.push(data);
-        notificationStore.success(t("success.added"), {
-          timeout: 3000,
-        });
+        notificationStore.success("Deduction saved successfully");
+        await fetchDeductions();
       }
       closeModal();
     };
 
-    const deleteDeduction = async (id) => {
+    const deleteDeductioncall = async (id) => {
       try {
         const result = await Swal.fire({
           title: t("error.deleteTitle"),
@@ -307,9 +232,10 @@ export default {
         });
 
         if (result.isConfirmed) {
-          const index = items.value.findIndex((r) => r.id === id);
+          await deleteDeduction(id);
+          const index = deductions.value.findIndex((r) => r.id === id);
           if (index !== -1) {
-            items.value.splice(index, 1);
+            deductions.value.splice(index, 1);
             notificationStore.success(t("success.deleted"), {
               timeout: 3000,
             });
@@ -329,16 +255,21 @@ export default {
       t,
       openModal,
       editDeduction,
-      deleteDeduction,
+      deleteDeductioncall,
       handleSaveDeduction,
       deductionModal,
-      salaryRows,
-      hasData,
-      addRow,
-      submitSalaryForm,
+      validationErrors,
+      hasValidationErrors,
+      userId,
+      deductions,
+      fetchDeductions,
     };
   },
 };
 </script>
-
-<style scoped></style>
+<style>
+.nav-tabs .nav-link.active {
+  background-color: #5f5e5e;
+  color: rgb(0, 0, 0) !important;
+}
+</style>

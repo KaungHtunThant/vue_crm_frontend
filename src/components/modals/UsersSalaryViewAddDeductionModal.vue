@@ -16,16 +16,21 @@
               <div class="mb-3">
                 <select
                   class="form-control"
-                  v-model="deduction.reason"
+                  v-model="deduction.deduction_type_id"
                   required
                 >
                   <option disabled value="">
-                    {{ $t("users-salary-modal-add-placeholder-reason") }}
+                    {{
+                      $t("users-salary-modal-add-placeholder-deduction-type")
+                    }}
                   </option>
-                  <option value="Absence">Absence</option>
-                  <option value="Late">Late</option>
-                  <option value="Early">Early</option>
-                  <option value="Other">Other</option>
+                  <option
+                    v-for="type in deductionTypes"
+                    :key="type.id"
+                    :value="type.id"
+                  >
+                    {{ type.name }}
+                  </option>
                 </select>
               </div>
             </div>
@@ -52,7 +57,7 @@
           <button
             class="btn btn-success text-white"
             @click="save"
-            :disabled="!deduction.reason || deduction.amount <= 0"
+            :disabled="!deduction.deduction_type_id || deduction.amount <= 0"
           >
             {{ mode === "add" ? "Save" : "Update" }}
           </button>
@@ -66,32 +71,46 @@
 import { ref, onMounted } from "vue";
 import { Modal } from "bootstrap";
 import { useI18n } from "vue-i18n";
-
+import { deductiontypes } from "@/plugins/services/salaryService";
+import Cookies from "js-cookie";
 export default {
   name: "UsersSalaryViewAddDeductionModal",
   emits: ["save", "close"],
 
   setup(_, { emit }) {
     const { t } = useI18n();
-
     const modal = ref(null);
-    const deduction = ref({ id: null, reason: "", amount: 0 });
+    const deduction = ref({ id: null, amount: 0 });
     const mode = ref("add");
+    const deductionTypes = ref([]);
+    const createdBy = Cookies.get("user_id");
 
     onMounted(() => {
       const element = document.getElementById("deductionModal");
       modal.value = new Modal(element);
+      getDeductionTypes();
     });
 
-    const open = (item = null) => {
-      if (item) {
+    const open = (userId, item) => {
+      if (item && item.id) {
         mode.value = "edit";
-        deduction.value = { ...item };
+        deduction.value = {
+          id: item.id,
+          emp_id: item.emp_id || userId,
+          deduction_type_id: item.deduction_type_id,
+          amount: parseFloat(item.amount) || 0,
+          created_by: item.created_by || createdBy,
+        };
       } else {
         mode.value = "add";
-        deduction.value = { id: null, reason: "", amount: 0 };
+        deduction.value = {
+          id: null,
+          emp_id: userId,
+          deduction_type_id: null,
+          amount: 0,
+          created_by: createdBy,
+        };
       }
-
       modal.value?.show();
     };
 
@@ -105,6 +124,15 @@ export default {
       closeModal();
     };
 
+    const getDeductionTypes = async () => {
+      try {
+        const response = await deductiontypes();
+        deductionTypes.value = response.data.data || [];
+      } catch (error) {
+        console.error("Failed to fetch deduction types:", error);
+      }
+    };
+
     return {
       deduction,
       mode,
@@ -112,6 +140,8 @@ export default {
       save,
       closeModal,
       t,
+      getDeductionTypes,
+      deductionTypes,
     };
   },
 };
