@@ -8,8 +8,8 @@
           <h5 class="modal-title">
             {{
               mode === "add"
-                ? "Add Commission Package"
-                : "Edit Commission Package"
+                ? $t("commission-modal-title-bar-add")
+                : $t("commission-modal-title-bar-edit")
             }}
           </h5>
           <button type="button" class="btn-close" @click="closeModal"></button>
@@ -20,12 +20,14 @@
             <!-- Package Name -->
             <div class="row mb-4">
               <div class="col-md-6">
-                <label class="form-label fw-bold">Package Name *</label>
+                <label class="form-label fw-bold"
+                  >{{ $t("commission-modal-package-title") }}
+                </label>
                 <input
                   type="text"
                   class="form-control"
                   v-model="packageData.package_name"
-                  placeholder="e.g., Gold Package, Silver Package"
+                  :placeholder="$t('commission-modal-package-placeholder')"
                   required
                 />
               </div>
@@ -33,10 +35,11 @@
 
             <!-- Salary Levels -->
             <div class="mb-3">
-              <h6 class="fw-bold">Commission Levels</h6>
+              <h6 class="fw-bold">
+                {{ $t("commission-modal-commission-levels") }}
+              </h6>
               <p class="text-muted small">
-                Define the salary ranges and commission percentages for each
-                level
+                {{ $t("commission-modal-commission-levels-description") }}
               </p>
             </div>
 
@@ -57,14 +60,13 @@
 
               <!-- Basic Salary -->
               <div class="col-md-3">
-                <label class="form-label small">Basic Salary *</label>
                 <input
                   type="number"
                   class="form-control"
                   :class="{
                     'is-invalid': validationErrors[index]?.basic_salary,
                   }"
-                  placeholder="Basic Salary"
+                  :placeholder="$t('commission-modal-basicpay-placeholder')"
                   v-model.number="row.basic_salary"
                   @input="onBasicSalaryChange(index)"
                   required
@@ -79,14 +81,13 @@
 
               <!-- Commission Percent -->
               <div class="col-md-2">
-                <label class="form-label small">Commission % *</label>
                 <input
                   type="number"
                   class="form-control"
                   min="0"
                   max="100"
                   step="0.01"
-                  placeholder="0.00"
+                  :placeholder="$t('commission-modal-commission-placeholder')"
                   v-model.number="row.commission_percent"
                   required
                 />
@@ -94,14 +95,15 @@
 
               <!-- Minimum Amount -->
               <div class="col-md-3">
-                <label class="form-label small">Min Amount *</label>
                 <input
                   type="number"
                   class="form-control"
                   :class="{
                     'is-invalid': validationErrors[index]?.minimum_amount,
                   }"
-                  placeholder="Min"
+                  :placeholder="
+                    $t('commission-modal-minimumamount-placeholder')
+                  "
                   v-model.number="row.minimum_amount"
                   @input="onMinimumAmountChange(index)"
                   required
@@ -116,14 +118,15 @@
 
               <!-- Maximum Amount -->
               <div class="col-md-3">
-                <label class="form-label small">Max Amount *</label>
                 <input
                   type="number"
                   class="form-control"
                   :class="{
                     'is-invalid': validationErrors[index]?.maximum_amount,
                   }"
-                  placeholder="Max"
+                  :placeholder="
+                    $t('commission-modal-maximumamount-placeholder')
+                  "
                   v-model.number="row.maximum_amount"
                   @input="onMaximumAmountChange(index)"
                   required
@@ -158,14 +161,18 @@
                 @click="addRow"
               >
                 <i class="fas fa-plus me-2"></i>
-                Add Level ({{ salaryRows.length }}/{{ maxLevels }})
+                {{ $t("commission-modal-addmore-button") }} ({{
+                  salaryRows.length
+                }}/{{ maxLevels }})
               </button>
             </div>
           </form>
         </div>
 
         <div class="modal-footer">
-          <button class="btn btn-secondary" @click="closeModal">Cancel</button>
+          <button class="btn btn-secondary" @click="closeModal">
+            {{ $t("commission-modal-close-button") }}
+          </button>
           <button
             class="btn btn-success"
             @click="save"
@@ -175,7 +182,11 @@
               v-if="isSaving"
               class="spinner-border spinner-border-sm me-2"
             ></span>
-            {{ mode === "add" ? "Create Package" : "Update Package" }}
+            {{
+              mode === "add"
+                ? $t("commission-modal-add-button")
+                : $t("commission-modal-update-button")
+            }}
           </button>
         </div>
       </div>
@@ -193,12 +204,14 @@ import {
   updateCommissionPackage,
   payingLevels,
 } from "@/plugins/services/salaryService";
+import { useI18n } from "vue-i18n";
 
 export default {
   name: "CommissionPackageModal",
   emits: ["save", "close"],
 
   setup(_, { emit }) {
+    const { t } = useI18n();
     const notificationStore = useNotificationStore();
     const modal = ref(null);
     const mode = ref("add");
@@ -443,6 +456,7 @@ export default {
       onBasicSalaryChange,
       onMinimumAmountChange,
       onMaximumAmountChange,
+      t,
     };
   },
 };

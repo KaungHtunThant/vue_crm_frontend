@@ -12,7 +12,7 @@
           aria-controls="deductions"
           aria-selected="true"
         >
-          Deduction
+          {{ $t("deductions-page-title") }}
         </button>
       </li>
     </ul>
@@ -30,7 +30,7 @@
       >
         <div class="text-end mb-3">
           <button @click="openModal(userId.value)" class="btn btn-primary">
-            Add Deduction
+            {{ $t("deductions-page-add-button") }}
           </button>
         </div>
         <EasyDataTable
@@ -75,7 +75,7 @@
           </template>
         </EasyDataTable>
         <div v-else class="text-center text-muted mt-3">
-          No deductions found
+          {{ $t("deduction-page-table-nodeductions") }}
         </div>
       </div>
     </div>

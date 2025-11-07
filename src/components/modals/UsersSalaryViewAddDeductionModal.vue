@@ -4,7 +4,11 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title d-flex align-items-center">
-            {{ mode === "add" ? "Add Deduction" : "Edit Deduction" }}
+            {{
+              mode === "add"
+                ? $t("users-deduction-modal-add-title")
+                : $t("users-deduction-modal-update-title")
+            }}
           </h5>
 
           <button type="button" class="btn-close" @click="closeModal"></button>
@@ -19,10 +23,8 @@
                   v-model="deduction.deduction_type_id"
                   required
                 >
-                  <option disabled value="">
-                    {{
-                      $t("users-salary-modal-add-placeholder-deduction-type")
-                    }}
+                  <option value="" disabled>
+                    {{ $t("users-deduction-modal-deduction-types") }}
                   </option>
                   <option
                     v-for="type in deductionTypes"
@@ -59,7 +61,11 @@
             @click="save"
             :disabled="!deduction.deduction_type_id || deduction.amount <= 0"
           >
-            {{ mode === "add" ? "Save" : "Update" }}
+            {{
+              mode === "add"
+                ? $t("deduction-modal-add-button")
+                : $t("deduction-modal-update-button")
+            }}
           </button>
         </div>
       </div>

@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h4>{{ t("commission-packages-title") || "Commission Packages" }}</h4>
       <button @click="openAddModal" class="btn btn-primary">
-        <i class="fas fa-plus me-2"></i>Add Package
+        <i class="fas fa-plus me-2"></i>{{ t("commission-package-add-button") }}
       </button>
     </div>
 
@@ -81,10 +81,10 @@ export default {
 
     const headers = [
       { text: "#", value: "serial" },
-      { text: "Package Name", value: "name" },
-      { text: "Levels", value: "levels_count" },
-      { text: "Created Date", value: "created_at" },
-      { text: "Actions", value: "actions" },
+      { text: t("commission-package-table-name"), value: "name" },
+      { text: t("commission-package-table-levels"), value: "levels_count" },
+      { text: t("commission-package-table-created"), value: "created_at" },
+      { text: t("commission-package-table-actions"), value: "actions" },
     ];
 
     const fetchPackages = async () => {

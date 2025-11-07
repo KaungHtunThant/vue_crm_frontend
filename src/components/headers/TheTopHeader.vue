@@ -253,7 +253,7 @@
                 <div class="dropdown-link">
                   <div
                     class="sidebar-item d-flex align-items-center"
-                    title="Commissions Packages"
+                    :title="$t('sidebar-nav-item-commissions-packages')"
                   >
                     <i class="fa-solid fa-money-check-dollar fs-5 me-2"></i>
                     <span>{{
