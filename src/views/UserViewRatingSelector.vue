@@ -39,7 +39,15 @@ export default {
     const ratingStore = useRatingStore();
 
     const onChangeRating = () => {
-      emit("rating-changed", local_rating.value["id"], props.user_id);
+      emit(
+        "rating-changed",
+        {
+          id: local_rating.value["id"],
+          name: local_rating.value["name"],
+          slug: local_rating.value["slug"],
+        },
+        props.user_id
+      );
     };
 
     watch(

@@ -308,15 +308,15 @@ export default {
       });
     };
 
-    const handleRatingChange = async (rating_id, user_id) => {
+    const handleRatingChange = async (rating, user_id) => {
       try {
         const user = store.rows.find((u) => u.id === user_id);
         if (user) {
-          user.rating = { id: rating_id };
+          user.rating = rating;
           store.updateUserLocal(user);
         }
 
-        const response = await updateUserRating(user_id, rating_id);
+        const response = await updateUserRating(user_id, rating.id);
         if (response.status === 200) {
           notificationStore.success(
             response.data.message || t("success.updateUser"),
