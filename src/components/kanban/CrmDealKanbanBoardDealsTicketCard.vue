@@ -59,6 +59,16 @@
             ></i>
           </button>
         </span>
+        <span
+          v-if="showCalendarDrag"
+          class="deal-card-calendar"
+          draggable="true"
+          :data-ticket="JSON.stringify(deal)"
+          style="cursor: grab"
+          title="اسحب إلى التقويم"
+        >
+          <i class="fa fa-calendar-plus text-primary fs-6"></i>
+        </span>
       </div>
 
       <!-- الهاتف والواتساب -->
@@ -116,7 +126,7 @@
         <!-- <span class="fw-normal text-dark">
           <i :class="getIcon(deal.source_id)"></i>
         </span> -->
-        <span
+        <!-- <span
           v-if="showCalendarDrag"
           class="deal-card-calendar"
           draggable="true"
@@ -125,7 +135,7 @@
           title="اسحب إلى التقويم"
         >
           <i class="fa fa-calendar-plus text-primary fs-6"></i>
-        </span>
+        </span> -->
       </div>
 
       <!-- persuasion progress  -->

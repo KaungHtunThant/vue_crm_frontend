@@ -17,6 +17,8 @@
         :draggable="true"
         defaultColor="#333"
         :show-calendar-drag="true"
+        :use-stores="true"
+        :filters="filters"
         @open-whatsapp-modal="openWhatsappModal"
         @receive-whatsapp-message="receiveWhatsappMessage"
         @update-whatsapp-message="updateWhatsappMessage"
@@ -84,7 +86,7 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted, nextTick } from "vue";
+import { ref, onMounted, onUnmounted, nextTick, computed, watch } from "vue";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
 // import { useToast } from "vue-toastification";
@@ -96,11 +98,12 @@ import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vu
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
 import FullCalendar from "@fullcalendar/vue3";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
+import dayGridPlugin, { Draggable } from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
 import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";
 import { Modal } from "bootstrap";
-import { showDeal } from "@/plugins/services/dealService";
+import { useStageStore } from "@/stores/StageStore";
+import { useDealStore } from "@/stores/DealStore";
 
 export default {
   name: "EmrDealKanbanView",
@@ -117,41 +120,39 @@ export default {
     const fullCalendarRef = ref(null);
     const currentView = ref("dayGridMonth");
     const calendarTitle = ref("");
-    const stages = ref([
-      {
-        id: 1,
-        name: "مريض جديد",
-        color_code: "#007bff",
-        icon: "user-plus",
-        deal_count: 1,
-        deals: [{ id: 101, name: "محمد أحمد", stage_id: 1, tags: [] }],
-        filterable_tags: [],
-        parent_id: null,
-        has_children: false,
-      },
-      {
-        id: 2,
-        name: "قيد العلاج",
-        color_code: "#ffc107",
-        icon: "heartbeat",
-        deal_count: 1,
-        deals: [{ id: 102, name: "هيثم علي", stage_id: 2, tags: [] }],
-        filterable_tags: [],
-        parent_id: null,
-        has_children: false,
-      },
-      {
-        id: 3,
-        name: "أتم العلاج",
-        color_code: "#28a745",
-        icon: "check-circle",
-        deal_count: 1,
-        deals: [{ id: 103, name: "خالد يوسف", stage_id: 3, tags: [] }],
-        filterable_tags: [],
-        parent_id: null,
-        has_children: false,
-      },
-    ]);
+
+    const stageStore = useStageStore();
+    const dealStore = useDealStore();
+
+    const collectChildIds = (parentId, allStages) => {
+      return allStages
+        .filter((s) => s.parent_id === parentId)
+        .reduce((acc, child) => {
+          acc.push(child.id, ...collectChildIds(child.id, allStages));
+          return acc;
+        }, []);
+    };
+
+    const stages = computed(() => {
+      const allStages = stageStore.stages || [];
+
+      return allStages
+        .filter((s) => !s.parent_id)
+        .map((parent) => {
+          const childIds = collectChildIds(parent.id, allStages);
+          const stageIds = [parent.id, ...childIds];
+
+          const stageDeals =
+            dealStore.deals?.filter((d) => stageIds.includes(d.stage_id)) || [];
+
+          return {
+            ...parent,
+            deals: stageDeals,
+            deal_count: stageDeals.length,
+          };
+        });
+    });
+
     const calendarEvents = ref([]);
     const selectedDeal = ref(null);
     const logs = ref([]);
@@ -179,9 +180,11 @@ export default {
           start: info.event.startStr,
           extendedProps: {
             ticketId: ticketData.id,
+            manual: true,
           },
         };
         calendarEvents.value.push(newEvent);
+        calendarOptions.value.events = [...calendarEvents.value];
         notificationStore.success("تمت إضافة الموعد للتقويم");
       },
       eventDrop: (info) => {
@@ -191,6 +194,7 @@ export default {
         if (idx !== -1) {
           calendarEvents.value[idx].start = info.event.startStr;
         }
+        calendarOptions.value.events = [...calendarEvents.value];
         notificationStore.info("تم تغيير موعد المريض");
       },
       eventClick: async (info) => {
@@ -236,6 +240,41 @@ export default {
         },
       },
     });
+
+    const createEventFromDeal = (deal) => {
+      const date = deal?.appointment_date || deal?.appointment || deal?.date;
+      if (!date) return null;
+      return {
+        id: `evt-${deal.id}`,
+        title: deal.name || deal.patient_name || `تذكرة #${deal.id}`,
+        start: date,
+        extendedProps: {
+          ticketId: deal.id,
+        },
+      };
+    };
+
+    const rebuildCalendarEvents = () => {
+      const manualEvents = calendarEvents.value.filter(
+        (event) => event.extendedProps?.manual
+      );
+      const events = [...manualEvents];
+      (dealStore.deals || []).forEach((deal) => {
+        const event = createEventFromDeal(deal);
+        if (event) events.push(event);
+      });
+      calendarEvents.value = events;
+      calendarOptions.value.events = events;
+      try {
+        const api = fullCalendarRef.value?.getApi();
+        if (api) {
+          api.removeAllEvents();
+          events.forEach((event) => api.addEvent(event));
+        }
+      } catch (error) {
+        console.error("Error syncing calendar events:", error);
+      }
+    };
     const goToToday = () => {
       fullCalendarRef.value.getApi().today();
       calendarTitle.value = formatCalendarTitle(
@@ -318,37 +357,25 @@ export default {
       update_message.value = data;
     };
     const HandleSearch = async () => {};
-    const changeDealStage = async (dealId, newStageIndex, oldStageId) => {
+    const changeDealStage = async (dealId, newStageId) => {
       try {
-        const newStageId = stages.value[newStageIndex].id;
-        const oldStageIndex = stages.value.findIndex(
-          (stage) => stage.id == oldStageId
-        );
-        const oldDealIndex = stages.value[oldStageIndex].deals.findIndex(
-          (deal) => deal.id == dealId
-        );
-        if (oldDealIndex !== -1) {
-          stages.value[oldStageIndex].deals[oldDealIndex].stage_id = newStageId;
-          const deal = stages.value[oldStageIndex].deals[oldDealIndex];
-          stages.value[newStageIndex].deals.unshift(deal);
-          stages.value[oldStageIndex].deals.splice(oldDealIndex, 1);
-          stages.value[oldStageIndex].deal_count -= 1;
-          stages.value[newStageIndex].deal_count += 1;
-          notificationStore.success(t("success.dealMoved"));
-        } else {
-          console.error("Deal not found in the old stage");
-        }
+        await dealStore.updateDeal(dealId, { stage_id: newStageId });
+        notificationStore.success(t("success.dealMoved"));
       } catch (error) {
-        console.error("Error updating deal stage:", error.response?.data);
+        console.error(
+          "Error updating deal stage:",
+          error?.response?.data || error
+        );
+        notificationStore.error(t("error.dealMoveFailed") || "فشل نقل التذكرة");
       }
     };
     const openDealDataCard = async (dealId) => {
       try {
-        const dealData = await showDeal(dealId);
-        if (dealData.data && dealData.data.data) {
+        const deal = await dealStore.changeCurrentDeal(dealId);
+        if (deal) {
           selectedDeal.value = null;
           await nextTick();
-          selectedDeal.value = dealData.data.data;
+          selectedDeal.value = deal;
           await nextTick();
           const modalEl = document.getElementById("dealDataCard");
           if (modalEl) {
@@ -399,8 +426,27 @@ export default {
       if (month && year) return ` ${year} - ${month}`;
       return title;
     }
-    onMounted(() => {
+    onMounted(async () => {
       window.addEventListener("contextmenu", handleRightClick);
+
+      try {
+        await stageStore.fetchStages();
+
+        const allStages =
+          stageStore.getAllStagesWithHidden || stageStore.stages || [];
+        await Promise.all(
+          allStages.map((s) =>
+            dealStore.fetchDealsByStageId(s.id, 200, 0, {}).catch((e) => {
+              console.error("Failed fetching deals for stage", s.id, e);
+            })
+          )
+        );
+      } catch (error) {
+        console.error("Error loading stages or deals:", error);
+      }
+
+      rebuildCalendarEvents();
+
       nextTick(() => {
         const draggables = document.querySelectorAll(".deal-card-calendar");
         draggables.forEach((el) => {
@@ -417,6 +463,13 @@ export default {
         });
       });
     });
+
+    watch(
+      () => dealStore.deals,
+      () => rebuildCalendarEvents(),
+      { deep: true, immediate: true }
+    );
+
     onUnmounted(() => {
       window.removeEventListener("contextmenu", handleRightClick);
     });

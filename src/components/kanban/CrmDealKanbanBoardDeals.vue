@@ -314,6 +314,7 @@ import TicketCard from "@/components/kanban/CrmDealKanbanBoardDealsTicketCard.vu
 import { Modal } from "bootstrap";
 import { useRoute } from "vue-router";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { useDealStore } from "@/stores/DealStore";
 
 import {
   updateDealStage,
@@ -375,9 +376,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    useStores: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const notificationStore = useNotificationStore();
+    const dealStore = useDealStore();
     const isIdle = ref(false);
     const route = useRoute();
     const dealsContainer = ref(null);
@@ -415,6 +421,14 @@ export default {
         );
       },
       { immediate: true }
+    );
+
+    watch(
+      () => props.filters,
+      (newFilters) => {
+        dealStore.setActiveFilters(newFilters || {});
+      },
+      { deep: true, immediate: true }
     );
 
     const allDealsCount = computed(() => {
@@ -819,9 +833,33 @@ export default {
       }
     };
 
+    const shouldProcessBasedOnUserFilter = (dealData) => {
+      const activeFilters =
+        dealStore.getActiveFilters || dealStore.activeFilters;
+      const filterUserId = activeFilters?.user_id;
+      if (!filterUserId) {
+        return true;
+      }
+
+      const assignedId =
+        dealData?.assigned_to_id ??
+        dealData?.assigned_user_id ??
+        dealData?.responsible_user_id ??
+        dealData?.responsible_user?.id;
+
+      if (assignedId === undefined || assignedId === null) {
+        return false;
+      }
+
+      return String(assignedId) === String(filterUserId);
+    };
+
     const handleDealEvent = (event) => {
       const action = event.action;
       if (action === "create") {
+        if (!shouldProcessBasedOnUserFilter(event.data)) {
+          return;
+        }
         dealCreateEvent(event.data, event.message);
       } else if (action === "update") {
         dealUpdateEvent(event.data, event.message);

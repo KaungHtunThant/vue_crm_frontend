@@ -12,6 +12,7 @@ export const useDealStore = defineStore("deal", {
   state: () => ({
     deals: [],
     current_deal: {},
+    activeFilters: {},
   }),
   getters: {
     getAllDeals: (state) => {
@@ -26,8 +27,14 @@ export const useDealStore = defineStore("deal", {
     getCurrentDeal: (state) => {
       return state.current_deal;
     },
+    getActiveFilters: (state) => {
+      return state.activeFilters;
+    },
   },
   actions: {
+    setActiveFilters(filters) {
+      this.activeFilters = { ...(filters || {}) };
+    },
     async addDeal(deal_data) {
       // Optimistically add the deal to the local state
       const tempId = Date.now();
