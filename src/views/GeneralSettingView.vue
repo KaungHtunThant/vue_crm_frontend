@@ -546,7 +546,6 @@ import { useNotificationStore } from "@/stores/notificationStore";
 
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
-import defaultImage from "@/assets/new-nokta-logo.png";
 import { useI18n } from "vue-i18n";
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import EasyDataTable from "vue3-easy-data-table";
@@ -991,8 +990,8 @@ export default {
         googleCaptchaSecret: "",
         language: { label: "English", value: "en" },
         manualInstruction: "manual instruction",
-        appLogo: defaultImage,
-        favicon: defaultImage,
+        appLogo: require("@/assets/" + process.env.VUE_APP_LOGO_NAME),
+        favicon: require("@/assets/" + process.env.VUE_APP_LOGO_NAME),
       },
 
       currencies: [

@@ -5,7 +5,7 @@
     :options="ratings"
     label="name"
     track-by="id"
-    :placeholder="t('users-modal-add-placeholder-reportto')"
+    :placeholder="t('users-table-rating-norating')"
     :searchable="true"
     required
     @select="onChangeRating"
