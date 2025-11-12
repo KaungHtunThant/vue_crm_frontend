@@ -5,7 +5,7 @@ import { useAuthStore } from "./AuthStore";
 export const useSettingStore = defineStore("setting", {
   state: () => ({
     idleTimer: null,
-    idleTimeLimit: 1 * 60 * 1000, // 1 minute
+    idleTimeLimit: 15 * 60 * 1000, // 1 minute
   }),
   actions: {
     async requestOTP() {
