@@ -18,6 +18,7 @@
                 v-model="email"
                 placeholder="Enter Email"
                 required
+                @keydown.enter.prevent="otp_phase = true"
               />
               <p v-if="errors.email" class="text-danger fs-6">
                 {{ errors.email }}
@@ -35,6 +36,7 @@
                 class="form-control"
                 v-model="password"
                 placeholder="Enter Password"
+                @keydown.enter.prevent="otp_phase = true"
               />
               <p v-if="errors.password" class="text-danger fs-6">
                 {{ errors.password }}
