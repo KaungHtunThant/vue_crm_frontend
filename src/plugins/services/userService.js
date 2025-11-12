@@ -77,3 +77,12 @@ export const updateUserPackage = async (user_id, package_id) => {
 
 // Get All Roles
 export const getRoles = () => axios.get("/roles");
+
+export const getUserLoginLogs = (userId) => {
+  const token = Cookies.get("authToken");
+  return axios.get(`/users/${userId}/login-logs`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};

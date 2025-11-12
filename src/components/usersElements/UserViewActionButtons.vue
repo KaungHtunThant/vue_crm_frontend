@@ -6,6 +6,9 @@
     <button @click="getsalary" class="btn btn-link text-primary px-2">
       <i class="fas fa-file-invoice-dollar"></i>
     </button>
+    <button @click="getLoginDetails" class="btn btn-link text-primary px-2">
+      <i class="fas fa-history"></i>
+    </button>
     <button @click="removeItem" class="btn btn-link text-danger p-0">
       <i class="fas fa-trash"></i>
     </button>
@@ -23,7 +26,7 @@ export default {
       required: true,
     },
   },
-  emits: ["edit", "remove", "getsalary", "error"],
+  emits: ["edit", "remove", "getsalary", "error", "showLoginDetails"],
   methods: {
     async editItem() {
       const response = await getUserById(this.item.id);
@@ -51,6 +54,15 @@ export default {
     },
     removeItem() {
       this.$emit("remove", this.item.id);
+    },
+    async getLoginDetails() {
+      const res = await getUserById(this.item.id);
+      if (res.status !== 200) {
+        this.$emit("error", res.data.message);
+        return;
+      } else {
+        this.$emit("showLoginDetails", res.data.data);
+      }
     },
   },
 };

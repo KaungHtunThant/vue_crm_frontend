@@ -139,6 +139,7 @@
             :item="slotProps.data"
             @edit="editItem"
             @remove="confirmRemoveUser"
+            @showLoginDetails="handleShowLoginDetails"
           />
         </template>
       </Column>
@@ -166,6 +167,7 @@
       @apply-filters="applyFilters"
       @reset-filters="resetFilters"
     />
+    <userlog-details ref="userLogModalRef" />
   </div>
 </template>
 
@@ -174,6 +176,7 @@ import { ref, onMounted, onUnmounted, watch } from "vue";
 import UserViewAddEditUserModal from "@/components/modals/UserViewAddEditUserModal.vue";
 import UserViewActionButtons from "@/components/usersElements/UserViewActionButtons.vue";
 import UserViewStatusAccount from "@/components/usersElements/UserViewStatusAccount.vue";
+import UserlogDetails from "@/components/usersElements/UserlogDetails.vue";
 import UserViewFilterModal from "@/components/modals/UserViewFilterModal.vue";
 // import { useToast } from "vue-toastification";
 // import { showSuccess, showError } from "@/plugins/services/toastService";
@@ -203,6 +206,7 @@ export default {
     UserViewFilterModal,
     RatingSelector,
     PackageSelector,
+    UserlogDetails,
   },
 
   setup() {
@@ -212,6 +216,7 @@ export default {
     const ratingStore = useRatingStore();
     const packageStore = usePackageStore();
     const store = useUserStore();
+    const userLogModalRef = ref(null);
 
     // apply Filters
     const applyFilters = async (filters) => {
@@ -300,6 +305,17 @@ export default {
           timeout: 3000,
         });
         console.error("Delete User Is Failed:", error);
+      }
+    };
+
+    const handleShowLoginDetails = (user) => {
+      console.log("handleShowLoginDetails called with user:", user);
+      console.log("userLogModalRef.value:", userLogModalRef.value);
+      if (userLogModalRef.value) {
+        userLogModalRef.value.openModal(user);
+      } else {
+        console.error("userLogModalRef is null");
+        notificationStore.error("Unable to open login details modal");
       }
     };
 
@@ -424,6 +440,7 @@ export default {
       store,
       adminModalRef,
       filterModalRef,
+      userLogModalRef,
       fetchData,
       updateUserList,
       onToggleStatus,
@@ -437,6 +454,7 @@ export default {
       handleSearch,
       resetSearch,
       t,
+      handleShowLoginDetails,
     };
   },
 };
