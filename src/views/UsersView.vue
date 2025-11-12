@@ -115,6 +115,7 @@
             :item="slotProps.data"
             @edit="editItem"
             @remove="confirmRemoveUser"
+            @userLogModal="openUserLogModal"
           />
         </template>
       </Column>
@@ -142,6 +143,7 @@
       @apply-filters="applyFilters"
       @reset-filters="resetFilters"
     />
+    <user-view-user-log-modal ref="userLogModalRef" :user_id="selectedUserId" />
   </div>
 </template>
 
@@ -151,6 +153,7 @@ import UserViewAddEditUserModal from "@/components/modals/UserViewAddEditUserMod
 import UserViewActionButtons from "@/components/usersElements/UserViewActionButtons.vue";
 import UserViewStatusAccount from "@/components/usersElements/UserViewStatusAccount.vue";
 import UserViewFilterModal from "@/components/modals/UserViewFilterModal.vue";
+import UserViewUserLogModal from "@/components/modals/UserViewUserLogModal.vue";
 // import { useToast } from "vue-toastification";
 // import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
@@ -173,6 +176,7 @@ export default {
     UserViewStatusAccount,
     UserViewFilterModal,
     RatingSelector,
+    UserViewUserLogModal,
   },
 
   setup() {
@@ -182,7 +186,7 @@ export default {
     const ratingStore = useRatingStore();
     const store = useUserStore();
     const logo = require("@/assets/" + process.env.VUE_APP_LOGO_NAME);
-
+    const selectedUserId = ref(null);
     // apply Filters
     const applyFilters = async (filters) => {
       const mapped = {
@@ -232,6 +236,15 @@ export default {
     const openFilterModal = () => {
       if (filterModalRef.value) {
         filterModalRef.value.openFilterModal();
+      }
+    };
+
+    const userLogModalRef = ref(null);
+    const openUserLogModal = async (id) => {
+      selectedUserId.value = id;
+
+      if (userLogModalRef.value) {
+        userLogModalRef.value.openUserLogModal();
       }
     };
 
@@ -383,6 +396,9 @@ export default {
       t,
       formatRoleName,
       logo,
+      openUserLogModal,
+      userLogModalRef,
+      selectedUserId,
     };
   },
 };

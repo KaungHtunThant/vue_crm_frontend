@@ -6,6 +6,9 @@
     <button @click="removeItem" class="btn btn-link text-danger ps-2">
       <i class="fas fa-trash"></i>
     </button>
+    <button class="btn btn-link p-0" @click="openUserLogModal">
+      <i class="fas fa-history text-info"></i>
+    </button>
   </div>
 </template>
 
@@ -30,10 +33,13 @@ export default {
       editItem,
     };
   },
-  emits: ["edit", "remove"],
+  emits: ["edit", "remove", "userLogModal"],
   methods: {
     removeItem() {
       this.$emit("remove", this.item.id);
+    },
+    openUserLogModal() {
+      this.$emit("userLogModal", this.item.id);
     },
   },
 };

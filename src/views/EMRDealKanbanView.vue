@@ -33,6 +33,13 @@
             class="calendar-toolbar-controls d-flex align-items-center gap-2"
           >
             <button
+              class="btn btn-outline-danger"
+              style="min-width: 35px; padding: 3px 10px"
+              @click="openTrashDealModal"
+            >
+              <i class="fa-solid fa-trash"></i>
+            </button>
+            <button
               class="btn btn-primary text-white px-0 py-1"
               style="background-color: #515151; font-size: 16px"
               @click="goToNext"
