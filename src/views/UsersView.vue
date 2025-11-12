@@ -99,6 +99,20 @@
           </div>
         </template>
       </Column>
+      <Column
+        :header="t('users-table-header-commission-package')"
+        :style="{ width: '120px', textAlign: 'start' }"
+      >
+        <template #body="slotProps">
+          <div class="d-flex justify-content-center">
+            <package-selector
+              :package_id="slotProps.data.commission_package?.package_id"
+              :user_id="slotProps.data.id"
+              @package-changed="handlePackageChange"
+            />
+          </div>
+        </template>
+      </Column>
 
       <Column :header="t('users-table-header-status')">
         <template #body="slotProps">
@@ -115,6 +129,8 @@
             :item="slotProps.data"
             @edit="editItem"
             @remove="confirmRemoveUser"
+            @showLoginDetails="handleShowLoginDetails"
+            @getsalary="getUserSalary"
           />
         </template>
       </Column>
@@ -142,6 +158,7 @@
       @apply-filters="applyFilters"
       @reset-filters="resetFilters"
     />
+    <userlog-details ref="userLogModalRef" />
   </div>
 </template>
 
@@ -150,9 +167,8 @@ import { ref, onMounted, onUnmounted, watch } from "vue";
 import UserViewAddEditUserModal from "@/components/modals/UserViewAddEditUserModal.vue";
 import UserViewActionButtons from "@/components/usersElements/UserViewActionButtons.vue";
 import UserViewStatusAccount from "@/components/usersElements/UserViewStatusAccount.vue";
+import UserlogDetails from "@/components/usersElements/UserlogDetails.vue";
 import UserViewFilterModal from "@/components/modals/UserViewFilterModal.vue";
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 
 import Swal from "sweetalert2";
@@ -161,8 +177,13 @@ import Column from "primevue/column";
 import { useUserStore } from "@/stores/UserStore";
 import { useI18n } from "vue-i18n";
 import RatingSelector from "@/views/UserViewRatingSelector.vue";
+import PackageSelector from "@/views/UserCommissionPackageselector.vue";
 import { useRatingStore } from "@/stores/RatingStore";
-import { updateUserRating } from "@/plugins/services/userService";
+import { usePackageStore } from "@/stores/CommissionPackagesStore";
+import {
+  updateUserRating,
+  updateUserPackage,
+} from "@/plugins/services/userService";
 export default {
   name: "UsersView",
   components: {
@@ -173,6 +194,8 @@ export default {
     UserViewStatusAccount,
     UserViewFilterModal,
     RatingSelector,
+    PackageSelector,
+    UserlogDetails,
   },
 
   setup() {
@@ -180,8 +203,10 @@ export default {
     const notificationStore = useNotificationStore();
     // const toast = useToast();
     const ratingStore = useRatingStore();
+    const packageStore = usePackageStore();
     const store = useUserStore();
     const logo = require("@/assets/" + process.env.VUE_APP_LOGO_NAME);
+    const userLogModalRef = ref(null);
 
     // apply Filters
     const applyFilters = async (filters) => {
@@ -273,6 +298,17 @@ export default {
       }
     };
 
+    const handleShowLoginDetails = (user) => {
+      console.log("handleShowLoginDetails called with user:", user);
+      console.log("userLogModalRef.value:", userLogModalRef.value);
+      if (userLogModalRef.value) {
+        userLogModalRef.value.openModal(user);
+      } else {
+        console.error("userLogModalRef is null");
+        notificationStore.error("Unable to open login details modal");
+      }
+    };
+
     // reset Filter
     const resetFilters = async () => {
       try {
@@ -344,6 +380,36 @@ export default {
         ? name.trim().charAt(0).toUpperCase() + name.slice(1).replace(/-/g, " ")
         : "";
     };
+    const handlePackageChange = async (package_id, user_id) => {
+      try {
+        console.log("package_id", package_id);
+        const user = store.rows.find((u) => u.id === user_id);
+        if (user) {
+          user.package = { id: package_id };
+          store.updateUserLocal(user);
+        }
+        const response = await updateUserPackage(user_id, package_id);
+        if (response.status === 200) {
+          notificationStore.success(
+            response.data.message || t("success.updateUser"),
+            {
+              timeout: 3000,
+            }
+          );
+        } else {
+          notificationStore.error(
+            response.data.message || t("error.updateFailed"),
+            {
+              timeout: 3000,
+            }
+          );
+        }
+      } catch (error) {
+        notificationStore.error(error.message || t("error.updateFailed"), {
+          timeout: 3000,
+        });
+      }
+    };
 
     watch(
       () => store.search,
@@ -356,6 +422,7 @@ export default {
     onMounted(async () => {
       await fetchData(0, 10);
       ratingStore.fetchRatings();
+      packageStore.fetchPackages();
       window.addEventListener("contextmenu", handleRightClick);
     });
 
@@ -365,9 +432,11 @@ export default {
 
     return {
       handleRatingChange,
+      handlePackageChange,
       store,
       adminModalRef,
       filterModalRef,
+      userLogModalRef,
       fetchData,
       updateUserList,
       onToggleStatus,
@@ -383,6 +452,7 @@ export default {
       t,
       formatRoleName,
       logo,
+      handleShowLoginDetails,
     };
   },
 };

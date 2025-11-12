@@ -22,6 +22,8 @@ import CompleteCase from "@/views/CompleteCase.vue";
 import EMRDealKanbanView from "@/views/EMRDealKanbanView.vue";
 import TestKanbanView from "@/views/TestKanbanView.vue";
 import CrmDealAfterSalesView from "@/views/CrmDealAfterSalesView.vue";
+import UsersSalaryView from "@/views/UsersSalaryView.vue";
+import CommissionsPackagesView from "@/views/CommissionsPackagesView.vue";
 
 const routes = [
   {
@@ -255,6 +257,26 @@ const routes = [
       title: "EMR Kanban",
     },
     beforeEnter: requirePermission(PERMISSIONS.ROLES_SETTINGS),
+  },
+  {
+    path: "/users-salary/:userId",
+    name: "UsersSalaryView",
+    component: UsersSalaryView,
+    meta: {
+      requiresAuth: true,
+      title: "Users Salary",
+    },
+    beforeEnter: requirePermission(PERMISSIONS.USERS),
+  },
+  {
+    path: "/Commissions-Packages",
+    name: "CommissionsPackages",
+    component: CommissionsPackagesView,
+    meta: {
+      requiresAuth: true,
+      title: "Commissions Packages",
+    },
+    beforeEnter: requirePermission(PERMISSIONS.USERS),
   },
 ];
 

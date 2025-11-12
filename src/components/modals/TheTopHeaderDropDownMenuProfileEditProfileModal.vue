@@ -16,73 +16,65 @@
           <button
             type="button"
             class="btn-close"
+            @click="closeEditProfile"
             data-bs-dismiss="modal"
             aria-label="Close"
-            @click="closeEditProfile"
           ></button>
         </div>
+
         <form @submit.prevent="submitForm" ref="EditProfileForm">
           <div class="modal-body">
-            <!-- <profile-form :userData="userData" /> -->
-            <div class="mb-3">
-              <div class="my-2 text-center">
-                <img
-                  :src="
-                    userData.image ||
-                    require('@/assets/default-avatar-profile.webp')
-                  "
-                  class="img-fluid rounded"
-                  width="100"
-                  alt="Profile Image"
-                />
-              </div>
-              <input
-                type="file"
-                class="form-control"
-                id="profileImage"
-                name="image"
-                @change="updateImage"
+            <div class="text-center mb-3">
+              <img
+                :src="localImage"
+                class="img-fluid rounded"
+                width="100"
+                height="100"
+                style="object-fit: cover"
+                alt="Profile Image"
               />
             </div>
+
+            <input
+              type="file"
+              class="form-control mb-3"
+              accept="image/*"
+              @change="updateImage"
+            />
+
             <div class="mb-3">
-              <label for="name" class="form-label">{{
-                t("header-user-menu-item-profile-modal-label-name")
-              }}</label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Name in English"
-                name="name_en"
-                v-model="userData.name_en"
-              />
+              <label class="form-label">
+                {{ t("header-user-menu-item-profile-modal-label-name-en") }}
+              </label>
+              <input type="text" class="form-control" v-model="localNameEn" />
             </div>
+
             <div class="mb-3">
-              <label for="name" class="form-label">{{
-                t("header-user-menu-item-profile-modal-label-name")
-              }}</label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Name in Arabic"
-                name="name_ar"
-                v-model="userData.name_ar"
-              />
-            </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">{{
-                t("header-user-menu-item-profile-modal-label-email")
-              }}</label>
-              <input
-                type="email"
-                class="form-control"
-                placeholder="Email"
-                name="email"
-                v-model="userData.email"
-                readonly
-              />
+              <label class="form-label">
+                {{ t("header-user-menu-item-profile-modal-label-name-ar") }}
+              </label>
+              <input type="text" class="form-control" v-model="localNameAr" />
             </div>
           </div>
-          <profile-buttons :loading="loading" @close="closeEditProfile" />
+
+          <div class="modal-footer d-flex justify-content-between">
+            <button type="submit" class="btn btn-success" :disabled="loading">
+              <span v-if="loading">
+                <i class="fas fa-spinner fa-spin"></i> {{ t("modals.editing") }}
+              </span>
+              <span v-else>
+                {{ t("header-user-menu-item-profile-modal-button-confirm") }}
+              </span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-bs-dismiss="modal"
+              @click="closeEditProfile"
+            >
+              {{ t("buttons.close") }}
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -91,54 +83,79 @@
 
 <script>
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
-import ProfileButtons from "@/components/editProfileElements/TheTopHeaderDropDownMenuProfileEditProfileModalButtonsItems.vue";
 import { useNotificationStore } from "@/stores/notificationStore";
-
 import { useI18n } from "vue-i18n";
 import { useUserStore } from "@/stores/UserStore";
 export default {
   name: "TheTopHeaderDropDownMenuProfileEditProfileModal",
-  components: { ProfileButtons },
+
   setup() {
     const { t } = useI18n();
     const notificationStore = useNotificationStore();
-    // const toast = useToast();
-    return { t, notificationStore };
+    const userStore = useUserStore();
+    return { t, notificationStore, userStore };
   },
+
   data() {
     return {
       modalInstance: null,
       loading: false,
-      userStore: null,
-      userData: {
-        name_en: "",
-        name_ar: "",
-        email: "",
-        image: null,
-      },
-      image_bin: null,
+      localNameEn: "",
+      localNameAr: "",
+      localImage: require("@/assets/default-avatar-profile.webp"),
+      imageFile: null,
+      userData: null,
     };
   },
+
   methods: {
     closeEditProfile() {
       try {
         const modal = document.getElementById("EditProfileModal");
         const modalInstance = Modal.getInstance(modal);
-        if (modalInstance) {
-          modalInstance.hide();
-          document.querySelector(".modal-backdrop")?.remove();
-          document.body.classList.remove("modal-open");
-        } else {
-          console.log("No modal instance found for EditProfileModal", modal);
-        }
+        if (modalInstance) modalInstance.hide();
+        document.querySelectorAll(".modal-backdrop").forEach((b) => b.remove());
+        document.body.classList.remove("modal-open");
       } catch (error) {
         this.notificationStore.error(this.t("error.closeModal"), {
           timeout: 3000,
-          id: "edit-profile-close-error",
-          singleton: true,
         });
       }
     },
+
+    async fetchUserData() {
+      try {
+        const response = await this.userStore.fetchCurrentUser();
+        if (response.status !== 200) throw new Error(response.data.message);
+
+        this.userData = response.data.data;
+        this.localNameEn = this.userData.name_en || "";
+        this.localNameAr = this.userData.name_ar || "";
+        this.localImage =
+          this.userData.image && this.userData.image.trim() !== ""
+            ? this.userData.image
+            : require("@/assets/default-avatar-profile.webp");
+      } catch (error) {
+        this.notificationStore.error(error.message, { timeout: 3000 });
+      }
+    },
+
+    updateImage(event) {
+      const file = event.target.files[0];
+      if (file?.type?.startsWith("image/")) {
+        this.imageFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.localImage = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        this.notificationStore.error(this.t("errors.invalidImageFormat"), {
+          timeout: 3000,
+        });
+      }
+    },
+
     async submitForm() {
       try {
         const id = this.userData.id;
@@ -159,26 +176,12 @@ export default {
         });
         this.closeEditProfile();
       } catch (error) {
-        this.notificationStore.error(error.message, {
-          timeout: 3000,
-          id: "edit-profile-submit-error",
-          singleton: true,
-        });
+        console.error("Error updating user profile:", error);
+        this.notificationStore.error(
+          error.message || this.t("errors.updateFailed")
+        );
       } finally {
         this.loading = false;
-      }
-    },
-    updateImage(event) {
-      const file = event.target.files[0];
-      if (file?.type?.startsWith("image/")) {
-        this.image_bin = file;
-        console.log("Selected image file:", this.image_bin);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.userData.image = e.target.result;
-          this.$forceUpdate();
-        };
-        reader.readAsDataURL(file);
       }
     },
   },

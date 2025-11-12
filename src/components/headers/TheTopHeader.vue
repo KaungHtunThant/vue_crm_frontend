@@ -242,6 +242,26 @@
                   </div>
                 </div>
               </router-link>
+              <router-link
+                v-if="
+                  permissionStore.hasPermission(PERMISSIONS.GENERAL_SETTINGS)
+                "
+                to="/Commissions-Packages"
+                class="text-decoration-none text-black mb-2"
+                @click="closeDropdown"
+              >
+                <div class="dropdown-link">
+                  <div
+                    class="sidebar-item d-flex align-items-center"
+                    :title="$t('sidebar-nav-item-commissions-packages')"
+                  >
+                    <i class="fa-solid fa-money-check-dollar fs-5 me-2"></i>
+                    <span>{{
+                      $t("sidebar-nav-item-commissions-packages")
+                    }}</span>
+                  </div>
+                </div>
+              </router-link>
             </div>
           </transition>
         </div>
@@ -280,6 +300,16 @@
           class="btnHeaderBg px-3 text-white d-flex justify-content-center align-items-center rounded-1"
         >
           <i class="fa-solid fa-calendar-days"></i>
+        </div>
+        <div
+          v-if="user_role == 'sales'"
+          class="col-3 btnHeaderBg text-white d-flex justify-content-center align-items-center rounded-1 mx-2"
+        >
+          <i class="fa-solid fa-sack-dollar"></i>
+          <span class="px-2">
+            {{ salaryInfo.finalBasicPay }} +
+            {{ salaryInfo.calculatedCommission }}
+          </span>
         </div>
       </div>
       <div class="col-4 d-flex justify-content-end align-items-center">
@@ -335,6 +365,7 @@ import Cookies from "js-cookie";
 import { changeLanguage } from "@/i18n";
 import { useLoadingStore } from "@/plugins/loadingStore";
 import { useKanbanStore } from "@/stores/KanbanStore";
+import { calculatecommission } from "@/plugins/services/salaryService";
 import ScoureUser from "@/components/headers/ScoureUser.vue";
 import {
   ref,
@@ -367,6 +398,12 @@ export default {
       userImage: Cookies.get("image") || "",
       currentLanguage: localStorage.getItem("locale") || "en",
       showDropdown: false,
+      salaryInfo: {
+        finalBasicPay: 0,
+        calculatedCommission: 0,
+        totalSalary: 0,
+        totalDeductions: 0,
+      },
     };
   },
   setup() {
@@ -487,6 +524,27 @@ export default {
         this.activeMenu = menu;
       }
     },
+    async CommissionAndSalary() {
+      const userId = Cookies.get("user_id");
+      const commission = await calculatecommission(userId);
+      if (commission) {
+        const salaryData = commission?.data?.data?.original?.data;
+        console.log(salaryData);
+        return {
+          finalBasicPay: salaryData?.basic_pay || 0,
+          calculatedCommission: salaryData?.calculated_commission || 0,
+          totalSalary: salaryData?.total_salary || 0,
+          totalDeductions: salaryData?.total_deductions || 0,
+        };
+      } else {
+        return {
+          finalBasicPay: 0,
+          calculatedCommission: 0,
+          totalSalary: 0,
+          totalDeductions: 0,
+        };
+      }
+    },
 
     handleClickOutside(event) {
       if (
@@ -528,9 +586,10 @@ export default {
       document.removeEventListener("mousedown", this.handleClickOutside);
     },
   },
-  mounted() {
+  async mounted() {
     document.addEventListener("click", this.handleClickOutside);
     this.currentLanguage = localStorage.getItem("locale") || "en";
+    this.salaryInfo = await this.CommissionAndSalary();
   },
   beforeUnmount() {
     document.removeEventListener("click", this.handleClickOutside);
@@ -557,6 +616,7 @@ export default {
         "/stage-settings": "fa-solid fa-sliders",
         "/patient-registration": "fa-solid fa-user-group",
         "/broadcast-settings": "fa-solid fa-broadcast-tower",
+        "/commissions-packages": "fa-solid fa-money-check-dollar",
       };
       return icons[route] || "fa-solid fa-bars";
     },
