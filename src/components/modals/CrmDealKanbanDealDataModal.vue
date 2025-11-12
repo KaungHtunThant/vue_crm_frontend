@@ -302,7 +302,11 @@
                       ]"
                       v-model="customerData.phone"
                       :placeholder="t('kanban-modal-edit-placeholder-phone')"
-                      :readonly="!isEditMode"
+                      :readonly="
+                        !permissionStore.hasPermission(
+                          PERMISSIONS.EDIT_CONTACT_PHONE
+                        ) || !isEditMode
+                      "
                     />
                     <button
                       :class="['btn px-3 fs-5 btn-primary']"
