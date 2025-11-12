@@ -1,10 +1,11 @@
 import { defineStore } from "pinia";
 import { generateOTP } from "@/plugins/services/settingService";
-import { useAuthStore } from "./authStore";
+import { useAuthStore } from "./AuthStore";
 
 export const useSettingStore = defineStore("setting", {
   state: () => ({
-    is_idle: false,
+    idleTimer: null,
+    idleTimeLimit: 1 * 60 * 1000, // 1 minute
   }),
   actions: {
     async requestOTP() {
@@ -18,15 +19,25 @@ export const useSettingStore = defineStore("setting", {
       };
     },
     setupUserActivityListeners() {
+      console.log("activity listeners set up");
       ["mousemove", "keydown", "mousedown", "touchstart"].forEach((event) => {
-        window.addEventListener(event, this.resetIdleTimer);
+        window.addEventListener(event, this.startIdleTimer);
       });
     },
-    resetIdleTimer() {
-      if (this.is_idle) {
-        this.is_idle = false;
+    startIdleTimer() {
+      console.log("User activity detected, resetting idle timer");
+      this.clearIdleTimer();
+      this.idleTimer = setTimeout(() => {
+        console.log("User has been idle for too long, logging out");
         const authStore = useAuthStore();
-        authStore.logout();
+        authStore.initLogout();
+      }, this.idleTimeLimit);
+    },
+    clearIdleTimer() {
+      console.log("Clearing idle timer");
+      if (this.idleTimer) {
+        clearTimeout(this.idleTimer);
+        this.idleTimer = null;
       }
     },
   },

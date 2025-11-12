@@ -102,6 +102,7 @@ import { usePermissionStore } from "@/stores/PermissionStore";
 import { useRouter } from "vue-router";
 import { initializeTranslations } from "@/i18n";
 import { useLoadingStore } from "@/plugins/loadingStore";
+import { useSettingStore } from "@/stores/SettingStore";
 
 export default {
   name: "LoginView",
@@ -109,11 +110,13 @@ export default {
     const permissionStore = usePermissionStore();
     const router = useRouter();
     const loadingStore = useLoadingStore();
+    const settingStore = useSettingStore();
 
     return {
       permissionStore,
       router,
       loadingStore,
+      settingStore,
     };
   },
 
@@ -188,6 +191,8 @@ export default {
           document.body.style.backgroundSize = "cover";
           document.body.style.backgroundPosition = "center";
           this.$router.replace(defaultRedirect);
+          this.settingStore.startIdleTimer();
+          this.settingStore.setupUserActivityListeners();
         } else {
           this.errors.message = "Invalid email or password.";
         }

@@ -112,6 +112,7 @@ import {
   watch,
 } from "vue";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { useAuthStore } from "@/stores/AuthStore";
 
 export default {
   name: "TheTopHeaderDropDownMenuProfile",
@@ -127,6 +128,7 @@ export default {
     const notificationStore = useNotificationStore();
     const isNotificationsEnabled = ref(notificationStore.enabled);
     const { t } = useI18n();
+    const authStore = useAuthStore();
 
     const handleNotificationSwitchClick = async () => {
       try {
@@ -186,6 +188,7 @@ export default {
       handleNotificationSwitchClick,
       handleSwitchClick,
       notificationSwitch,
+      authStore,
     };
   },
   data() {
@@ -213,10 +216,7 @@ export default {
   methods: {
     async handleLogout() {
       try {
-        console.log(
-          "Logging out initiated from TheTopHeaderDropDownMenuProfile.vue"
-        );
-        this.$emit("logout");
+        this.authStore.initLogout();
       } catch (error) {
         console.error("Error logging out:", error);
         this.notificationStore.error(this.t("topHeader.logoutError"), {

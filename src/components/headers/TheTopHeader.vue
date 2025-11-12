@@ -318,7 +318,6 @@
                 <menu-profile
                   v-if="activeMenu === 'profile'"
                   :style="listProfileStyle"
-                  @logout="$emit('logout')"
                 />
               </transition>
             </button>

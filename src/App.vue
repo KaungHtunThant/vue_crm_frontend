@@ -14,7 +14,7 @@
         class="row g-0 flex-nowrap app-layout"
       >
         <div :class="headerClass" class="ms-2 main-content">
-          <the-top-header @logout="handleLogout" />
+          <the-top-header />
           <div class="content">
             <router-view />
           </div>
@@ -39,6 +39,7 @@ import { useLoadingStore } from "@/plugins/loadingStore";
 import { getBackgroundId } from "@/plugins/services/backgroundService";
 import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import { useAuthStore } from "./stores/AuthStore";
+import { useSettingStore } from "./stores/SettingStore";
 
 export default {
   name: "App",
@@ -53,11 +54,13 @@ export default {
     const loadingStore = useLoadingStore();
     const permissionStore = usePermissionStore();
     const authStore = useAuthStore();
+    const settingStore = useSettingStore();
 
     return {
       loadingStore,
       permissionStore,
       authStore,
+      settingStore,
     };
   },
 
@@ -102,11 +105,6 @@ export default {
       this.$router.push("/crm-kanban");
     },
 
-    async handleLogout() {
-      console.log("Logging out initiated from App.vue");
-      this.authStore.initLogout();
-    },
-
     async loadSavedBackground() {
       try {
         const bg_id = localStorage.getItem("backgroundImage_id");
@@ -135,6 +133,8 @@ export default {
       if (!token && this.$route.path !== "/login") {
         this.$router.push("/login");
       } else if (token && this.$route.path === "/login") {
+        this.settingStore.startIdleTimer();
+        this.settingStore.setupUserActivityListeners();
         this.$router.push("/dashboard");
       }
     },
