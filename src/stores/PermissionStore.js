@@ -40,6 +40,7 @@ export const PERMISSIONS = {
   IMPORT_DEAL: "import-deal",
   AFTER_SALES_KANBAN: "view-aftersales-kanban-page",
   EDIT_CONTACT_PHONE: "edit-contact-phone",
+  GENERATE_OTP: "generate-otp",
 };
 
 export const usePermissionStore = defineStore("permissions", {

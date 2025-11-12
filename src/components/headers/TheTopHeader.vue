@@ -316,6 +316,16 @@
         <div
           class="user-info d-flex justify-content-end align-items-center h-100"
         >
+          <button
+            v-if="permissionStore.hasPermission(PERMISSIONS.GENERATE_OTP)"
+            class="btnHeaderBg btn text-light me-2"
+            @click="handleOTPGenerate"
+          >
+            <span v-show="otp_code">{{ otp_code }}</span>
+            <span v-show="!otp_code">{{
+              $t("header-generate-otp-button")
+            }}</span>
+          </button>
           <div
             class="btnHeaderBg userImg d-flex justify-content-center align-items-center px-2 rounded-1 me-2"
           >
@@ -380,6 +390,7 @@ import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import { useI18n } from "vue-i18n";
 // import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { useSettingStore } from "@/stores/SettingStore";
 
 export default {
   name: "TheTopHeader",
@@ -409,11 +420,46 @@ export default {
   setup() {
     const notificationStore = useNotificationStore();
     const kanbanStore = useKanbanStore();
+    const settingStore = useSettingStore();
     const hasNewChanges = computed(() => kanbanStore.hasNewChanges);
     const user_role = Cookies.get("user_role");
     const loadingStore = useLoadingStore();
     const currentTime = ref("");
     const { t, locale } = useI18n();
+    const otp_code = ref(null);
+    const handleOTPGenerate = async () => {
+      try {
+        if (otp_code.value) {
+          await navigator.clipboard.writeText(otp_code.value);
+          notificationStore.success("OTP copied to clipboard", {
+            timeout: 3000,
+          });
+          return;
+        }
+        const response = await settingStore.generateOTP();
+        if (response.status) {
+          otp_code.value = response.otp;
+          await navigator.clipboard.writeText(otp_code.value);
+          notificationStore.success(response.message, {
+            timeout: 3000,
+          });
+          notificationStore.success("OTP copied to clipboard", {
+            timeout: 3000,
+          });
+          setTimeout(() => {
+            otp_code.value = null;
+            notificationStore.success("OTP expired", {
+              timeout: 3000,
+            });
+          }, 30000); // Clear OTP after 30 seconds
+        } else {
+          throw new Error(response.message);
+        }
+      } catch (error) {
+        notificationStore.error(error.message, { timeout: 3000 });
+      }
+    };
+
     const updateTime = () => {
       const now = new Date();
 
@@ -490,6 +536,8 @@ export default {
       t,
       locale,
       notificationStore,
+      handleOTPGenerate,
+      otp_code,
     };
   },
   methods: {
