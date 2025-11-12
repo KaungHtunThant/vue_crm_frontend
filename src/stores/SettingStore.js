@@ -19,22 +19,18 @@ export const useSettingStore = defineStore("setting", {
       };
     },
     setupUserActivityListeners() {
-      console.log("activity listeners set up");
       ["mousemove", "keydown", "mousedown", "touchstart"].forEach((event) => {
         window.addEventListener(event, this.startIdleTimer);
       });
     },
     startIdleTimer() {
-      console.log("User activity detected, resetting idle timer");
       this.clearIdleTimer();
       this.idleTimer = setTimeout(() => {
-        console.log("User has been idle for too long, logging out");
         const authStore = useAuthStore();
         authStore.initLogout();
       }, this.idleTimeLimit);
     },
     clearIdleTimer() {
-      console.log("Clearing idle timer");
       if (this.idleTimer) {
         clearTimeout(this.idleTimer);
         this.idleTimer = null;
