@@ -30,24 +30,20 @@
 </template>
 
 <script>
-// import { ref, onMounted } from "vue";
-import axiosInstance from "@/plugins/axios";
 import TheTopHeader from "@/components/headers/TheTopHeader.vue";
-// import TheLeftSidebar from "@/components/TheLeftSidebar.vue";
 import LoginView from "@/views/LoginView.vue";
 import Cookies from "js-cookie";
 import TheLoaderComponent from "@/components/TheLoaderComponent.vue";
 import TheNewsBar from "@/components/TheNewsBar.vue";
 import { useLoadingStore } from "@/plugins/loadingStore";
-import { logout } from "@/plugins/services/authService";
 import { getBackgroundId } from "@/plugins/services/backgroundService";
 import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
+import { useAuthStore } from "./stores/AuthStore";
 
 export default {
   name: "App",
   components: {
     TheTopHeader,
-    // TheLeftSidebar,
     LoginView,
     TheLoaderComponent,
     TheNewsBar,
@@ -56,9 +52,12 @@ export default {
   setup() {
     const loadingStore = useLoadingStore();
     const permissionStore = usePermissionStore();
+    const authStore = useAuthStore();
+
     return {
       loadingStore,
       permissionStore,
+      authStore,
     };
   },
 
@@ -104,20 +103,8 @@ export default {
     },
 
     async handleLogout() {
-      await logout();
-      Cookies.remove("authToken");
-      Cookies.remove("name");
-      Cookies.remove("image");
-      Cookies.remove("email");
-      Cookies.remove("user_role");
-      Cookies.remove("user_id");
-      localStorage.removeItem("backgroundImage");
-      localStorage.removeItem("backgroundImage_id");
-      localStorage.removeItem("locale");
-      localStorage.removeItem("userPermissions");
-      this.isLoggedIn = false;
-      delete axiosInstance.defaults.headers["Authorization"];
-      this.$router.push("/login");
+      console.log("Logging out initiated from App.vue");
+      this.authStore.initLogout();
     },
 
     async loadSavedBackground() {

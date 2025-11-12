@@ -213,6 +213,9 @@ export default {
   methods: {
     async handleLogout() {
       try {
+        console.log(
+          "Logging out initiated from TheTopHeaderDropDownMenuProfile.vue"
+        );
         this.$emit("logout");
       } catch (error) {
         console.error("Error logging out:", error);

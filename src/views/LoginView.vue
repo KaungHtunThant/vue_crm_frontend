@@ -10,7 +10,7 @@
             <p v-if="errors.message" class="text-danger text-center">
               {{ errors.message }}
             </p>
-            <div class="mb-3">
+            <div class="mb-3" v-show="!otp_phase">
               <label>Email <span class="text-danger">*</span></label>
               <input
                 type="email"
@@ -23,7 +23,7 @@
                 {{ errors.email }}
               </p>
             </div>
-            <div class="mb-3">
+            <div class="mb-3" v-show="!otp_phase">
               <div
                 class="d-flex justify-content-between align-items-center pb-1"
               >
@@ -40,8 +40,29 @@
                 {{ errors.password }}
               </p>
             </div>
-
-            <div class="mb-3">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button
+                v-show="otp_phase"
+                type="button"
+                class="btn btn-link mb-4 end"
+                @click="otp_phase = false"
+              >
+                <i class="fas fa-arrow-left"></i> Back to Login
+              </button>
+            </div>
+            <div class="mb-3" v-show="otp_phase">
+              <label>OTP <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                v-model="otp_code"
+                placeholder="Enter OTP"
+              />
+              <p v-if="errors.otp_code" class="text-danger fs-6">
+                {{ errors.otp_code }}
+              </p>
+            </div>
+            <!-- <div class="mb-3" v-show="otp_phase">
               <input
                 type="checkbox"
                 class="form-check-input shadow-none"
@@ -51,10 +72,19 @@
               <label class="form-check-label ms-2" for="rememberMe">
                 Remember Me
               </label>
-            </div>
-            <div class="text-center mb-2">
-              <button type="submit" class="btn w-100 bg-black text-white">
+            </div> -->
+            <div class="text-center mb-2" v-show="!otp_phase">
+              <button
+                type="button"
+                class="btn w-100 bg-black text-white"
+                @click="handleOTP"
+              >
                 Login
+              </button>
+            </div>
+            <div class="text-center mb-2" v-show="otp_phase">
+              <button type="submit" class="btn w-100 bg-black text-white">
+                Submit OTP
               </button>
             </div>
           </form>
@@ -99,10 +129,16 @@ export default {
         password: "",
         message: "",
       },
+      otp_code: "",
+      otp_phase: false,
     };
   },
 
   methods: {
+    async handleOTP() {
+      this.otp_phase = true;
+    },
+
     async handleLogin() {
       try {
         this.loadingStore.startLoading();
@@ -113,6 +149,7 @@ export default {
         const response = await login({
           email: this.email,
           password: this.password,
+          otp_code: this.otp_code,
         });
 
         if (response.data.token) {
@@ -157,8 +194,8 @@ export default {
       } catch (error) {
         console.error("Login failed:", error);
         this.errors.message = "Login failed. Please try again.";
-        this.email = "";
-        this.password = "";
+        this.otp_code = "";
+        this.otp_phase = false;
       }
       this.loadingStore.stopLoading();
     },
@@ -168,6 +205,7 @@ export default {
         email: "",
         password: "",
         message: "",
+        otp_code: "",
       };
     },
 

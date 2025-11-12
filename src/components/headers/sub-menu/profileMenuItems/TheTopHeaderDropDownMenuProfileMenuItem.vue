@@ -1,6 +1,6 @@
 <template>
   <li>
-    <button type="button" class="btn dropdown-item" @click="$emit('click')">
+    <button type="button" class="btn dropdown-item">
       <span class="dropdown-icon me-2 text-secondary">
         <i :class="`fa-solid ${icon}`"></i>
       </span>
