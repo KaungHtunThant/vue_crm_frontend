@@ -323,7 +323,7 @@
           >
             <span v-show="otp_code">{{ otp_code }}</span>
             <span v-show="!otp_code">{{
-              $t("header-generate-otp-button")
+              $t("header-button-generate-otp")
             }}</span>
           </button>
           <div
