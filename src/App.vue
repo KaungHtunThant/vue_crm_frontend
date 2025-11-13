@@ -57,6 +57,7 @@ export default {
     const settingStore = useSettingStore();
 
     return {
+      PERMISSIONS,
       loadingStore,
       permissionStore,
       authStore,
@@ -133,8 +134,10 @@ export default {
       if (!token && this.$route.path !== "/login") {
         this.$router.push("/login");
       } else if (token && this.$route.path === "/login") {
-        this.settingStore.startIdleTimer();
-        this.settingStore.setupUserActivityListeners();
+        if (!this.permissionStore.hasPermission(PERMISSIONS.STAY_IDLE)) {
+          this.settingStore.startIdleTimer();
+          this.settingStore.setupUserActivityListeners();
+        }
         this.$router.push("/dashboard");
       }
     },

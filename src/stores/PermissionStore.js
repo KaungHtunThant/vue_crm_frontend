@@ -41,6 +41,7 @@ export const PERMISSIONS = {
   AFTER_SALES_KANBAN: "view-aftersales-kanban-page",
   EDIT_CONTACT_PHONE: "edit-contact-phone",
   GENERATE_OTP: "generate-otp",
+  STAY_IDLE: "stay-idle",
 };
 
 export const usePermissionStore = defineStore("permissions", {

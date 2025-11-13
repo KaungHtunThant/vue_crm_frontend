@@ -100,7 +100,7 @@
 import { login } from "@/plugins/services/authService";
 import { getBackgroundId } from "@/plugins/services/backgroundService";
 import Cookies from "js-cookie";
-import { usePermissionStore } from "@/stores/PermissionStore";
+import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import { useRouter } from "vue-router";
 import { initializeTranslations } from "@/i18n";
 import { useLoadingStore } from "@/plugins/loadingStore";
@@ -115,6 +115,7 @@ export default {
     const settingStore = useSettingStore();
 
     return {
+      PERMISSIONS,
       permissionStore,
       router,
       loadingStore,
@@ -193,8 +194,10 @@ export default {
           document.body.style.backgroundSize = "cover";
           document.body.style.backgroundPosition = "center";
           this.$router.replace(defaultRedirect);
-          this.settingStore.startIdleTimer();
-          this.settingStore.setupUserActivityListeners();
+          if (!this.permissionStore.hasPermission(PERMISSIONS.STAY_IDLE)) {
+            this.settingStore.startIdleTimer();
+            this.settingStore.setupUserActivityListeners();
+          }
         } else {
           this.errors.message = "Invalid email or password.";
         }
