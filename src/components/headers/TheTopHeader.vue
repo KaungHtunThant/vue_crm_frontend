@@ -451,7 +451,7 @@ export default {
             notificationStore.success("OTP expired", {
               timeout: 3000,
             });
-          }, 30000); // Clear OTP after 30 seconds
+          }, 60000); // Clear OTP after 1 minute
         } else {
           throw new Error(response.message);
         }
