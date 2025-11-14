@@ -83,7 +83,7 @@ export const getRoles = () => axios.get("/roles");
 
 export const getUserLoginLogs = (userId) => {
   const token = Cookies.get("authToken");
-  return axios.get(`/users/${userId}/login-logs`, {
+  return axios.get(`/logs/login-logs/${userId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
