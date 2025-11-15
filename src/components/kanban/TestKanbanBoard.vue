@@ -36,6 +36,7 @@ import moveCardSound from "@/assets/move-card.wav";
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import TestKanbanStage from "@/components/kanban/TestKanbanStage.vue";
 import ScrollButton from "@/components/kanban/TestScrollButton.vue";
+import { useBoardStore } from "@/stores/BoardStore";
 
 export default {
   name: "TestKanbanBoard",
@@ -47,6 +48,8 @@ export default {
     const notificationStore = useNotificationStore();
     const moveSound = new Audio(moveCardSound);
     const stage_store = useStageStore();
+    const board_store = useBoardStore();
+    const currentBoard = computed(() => board_store.getCurrentBoard);
     const stages = computed(() => stage_store.getAllStages);
     const nonChildStages = computed(() => stage_store.getNonChildStages);
     const dynamicStages = computed(() => stage_store.getDynamicStages);
@@ -101,7 +104,7 @@ export default {
         resizeObserver.observe(dealsContainer.value);
       }
       stage_store
-        .fetchStages()
+        .fetchStagesByBoardId(currentBoard.value.id)
         .then(() => {
           nonChildStages.value
             .filter((stage) => stage.deals_count > 0)
