@@ -101,6 +101,9 @@ import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
 import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";
 import { Modal } from "bootstrap";
 import { showDeal } from "@/plugins/services/dealService";
+import { computed } from "vue";
+import { useStageStore } from "@/stores/StageStore";
+import { useBoardStore } from "@/stores/BoardStore";
 
 export default {
   name: "EmrDealKanbanView",
@@ -114,44 +117,13 @@ export default {
     const notificationStore = useNotificationStore();
     // const toast = useToast();
     const { t } = useI18n();
+    const board_store = useBoardStore();
+    const currentBoard = computed(() => board_store.getCurrentBoard);
     const fullCalendarRef = ref(null);
     const currentView = ref("dayGridMonth");
     const calendarTitle = ref("");
-    const stages = ref([
-      {
-        id: 1,
-        name: "مريض جديد",
-        color_code: "#007bff",
-        icon: "user-plus",
-        deal_count: 1,
-        deals: [{ id: 101, name: "محمد أحمد", stage_id: 1, tags: [] }],
-        filterable_tags: [],
-        parent_id: null,
-        has_children: false,
-      },
-      {
-        id: 2,
-        name: "قيد العلاج",
-        color_code: "#ffc107",
-        icon: "heartbeat",
-        deal_count: 1,
-        deals: [{ id: 102, name: "هيثم علي", stage_id: 2, tags: [] }],
-        filterable_tags: [],
-        parent_id: null,
-        has_children: false,
-      },
-      {
-        id: 3,
-        name: "أتم العلاج",
-        color_code: "#28a745",
-        icon: "check-circle",
-        deal_count: 1,
-        deals: [{ id: 103, name: "خالد يوسف", stage_id: 3, tags: [] }],
-        filterable_tags: [],
-        parent_id: null,
-        has_children: false,
-      },
-    ]);
+    const stage_store = useStageStore();
+    const stages = computed(() => stage_store.getAllStages);
     const calendarEvents = ref([]);
     const selectedDeal = ref(null);
     const logs = ref([]);
@@ -400,6 +372,10 @@ export default {
       return title;
     }
     onMounted(() => {
+      board_store.fetchAllBoards();
+      board_store.setCurrentBoardWithSlug("emr");
+      stage_store.fetchAllStages();
+      stage_store.fetchStagesByBoardId(currentBoard.value.id);
       window.addEventListener("contextmenu", handleRightClick);
       nextTick(() => {
         const draggables = document.querySelectorAll(".deal-card-calendar");

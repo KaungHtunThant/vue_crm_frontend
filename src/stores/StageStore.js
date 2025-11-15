@@ -2,6 +2,7 @@ import {
   createStage,
   deleteStage,
   getAllStages,
+  getStagesByBoardId,
   updateStage,
 } from "@/plugins/services/stageService";
 import { defineStore } from "pinia";
@@ -41,6 +42,10 @@ export const useStageStore = defineStore("stage", {
       return state.stages.filter(
         (stage) => stage.parent_id !== null && !stage.is_dynamic
       );
+    },
+    getStagesWithBoardId: (state) => {
+      return (board_id) =>
+        state.stages.filter((stage) => stage.board_id === board_id);
     },
   },
   actions: {
@@ -152,6 +157,18 @@ export const useStageStore = defineStore("stage", {
     },
     getStageById(stage_id) {
       return this.stages.find((stage) => stage.id === stage_id);
+    },
+    async fetchStagesByBoardId(board_id) {
+      const response = await getStagesByBoardId(board_id);
+      if (response.status !== 200) {
+        throw new Error("Failed to fetch stages");
+      }
+      this.stages = response.data.data.map((stage) => ({
+        ...stage,
+        hidden: stage.parent_id !== null,
+        merge_view: false,
+        minimized: false,
+      }));
     },
   },
 });

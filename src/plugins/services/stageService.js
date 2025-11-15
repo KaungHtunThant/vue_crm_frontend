@@ -46,3 +46,7 @@ export const fetchTasksCountByStageName = (stageName) => {
     },
   });
 };
+
+export const getStagesByBoardId = (board_id) => {
+  return axios.get(`/stages/board/${board_id}`);
+};
