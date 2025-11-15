@@ -1,0 +1,22 @@
+import { payingLevels } from "@/plugins/services/salaryService";
+import { defineStore } from "pinia";
+
+export const usePackageStore = defineStore("package", {
+  state: () => ({
+    packages: [],
+  }),
+  getters: {
+    getPackages: (state) => state.packages,
+  },
+  actions: {
+    async fetchPackages() {
+      try {
+        const response = await payingLevels();
+        console.log(response);
+        this.packages = response.data.data;
+      } catch (error) {
+        console.error("Error fetching packages:", error);
+      }
+    },
+  },
+});
