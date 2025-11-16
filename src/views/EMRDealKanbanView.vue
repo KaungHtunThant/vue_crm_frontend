@@ -69,39 +69,21 @@
       </div>
     </div>
   </div>
-  <deal-data-card
-    v-if="selectedDeal"
-    :key="selectedDeal.id"
-    :deal="selectedDeal"
-    :logs="logs"
-    :comments="comments"
-    :tasks="tasks"
-    :packages="packages"
-    :stages="stages"
-    :currentStageId="selectedDeal.stage_id"
-    @close="selectedDeal = null"
-  />
 </template>
 
 <script>
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
-// import { useToast } from "vue-toastification";
-// import {
-//   showSuccess,
-//   showError,
-//   showInfo,
-// } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
-import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";
 import { Modal } from "bootstrap";
-import { showDeal } from "@/plugins/services/dealService";
+import { addViewCount, showDeal } from "@/plugins/services/dealService";
 import { getEmrKanban } from "@/plugins/services/kanbanService";
+import { createTask, getTasksByDealId } from "@/plugins/services/taskService";
 
 export default {
   name: "EmrDealKanbanView",
@@ -109,7 +91,6 @@ export default {
     CrmKanbanHeader,
     CrmKanbanKanbanBoard,
     FullCalendar,
-    DealDataCard,
   },
   setup() {
     const notificationStore = useNotificationStore();
@@ -118,41 +99,7 @@ export default {
     const fullCalendarRef = ref(null);
     const currentView = ref("dayGridMonth");
     const calendarTitle = ref("");
-    const stages = ref([
-      {
-        id: 1,
-        name: "مريض جديد",
-        color_code: "#007bff",
-        icon: "user-plus",
-        deal_count: 1,
-        deals: [{ id: 101, name: "محمد أحمد", stage_id: 1, tags: [] }],
-        filterable_tags: [],
-        parent_id: null,
-        has_children: false,
-      },
-      {
-        id: 2,
-        name: "قيد العلاج",
-        color_code: "#ffc107",
-        icon: "heartbeat",
-        deal_count: 1,
-        deals: [{ id: 102, name: "هيثم علي", stage_id: 2, tags: [] }],
-        filterable_tags: [],
-        parent_id: null,
-        has_children: false,
-      },
-      {
-        id: 3,
-        name: "أتم العلاج",
-        color_code: "#28a745",
-        icon: "check-circle",
-        deal_count: 1,
-        deals: [{ id: 103, name: "خالد يوسف", stage_id: 3, tags: [] }],
-        filterable_tags: [],
-        parent_id: null,
-        has_children: false,
-      },
-    ]);
+    const stages = ref([]);
     const calendarEvents = ref([]);
     const selectedDeal = ref(null);
     const logs = ref([]);
@@ -183,6 +130,7 @@ export default {
           },
         };
         calendarEvents.value.push(newEvent);
+        handleAddTask(ticketData.id, info.event.startStr);
         notificationStore.success("تمت إضافة الموعد للتقويم");
       },
       eventDrop: (info) => {
@@ -343,13 +291,38 @@ export default {
         console.error("Error updating deal stage:", error.response?.data);
       }
     };
+    // const openDealDataCard = async (dealId) => {
+    //   try {
+    //     const dealData = await showDeal(dealId);
+    //     if (dealData.data && dealData.data.data) {
+    //       selectedDeal.value = null;
+    //       await nextTick();
+    //       selectedDeal.value = dealData.data.data;
+    //       await nextTick();
+    //       const modalEl = document.getElementById("dealDataCard");
+    //       if (modalEl) {
+    //         const modal = new Modal(modalEl);
+    //         modal.show();
+    //       }
+    //     } else {
+    //       console.error("No matching deal found for ID:", dealId);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching deal data:", error);
+    //   }
+    // };
     const openDealDataCard = async (dealId) => {
       try {
-        const dealData = await showDeal(dealId);
-        if (dealData.data && dealData.data.data) {
-          selectedDeal.value = null;
-          await nextTick();
-          selectedDeal.value = dealData.data.data;
+        addViewCount(dealId);
+        const response = await showDeal(dealId);
+        if (response.status === 200) {
+          const task_response = await getTasksByDealId(dealId);
+          if (task_response.status === 200) {
+            tasks.value = task_response.data.data;
+          } else {
+            tasks.value = [];
+          }
+          selectedDeal.value = response.data.data;
           await nextTick();
           const modalEl = document.getElementById("dealDataCard");
           if (modalEl) {
@@ -361,6 +334,7 @@ export default {
         }
       } catch (error) {
         console.error("Error fetching deal data:", error);
+        notificationStore.error("something went wrong");
       }
     };
     function formatCalendarTitle(title) {
@@ -410,8 +384,33 @@ export default {
         console.error("Error fetching stages:", error);
       }
     };
-    onMounted(() => {
-      fetchStages();
+    const handleAddTask = async (deal_id, date) => {
+      try {
+        const formData = {
+          description: "Appointment",
+          duedate: date,
+          duetime: null,
+          deal_id: deal_id,
+        };
+        const response = await createTask(formData);
+        if (response.status === 200 || response.status === 201) {
+          notificationStore.success(response.data.message, {
+            timeout: 3000,
+          });
+        } else {
+          notificationStore.error(response.data.message, {
+            timeout: 3000,
+          });
+        }
+      } catch (error) {
+        console.error("Error adding task:", error);
+        notificationStore.error(error.message, {
+          timeout: 3000,
+        });
+      }
+    };
+    onMounted(async () => {
+      await fetchStages();
       window.addEventListener("contextmenu", handleRightClick);
       nextTick(() => {
         const draggables = document.querySelectorAll(".deal-card-calendar");

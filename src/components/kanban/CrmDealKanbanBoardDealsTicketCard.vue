@@ -49,7 +49,7 @@
         <!-- <span class="text-dark fs-7">
           {{ deal.view_count }} <i class="fa-solid fa-eye"></i>
         </span> -->
-        <span class="d-flex align-items-center" v-if="!showCalendarDrag">
+        <span class="d-flex align-items-center">
           <button class="btn btn-link m-0 p-0" @click.stop="handleHighlight">
             <!-- <i class="fa-solid fa-star text-warning"></i> -->
             <i
@@ -110,7 +110,7 @@
             <i class="fa-solid fa-star text-warning"></i>
           </button>
         </div> -->
-        <span class="text-dark fs-7">
+        <span class="text-dark fs-7" v-if="!showCalendarDrag">
           {{ deal.view_count }} <i class="fa-solid fa-eye"></i>
         </span>
         <!-- <span class="fw-normal text-dark">
