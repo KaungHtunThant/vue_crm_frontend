@@ -87,6 +87,12 @@
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
+// import { useToast } from "vue-toastification";
+// import {
+//   showSuccess,
+//   showError,
+//   showInfo,
+// } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
 import FullCalendar from "@fullcalendar/vue3";
@@ -107,11 +113,46 @@ export default {
   },
   setup() {
     const notificationStore = useNotificationStore();
+    // const toast = useToast();
     const { t } = useI18n();
     const fullCalendarRef = ref(null);
     const currentView = ref("dayGridMonth");
     const calendarTitle = ref("");
-    const stages = ref([]);
+    const stages = ref([
+      {
+        id: 1,
+        name: "مريض جديد",
+        color_code: "#007bff",
+        icon: "user-plus",
+        deal_count: 1,
+        deals: [{ id: 101, name: "محمد أحمد", stage_id: 1, tags: [] }],
+        filterable_tags: [],
+        parent_id: null,
+        has_children: false,
+      },
+      {
+        id: 2,
+        name: "قيد العلاج",
+        color_code: "#ffc107",
+        icon: "heartbeat",
+        deal_count: 1,
+        deals: [{ id: 102, name: "هيثم علي", stage_id: 2, tags: [] }],
+        filterable_tags: [],
+        parent_id: null,
+        has_children: false,
+      },
+      {
+        id: 3,
+        name: "أتم العلاج",
+        color_code: "#28a745",
+        icon: "check-circle",
+        deal_count: 1,
+        deals: [{ id: 103, name: "خالد يوسف", stage_id: 3, tags: [] }],
+        filterable_tags: [],
+        parent_id: null,
+        has_children: false,
+      },
+    ]);
     const calendarEvents = ref([]);
     const selectedDeal = ref(null);
     const logs = ref([]);
