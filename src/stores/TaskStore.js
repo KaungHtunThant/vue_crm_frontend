@@ -1,5 +1,6 @@
 import {
   createTask,
+  getTasksByDate,
   getTasksByDealId,
   updateTask,
 } from "@/plugins/services/taskService";
@@ -13,6 +14,7 @@ export const useTaskStore = defineStore("task", {
     tomorrow_count: 0,
     idle_count: 0,
     tasks: [],
+    calendar_tasks: [],
   }),
   getters: {
     getOverdueCount: (state) => state.overdue_count,
@@ -20,7 +22,8 @@ export const useTaskStore = defineStore("task", {
     getTomorrowCount: (state) => state.tomorrow_count,
     getIdleCount: (state) => state.idle_count,
     getCurrentTasks: (state) =>
-      state.tasks.filter((task) => task.tatus !== "completed"),
+      state.tasks.filter((task) => task.status !== "completed"),
+    getCalendarTasks: (state) => state.calendar_tasks,
   },
   actions: {
     async fetchTaskCounts() {
@@ -106,7 +109,13 @@ export const useTaskStore = defineStore("task", {
         throw error;
       }
     },
-    async addTaskToCurrentTasks(description, duedate, duetime, deal_id) {
+    async addTaskToCurrentTasks(
+      description,
+      duedate,
+      duetime,
+      deal_id,
+      type = "sales"
+    ) {
       const tempId = Date.now();
       const optimisticTask = {
         id: tempId,
@@ -114,6 +123,7 @@ export const useTaskStore = defineStore("task", {
         duedate: duedate,
         duetime: duetime,
         deal_id: deal_id,
+        type: type,
       };
       this.tasks.push(optimisticTask);
       try {
@@ -122,6 +132,7 @@ export const useTaskStore = defineStore("task", {
         formData.append("duedate", duedate);
         formData.append("duetime", duetime);
         formData.append("deal_id", deal_id);
+        formData.append("type", type);
         const response = await createTask(formData);
         if (response.status !== 201 && response.status !== 200) {
           throw new Error(response.data.message);
@@ -203,6 +214,23 @@ export const useTaskStore = defineStore("task", {
         return "overdue";
       } else {
         return false;
+      }
+    },
+    async fetchCalendarTasksByDate(start_date, end_date) {
+      try {
+        const response = await getTasksByDate(start_date, end_date);
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
+        this.calendar_tasks = response.data.data || [];
+        console.log("Fetched calendar tasks:", this.calendar_tasks);
+        return response.data.data;
+      } catch (error) {
+        console.error("Error fetching calendar tasks:", error);
+        return {
+          success: false,
+          message: error.message || "Error fetching calendar tasks",
+        };
       }
     },
   },

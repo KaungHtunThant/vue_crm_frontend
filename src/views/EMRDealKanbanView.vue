@@ -59,9 +59,9 @@
               style="width: 120px"
               @change="changeCalendarView"
             >
-              <option value="dayGridMonth">شهر</option>
-              <option value="dayGridWeek">أسبوع</option>
-              <option value="dayGridDay">يوم</option>
+              <option value="dayGridMonth">Month</option>
+              <option value="dayGridWeek">Week</option>
+              <option value="dayGridDay">Day</option>
             </select>
           </div>
         </div>
@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted, nextTick } from "vue";
+import { ref, onMounted, onUnmounted, nextTick, computed } from "vue";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
 import { useNotificationStore } from "@/stores/notificationStore";
@@ -80,10 +80,9 @@ import { useI18n } from "vue-i18n";
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
-import { Modal } from "bootstrap";
-import { addViewCount, showDeal } from "@/plugins/services/dealService";
 import { getEmrKanban } from "@/plugins/services/kanbanService";
-import { createTask, getTasksByDealId } from "@/plugins/services/taskService";
+import { createTask } from "@/plugins/services/taskService";
+import { useTaskStore } from "@/stores/TaskStore";
 
 export default {
   name: "EmrDealKanbanView",
@@ -94,17 +93,16 @@ export default {
   },
   setup() {
     const notificationStore = useNotificationStore();
-    // const toast = useToast();
+    const taskStore = useTaskStore();
     const { t } = useI18n();
     const fullCalendarRef = ref(null);
     const currentView = ref("dayGridMonth");
     const calendarTitle = ref("");
     const stages = ref([]);
-    const calendarEvents = ref([]);
+    const calendarEvents = computed(() => taskStore.calendar_tasks);
     const selectedDeal = ref(null);
     const logs = ref([]);
     const comments = ref([]);
-    const tasks = ref([]);
     const packages = ref([]);
     const calendarOptions = ref({
       plugins: [dayGridPlugin, interactionPlugin],
@@ -112,7 +110,16 @@ export default {
       locale: localStorage.getItem("locale") || "ar",
       editable: true,
       droppable: true,
-      events: calendarEvents.value,
+      events(fetchInfo, successCallback, failureCallback) {
+        taskStore
+          .fetchCalendarTasksByDate(fetchInfo.startStr, fetchInfo.endStr)
+          .then(() => {
+            successCallback(taskStore.calendar_tasks);
+          })
+          .catch(() => {
+            failureCallback();
+          });
+      },
       dropAccept: ".deal-card-calendar",
       eventReceive: (info) => {
         let ticketData;
@@ -121,15 +128,6 @@ export default {
         } catch {
           ticketData = { name: info.event.title };
         }
-        const newEvent = {
-          id: String(Date.now()),
-          title: ticketData.name,
-          start: info.event.startStr,
-          extendedProps: {
-            ticketId: ticketData.id,
-          },
-        };
-        calendarEvents.value.push(newEvent);
         handleAddTask(ticketData.id, info.event.startStr);
         notificationStore.success("تمت إضافة الموعد للتقويم");
       },
@@ -145,7 +143,7 @@ export default {
       eventClick: async (info) => {
         const ticketId = info.event.extendedProps.ticketId;
         if (ticketId) {
-          await openDealDataCard(ticketId);
+          // await openDealDataCard(ticketId);
         } else {
           notificationStore.error(
             "لم يتم العثور على رقم التذكرة لفتح بياناتها"
@@ -207,6 +205,10 @@ export default {
       fullCalendarRef.value.getApi().changeView(currentView.value);
       calendarTitle.value = formatCalendarTitle(
         fullCalendarRef.value.getApi().view.title
+      );
+      taskStore.fetchCalendarTasksByDate(
+        currentView.value,
+        new Date().toISOString().split("T")[0]
       );
     };
     const filters = ref({
@@ -293,11 +295,16 @@ export default {
     };
     // const openDealDataCard = async (dealId) => {
     //   try {
-    //     const dealData = await showDeal(dealId);
-    //     if (dealData.data && dealData.data.data) {
-    //       selectedDeal.value = null;
-    //       await nextTick();
-    //       selectedDeal.value = dealData.data.data;
+    //     addViewCount(dealId);
+    //     const response = await showDeal(dealId);
+    //     if (response.status === 200) {
+    //       const task_response = await getTasksByDealId(dealId);
+    //       if (task_response.status === 200) {
+    //         tasks.value = task_response.data.data;
+    //       } else {
+    //         tasks.value = [];
+    //       }
+    //       selectedDeal.value = response.data.data;
     //       await nextTick();
     //       const modalEl = document.getElementById("dealDataCard");
     //       if (modalEl) {
@@ -309,34 +316,9 @@ export default {
     //     }
     //   } catch (error) {
     //     console.error("Error fetching deal data:", error);
+    //     notificationStore.error("something went wrong");
     //   }
     // };
-    const openDealDataCard = async (dealId) => {
-      try {
-        addViewCount(dealId);
-        const response = await showDeal(dealId);
-        if (response.status === 200) {
-          const task_response = await getTasksByDealId(dealId);
-          if (task_response.status === 200) {
-            tasks.value = task_response.data.data;
-          } else {
-            tasks.value = [];
-          }
-          selectedDeal.value = response.data.data;
-          await nextTick();
-          const modalEl = document.getElementById("dealDataCard");
-          if (modalEl) {
-            const modal = new Modal(modalEl);
-            modal.show();
-          }
-        } else {
-          console.error("No matching deal found for ID:", dealId);
-        }
-      } catch (error) {
-        console.error("Error fetching deal data:", error);
-        notificationStore.error("something went wrong");
-      }
-    };
     function formatCalendarTitle(title) {
       const yearMatch = title.match(/\d{4}/);
       let year = yearMatch ? yearMatch[0] : "";
@@ -391,9 +373,18 @@ export default {
           duedate: date,
           duetime: null,
           deal_id: deal_id,
+          type: "hospital",
         };
         const response = await createTask(formData);
         if (response.status === 200 || response.status === 201) {
+          fullCalendarRef.value.getApi().addEvent({
+            id: response.data.data.id,
+            title: formData.description,
+            start: formData.duedate,
+            extendedProps: {
+              ticketId: deal_id,
+            },
+          });
           notificationStore.success(response.data.message, {
             timeout: 3000,
           });
@@ -452,12 +443,11 @@ export default {
       goToPrev,
       goToNext,
       changeCalendarView,
-      openDealDataCard,
       selectedDeal,
       logs,
       comments,
-      tasks,
       packages,
+      calendarEvents,
     };
   },
 };
