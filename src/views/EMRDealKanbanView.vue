@@ -122,6 +122,7 @@ export default {
       },
       dropAccept: ".deal-card-calendar",
       eventReceive: (info) => {
+        info.revert();
         let ticketData;
         try {
           ticketData = JSON.parse(info.draggedEl.dataset.ticket);
