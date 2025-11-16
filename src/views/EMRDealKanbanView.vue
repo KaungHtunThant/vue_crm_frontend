@@ -17,6 +17,7 @@
         :draggable="true"
         defaultColor="#333"
         :show-calendar-drag="true"
+        :view-type="emr"
         @open-whatsapp-modal="openWhatsappModal"
         @receive-whatsapp-message="receiveWhatsappMessage"
         @update-whatsapp-message="updateWhatsappMessage"
@@ -131,6 +132,7 @@ export default {
         }
         handleAddTask(ticketData.id, info.event.startStr);
         notificationStore.success("تمت إضافة الموعد للتقويم");
+        fetchStages();
       },
       eventDrop: (info) => {
         const idx = calendarEvents.value.findIndex(

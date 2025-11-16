@@ -256,7 +256,7 @@ const routes = [
       requiresAuth: true,
       title: "EMR Kanban",
     },
-    beforeEnter: requirePermission(PERMISSIONS.ROLES_SETTINGS),
+    beforeEnter: requirePermission(PERMISSIONS.EMRKANBAN),
   },
   {
     path: "/users-salary/:userId",
@@ -307,6 +307,8 @@ router.beforeEach(async (to, from, next) => {
     let redirectPath = "/crm-kanban";
     if (user_role === "after-sales") {
       redirectPath = "/crm-after-sales";
+    } else if (user_role === "emr-admin") {
+      redirectPath = "/emr-kanban";
     }
     next({ path: redirectPath, replace: true });
     return;

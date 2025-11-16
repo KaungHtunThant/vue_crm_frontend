@@ -182,11 +182,18 @@ export default {
           this.email = "";
           this.password = "";
           this.loginSuccess = true;
-          let defaultRedirect =
-            response.data.user.role === "after-sales"
-              ? "/crm-after-sales"
-              : "/crm-kanban";
+          let defaultRedirect = "/crm-kanban";
+          if (response.data.user.role === "after-sales") {
+            defaultRedirect = "/crm-after-sales";
+          } else if (response.data.user.role === "emr-admin") {
+            defaultRedirect = "/emr-kanban";
+          }
+          console.log("defaultRedirect", defaultRedirect);
           this.permissionStore.setPermissions(response.data.user.permissions);
+          console.log(
+            "has permission",
+            this.permissionStore.hasPermission(PERMISSIONS.EMRKANBAN)
+          );
           this.$emit("loginSuccess");
           let bg_fetch = await getBackgroundId(response.data.user.bg_image_id);
           let imageUrl = bg_fetch.data.data.url;
