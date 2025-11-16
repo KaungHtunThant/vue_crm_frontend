@@ -87,12 +87,6 @@
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
-// import { useToast } from "vue-toastification";
-// import {
-//   showSuccess,
-//   showError,
-//   showInfo,
-// } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
 import FullCalendar from "@fullcalendar/vue3";
@@ -101,6 +95,7 @@ import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
 import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";
 import { Modal } from "bootstrap";
 import { showDeal } from "@/plugins/services/dealService";
+import { getEmrKanban } from "@/plugins/services/kanbanService";
 
 export default {
   name: "EmrDealKanbanView",
@@ -112,7 +107,6 @@ export default {
   },
   setup() {
     const notificationStore = useNotificationStore();
-    // const toast = useToast();
     const { t } = useI18n();
     const fullCalendarRef = ref(null);
     const currentView = ref("dayGridMonth");
@@ -365,7 +359,18 @@ export default {
       if (month && year) return ` ${year} - ${month}`;
       return title;
     }
+    const fetchStages = async () => {
+      try {
+        const response = await getEmrKanban();
+        if (response.status == 200) {
+          stages.value = response.data.data;
+        }
+      } catch (error) {
+        console.error("Error fetching stages:", error);
+      }
+    };
     onMounted(() => {
+      fetchStages();
       window.addEventListener("contextmenu", handleRightClick);
       nextTick(() => {
         const draggables = document.querySelectorAll(".deal-card-calendar");
