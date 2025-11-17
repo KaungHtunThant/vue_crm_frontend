@@ -126,14 +126,14 @@ export default {
     async fetchUserData() {
       try {
         const response = await this.userStore.fetchCurrentUser();
-        if (response.status !== 200) throw new Error(response.data.message);
+        if (!response.success) throw new Error(response.message);
 
-        this.userData = response.data.data;
+        this.userData = this.userStore.getCurrentUser;
         this.localNameEn = this.userData.name_en || "";
         this.localNameAr = this.userData.name_ar || "";
         this.localImage =
-          this.userData.image && this.userData.image.trim() !== ""
-            ? this.userData.image
+          this.userData.image_url && this.userData.image_url.trim() !== ""
+            ? this.userData.image_url
             : require("@/assets/default-avatar-profile.webp");
       } catch (error) {
         this.notificationStore.error(error.message, { timeout: 3000 });

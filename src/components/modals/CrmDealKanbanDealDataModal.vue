@@ -1852,6 +1852,7 @@ import { usePackageStore } from "@/stores/PackageStore";
 import { useSourceStore } from "@/stores/SourceStore";
 import Cookies from "js-cookie";
 import { nationalities as nationalities_options } from "@/enums/NationalitiesEnum";
+import { useTaskStore } from "@/stores/TaskStore";
 
 export default {
   name: "CrmDealKanbanDealDataModal",
@@ -1921,6 +1922,7 @@ export default {
 
     const taskDataModified = ref(false);
     const modified_id = ref(null);
+    const taskStore = useTaskStore();
 
     const resizeDisplayedCommentWidth = (commentId) => {
       nextTick(() => {
@@ -2524,6 +2526,7 @@ export default {
             timeout: 3000,
           });
           emit("task-finish", task.duedate);
+          taskStore.toggleStatusChangeTrigger();
         } else {
           notificationStore.error(t("error.completingTask"), {
             timeout: 3000,

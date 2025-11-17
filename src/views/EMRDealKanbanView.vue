@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted, nextTick, computed } from "vue";
+import { ref, onMounted, onUnmounted, nextTick, computed, watch } from "vue";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
 import { useNotificationStore } from "@/stores/notificationStore";
@@ -147,7 +147,8 @@ export default {
         if (idx !== -1) {
           calendarEvents.value[idx].start = info.event.startStr;
         }
-        notificationStore.info("تم تغيير موعد المريض");
+        console.log("Event dropped to new date", info);
+        notificationStore.info("Event update triggered");
       },
       eventClick: async (info) => {
         const ticketId = info.event.extendedProps.ticketId;
@@ -191,6 +192,16 @@ export default {
           eventMaxStack: 10,
         },
       },
+    });
+    const task_status_change_trigger = computed(
+      () => taskStore.status_change_trigger
+    );
+    watch(task_status_change_trigger, () => {
+      if (task_status_change_trigger.value) {
+        fetchStages();
+        fullCalendarRef.value.getApi().refetchEvents();
+        taskStore.toggleStatusChangeTrigger();
+      }
     });
     const goToToday = () => {
       fullCalendarRef.value.getApi().today();
@@ -386,14 +397,7 @@ export default {
         };
         const response = await createTask(formData);
         if (response.status === 200 || response.status === 201) {
-          fullCalendarRef.value.getApi().addEvent({
-            id: response.data.data.id,
-            title: formData.description,
-            start: formData.duedate,
-            extendedProps: {
-              ticketId: deal_id,
-            },
-          });
+          fullCalendarRef.value.getApi().refetchEvents();
           notificationStore.success(response.data.message, {
             timeout: 3000,
           });

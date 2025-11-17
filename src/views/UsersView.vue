@@ -65,7 +65,7 @@
           <div class="d-flex">
             <img
               :src="
-                slotProps.data.image ||
+                slotProps.data.image_url ||
                 require('@/assets/default-avatar-profile.webp')
               "
               alt="User Image"

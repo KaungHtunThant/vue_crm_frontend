@@ -15,6 +15,7 @@ export const useTaskStore = defineStore("task", {
     idle_count: 0,
     tasks: [],
     calendar_tasks: [],
+    status_change_trigger: false, // temporary solution
   }),
   getters: {
     getOverdueCount: (state) => state.overdue_count,
@@ -24,6 +25,7 @@ export const useTaskStore = defineStore("task", {
     getCurrentTasks: (state) =>
       state.tasks.filter((task) => task.status !== "completed"),
     getCalendarTasks: (state) => state.calendar_tasks,
+    getStatusChangeTrigger: (state) => state.status_change_trigger,
   },
   actions: {
     async fetchTaskCounts() {
@@ -232,6 +234,9 @@ export const useTaskStore = defineStore("task", {
           message: error.message || "Error fetching calendar tasks",
         };
       }
+    },
+    toggleStatusChangeTrigger() {
+      this.status_change_trigger = !this.status_change_trigger;
     },
   },
 });

@@ -29,15 +29,9 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
-// import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 import { getDealsKanban } from "@/plugins/services/kanbanService";
 import { useSourceStore } from "@/stores/SourceStore";
-// import {
-//   showSuccess,
-//   showError,
-//   showInfo,
-// } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 
 export default {
@@ -50,7 +44,6 @@ export default {
 
   setup() {
     const { t } = useI18n();
-    // const toast = useToast();
     const notificationStore = useNotificationStore();
     const stages = ref([]);
     const selected_conversation = ref(null);

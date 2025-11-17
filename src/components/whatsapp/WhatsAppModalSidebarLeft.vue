@@ -465,7 +465,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchConversations();
+    // this.fetchConversations();
     if (this.$refs.labelModal) {
       this.modalInstance = new Modal(this.$refs.labelModal);
     }
