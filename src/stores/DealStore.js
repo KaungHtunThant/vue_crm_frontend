@@ -121,6 +121,9 @@ export const useDealStore = defineStore("deal", {
       this.current_deal = response.data.data;
       return this.current_deal;
     },
+    resetCurrentDeal() {
+      this.current_deal = null;
+    },
     getDealsByStageIds(stage_ids) {
       return this.deals.filter((deal) => stage_ids.includes(deal.stage_id));
     },

@@ -314,7 +314,6 @@ import TicketCard from "@/components/kanban/CrmDealKanbanBoardDealsTicketCard.vu
 import { Modal } from "bootstrap";
 import { useRoute } from "vue-router";
 import { useNotificationStore } from "@/stores/notificationStore";
-
 import {
   updateDealStage,
   showDeal,
@@ -323,15 +322,12 @@ import {
   toggleHighlight,
   pullDealsFromOldSystem,
 } from "@/plugins/services/dealService";
-
 import {
   getAvailableStages,
   getStagesChildren,
   getAvailableAfterSalesStages,
 } from "@/plugins/services/stageService";
-
 import { createApproval } from "@/plugins/services/approvalService";
-
 import { useI18n } from "vue-i18n";
 import Cookies from "js-cookie";
 import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";
@@ -420,9 +416,10 @@ export default {
     watch(
       () => currentDeal.value,
       (newDeal) => {
-        selectedDeal.value = newDeal;
-        console.log("Current deal changed:", newDeal);
-        openDealDataCard(newDeal.id);
+        if (newDeal) {
+          selectedDeal.value = newDeal;
+          openDealDataCard(newDeal.id, null, "calendar");
+        }
       }
     );
 
@@ -675,7 +672,11 @@ export default {
         .catch((error) => console.error("Failed to play sound:", error));
     };
 
-    const openDealDataCard = async (dealId, currentStageId = null) => {
+    const openDealDataCard = async (
+      dealId,
+      currentStageId = null,
+      mode = null
+    ) => {
       console.log("Opening deal data card for deal ID:", dealId);
       try {
         if (!allStages.value) {
@@ -692,14 +693,9 @@ export default {
           }
         }
         addViewCount(dealId);
-        if (props.viewType === "emr") {
-          console.log(
-            "EMR view - opening deal data card for deal ID:",
-            selectedDeal.value.id
-          );
+        if (mode === "calendar") {
           await nextTick();
           const modalEl = document.getElementById("dealDataCard");
-          console.log("Modal element:", modalEl);
           const modal = new Modal(modalEl);
           modal.show();
           modalEl.addEventListener(

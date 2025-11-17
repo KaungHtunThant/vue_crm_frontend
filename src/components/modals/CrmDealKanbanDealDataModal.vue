@@ -1853,6 +1853,7 @@ import { useSourceStore } from "@/stores/SourceStore";
 import Cookies from "js-cookie";
 import { nationalities as nationalities_options } from "@/enums/NationalitiesEnum";
 import { useTaskStore } from "@/stores/TaskStore";
+import { useDealStore } from "@/stores/DealStore";
 
 export default {
   name: "CrmDealKanbanDealDataModal",
@@ -1896,7 +1897,7 @@ export default {
     const permissionStore = usePermissionStore();
     const selected_conversation = ref(null);
     const { t, locale } = useI18n();
-    // const toast = useToast();
+    const dealStore = useDealStore();
     const sourceStore = useSourceStore();
     const sources = computed(() => sourceStore.sources);
     const allStages = ref(null);
@@ -2854,6 +2855,8 @@ export default {
       editingCommentText.value = "";
     };
     onMounted(async () => {
+      packageStore.fetchAll();
+      user_role.value = Cookies.get("user_role");
       await logStore.fetchUsers();
       if (props.deal?.id) await logStore.fetchLogs(props.deal.id);
       // fetchUsers();
@@ -2873,6 +2876,7 @@ export default {
       const modalElement = document.getElementById("dealDataCard");
       if (modalElement) {
         modalElement.__cancelEditHandler = () => {
+          dealStore.resetCurrentDeal();
           if (isEditMode.value) {
             closeEditMode();
           }
@@ -3142,10 +3146,6 @@ export default {
       const stage = props.stages.find((s) => s.id === id);
       return stage ? stage.color_code : id;
     };
-    onMounted(() => {
-      packageStore.fetchAll();
-      user_role.value = Cookies.get("user_role");
-    });
 
     return {
       modified_id,

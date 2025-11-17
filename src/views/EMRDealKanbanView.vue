@@ -164,12 +164,9 @@ export default {
       eventClick: async (info) => {
         const ticketId = info.event.extendedProps.ticketId;
         if (ticketId) {
-          console.log("Opening deal with ticket ID:", ticketId);
           dealStore.changeCurrentDeal(ticketId);
         } else {
-          notificationStore.error(
-            "لم يتم العثور على رقم التذكرة لفتح بياناتها"
-          );
+          notificationStore.error("Task has no deal");
         }
       },
       headerToolbar: false,
