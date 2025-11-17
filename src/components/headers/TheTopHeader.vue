@@ -303,12 +303,12 @@
         </div>
         <div
           v-if="user_role == 'sales'"
-          class="col-3 btnHeaderBg text-white d-flex justify-content-center align-items-center rounded-1 mx-2"
+          class="col-4 btnHeaderBg text-white d-flex justify-content-center align-items-center rounded-1 mx-2"
         >
           <i class="fa-solid fa-sack-dollar"></i>
           <span class="px-2">
             {{ salaryInfo.finalBasicPay }} +
-            {{ salaryInfo.calculatedCommission }}
+            {{ salaryInfo.calculatedCommission }} {{ currency }}
           </span>
         </div>
       </div>
@@ -409,6 +409,7 @@ export default {
       userImage: Cookies.get("image") || "",
       currentLanguage: localStorage.getItem("locale") || "en",
       showDropdown: false,
+      currency: Cookies.get("currency") || "USD",
       salaryInfo: {
         finalBasicPay: 0,
         calculatedCommission: 0,
