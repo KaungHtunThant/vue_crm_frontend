@@ -171,6 +171,7 @@ export default {
           Cookies.set("image", response.data.user.image || "", cookieOptions);
           Cookies.set("user_role", response.data.user.role, cookieOptions);
           Cookies.set("user_id", response.data.user.id, cookieOptions);
+          Cookies.set("currency", response.data.user.currency, cookieOptions);
           localStorage.setItem(
             "backgroundImage_id",
             response.data.user.bg_image_id

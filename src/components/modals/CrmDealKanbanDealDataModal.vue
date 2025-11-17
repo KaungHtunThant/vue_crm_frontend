@@ -619,9 +619,10 @@
                       +
                     </button>
                     <div class="input-group">
-                      <span class="input-group-text">{{
-                        t("kanban-modal-edit-label-total-cost")
-                      }}</span>
+                      <span class="input-group-text">
+                        {{ t("kanban-modal-edit-label-total-cost") }}
+                        {{ currency }}
+                      </span>
                       <input
                         type="number"
                         lang="en"
@@ -633,9 +634,9 @@
                           'form-control',
                         ]"
                         v-model="customerData.kanban_total_cost"
-                        :placeholder="
-                          t('kanban-modal-edit-placeholder-total-cost')
-                        "
+                        :placeholder="`${t(
+                          'kanban-modal-edit-placeholder-total-cost'
+                        )} ${currency}`"
                         :readonly="!isEditMode"
                         min="0"
                       />
@@ -724,9 +725,10 @@
                       +
                     </button>
                     <div class="input-group">
-                      <span class="input-group-text">{{
-                        t("kanban-modal-edit-label-total-cost")
-                      }}</span>
+                      <span class="input-group-text">
+                        {{ t("kanban-modal-edit-label-total-cost") }}
+                        {{ currency }}
+                      </span>
                       <input
                         type="number"
                         lang="en"
@@ -738,9 +740,9 @@
                           'form-control',
                         ]"
                         v-model="customerData.add_on_total_cost"
-                        :placeholder="
-                          t('kanban-modal-edit-placeholder-total-cost')
-                        "
+                        :placeholder="`${t(
+                          'kanban-modal-edit-placeholder-total-cost'
+                        )} ${currency}`"
                         :readonly="!isEditMode"
                         min="0"
                       />
@@ -1310,9 +1312,10 @@
                       +
                     </button>
                     <div class="input-group">
-                      <span class="input-group-text">{{
-                        t("kanban-modal-edit-label-total-cost")
-                      }}</span>
+                      <span class="input-group-text">
+                        {{ t("kanban-modal-edit-label-total-cost") }}
+                        {{ currency }}
+                      </span>
                       <input
                         type="number"
                         lang="en"
@@ -1324,9 +1327,9 @@
                           'form-control',
                         ]"
                         v-model="customerData.hospital_total_cost"
-                        :placeholder="
-                          t('kanban-modal-edit-placeholder-total-cost')
-                        "
+                        :placeholder="`${t(
+                          'kanban-modal-edit-placeholder-total-cost'
+                        )} ${currency}`"
                         :readonly="!isEditMode"
                         min="0"
                       />
@@ -1903,6 +1906,7 @@ export default {
     const stageColors = reactive({});
     const commentInput = ref(null);
     const user_role = ref(null);
+    const currency = Cookies.get("currency") || "USD";
     const treatment_packages = computed(() =>
       packageStore.getPackagesWithCategory("treatments")
     );
@@ -4035,6 +4039,7 @@ export default {
       diagnoses_packages,
       user_role,
       warrantyList,
+      currency,
     };
   },
 };
