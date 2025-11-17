@@ -42,7 +42,6 @@ export const PERMISSIONS = {
   EDIT_CONTACT_PHONE: "edit-contact-phone",
   GENERATE_OTP: "generate-otp",
   STAY_IDLE: "stay-idle",
-  VIEW_EMR: "view-emr-kanban-page",
 };
 
 export const usePermissionStore = defineStore("permissions", {

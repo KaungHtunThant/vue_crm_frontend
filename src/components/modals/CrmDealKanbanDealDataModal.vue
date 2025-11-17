@@ -70,7 +70,11 @@
         </div>
         <div class="modal-body">
           <!-- Stages -->
-          <div class="stages-container mb-4" @dblclick="handleDoubleClick">
+          <div
+            class="stages-container mb-4"
+            @dblclick="handleDoubleClick"
+            v-if="viewType !== 'emr'"
+          >
             <div class="d-flex stages-wrapper">
               <button
                 v-for="stage in stages"
@@ -1770,7 +1774,7 @@
             </div>
           </div>
         </div>
-        <div class="position-fixed trashCustm">
+        <div class="position-fixed trashCustm" v-if="viewType !== 'emr'">
           <button
             v-if="this.user_role !== 'after-sales'"
             class="btn bg-warning py-2 px-3 rounded-3 me-2"
@@ -1801,6 +1805,7 @@
     ref="trashDealModalRef"
     :dealId="deal?.id"
     @deal-trashed="handleStageUpdate"
+    v-if="viewType !== 'emr'"
   />
 </template>
 

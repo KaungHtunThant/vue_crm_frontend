@@ -335,7 +335,6 @@ import { createApproval } from "@/plugins/services/approvalService";
 import { useI18n } from "vue-i18n";
 import Cookies from "js-cookie";
 import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";
-// import UpdateStage from "@/components/modals/CrmDealKanbanBoardDealsUpdateStageModal.vue";
 import FilterStageModal from "@/components/modals/CrmDealKanbanBoardDealsFilterStageModal.vue";
 import moveCardSound from "@/assets/move-card.wav";
 import { closeWebSocket, initializeWebSocket } from "@/plugins/websocket";
@@ -347,7 +346,6 @@ export default {
     draggable,
     TicketCard,
     DealDataCard,
-    // UpdateStage,
     FilterStageModal,
   },
   props: {

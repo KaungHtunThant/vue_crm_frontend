@@ -17,7 +17,7 @@
         :draggable="true"
         defaultColor="#333"
         :show-calendar-drag="true"
-        :view-type="emr"
+        :view-type="'emr'"
         @open-whatsapp-modal="openWhatsappModal"
         @receive-whatsapp-message="receiveWhatsappMessage"
         @update-whatsapp-message="updateWhatsappMessage"
@@ -52,7 +52,7 @@
               style="font-size: 16px"
               @click="goToToday"
             >
-              اليوم
+              {{ $t("emr-calendar-go-to-today") }}
             </button>
             <select
               v-model="currentView"
@@ -60,9 +60,15 @@
               style="width: 120px"
               @change="changeCalendarView"
             >
-              <option value="dayGridMonth">Month</option>
-              <option value="dayGridWeek">Week</option>
-              <option value="dayGridDay">Day</option>
+              <option value="dayGridMonth">
+                {{ $t("emr-calendar-view-type-month") }}
+              </option>
+              <option value="dayGridWeek">
+                {{ $t("emr-calendar-view-type-week") }}
+              </option>
+              <option value="dayGridDay">
+                {{ $t("emr-calendar-view-type-day") }}
+              </option>
             </select>
           </div>
         </div>

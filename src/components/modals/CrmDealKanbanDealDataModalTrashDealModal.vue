@@ -104,10 +104,7 @@
 
 <script>
 import { Modal } from "bootstrap";
-// import { useToast } from "vue-toastification";
-// import { showInfo, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
-
 import { createComment } from "@/plugins/services/commentService";
 import { getTrashStages } from "@/plugins/services/stageService";
 import Cookies from "js-cookie";
@@ -121,7 +118,6 @@ export default {
     },
   },
   setup() {
-    // const toast = useToast();
     const notificationStore = useNotificationStore();
     const getContrastColor = (color) => {
       const r = parseInt(color.slice(1, 3), 16);
@@ -142,7 +138,7 @@ export default {
   },
   mounted() {
     const user_role = Cookies.get("user_role");
-    if (user_role !== "after-sales") {
+    if (user_role !== "after-sales" && user_role !== "emr-admin") {
       this.getStages();
     }
     const modal = document.getElementById("trashDealModal");
