@@ -2859,7 +2859,6 @@ export default {
       user_role.value = Cookies.get("user_role");
       await logStore.fetchUsers();
       if (props.deal?.id) await logStore.fetchLogs(props.deal.id);
-      // fetchUsers();
       document.addEventListener("click", handleClickOutside);
 
       if (commentInput.value) {
@@ -2877,6 +2876,10 @@ export default {
       if (modalElement) {
         modalElement.__cancelEditHandler = () => {
           dealStore.resetCurrentDeal();
+          console.log(
+            "Modal hidden, resetting current deal.",
+            dealStore.getCurrentDeal
+          );
           if (isEditMode.value) {
             closeEditMode();
           }
