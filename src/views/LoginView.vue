@@ -105,6 +105,7 @@ import { useRouter } from "vue-router";
 import { initializeTranslations } from "@/i18n";
 import { useLoadingStore } from "@/plugins/loadingStore";
 import { useSettingStore } from "@/stores/SettingStore";
+import { useUserStore } from "@/stores/UserStore";
 
 export default {
   name: "LoginView",
@@ -113,6 +114,7 @@ export default {
     const router = useRouter();
     const loadingStore = useLoadingStore();
     const settingStore = useSettingStore();
+    const userStore = useUserStore();
 
     return {
       PERMISSIONS,
@@ -120,6 +122,7 @@ export default {
       router,
       loadingStore,
       settingStore,
+      userStore,
     };
   },
 
@@ -158,7 +161,8 @@ export default {
           otp_code: this.otp_code,
         });
 
-        if (response.data.token) {
+        if (response.status === 200) {
+          this.userStore.setCurrentUser(response.data.user);
           const cookieOptions = {
             secure: true,
             sameSite: "Strict",
@@ -207,11 +211,11 @@ export default {
             this.settingStore.setupUserActivityListeners();
           }
         } else {
-          this.errors.message = "Invalid email or password.";
+          this.errors.message = response.message;
         }
       } catch (error) {
         console.error("Login failed:", error);
-        this.errors.message = "Login failed. Please try again.";
+        this.errors.message = error.message;
         this.otp_code = "";
         this.otp_phase = false;
       }

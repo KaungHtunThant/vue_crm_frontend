@@ -388,9 +388,9 @@ import {
 import { useRoute } from "vue-router";
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import { useI18n } from "vue-i18n";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useSettingStore } from "@/stores/SettingStore";
+import { useUserStore } from "@/stores/UserStore";
 
 export default {
   name: "TheTopHeader",
@@ -406,7 +406,6 @@ export default {
       listProfileStyle: {},
       listNotifiStyle: {},
       name: Cookies.get("name") || "User",
-      userImage: Cookies.get("image") || "",
       currentLanguage: localStorage.getItem("locale") || "en",
       showDropdown: false,
       currency: Cookies.get("currency") || "USD",
@@ -428,6 +427,8 @@ export default {
     const currentTime = ref("");
     const { t, locale } = useI18n();
     const otp_code = ref(null);
+    const userStore = useUserStore();
+    const userImage = computed(() => userStore.getCurrentUser?.image || "");
     const handleOTPGenerate = async () => {
       try {
         if (otp_code.value) {
@@ -539,6 +540,7 @@ export default {
       notificationStore,
       handleOTPGenerate,
       otp_code,
+      userImage,
     };
   },
   methods: {
