@@ -90,6 +90,7 @@ import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
 import { getEmrKanban } from "@/plugins/services/kanbanService";
 import { createTask } from "@/plugins/services/taskService";
 import { useTaskStore } from "@/stores/TaskStore";
+import { useDealStore } from "@/stores/DealStore";
 
 export default {
   name: "EmrDealKanbanView",
@@ -100,6 +101,7 @@ export default {
   },
   setup() {
     const notificationStore = useNotificationStore();
+    const dealStore = useDealStore();
     const taskStore = useTaskStore();
     const { t } = useI18n();
     const fullCalendarRef = ref(null);
@@ -162,7 +164,7 @@ export default {
       eventClick: async (info) => {
         const ticketId = info.event.extendedProps.ticketId;
         if (ticketId) {
-          // await openDealDataCard(ticketId);
+          dealStore.changeCurrentDeal(ticketId);
         } else {
           notificationStore.error(
             "لم يتم العثور على رقم التذكرة لفتح بياناتها"

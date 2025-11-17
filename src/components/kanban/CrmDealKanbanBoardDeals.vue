@@ -340,6 +340,7 @@ import moveCardSound from "@/assets/move-card.wav";
 import { closeWebSocket, initializeWebSocket } from "@/plugins/websocket";
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import { useKanbanStore } from "@/stores/KanbanStore";
+import { useDealStore } from "@/stores/DealStore";
 export default {
   name: "CrmDealKanbanBoardDeals",
   components: {
@@ -388,7 +389,8 @@ export default {
     const comments = ref([]);
     const isTasksView = computed(() => route.path === "/crm-tasks");
     const tasks = ref([]);
-    // const toast = useToast();
+    const dealStore = useDealStore();
+    const currentDeal = computed(() => dealStore.currentDeal);
     const { t } = useI18n();
     const selectedDeal = ref(null);
     const reachedBottom = ref(false);
@@ -414,6 +416,12 @@ export default {
       },
       { immediate: true }
     );
+
+    watch(currentDeal, (newDeal) => {
+      if (newDeal) {
+        openDealDataCard(newDeal.id, newDeal.stage_id);
+      }
+    });
 
     const allDealsCount = computed(() => {
       return displayStages.value.reduce((count, stage) => {
@@ -694,37 +702,8 @@ export default {
           }
         }
         addViewCount(dealId);
-        const dealData = await showDeal(dealId);
-        if (dealData.data) {
-          const deal = dealData.data.data;
-          selectedStageId.value = deal.stage_id;
-          const checkStageLoaded = () => {
-            if (isTasksView.value) {
-              return displayStages.value.find(
-                (stage) => stage.id === currentStageId
-              );
-            } else {
-              return displayStages.value.some(
-                (stage) => stage.id === deal.stage_id
-              );
-            }
-          };
-          const waitForStage = () => {
-            return new Promise((resolve) => {
-              if (checkStageLoaded()) {
-                resolve();
-              } else {
-                console.warn(
-                  `Deal's stage (ID: ${deal.stage_id}) not currently displayed.`
-                );
-                resolve();
-              }
-            });
-          };
-
-          await waitForStage();
-
-          selectedDeal.value = deal;
+        if (props.viewType === "emr") {
+          selectedDeal.value = dealStore.currentDeal;
           await nextTick();
           const modalEl = document.getElementById("dealDataCard");
           const modal = new Modal(modalEl);
@@ -742,7 +721,54 @@ export default {
             { once: true }
           );
         } else {
-          console.error("No matching deal found for ID:", dealId);
+          const dealData = await showDeal(dealId);
+          if (dealData.data) {
+            const deal = dealData.data.data;
+            selectedStageId.value = deal.stage_id;
+            const checkStageLoaded = () => {
+              if (isTasksView.value) {
+                return displayStages.value.find(
+                  (stage) => stage.id === currentStageId
+                );
+              } else {
+                return displayStages.value.some(
+                  (stage) => stage.id === deal.stage_id
+                );
+              }
+            };
+            const waitForStage = () => {
+              return new Promise((resolve) => {
+                if (checkStageLoaded()) {
+                  resolve();
+                } else {
+                  console.warn(
+                    `Deal's stage (ID: ${deal.stage_id}) not currently displayed.`
+                  );
+                  resolve();
+                }
+              });
+            };
+            await waitForStage();
+            selectedDeal.value = deal;
+            await nextTick();
+            const modalEl = document.getElementById("dealDataCard");
+            const modal = new Modal(modalEl);
+            modal.show();
+            modalEl.addEventListener(
+              "hidden.bs.modal",
+              () => {
+                const backdrop = document.querySelector(".modal-backdrop");
+                if (backdrop) {
+                  backdrop.remove();
+                  document.body.classList.remove("modal-open");
+                  document.body.style.paddingRight = null;
+                }
+              },
+              { once: true }
+            );
+          } else {
+            console.error("No matching deal found for ID:", dealId);
+          }
         }
       } catch (error) {
         console.error("Error fetching deal data:", error);
