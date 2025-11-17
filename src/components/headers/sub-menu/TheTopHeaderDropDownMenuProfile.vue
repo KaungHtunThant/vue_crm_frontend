@@ -84,7 +84,7 @@
       />
     </ul>
   </div>
-  <edit-profile ref="editProfileModal" />
+  <edit-profile-modal ref="editProfileModal" />
   <change-password ref="changePasswordModal" />
   <change-lang ref="changeLangModal" />
   <calender-modal ref="CalenderModal" />
@@ -93,24 +93,14 @@
 <script>
 import Cookies from "js-cookie";
 import ProfileMenuItem from "@/components/headers/sub-menu/profileMenuItems/TheTopHeaderDropDownMenuProfileMenuItem.vue";
-import EditProfile from "@/components/modals/TheTopHeaderDropDownMenuProfileEditProfileModal.vue";
+import EditProfileModal from "@/components/modals/TheTopHeaderDropDownMenuProfileEditProfileModal.vue";
 import ChangePassword from "@/components/modals/TheTopHeaderDropDownMenuProfileEditProfileModalChangePasswordModal.vue";
 import ChangeLang from "@/components/modals/TheTopHeaderDropDownMenuProfileEditProfileModalChangeLangModal.vue";
 import CalenderModal from "@/components/modals/TheTopHeaderDropDownMenuProfileEditProfileModalCalenderModal.vue";
 import CustomBackground from "@/components/headers/sub-menu/profileMenuItems/TheTopHeaderDropDownMenuProfileEditProfileModalCustmBackgroundModal.vue";
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
-
 import { useI18n } from "vue-i18n";
 import { Modal } from "bootstrap";
-import {
-  ref,
-  onMounted,
-  onUnmounted,
-  onBeforeUnmount,
-  nextTick,
-  watch,
-} from "vue";
+import { ref, onMounted, nextTick, watch } from "vue";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useAuthStore } from "@/stores/AuthStore";
 
@@ -118,7 +108,7 @@ export default {
   name: "TheTopHeaderDropDownMenuProfile",
   components: {
     ProfileMenuItem,
-    EditProfile,
+    EditProfileModal,
     ChangePassword,
     ChangeLang,
     CalenderModal,
@@ -150,11 +140,7 @@ export default {
         isNotificationsEnabled.value = newVal;
       }
     );
-    // const toast = useToast();
-    // const { t } = useI18n();
     const notificationSwitch = ref(null);
-    // const customSwitchInput = ref(null);
-    // const isNotificationsEnabled = ref(null);
 
     const handleSwitchClick = () => {
       nextTick(() => {
@@ -163,23 +149,8 @@ export default {
         }
       });
     };
-    // const handleNotificationSwitchClick = () => {
-    //   nextTick(() => {
-    //     if (isNotificationsEnabled.value) {
-    //       isNotificationsEnabled.value.blur();
-    //     }
-    //   });
-    // };
     onMounted(() => {
       isNotificationsEnabled.value = notificationStore.enabled;
-    });
-
-    onUnmounted(() => {
-      // ... باقي الـ onUnmounted
-    });
-
-    onBeforeUnmount(() => {
-      // ... باقي الـ onBeforeUnmount
     });
 
     return {
@@ -189,6 +160,7 @@ export default {
       handleSwitchClick,
       notificationSwitch,
       authStore,
+      notificationStore,
     };
   },
   data() {
@@ -196,21 +168,6 @@ export default {
       name: Cookies.get("name") || "User",
       userEmail: Cookies.get("email") || "test@email",
       userImage: Cookies.get("image") || "",
-      notificationStore: useNotificationStore(),
-      images: [
-        "/images/bg1.jpg",
-        "/images/bg2.jpg",
-        "/images/bg3.jpg",
-        "/images/bg4.jpg",
-        "/images/bg5.jpg",
-        "/images/bg6.jpg",
-        "/images/bg7.jpg",
-        "/images/bg8.jpg",
-        "/images/bg9.jpg",
-        "/images/bg10.jpg",
-        "/images/bg11.jpg",
-        "/images/bg12.jpg",
-      ],
     };
   },
   methods: {
@@ -229,8 +186,7 @@ export default {
       modal.show();
     },
     openEditProfileModal() {
-      const modal = new Modal(document.getElementById("EditProfileModal"));
-      modal.show();
+      this.$refs.editProfileModal.openEditProfile();
     },
     openChangePasswordModal() {
       this.$refs.changePasswordModal.openChangePassword();

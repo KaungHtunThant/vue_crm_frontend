@@ -201,6 +201,35 @@ export const useTaskStore = defineStore("task", {
         throw error;
       }
     },
+    async updateTask(
+      id,
+      duedate,
+      duetime = null,
+      description = null,
+      status = null
+    ) {
+      try {
+        const response = await updateTask(id, {
+          duedate: duedate,
+          duetime: duetime,
+          description: description,
+          status: status,
+        });
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
+        return {
+          success: true,
+          message: response.data.message || "Task updated successfully",
+        };
+      } catch (error) {
+        console.error("Error updating task:", error);
+        return {
+          success: false,
+          message: error.message || "Error updating task",
+        };
+      }
+    },
     _determineDuedate(duedate) {
       const date = new Date(duedate);
       const today = new Date();
@@ -225,7 +254,6 @@ export const useTaskStore = defineStore("task", {
           throw new Error(response.data.message);
         }
         this.calendar_tasks = response.data.data || [];
-        console.log("Fetched calendar tasks:", this.calendar_tasks);
         return response.data.data;
       } catch (error) {
         console.error("Error fetching calendar tasks:", error);

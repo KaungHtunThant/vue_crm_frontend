@@ -140,15 +140,24 @@ export default {
         notificationStore.success("تمت إضافة الموعد للتقويم");
         fetchStages();
       },
-      eventDrop: (info) => {
+      eventDrop: async (info) => {
         const idx = calendarEvents.value.findIndex(
           (e) => e.id == info.event.id
         );
         if (idx !== -1) {
           calendarEvents.value[idx].start = info.event.startStr;
         }
-        console.log("Event dropped to new date", info);
-        notificationStore.info("Event update triggered");
+        console.log("Event dropped to new date:", info.event);
+        const response = await taskStore.updateTask(
+          info.event.id,
+          info.event.startStr
+        );
+        if (response.success) {
+          notificationStore.success(response.message);
+        } else {
+          notificationStore.error(response.message);
+          info.revert();
+        }
       },
       eventClick: async (info) => {
         const ticketId = info.event.extendedProps.ticketId;

@@ -87,7 +87,7 @@ import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
 import { useUserStore } from "@/stores/UserStore";
 export default {
-  name: "TheTopHeaderDropDownMenuProfileEditProfileModal",
+  name: "EditProfileModal",
 
   setup() {
     const { t } = useI18n();
@@ -125,10 +125,8 @@ export default {
 
     async fetchUserData() {
       try {
-        const response = await this.userStore.fetchCurrentUser();
-        if (!response.success) throw new Error(response.message);
-
         this.userData = this.userStore.getCurrentUser;
+        console.log("Fetched user data:", this.userData);
         this.localNameEn = this.userData.name_en || "";
         this.localNameAr = this.userData.name_ar || "";
         this.localImage =
@@ -184,12 +182,18 @@ export default {
         this.loading = false;
       }
     },
+    openEditProfile() {
+      const modal = document.getElementById("EditProfileModal");
+      const modalInstance = new Modal(modal);
+      modalInstance.show();
+    },
   },
   async mounted() {
     this.userStore = useUserStore();
     if (!this.userStore.getCurrentUser) {
       this.userData = await this.userStore.fetchCurrentUser();
     }
+    console.log("Fetched user data:", this.userStore.getCurrentUser);
   },
 };
 </script>
