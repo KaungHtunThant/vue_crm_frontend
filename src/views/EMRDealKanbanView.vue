@@ -164,6 +164,7 @@ export default {
       eventClick: async (info) => {
         const ticketId = info.event.extendedProps.ticketId;
         if (ticketId) {
+          console.log("Opening deal with ticket ID:", ticketId);
           dealStore.changeCurrentDeal(ticketId);
         } else {
           notificationStore.error(

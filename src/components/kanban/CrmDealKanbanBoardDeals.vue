@@ -390,7 +390,7 @@ export default {
     const isTasksView = computed(() => route.path === "/crm-tasks");
     const tasks = ref([]);
     const dealStore = useDealStore();
-    const currentDeal = computed(() => dealStore.currentDeal);
+    const currentDeal = computed(() => dealStore.getCurrentDeal);
     const { t } = useI18n();
     const selectedDeal = ref(null);
     const reachedBottom = ref(false);
@@ -417,11 +417,14 @@ export default {
       { immediate: true }
     );
 
-    watch(currentDeal, (newDeal) => {
-      if (newDeal) {
-        openDealDataCard(newDeal.id, newDeal.stage_id);
+    watch(
+      () => currentDeal.value,
+      (newDeal) => {
+        selectedDeal.value = newDeal;
+        console.log("Current deal changed:", newDeal);
+        openDealDataCard(newDeal.id);
       }
-    });
+    );
 
     const allDealsCount = computed(() => {
       return displayStages.value.reduce((count, stage) => {
@@ -568,20 +571,6 @@ export default {
         const deal = event.added.element;
         const oldStageId = deal.stage_id;
         const originalStageId = deal.stage_id;
-
-        // DON'T update the stage_id yet - wait for API success
-        // const newStageInDisplay = displayStages.value.find(
-        //   (stage) => stage.id === newStageId
-        // );
-        // if (newStageInDisplay) {
-        //   const dealInNewStage = newStageInDisplay.deals.find(
-        //     (d) => d.id === deal.id
-        //   );
-        //   if (dealInNewStage) {
-        //     dealInNewStage.stage_id = newStageId; // Remove this - do it after API success
-        //   }
-        // }
-
         try {
           const request = await updateDealStage(deal.id, newStageId);
           if (request.status !== 200) {
@@ -687,6 +676,7 @@ export default {
     };
 
     const openDealDataCard = async (dealId, currentStageId = null) => {
+      console.log("Opening deal data card for deal ID:", dealId);
       try {
         if (!allStages.value) {
           let response = null;
@@ -703,9 +693,13 @@ export default {
         }
         addViewCount(dealId);
         if (props.viewType === "emr") {
-          selectedDeal.value = dealStore.currentDeal;
+          console.log(
+            "EMR view - opening deal data card for deal ID:",
+            selectedDeal.value.id
+          );
           await nextTick();
           const modalEl = document.getElementById("dealDataCard");
+          console.log("Modal element:", modalEl);
           const modal = new Modal(modalEl);
           modal.show();
           modalEl.addEventListener(
