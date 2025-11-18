@@ -28,6 +28,7 @@ export const fetchAdditionalDealsByStageId = (
   offset,
   filters = {}
 ) => {
+  console.log("filters in service:", filters);
   return axios.get(`/deals/get-more`, {
     params: {
       stage_id: stageId,

@@ -22,6 +22,7 @@
     :stages="stages"
     :viewType="'task'"
     defaultColor="#333"
+    :filters="filters"
     @open-whatsapp-modal="openWhatsappModal"
     @receive-whatsapp-message="receiveWhatsappMessage"
     @update-whatsapp-message="updateWhatsappMessage"
@@ -35,12 +36,6 @@ import { ref, onMounted, onUnmounted } from "vue";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
 import { getTasksKanban } from "@/plugins/services/kanbanService";
-// import { useToast } from "vue-toastification";
-// import {
-//   showSuccess,
-//   showError,
-//   showInfo,
-// } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
