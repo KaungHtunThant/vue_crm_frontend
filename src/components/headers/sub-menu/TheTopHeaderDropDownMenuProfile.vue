@@ -4,11 +4,7 @@
       class="image mt-1 d-flex justify-content-start align-items-center w-100 px-1"
     >
       <div class="profileImage me-1 border border-2 rounded-5">
-        <img
-          :src="userImage || require('@/assets/default-avatar-profile.webp')"
-          class="img-fluid rounded-5"
-          alt="profile image"
-        />
+        <img :src="userImage" class="img-fluid rounded-5" alt="profile image" />
       </div>
       <div class="data w-100">
         <div
@@ -103,6 +99,8 @@ import { Modal } from "bootstrap";
 import { ref, onMounted, nextTick, watch } from "vue";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useAuthStore } from "@/stores/AuthStore";
+import { useUserStore } from "@/stores/UserStore";
+import { computed } from "vue";
 
 export default {
   name: "TheTopHeaderDropDownMenuProfile",
@@ -119,7 +117,8 @@ export default {
     const isNotificationsEnabled = ref(notificationStore.enabled);
     const { t } = useI18n();
     const authStore = useAuthStore();
-
+    const userStore = useUserStore();
+    const userImage = computed(() => userStore.getCurrentUser?.image || "");
     const handleNotificationSwitchClick = async () => {
       try {
         notificationStore.set(isNotificationsEnabled.value);
@@ -161,13 +160,13 @@ export default {
       notificationSwitch,
       authStore,
       notificationStore,
+      userImage,
     };
   },
   data() {
     return {
       name: Cookies.get("name") || "User",
       userEmail: Cookies.get("email") || "test@email",
-      userImage: Cookies.get("image") || "",
     };
   },
   methods: {

@@ -19,7 +19,6 @@
               margin-right: 10px;
               display: flex;
               flex-direction: column;
-              /* border-right: 2px dashed #eee; */
               height: 100%;
               align-items: flex-start;
               justify-content: flex-start;
