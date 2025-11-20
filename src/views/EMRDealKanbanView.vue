@@ -59,7 +59,7 @@
               v-show="delete_mode_loading"
               disabled
             >
-              <i class="fa fa-check"></i>
+              <i class="fa fa-spinner spin-icon"></i>
             </button>
             <button
               class="btn btn-primary text-white px-0 py-1 fs-6"
@@ -490,7 +490,6 @@ export default {
       window.removeEventListener("contextmenu", handleRightClick);
     });
     return {
-      handleCancelDeleteSelectedTasks,
       stages,
       filters,
       applyFilters,
@@ -518,6 +517,8 @@ export default {
       calendarEvents,
       delete_mode,
       handleDeleteSelectedTasks,
+      delete_mode_loading,
+      handleCancelDeleteSelectedTasks,
     };
   },
 };
@@ -606,6 +607,19 @@ export default {
 .calendar-toolbar-controls .form-select {
   font-size: 1.08rem;
   min-width: 80px;
+}
+.spin-icon {
+  animation: spin 1s linear infinite;
+  display: inline-block; /* ensures rotation behaves properly */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
 <style>
