@@ -12,6 +12,7 @@ export const useDealStore = defineStore("deal", {
   state: () => ({
     deals: [],
     current_deal: {},
+    deal_scroll_status: false,
   }),
   getters: {
     getAllDeals: (state) => {
@@ -25,6 +26,9 @@ export const useDealStore = defineStore("deal", {
     },
     getCurrentDeal: (state) => {
       return state.current_deal;
+    },
+    getDealScrollStatus: (state) => {
+      return state.deal_scroll_status;
     },
   },
   actions: {
@@ -150,6 +154,9 @@ export const useDealStore = defineStore("deal", {
         ];
       }
       return deals;
+    },
+    toggleDealScrollStatus() {
+      this.deal_scroll_status = !this.deal_scroll_status;
     },
   },
 });

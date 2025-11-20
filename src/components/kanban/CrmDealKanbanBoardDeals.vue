@@ -204,12 +204,14 @@
                 @start="drag = true"
                 @change="handleDragChange($event, stage.id)"
                 @scroll="handleDealContainerScroll($event, stage.id)"
+                :disabled="!isDraggable"
               >
                 <template #item="{ element: deal }">
                   <ticket-card
                     :deal="deal"
                     :stage-id="deal.stage_id"
                     :all-stages="allStages"
+                    :is-draggable="isDraggable"
                     @open-deal-data-card="openDealDataCard(deal.id, stage.id)"
                     @toggle-highlight="handleHighlight(deal.id)"
                     :show-calendar-drag="showCalendarDrag"
@@ -368,6 +370,10 @@ export default {
     showCalendarDrag: {
       type: Boolean,
       default: false,
+    },
+    isDraggable: {
+      type: Boolean,
+      default: true,
     },
   },
   setup(props, { emit }) {
@@ -1083,9 +1089,10 @@ export default {
             Array.isArray(additional_deals.data.data)
           ) {
             if (stageIndex !== -1) {
-              displayStages.value[stageIndex].deals.push(
+              await displayStages.value[stageIndex].deals.push(
                 ...additional_deals.data.data
               );
+              dealStore.toggleDealScrollStatus();
             }
           }
         } finally {

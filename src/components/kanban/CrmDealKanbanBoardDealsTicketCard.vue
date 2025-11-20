@@ -1,7 +1,7 @@
 <template>
   <div
     class="deal-card position-relative"
-    draggable="true"
+    :disabled="!isDraggable"
     @dragstart="onDragStart"
     :data-ticket="JSON.stringify(deal)"
     @click="openDealDataCard"
@@ -238,8 +238,6 @@
 
 <script>
 import { useI18n } from "vue-i18n";
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 
 import { computed } from "vue";
@@ -264,6 +262,10 @@ export default {
     showCalendarDrag: {
       type: Boolean,
       default: false,
+    },
+    isDraggable: {
+      type: Boolean,
+      default: true,
     },
   },
   components: {

@@ -14,7 +14,7 @@
     <div style="width: 49%">
       <crm-kanban-kanban-board
         :stages="stages"
-        :draggable="true"
+        :isDraggable="false"
         defaultColor="#333"
         :show-calendar-drag="true"
         :view-type="'emr'"
@@ -249,11 +249,34 @@ export default {
     const task_status_change_trigger = computed(
       () => taskStore.status_change_trigger
     );
+    const deal_scroll_status = computed(() => dealStore.getDealScrollStatus);
     watch(task_status_change_trigger, () => {
       if (task_status_change_trigger.value) {
         fetchStages();
         fullCalendarRef.value.getApi().refetchEvents();
         taskStore.toggleStatusChangeTrigger();
+      }
+    });
+    watch(deal_scroll_status, (newStatus) => {
+      if (newStatus) {
+        console.log("Re-initializing draggables after deal scroll");
+        const draggables = document.querySelectorAll(
+          ".deal-card-calendar:not(.draggable-initialized)"
+        );
+        draggables.forEach((el) => {
+          new Draggable(el, {
+            itemSelector: ".deal-card-calendar",
+            eventData: function (eventEl) {
+              try {
+                return JSON.parse(eventEl.dataset.ticket);
+              } catch {
+                return { title: eventEl.innerText };
+              }
+            },
+          });
+          el.classList.add("draggable-initialized");
+        });
+        dealStore.toggleDealScrollStatus();
       }
     });
     const goToToday = () => {
@@ -408,6 +431,24 @@ export default {
         const response = await getEmrKanban();
         if (response.status == 200) {
           stages.value = response.data.data;
+          nextTick(() => {
+            const draggables = document.querySelectorAll(
+              ".deal-card-calendar:not(.draggable-initialized)"
+            );
+            draggables.forEach((el) => {
+              new Draggable(el, {
+                itemSelector: ".deal-card-calendar",
+                eventData: function (eventEl) {
+                  try {
+                    return JSON.parse(eventEl.dataset.ticket);
+                  } catch {
+                    return { title: eventEl.innerText };
+                  }
+                },
+              });
+              el.classList.add("draggable-initialized");
+            });
+          });
         }
       } catch (error) {
         console.error("Error fetching stages:", error);
@@ -470,21 +511,6 @@ export default {
     onMounted(async () => {
       await fetchStages();
       window.addEventListener("contextmenu", handleRightClick);
-      nextTick(() => {
-        const draggables = document.querySelectorAll(".deal-card-calendar");
-        draggables.forEach((el) => {
-          new Draggable(el, {
-            itemSelector: ".deal-card-calendar",
-            eventData: function (eventEl) {
-              try {
-                return JSON.parse(eventEl.dataset.ticket);
-              } catch {
-                return { title: eventEl.innerText };
-              }
-            },
-          });
-        });
-      });
     });
     onUnmounted(() => {
       window.removeEventListener("contextmenu", handleRightClick);
