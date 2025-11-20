@@ -20,3 +20,9 @@ export const getTasksByDate = async (start_date, end_date) => {
     },
   });
 };
+
+export const bulkDeleteTasks = async (ids) => {
+  return await axios.post("/tasks/bulk-delete", {
+    ids: ids,
+  });
+};

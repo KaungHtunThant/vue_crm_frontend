@@ -3,6 +3,7 @@ import {
   getTasksByDate,
   getTasksByDealId,
   updateTask,
+  bulkDeleteTasks as bulkDelete,
 } from "@/plugins/services/taskService";
 import { fetchTasksCountByStageName } from "@/plugins/services/stageService";
 import { defineStore } from "pinia";
@@ -265,6 +266,25 @@ export const useTaskStore = defineStore("task", {
     },
     toggleStatusChangeTrigger() {
       this.status_change_trigger = !this.status_change_trigger;
+    },
+    async bulkDeleteTasks(task_ids) {
+      try {
+        const response = await bulkDelete(task_ids);
+        if (response.status === 200 || response.status === 204) {
+          return {
+            success: true,
+            message: response.data.message,
+          };
+        } else {
+          throw new Error(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error bulk deleting tasks:", error);
+        return {
+          success: false,
+          message: error.message || "Error bulk deleting tasks",
+        };
+      }
     },
   },
 });

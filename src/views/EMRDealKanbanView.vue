@@ -34,24 +34,46 @@
             class="calendar-toolbar-controls d-flex align-items-center gap-2"
           >
             <button
-              class="btn btn-primary text-white px-0 py-1"
-              style="background-color: #515151; font-size: 16px"
+              class="btn btn-outline-danger px-0 py-1 me-2 fs-6"
+              @click="delete_mode = !delete_mode"
+              v-show="!delete_mode"
+            >
+              <i class="fa fa-trash"></i>
+            </button>
+            <button
+              class="btn btn-outline-primary px-0 py-1 me-2 fs-6"
+              @click="handleCancelDeleteSelectedTasks"
+              v-show="delete_mode"
+            >
+              <i class="fa fa-times"></i>
+            </button>
+            <button
+              class="btn btn-danger px-0 py-1 me-2 fs-6"
+              @click="handleDeleteSelectedTasks"
+              v-show="delete_mode"
+            >
+              <i class="fa fa-check"></i>
+            </button>
+            <button
+              class="btn btn-info px-0 py-1 me-2"
+              v-show="delete_mode_loading"
+              disabled
+            >
+              <i class="fa fa-spinner"></i>
+            </button>
+            <button
+              class="btn btn-primary text-white px-0 py-1 fs-6"
               @click="goToNext"
             >
               <i class="fa fa-chevron-left"></i>
             </button>
             <button
-              class="btn btn-primary text-white px-0 py-1"
-              style="background-color: #515151; font-size: 16px"
+              class="btn btn-primary text-white px-0 py-1 fs-6"
               @click="goToPrev"
             >
               <i class="fa fa-chevron-right"></i>
             </button>
-            <button
-              class="btn btn-primary px-0 py-1"
-              style="font-size: 16px"
-              @click="goToToday"
-            >
+            <button class="btn btn-primary px-0 py-1 fs-6" @click="goToToday">
               {{ $t("emr-calendar-go-to-today") }}
             </button>
             <select
@@ -113,6 +135,15 @@ export default {
     const logs = ref([]);
     const comments = ref([]);
     const packages = ref([]);
+    const delete_mode = ref(false);
+    const delete_mode_loading = ref(false);
+    const selectedTasks = ref([]);
+    const getEventClass = (arg) => {
+      if (delete_mode.value && selectedTasks.value.includes(arg.event.id)) {
+        return ["selected-for-deletion"];
+      }
+      return [];
+    };
     const calendarOptions = ref({
       plugins: [dayGridPlugin, interactionPlugin],
       initialView: currentView.value,
@@ -139,7 +170,7 @@ export default {
           ticketData = { name: info.event.title };
         }
         handleAddTask(ticketData.id, info.event.startStr);
-        notificationStore.success("تمت إضافة الموعد للتقويم");
+        notificationStore.success("Task added successfully");
         fetchStages();
       },
       eventDrop: async (info) => {
@@ -162,18 +193,32 @@ export default {
         }
       },
       eventClick: async (info) => {
-        const ticketId = info.event.extendedProps.ticketId;
-        if (ticketId) {
-          dealStore.changeCurrentDeal(ticketId);
+        if (delete_mode.value) {
+          const el = info.el;
+          if (selectedTasks.value.includes(info.event.id)) {
+            selectedTasks.value = selectedTasks.value.filter(
+              (id) => id !== info.event.id
+            );
+            el.classList.remove("selected-for-deletion");
+          } else {
+            selectedTasks.value.push(info.event.id);
+            el.classList.add("selected-for-deletion");
+          }
+          console.log("Selected tasks for deletion:", selectedTasks.value);
         } else {
-          notificationStore.error("Task has no deal");
+          const ticketId = info.event.extendedProps.ticketId;
+          if (ticketId) {
+            dealStore.changeCurrentDeal(ticketId);
+          } else {
+            notificationStore.error("Task has no deal");
+          }
         }
       },
       headerToolbar: false,
       height: "calc(100vh - 150px)",
-      eventBackgroundColor: "#dc3545",
-      eventBorderColor: "#dc3545",
-      eventTextColor: "#fff",
+      eventBackgroundColor: "#2d2e2e",
+      eventBorderColor: "#2d2e2e",
+      eventClassNames: getEventClass,
       dayMaxEventRows: 3,
       fixedWeekCount: false,
       dayHeaderClassNames: "calendar-day-header",
@@ -322,32 +367,6 @@ export default {
         console.error("Error updating deal stage:", error.response?.data);
       }
     };
-    // const openDealDataCard = async (dealId) => {
-    //   try {
-    //     addViewCount(dealId);
-    //     const response = await showDeal(dealId);
-    //     if (response.status === 200) {
-    //       const task_response = await getTasksByDealId(dealId);
-    //       if (task_response.status === 200) {
-    //         tasks.value = task_response.data.data;
-    //       } else {
-    //         tasks.value = [];
-    //       }
-    //       selectedDeal.value = response.data.data;
-    //       await nextTick();
-    //       const modalEl = document.getElementById("dealDataCard");
-    //       if (modalEl) {
-    //         const modal = new Modal(modalEl);
-    //         modal.show();
-    //       }
-    //     } else {
-    //       console.error("No matching deal found for ID:", dealId);
-    //     }
-    //   } catch (error) {
-    //     console.error("Error fetching deal data:", error);
-    //     notificationStore.error("something went wrong");
-    //   }
-    // };
     function formatCalendarTitle(title) {
       const yearMatch = title.match(/\d{4}/);
       let year = yearMatch ? yearMatch[0] : "";
@@ -422,6 +441,33 @@ export default {
         });
       }
     };
+    const handleDeleteSelectedTasks = async () => {
+      delete_mode_loading.value = true;
+      if (selectedTasks.value.length === 0) {
+        notificationStore.error("No tasks selected for deletion");
+      } else {
+        const response = await taskStore.bulkDeleteTasks(selectedTasks.value);
+        if (response.success) {
+          fullCalendarRef.value.getApi().refetchEvents();
+          fetchStages();
+          notificationStore.success(response.message);
+          selectedTasks.value = [];
+          delete_mode.value = false;
+        } else {
+          notificationStore.error(response.message);
+        }
+      }
+      delete_mode_loading.value = false;
+    };
+    const handleCancelDeleteSelectedTasks = () => {
+      delete_mode.value = false;
+      selectedTasks.value = [];
+      nextTick(() => {
+        document.querySelectorAll(".selected-for-deletion").forEach((el) => {
+          el.classList.remove("selected-for-deletion");
+        });
+      });
+    };
     onMounted(async () => {
       await fetchStages();
       window.addEventListener("contextmenu", handleRightClick);
@@ -445,6 +491,7 @@ export default {
       window.removeEventListener("contextmenu", handleRightClick);
     });
     return {
+      handleCancelDeleteSelectedTasks,
       stages,
       filters,
       applyFilters,
@@ -470,6 +517,8 @@ export default {
       comments,
       packages,
       calendarEvents,
+      delete_mode,
+      handleDeleteSelectedTasks,
     };
   },
 };
@@ -510,9 +559,9 @@ export default {
   font-weight: 700 !important;
 }
 :deep(.fc-daygrid-event) {
-  background: #da1b2fd5 !important;
-  border: none !important;
-  color: #fff !important;
+  /* background: #da1b2fd5 !important;
+  border: none !important; */
+  /* color: #fff !important; */
   border-radius: 7px !important;
   font-size: 14px;
   padding: 4px 12px;
@@ -558,5 +607,11 @@ export default {
 .calendar-toolbar-controls .form-select {
   font-size: 1.08rem;
   min-width: 80px;
+}
+</style>
+<style>
+.selected-for-deletion {
+  background-color: #fc0909 !important;
+  border-color: #722525 !important;
 }
 </style>
