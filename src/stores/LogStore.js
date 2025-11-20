@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { getUser } from "@/plugins/services/userService";
+import { getAllUsers } from "@/plugins/services/userService";
 import { getLogsByDealId } from "@/plugins/services/logService";
 
 export const useLogStore = defineStore("log", () => {
@@ -20,7 +20,7 @@ export const useLogStore = defineStore("log", () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await getUser();
+      const response = await getAllUsers();
       users.value = response.data.data;
     } catch (error) {
       console.error("Error fetching users:", error);

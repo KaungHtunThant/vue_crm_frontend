@@ -1367,7 +1367,7 @@
                       {{ t("kanban-modal-edit-placeholder-representative") }}
                     </option>
                     <option
-                      v-for="user in logStore.users"
+                      v-for="user in users"
                       :key="user.id"
                       :value="user.id"
                     >
@@ -1854,6 +1854,7 @@ import Cookies from "js-cookie";
 import { nationalities as nationalities_options } from "@/enums/NationalitiesEnum";
 import { useTaskStore } from "@/stores/TaskStore";
 import { useDealStore } from "@/stores/DealStore";
+import { useUserStore } from "@/stores/UserStore";
 
 export default {
   name: "CrmDealKanbanDealDataModal",
@@ -1889,6 +1890,8 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const userStore = useUserStore();
+    const users = computed(() => userStore.getAllUsers);
     const notificationStore = useNotificationStore();
     const logStore = useLogStore();
     const packageStore = usePackageStore();
@@ -2745,7 +2748,6 @@ export default {
       () => props.deal,
       (newDeal) => {
         if (newDeal) {
-          // fetchLogs(newDeal.id);
           if (newDeal?.id) {
             logStore.logs = [];
             logStore.fetchLogs(newDeal.id);
@@ -2857,7 +2859,12 @@ export default {
     onMounted(async () => {
       packageStore.fetchAll();
       user_role.value = Cookies.get("user_role");
-      await logStore.fetchUsers();
+      if (logStore.users.length === 0) {
+        await logStore.fetchUsers();
+      }
+      if (users.value.length === 0) {
+        await userStore.fetchUsers();
+      }
       if (props.deal?.id) await logStore.fetchLogs(props.deal.id);
       document.addEventListener("click", handleClickOutside);
 
@@ -3217,7 +3224,7 @@ export default {
       sortedComments,
       cancelEditComment,
       logStore,
-      users: logStore.users,
+      users,
       commentInput,
       autoResizeEditWidth,
       resizeDisplayedCommentWidth,
