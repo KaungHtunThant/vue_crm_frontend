@@ -44,6 +44,7 @@
               class="btn btn-outline-primary px-0 py-1 me-2 fs-6"
               @click="handleCancelDeleteSelectedTasks"
               v-show="delete_mode"
+              :disabled="delete_mode_loading"
             >
               <i class="fa fa-times"></i>
             </button>
@@ -51,15 +52,9 @@
               class="btn btn-danger px-0 py-1 me-2 fs-6"
               @click="handleDeleteSelectedTasks"
               v-show="delete_mode"
+              :disabled="delete_mode_loading"
             >
               <i class="fa fa-check"></i>
-            </button>
-            <button
-              class="btn btn-info px-0 py-1 me-2"
-              v-show="delete_mode_loading"
-              disabled
-            >
-              <i class="fa fa-spinner"></i>
             </button>
             <button
               class="btn btn-primary text-white px-0 py-1 fs-6"
