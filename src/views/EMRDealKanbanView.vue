@@ -165,7 +165,6 @@ export default {
           ticketData = { name: info.event.title };
         }
         handleAddTask(ticketData.id, info.event.startStr);
-        notificationStore.success("Task added successfully");
         fetchStages();
       },
       eventDrop: async (info) => {
