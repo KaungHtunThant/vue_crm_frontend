@@ -1309,13 +1309,30 @@
                     >
                       {{ t("kanban-modal-edit-tasks-heading") }}
                     </span>
-                    <input
+                    <!-- <input
                       type="text"
                       class="form-control bg-input text-secondary py-2 me-1"
                       v-model="customerData.task"
                       :placeholder="t('kanban-modal-edit-tasks-placeholder')"
                       @keyup.enter="handleAddTask"
-                    />
+                    /> -->
+                    <select
+                      class="form-select bg-input text-secondary py-2 me-1"
+                      v-model="customerData.task"
+                      :placeholder="t('kanban-modal-edit-tasks-placeholder')"
+                      @keyup.enter="handleAddTask"
+                    >
+                      <option value="" disabled selected>
+                        {{ t("kanban-modal-edit-tasks-placeholder") }}
+                      </option>
+                      <option
+                        v-for="event in taskEventsList"
+                        :key="event.id"
+                        :value="event.id"
+                      >
+                        {{ event.name }}
+                      </option>
+                    </select>
                     <input
                       type="date"
                       lang="en"
@@ -1369,7 +1386,7 @@
                     :class="{ 'delete-animation': task.toDelete }"
                   >
                     <div class="col-4">
-                      {{ task.description }}
+                      {{ task.description || task.task_event?.name || "Nill" }}
                     </div>
                     <div class="col-2">
                       <input
@@ -1511,6 +1528,7 @@ import { nationalities as nationalities_options } from "@/enums/NationalitiesEnu
 import { useTaskStore } from "@/stores/TaskStore";
 import { useDealStore } from "@/stores/DealStore";
 import { useUserStore } from "@/stores/UserStore";
+import { useTaskEventsStore } from "@/stores/TaskEventsStore";
 
 export default {
   name: "CrmDealKanbanDealDataModal",
@@ -1566,6 +1584,7 @@ export default {
     const commentInput = ref(null);
     const user_role = ref(null);
     const currency = Cookies.get("currency") || "USD";
+    const taskEventsStore = useTaskEventsStore();
     const treatment_packages = computed(() =>
       packageStore.getPackagesWithCategory("treatments")
     );
@@ -2256,18 +2275,27 @@ export default {
       try {
         const deal_id = props.deal?.id;
         const formData = {
-          description: customerData.task,
+          description: "",
           duedate: customerData.date,
           duetime: customerData.time,
           deal_id: props.deal?.id,
+          task_events_id: customerData.task,
         };
+        console.log("Form Data for New Task:", formData);
         const response = await createTask(formData);
         if (response.status === 200 || response.status === 201) {
+          const selectedEvent = taskEventsList.value.find(
+            (event) => event.id === customerData.task
+          );
           customerData.tasks.unshift({
             id: response.data.data.id,
-            description: customerData.task,
+            description: selectedEvent?.name || "",
             duedate: customerData.date,
             duetime: customerData.time,
+            task_events_id: customerData.task,
+            task_event: selectedEvent
+              ? { id: selectedEvent.id, name: selectedEvent.name }
+              : null,
             status: "active",
             stage: getTaskStageName(customerData.date),
           });
@@ -2495,6 +2523,7 @@ export default {
           }
         });
       }
+      await taskEventsStore.fetchTaskEvents();
     });
     watch(
       () => customerData.comments,
@@ -2738,6 +2767,7 @@ export default {
       const stage = props.stages.find((s) => s.id === id);
       return stage ? stage.color_code : id;
     };
+    const taskEventsList = computed(() => taskEventsStore.getTaskEvents);
 
     return {
       modified_id,
@@ -2830,6 +2860,7 @@ export default {
       user_role,
       warrantyList,
       currency,
+      taskEventsList,
     };
   },
 };

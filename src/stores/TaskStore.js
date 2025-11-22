@@ -117,7 +117,8 @@ export const useTaskStore = defineStore("task", {
       duedate,
       duetime,
       deal_id,
-      type = "sales"
+      type = "sales",
+      task_events_id
     ) {
       const tempId = Date.now();
       const optimisticTask = {
@@ -127,6 +128,7 @@ export const useTaskStore = defineStore("task", {
         duetime: duetime,
         deal_id: deal_id,
         type: type,
+        task_events_id: task_events_id,
       };
       this.tasks.push(optimisticTask);
       try {
@@ -136,6 +138,7 @@ export const useTaskStore = defineStore("task", {
         formData.append("duetime", duetime);
         formData.append("deal_id", deal_id);
         formData.append("type", type);
+        formData.append("task_events_id", task_events_id);
         const response = await createTask(formData);
         if (response.status !== 201 && response.status !== 200) {
           throw new Error(response.data.message);
