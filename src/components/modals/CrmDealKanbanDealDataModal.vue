@@ -31,7 +31,7 @@
               {{ t("kanban-modal-edit-print-case") }}
             </button>
           </div> -->
-          <div class="rating">
+          <div class="rating d-flex align-items-center">
             <rating-stars
               v-model="customerData.rating"
               :isEditable="isEditMode"

@@ -1,6 +1,8 @@
 <template>
-  <label class="fs-6">{{ t("kanban-modal-edit-rating-heading") }}</label>
-  <div class="w-100 mt-2">
+  <label class="fs-6 w-100 mx-2">
+    {{ t("kanban-modal-edit-rating-heading") }}
+  </label>
+  <div class="w-100 d-flex align-items-center">
     <span
       v-for="index in 7"
       :key="index"
