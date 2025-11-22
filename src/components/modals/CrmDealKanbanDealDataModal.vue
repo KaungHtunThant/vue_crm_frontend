@@ -8,7 +8,14 @@
     data-bs-backdrop="false"
   >
     <div class="modal-dialog modal-fullscreen">
-      <div class="modal-content">
+      <div class="modal-content p-relative overflow-hidden">
+        <div
+          v-if="isOtherTaskSelected"
+          class="blur-overlay"
+          @click="handleOverlayClick"
+          @contextmenu.prevent="preventRightClick"
+          v-disable-right-click
+        ></div>
         <div
           class="modal-header py-0 d-flex justify-content-between align-items-center"
         >
@@ -1451,192 +1458,209 @@
             <!-- right section Comments And Tasks -->
             <div class="col-12 col-md-6 px-4">
               <!-- Comments Section -->
-              <div class="row">
-                <div class="col-12 px-0">
-                  <div class="d-flex align-items-start">
-                    <span
-                      class="btn btn-light text-primary me-1 px-4 rounded-end-0"
-                      style="background-color: #eee"
-                    >
-                      {{ t("kanban-modal-edit-comment-heading") }}
-                    </span>
-                    <textarea
-                      ref="commentInput"
-                      v-model="customerData.comment"
-                      :placeholder="t('kanban-modal-edit-comment-placeholder')"
-                      class="form-control comment-textarea bg-input text-secondary rounded-0 me-1"
-                      rows="1"
-                      style="
-                        resize: none;
-                        overflow-y: hidden;
-                        min-height: 38px;
-                        min-width: 50px;
-                        width: 100%;
-                      "
-                      @input="autoResize($event.target)"
-                      @keydown.enter="handleEnter"
-                    ></textarea>
-                    <button
-                      class="btn btn-primary rounded-start-0 fixed-action-btn"
-                      type="submit"
-                      @click="handleAddComment"
-                    >
-                      {{ t("kanban-modal-edit-comment-button-submit") }}
-                    </button>
-                  </div>
-                </div>
-                <div class="col-12 mt-2 bg-input showComments py-2 rounded-3">
-                  <div
-                    v-for="comment in sortedComments"
-                    :key="comment.id"
-                    class="mt-2 d-flex justify-content-start align-items-start flex-nowrap"
-                  >
-                    <div class="pe-0">
-                      <img
-                        :src="comment.image"
-                        class="rounded-5"
-                        alt="Seals Image"
-                        width="45"
-                        height="45"
-                      />
-                      <!-- <span class="ms-2">{{ comment.username }}</span> -->
-                    </div>
-                    <div
-                      class="position-relative ps-0"
-                      style="max-width: calc(100% - 45px)"
-                    >
-                      <div
-                        class="rounded-3 p-2"
-                        style="
-                          word-break: break-word;
-                          overflow-wrap: break-word;
-                          min-width: 50px !important;
-                          max-width: 100% !important;
-                          width: fit-content !important;
-                        "
+              <div
+                ref="commentsSection"
+                class="comments-section position-relative"
+                :class="{
+                  'elevated-section bg-white p-4 rounded-3 shadow-lg border border-2 border-danger':
+                    isOtherTaskSelected,
+                }"
+                @contextmenu.prevent="preventRightClick"
+              >
+                <div class="row">
+                  <div class="col-12 px-0">
+                    <div class="d-flex align-items-start">
+                      <span
+                        class="btn btn-light text-primary me-1 px-4 rounded-end-0"
+                        style="background-color: #eee"
                       >
-                        <h6
-                          class="mb-2"
-                          style="font-size: 16px; font-weight: 600"
-                        >
-                          {{ comment.isAdmin ? "System" : comment.username }}
-                        </h6>
+                        {{ t("kanban-modal-edit-comment-heading") }}
+                      </span>
+                      <textarea
+                        ref="commentInput"
+                        v-model="customerData.comment"
+                        :placeholder="
+                          t('kanban-modal-edit-comment-placeholder')
+                        "
+                        class="form-control comment-textarea bg-input text-secondary rounded-0 me-1"
+                        rows="1"
+                        style="
+                          resize: none;
+                          overflow-y: hidden;
+                          min-height: 38px;
+                          min-width: 50px;
+                          width: 100%;
+                        "
+                        @input="autoResize($event.target)"
+                        @keydown.enter="handleEnter"
+                      ></textarea>
+                      <button
+                        class="btn btn-primary rounded-start-0 fixed-action-btn"
+                        type="submit"
+                        @click="handleAddComment"
+                      >
+                        {{ t("kanban-modal-edit-comment-button-submit") }}
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-12 mt-2 bg-input showComments py-2 rounded-3">
+                    <div
+                      v-for="comment in sortedComments"
+                      :key="comment.id"
+                      class="mt-2 d-flex justify-content-start align-items-start flex-nowrap"
+                    >
+                      <div class="pe-0">
+                        <img
+                          :src="comment.image"
+                          class="rounded-5"
+                          alt="Seals Image"
+                          width="45"
+                          height="45"
+                        />
+                        <!-- <span class="ms-2">{{ comment.username }}</span> -->
+                      </div>
+                      <div
+                        class="position-relative ps-0"
+                        style="max-width: calc(100% - 45px)"
+                      >
                         <div
-                          :class="[
-                            'rounded-3 p-2',
-                            comment.isAdmin
-                              ? 'adminComment'
-                              : 'bg-light text-dark',
-                          ]"
+                          class="rounded-3 p-2"
+                          style="
+                            word-break: break-word;
+                            overflow-wrap: break-word;
+                            min-width: 50px !important;
+                            max-width: 100% !important;
+                            width: fit-content !important;
+                          "
                         >
-                          <div v-if="editingCommentId === comment.id">
-                            <textarea
-                              :id="`edit-textarea-${comment.id}`"
-                              v-model="editingCommentText"
-                              class="form-control rounded-2 bg-white text-dark ps-2"
-                              style="
-                                resize: none;
-                                overflow-y: hidden;
-                                min-height: 30px;
-                                height: fit-content !important;
-                                min-width: 50px;
-                                max-width: 100% !important;
-                                width: fit-content !important;
-                                font-size: 14px;
-                                box-sizing: border-box;
-                                display: inline-block;
-                                overflow-x: auto;
-                                width: auto !important;
-                              "
-                              @input="
-                                autoResize($event.target);
-                                autoResizeEditWidth($event.target);
-                              "
-                            ></textarea>
-                            <div class="d-flex justify-content-end gap-2 mt-1">
-                              <button
-                                class="btn btn-success btn-sm"
-                                @click="handleUpdateComment(comment)"
-                                style="font-size: 10px"
+                          <h6
+                            class="mb-2"
+                            style="font-size: 16px; font-weight: 600"
+                          >
+                            {{ comment.isAdmin ? "System" : comment.username }}
+                          </h6>
+                          <div
+                            :class="[
+                              'rounded-3 p-2',
+                              comment.isAdmin
+                                ? 'adminComment'
+                                : 'bg-light text-dark',
+                            ]"
+                          >
+                            <div v-if="editingCommentId === comment.id">
+                              <textarea
+                                :id="`edit-textarea-${comment.id}`"
+                                v-model="editingCommentText"
+                                class="form-control rounded-2 bg-white text-dark ps-2"
+                                style="
+                                  resize: none;
+                                  overflow-y: hidden;
+                                  min-height: 30px;
+                                  height: fit-content !important;
+                                  min-width: 50px;
+                                  max-width: 100% !important;
+                                  width: fit-content !important;
+                                  font-size: 14px;
+                                  box-sizing: border-box;
+                                  display: inline-block;
+                                  overflow-x: auto;
+                                  width: auto !important;
+                                "
+                                @input="
+                                  autoResize($event.target);
+                                  autoResizeEditWidth($event.target);
+                                "
+                              ></textarea>
+                              <div
+                                class="d-flex justify-content-end gap-2 mt-1"
                               >
-                                <i class="fa fa-check"></i>
-                              </button>
-                              <button
-                                class="btn btn-danger btn-sm"
-                                @click="cancelEditComment"
-                                style="font-size: 10px"
-                              >
-                                <i class="fa fa-times"></i>
-                              </button>
+                                <button
+                                  class="btn btn-success btn-sm"
+                                  @click="handleUpdateComment(comment)"
+                                  style="font-size: 10px"
+                                >
+                                  <i class="fa fa-check"></i>
+                                </button>
+                                <button
+                                  class="btn btn-danger btn-sm"
+                                  @click="cancelEditComment"
+                                  style="font-size: 10px"
+                                >
+                                  <i class="fa fa-times"></i>
+                                </button>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <div
+                                :ref="`commentText-${comment.id}`"
+                                style="
+                                  white-space: pre-line;
+                                  min-width: 50px;
+                                  word-break: break-word;
+                                  overflow-wrap: break-word;
+                                  display: inline-block;
+                                  box-sizing: border-box;
+                                  overflow-x: hidden;
+                                  width: auto !important;
+                                "
+                                :style="{
+                                  width: getCommentTextWidth(comment.id),
+                                }"
+                                v-html="comment.text_body"
+                              />
                             </div>
                           </div>
-                          <div v-else>
-                            <div
-                              :ref="`commentText-${comment.id}`"
-                              style="
-                                white-space: pre-line;
-                                min-width: 50px;
-                                word-break: break-word;
-                                overflow-wrap: break-word;
-                                display: inline-block;
-                                box-sizing: border-box;
-                                overflow-x: hidden;
-                                width: auto !important;
-                              "
-                              :style="{
-                                width: getCommentTextWidth(comment.id),
-                              }"
-                              v-html="comment.text_body"
-                            />
+                          <div
+                            class="d-flex justify-content-end align-items-center gap-2 mt-2"
+                          >
+                            <!-- pin button -->
+                            <button
+                              class="btn btn-sm p-0"
+                              @click="togglePin(comment)"
+                              :title="comment.isPinned ? 'Unpin' : 'Pin'"
+                              style="z-index: 2"
+                            >
+                              <i
+                                :class="[
+                                  'fa-solid',
+                                  'fa-thumbtack',
+                                  comment.isPinned
+                                    ? 'text-warning'
+                                    : comment.isAdmin
+                                    ? ''
+                                    : 'text-dark',
+                                ]"
+                                style="
+                                  transform: rotate(-30deg);
+                                  font-size: 12px;
+                                "
+                              ></i>
+                            </button>
+                            <button
+                              v-if="editingCommentId !== comment.id"
+                              class="btn btn-sm p-0 text-dark"
+                              @click="editComment(comment)"
+                            >
+                              <i
+                                class="fa-solid fa-pencil text-dark"
+                                style="font-size: 12px"
+                              ></i>
+                            </button>
+                            <button
+                              class="btn btn-sm p-0 text-dark"
+                              @click.prevent="copyComment(comment.text_body)"
+                            >
+                              <i
+                                class="fa-solid fa-copy dark"
+                                style="font-size: 12px"
+                              ></i>
+                            </button>
+                            <span
+                              class="text-secondary"
+                              style="font-size: 10px"
+                              >{{ formatDate(comment.created_at) }}</span
+                            >
                           </div>
-                        </div>
-                        <div
-                          class="d-flex justify-content-end align-items-center gap-2 mt-2"
-                        >
-                          <!-- pin button -->
-                          <button
-                            class="btn btn-sm p-0"
-                            @click="togglePin(comment)"
-                            :title="comment.isPinned ? 'Unpin' : 'Pin'"
-                            style="z-index: 2"
-                          >
-                            <i
-                              :class="[
-                                'fa-solid',
-                                'fa-thumbtack',
-                                comment.isPinned
-                                  ? 'text-warning'
-                                  : comment.isAdmin
-                                  ? ''
-                                  : 'text-dark',
-                              ]"
-                              style="transform: rotate(-30deg); font-size: 12px"
-                            ></i>
-                          </button>
-                          <button
-                            v-if="editingCommentId !== comment.id"
-                            class="btn btn-sm p-0 text-dark"
-                            @click="editComment(comment)"
-                          >
-                            <i
-                              class="fa-solid fa-pencil text-dark"
-                              style="font-size: 12px"
-                            ></i>
-                          </button>
-                          <button
-                            class="btn btn-sm p-0 text-dark"
-                            @click.prevent="copyComment(comment.text_body)"
-                          >
-                            <i
-                              class="fa-solid fa-copy dark"
-                              style="font-size: 12px"
-                            ></i>
-                          </button>
-                          <span
-                            class="text-secondary"
-                            style="font-size: 10px"
-                            >{{ formatDate(comment.created_at) }}</span
-                          >
                         </div>
                       </div>
                     </div>
@@ -1661,12 +1685,12 @@
                       @keyup.enter="handleAddTask"
                     /> -->
                     <select
-                      class="form-select bg-input text-secondary py-2 me-1"
+                      class="form-select bg-input py-2 me-1"
                       v-model="customerData.task"
                       :placeholder="t('kanban-modal-edit-tasks-placeholder')"
                       @keyup.enter="handleAddTask"
                     >
-                      <option value="" disabled selected>
+                      <option value="" disabled>
                         {{ t("kanban-modal-edit-tasks-placeholder") }}
                       </option>
                       <option
@@ -1927,6 +1951,8 @@ export default {
     const stageColors = reactive({});
     const commentInput = ref(null);
     const user_role = ref(null);
+    const isOtherTaskSelected = ref(false);
+    const commentsSection = ref(null);
     const currency = Cookies.get("currency") || "USD";
     const taskEventsStore = useTaskEventsStore();
     const treatment_packages = computed(() =>
@@ -2670,6 +2696,7 @@ export default {
             timeout: 3000,
           });
         }
+        removeBlur();
       } catch (error) {
         console.error("Error adding comment:", error);
         notificationStore.error(error.message, {
@@ -2706,6 +2733,16 @@ export default {
           const selectedEvent = taskEventsList.value.find(
             (event) => event.id === customerData.task
           );
+          if (selectedEvent?.name === "Other") {
+            isOtherTaskSelected.value = true;
+            await nextTick();
+            if (commentsSection.value) {
+              commentsSection.value.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+            }
+          }
           customerData.tasks.unshift({
             id: response.data.data.id,
             description: selectedEvent?.name || "",
@@ -2742,6 +2779,18 @@ export default {
           timeout: 3000,
         });
       }
+    };
+    const removeBlur = () => {
+      isOtherTaskSelected.value = false;
+    };
+    const handleOverlayClick = () => {
+      notificationStore.info("Please add a comment to continue", {
+        timeout: 2000,
+      });
+    };
+    const preventRightClick = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
     };
     const activeTasks = computed(() => {
       return customerData.tasks.filter((task) => task.status === "active");
@@ -3286,6 +3335,9 @@ export default {
       warrantyList,
       currency,
       taskEventsList,
+      isOtherTaskSelected,
+      handleOverlayClick,
+      preventRightClick,
     };
   },
 };
@@ -3639,5 +3691,44 @@ label {
 }
 .fs-7 {
   font-size: 0.9rem !important;
+}
+.blur-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1000;
+  cursor: not-allowed;
+}
+.elevated-section {
+  z-index: 1001 !important;
+}
+.elevated-section::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid var(--bs-danger);
+  border-radius: 0.5rem;
+  pointer-events: none;
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
 }
 </style>
