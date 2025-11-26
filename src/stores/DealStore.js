@@ -158,5 +158,8 @@ export const useDealStore = defineStore("deal", {
     toggleDealScrollStatus() {
       this.deal_scroll_status = !this.deal_scroll_status;
     },
+    setCurrentDeal(deal) {
+      this.current_deal = deal;
+    },
   },
 });

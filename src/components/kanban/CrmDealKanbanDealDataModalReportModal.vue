@@ -24,12 +24,17 @@
           ></button>
         </div>
         <div class="modal-body">
+          <h6 class="mb-3">
+            {{ t("kanban-modal-questions-subheading-questions-list") }}
+          </h6>
           <form @submit.prevent="submitForm">
             <questions-div
               v-for="(question, index) in questions"
               :key="index"
               :question="question"
             />
+            <hr class="my-3" />
+            <initial-diagnosis-component />
             <div class="d-flex justify-content-end gap-2 mt-4 mb-2">
               <button
                 type="submit"
@@ -58,9 +63,10 @@ import { updateAnswersByDealId } from "@/plugins/services/answerService";
 import { getKanbanQuestions } from "@/plugins/services/kanbanService";
 import { useI18n } from "vue-i18n";
 import QuestionsDiv from "./CrmDealKanbanDealDataModalReportModalQuestions.vue";
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
+import InitialDiagnosisComponent from "./CrmDealKanbanDealDataModalReportModalInitialDiagnosisComponent.vue";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { useDealStore } from "@/stores/DealStore";
+import { computed } from "vue";
 
 export default {
   name: "CrmDealKanbanDealDataModalReportModal",
@@ -73,10 +79,13 @@ export default {
   setup() {
     const { t } = useI18n();
     const notificationStore = useNotificationStore();
-    return { t, notificationStore };
+    const deal_store = useDealStore();
+    const current_deal = computed(() => deal_store.getCurrentDeal);
+    return { t, notificationStore, deal_store, current_deal };
   },
   components: {
     QuestionsDiv,
+    InitialDiagnosisComponent,
   },
   data() {
     return {
@@ -113,14 +122,17 @@ export default {
         const questionAnswers = this.getFormDataByQuestion(question);
         formData.push(...questionAnswers);
       });
-      const response = await updateAnswersByDealId(this.deal_id, formData);
-      if (response.status === 200) {
-        this.notificationStore.success(response.data.message, {
+      const response_1 = await updateAnswersByDealId(this.deal_id, formData);
+      this.deal_store.updateDeal(this.deal_id, {
+        diagnosis: this.current_deal.diagnoses,
+      });
+      if (response_1.status === 200) {
+        this.notificationStore.success(response_1.data.message, {
           timeout: 3000,
         });
       } else {
-        console.error("Failed to update answers: ", response.data.message);
-        this.notificationStore.error(response.data.message, {
+        console.error("Failed to update answers: ", response_1.data.message);
+        this.notificationStore.error(response_1.data.message, {
           timeout: 3000,
         });
       }

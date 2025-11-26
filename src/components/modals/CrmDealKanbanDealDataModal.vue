@@ -409,105 +409,6 @@
                   </button>
                 </div>
               </div>
-
-              <!-- Patient Problems -->
-              <div class="row mb-3" @dblclick="handleDoubleClick">
-                <div class="col-2 pt-2">
-                  <label class="form-label"
-                    ><i class="fa-solid fa-notes-medical"></i>
-                    {{ t("kanban-modal-edit-label-initialdiagnosis") }}</label
-                  >
-                </div>
-                <div class="col-10">
-                  <div class="" v-if="customerData.patient_problems.length > 0">
-                    <div class="row m-0 g-0">
-                      <div
-                        class="col-12 col-lg-6 p-0"
-                        v-for="(
-                          problem, index
-                        ) in customerData.patient_problems"
-                        :key="index"
-                      >
-                        <div class="row p-0 g-0 pe-2">
-                          <div
-                            class="col-7 pe-2 pb-2"
-                            @dblclick="handleDoubleClick"
-                          >
-                            <select
-                              class="form-select py-2 me-2"
-                              :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
-                              v-model="problem.id"
-                              :disabled="!isEditMode"
-                              @dblclick="handleDoubleClick"
-                            >
-                              <option value="" disabled>
-                                {{
-                                  t(
-                                    "kanban-modal-edit-placeholder-initialdiagnosis"
-                                  )
-                                }}
-                              </option>
-                              <option
-                                v-for="pkg in diagnoses_packages"
-                                :key="pkg.id"
-                                :value="pkg.id"
-                              >
-                                {{ pkg.name }}
-                              </option>
-                            </select>
-                          </div>
-                          <div class="col-4 pe-2 pb-2">
-                            <select
-                              class="form-select py-2 me-2"
-                              :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
-                              v-model="problem.severity"
-                              :disabled="!isEditMode"
-                              @dblclick="handleDoubleClick"
-                            >
-                              <option value="" disabled>
-                                {{
-                                  t("kanban-modal-edit-placeholder-severity")
-                                }}
-                              </option>
-                              <option value="mild">
-                                {{ t("kanban-modal-edit-severity-low") }}
-                              </option>
-                              <option value="moderate">
-                                {{ t("kanban-modal-edit-severity-medium") }}
-                              </option>
-                              <option value="severe">
-                                {{ t("kanban-modal-edit-severity-high") }}
-                              </option>
-                            </select>
-                          </div>
-                          <div class="col-1 pb-2">
-                            <button
-                              class="btn btn-primary me-2 h-100"
-                              @click="removePatientProblem(index)"
-                              v-show="isEditMode"
-                            >
-                              x
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="pt-2" v-else-if="!isEditMode">
-                    {{ t("kanban-modal-edit-label-no-initialdiagnosis") }}
-                  </div>
-                  <div class="w-100 d-flex mt-2 justify-content-start gap-2">
-                    <button
-                      class="btn btn-primary fs-5 px-3"
-                      @click="addNewPatientProblem"
-                      :disabled="!isEditMode"
-                      v-show="isEditMode"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              </div>
               <hr />
               <!-- Kanban Packages -->
               <div class="row mb-3" @dblclick="handleDoubleClick">
@@ -2044,7 +1945,6 @@ export default {
       kanban_total_cost: props.deal?.kanban_total_cost || null,
       hospital_total_cost: props.deal?.hospital_total_cost || null,
       passports: props.deal?.passports || [],
-      patient_problems: props.deal?.diagnoses || [],
       additional_services: props.deal?.additional_services || [],
       add_on_total_cost: props.deal?.add_on_total_cost || null,
       warranty: props.deal?.warranty || null,
@@ -2380,7 +2280,6 @@ export default {
           hospital_total_cost: customerData.hospital_total_cost || null,
           add_on_total_cost: customerData.add_on_total_cost || null,
           passports: [customerData.passport || null],
-          diagnosis: customerData.patient_problems || [],
           additional_services: customerData.additional_services || [],
           dob: customerData.date_of_birth || [],
           passportNumber: customerData.passportNumber || [],
@@ -2472,27 +2371,6 @@ export default {
       } catch (error) {
         console.error("Error removing package:", error);
         notificationStore.error(t("error.removePackage"), {
-          timeout: 3000,
-        });
-      }
-    };
-
-    const addNewPatientProblem = () => {
-      if (!isEditMode.value) return;
-      customerData.patient_problems.push({
-        id: "",
-      });
-    };
-
-    const removePatientProblem = (index) => {
-      try {
-        customerData.patient_problems.splice(index, 1);
-        notificationStore.success(t("success.removePatientProblem"), {
-          timeout: 3000,
-        });
-      } catch (error) {
-        console.error("Error removing patient problem:", error);
-        notificationStore.success(t("error.removePatientProblem"), {
           timeout: 3000,
         });
       }
@@ -2760,6 +2638,7 @@ export default {
             }
           });
           originalDataValue.value = dataDealCopy(customerData);
+          dealStore.changeCurrentDeal(newDeal.id);
         }
       },
       { immediate: true }
@@ -3245,8 +3124,6 @@ export default {
       PrintCase,
       maritalStatusList,
       personalCompanionList,
-      addNewPatientProblem,
-      removePatientProblem,
       addNewAdditionalService,
       removeAdditionalService,
       treatment_packages,

@@ -21,6 +21,9 @@ export const usePackageStore = defineStore("package", {
     getCategories: (state) => {
       return state.categories;
     },
+    getAllPackages: (state) => {
+      return state.packages;
+    },
   },
 
   actions: {
