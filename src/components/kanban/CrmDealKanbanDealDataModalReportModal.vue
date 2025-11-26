@@ -35,6 +35,7 @@
             />
             <hr class="my-3" />
             <initial-diagnosis-component />
+            <sales-packages-component />
             <div class="d-flex justify-content-end gap-2 mt-4 mb-2">
               <button
                 type="submit"
@@ -67,6 +68,7 @@ import InitialDiagnosisComponent from "./CrmDealKanbanDealDataModalReportModalIn
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useDealStore } from "@/stores/DealStore";
 import { computed } from "vue";
+import SalesPackagesComponent from "./CrmDealKanbanDealDataModalReportModalSalesPackagesComponent.vue";
 
 export default {
   name: "CrmDealKanbanDealDataModalReportModal",
@@ -86,6 +88,7 @@ export default {
   components: {
     QuestionsDiv,
     InitialDiagnosisComponent,
+    SalesPackagesComponent,
   },
   data() {
     return {
@@ -125,6 +128,8 @@ export default {
       const response_1 = await updateAnswersByDealId(this.deal_id, formData);
       this.deal_store.updateDeal(this.deal_id, {
         diagnosis: this.current_deal.diagnoses,
+        kanban_packages: this.current_deal.kanban_packages,
+        kanban_total_cost: this.current_deal.kanban_total_cost,
       });
       if (response_1.status === 200) {
         this.notificationStore.success(response_1.data.message, {
