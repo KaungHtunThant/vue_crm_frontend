@@ -2711,6 +2711,7 @@ export default {
             created_at: new Date().toISOString(),
             username: response.data.data.user?.name || "No user",
             isAdmin: response.data.data.user?.role === "super-admin",
+            image: response.data.data.user?.image_url,
           };
           customerData.comments.unshift(newComment);
 
