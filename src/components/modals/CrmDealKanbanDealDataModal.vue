@@ -410,112 +410,6 @@
                 </div>
               </div>
               <hr />
-              <!-- Additional Services -->
-              <div class="row mb-3" @dblclick="handleDoubleClick">
-                <div class="col-2 pt-2">
-                  <label class="form-label"
-                    ><i class="fa-solid fa-hand-holding-medical"></i>
-                    {{ t("kanban-modal-edit-label-addon") }}</label
-                  >
-                </div>
-                <div class="col-10">
-                  <div
-                    class="row m-0 g-2"
-                    v-if="customerData.additional_services.length > 0"
-                  >
-                    <div
-                      class="col-12 col-lg-6 px-0 pe-2"
-                      v-for="(
-                        service, index
-                      ) in customerData.additional_services"
-                      :key="index"
-                    >
-                      <div class="row m-0 gx-0">
-                        <div class="col-7 pe-2" @dblclick="handleDoubleClick">
-                          <select
-                            class="form-select py-2"
-                            :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
-                            v-model="service.id"
-                            :disabled="!isEditMode"
-                            @dblclick="handleDoubleClick"
-                          >
-                            <option value="" disabled>
-                              {{ t("kanban-modal-edit-placeholder-addon") }}
-                            </option>
-                            <option
-                              v-for="pkg in additional_packages"
-                              :key="pkg.id"
-                              :value="pkg.id"
-                            >
-                              {{ pkg.name }}
-                            </option>
-                          </select>
-                        </div>
-                        <div class="col-4 pe-2">
-                          <input
-                            type="number"
-                            v-model="service.days"
-                            :placeholder="
-                              t(
-                                'kanban-model-edit-addon-input-placeholder-days'
-                              )
-                            "
-                            class="form-control py-2"
-                            :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
-                            :readonly="!isEditMode"
-                            min="1"
-                          />
-                        </div>
-                        <div class="col-1 pe-2">
-                          <button
-                            class="btn btn-primary h-100"
-                            @click="removeAdditionalService(index)"
-                            v-if="isEditMode"
-                          >
-                            x
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="pt-2" v-else-if="!isEditMode">
-                    {{ t("kanban-modal-edit-label-noaddon") }}
-                  </div>
-                  <div class="w-100 d-flex mt-2 justify-content-start gap-2">
-                    <button
-                      class="btn btn-primary fs-5 px-3"
-                      @click="addNewAdditionalService"
-                      :disabled="!isEditMode"
-                      v-show="isEditMode"
-                    >
-                      +
-                    </button>
-                    <div class="input-group">
-                      <span class="input-group-text">
-                        {{ t("kanban-modal-edit-label-total-cost") }}
-                        {{ currency }}
-                      </span>
-                      <input
-                        type="number"
-                        lang="en"
-                        :class="[
-                          'bg-input',
-                          isEditMode ? 'bg-input-edit' : 'bg-input',
-                          'p-2',
-                          'rounded-right-2',
-                          'form-control',
-                        ]"
-                        v-model="customerData.add_on_total_cost"
-                        :placeholder="`${t(
-                          'kanban-modal-edit-placeholder-total-cost'
-                        )} ${currency}`"
-                        :readonly="!isEditMode"
-                        min="0"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
               <div class="row mb-3" @dblclick="handleDoubleClick">
                 <div class="col-2">
                   <label class="form-label"
@@ -1675,9 +1569,6 @@ export default {
     const treatment_packages = computed(() =>
       packageStore.getPackagesWithCategory("treatments")
     );
-    const additional_packages = computed(() =>
-      packageStore.getPackagesWithCategory("add-ons")
-    );
     const diagnoses_packages = computed(() =>
       packageStore.getPackagesWithCategory("initial-diagnosis")
     );
@@ -1792,7 +1683,6 @@ export default {
       assigned_to: props.deal?.assigned_to_id || "",
       is_local: props.deal?.is_local || 0,
       ticket: props.deal?.ticket || null,
-      kanban_packages: props.deal?.kanban_packages || [],
       hospital_packages: props.deal?.hospital_packages || [],
       flight_number: props.deal?.flight_number || "",
       arrival_date: props.deal?.arrival_date || "",
@@ -1803,11 +1693,8 @@ export default {
       hotel_gmap_link: props.deal?.hotel_gmap_link || "",
       transportation: props.deal?.transportation || 0,
       time: props.deal?.time || "",
-      kanban_total_cost: props.deal?.kanban_total_cost || null,
       hospital_total_cost: props.deal?.hospital_total_cost || null,
       passports: props.deal?.passports || [],
-      additional_services: props.deal?.additional_services || [],
-      add_on_total_cost: props.deal?.add_on_total_cost || null,
       warranty: props.deal?.warranty || null,
     });
     const nationalities = computed(() => {
@@ -2137,9 +2024,7 @@ export default {
           transportation: customerData.transportation || 0,
           time: customerData.time || "",
           hospital_total_cost: customerData.hospital_total_cost || null,
-          add_on_total_cost: customerData.add_on_total_cost || null,
           passports: [customerData.passport || null],
-          additional_services: customerData.additional_services || [],
           dob: customerData.date_of_birth || [],
           passportNumber: customerData.passportNumber || [],
           warranty: customerData.warranty || [],
@@ -2207,24 +2092,6 @@ export default {
       } catch (error) {
         console.error("Error removing package:", error);
         notificationStore.error(t("error.removePackage"), {
-          timeout: 3000,
-        });
-      }
-    };
-
-    const addNewAdditionalService = () => {
-      if (!isEditMode.value) return;
-      customerData.additional_services.push({
-        id: "",
-      });
-    };
-
-    const removeAdditionalService = (index) => {
-      try {
-        customerData.additional_services.splice(index, 1);
-      } catch (error) {
-        console.error("Error removing additional service:", error);
-        notificationStore.error(t("error.removeAdditionalService"), {
           timeout: 3000,
         });
       }
@@ -2958,10 +2825,7 @@ export default {
       PrintCase,
       maritalStatusList,
       personalCompanionList,
-      addNewAdditionalService,
-      removeAdditionalService,
       treatment_packages,
-      additional_packages,
       diagnoses_packages,
       user_role,
       warrantyList,
