@@ -410,145 +410,6 @@
                 </div>
               </div>
               <hr />
-              <!-- Kanban Packages -->
-              <div class="row mb-3" @dblclick="handleDoubleClick">
-                <div class="col-2 pt-2">
-                  <label class="form-label"
-                    ><i class="fa-solid fa-cubes"></i>
-                    {{ t("kanban-modal-edit-label-kanban-packages") }}</label
-                  >
-                </div>
-                <div class="col-10">
-                  <div class="" v-if="customerData.kanban_packages.length > 0">
-                    <div
-                      v-for="(pkg, index) in customerData.kanban_packages"
-                      :key="index"
-                      class="packages mb-2 px-2"
-                    >
-                      <div class="row p-0">
-                        <div
-                          class="col-8 p-1 px-1"
-                          @dblclick="handleDoubleClick"
-                        >
-                          <select
-                            class="form-select py-2"
-                            :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
-                            v-model="pkg.id"
-                            :disabled="!isEditMode"
-                            @dblclick="handleDoubleClick"
-                          >
-                            <option value="" disabled>
-                              {{
-                                t("kanban-modal-edit-placeholder-packages-name")
-                              }}
-                            </option>
-                            <option
-                              v-for="pkg in treatment_packages"
-                              :key="pkg.id"
-                              :value="pkg.id"
-                            >
-                              {{ pkg.name }}
-                            </option>
-                          </select>
-                        </div>
-                        <div class="col-3 p-1 px-1">
-                          <div class="input-group">
-                            <span class="input-group-text">Qty</span>
-                            <input
-                              type="number"
-                              lang="en"
-                              :class="[
-                                'bg-input',
-                                isEditMode ? 'bg-input-edit' : 'bg-input',
-                                'p-2',
-                                'rounded-right-2',
-                                'form-control',
-                              ]"
-                              v-model="pkg.quantity"
-                              :placeholder="
-                                t(
-                                  'kanban-modal-edit-placeholder-packages-quantity'
-                                )
-                              "
-                              :readonly="!isEditMode"
-                              min="1"
-                            />
-                          </div>
-                        </div>
-                        <div class="col-2 p-1 px-0 d-none">
-                          <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            <input
-                              type="number"
-                              lang="en"
-                              :class="[
-                                'bg-input',
-                                isEditMode ? 'bg-input-edit' : 'bg-input',
-                                'p-2',
-                                'rounded-right-2',
-                                'form-control',
-                              ]"
-                              v-model="pkg.total_price"
-                              :placeholder="
-                                t(
-                                  'kanban-modal-edit-placeholder-packages-price'
-                                )
-                              "
-                              :readonly="!isEditMode"
-                              min="0"
-                            />
-                          </div>
-                        </div>
-                        <div class="col-1 py-1">
-                          <button
-                            class="btn btn-primary"
-                            @click="removeKanbanPackage(index)"
-                            v-if="isEditMode"
-                          >
-                            x
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="pt-2" v-else-if="!isEditMode">
-                    {{ t("kanban-modal-edit-label-no-packages") }}
-                  </div>
-                  <div class="w-100 d-flex mt-2 justify-content-between gap-2">
-                    <button
-                      class="btn btn-primary fs-5 px-3"
-                      @click="addNewKanbanPackage"
-                      :disabled="!isEditMode"
-                      v-show="isEditMode"
-                    >
-                      +
-                    </button>
-                    <div class="input-group">
-                      <span class="input-group-text">
-                        {{ t("kanban-modal-edit-label-total-cost") }}
-                        {{ currency }}
-                      </span>
-                      <input
-                        type="number"
-                        lang="en"
-                        :class="[
-                          'bg-input',
-                          isEditMode ? 'bg-input-edit' : 'bg-input',
-                          'p-2',
-                          'rounded-right-2',
-                          'form-control',
-                        ]"
-                        v-model="customerData.kanban_total_cost"
-                        :placeholder="`${t(
-                          'kanban-modal-edit-placeholder-total-cost'
-                        )} ${currency}`"
-                        :readonly="!isEditMode"
-                        min="0"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
               <!-- Additional Services -->
               <div class="row mb-3" @dblclick="handleDoubleClick">
                 <div class="col-2 pt-2">
@@ -2265,7 +2126,6 @@ export default {
           user_id: customerData.assigned_to || "",
           is_local: customerData.is_local ? 1 : 0,
           ticket: customerData.ticket || null,
-          kanban_packages: customerData.kanban_packages || null,
           hospital_packages: customerData.hospital_packages || null,
           flight_number: customerData.flight_number || "",
           arrival_date: customerData.arrival_date || "",
@@ -2276,7 +2136,6 @@ export default {
           hotel_gmap_link: customerData.hotel_gmap_link || "",
           transportation: customerData.transportation || 0,
           time: customerData.time || "",
-          kanban_total_cost: customerData.kanban_total_cost || null,
           hospital_total_cost: customerData.hospital_total_cost || null,
           add_on_total_cost: customerData.add_on_total_cost || null,
           passports: [customerData.passport || null],
@@ -2330,15 +2189,6 @@ export default {
       return text;
     };
 
-    const addNewKanbanPackage = () => {
-      if (!isEditMode.value) return;
-      customerData.kanban_packages.push({
-        id: "",
-        quantity: null,
-        total_price: null,
-      });
-    };
-
     const addNewHospitalPackage = () => {
       if (!isEditMode.value) return;
       customerData.hospital_packages.push({
@@ -2346,20 +2196,6 @@ export default {
         quantity: null,
         total_price: null,
       });
-    };
-
-    const removeKanbanPackage = (index) => {
-      try {
-        customerData.kanban_packages.splice(index, 1);
-        notificationStore.success(t("success.removePackage"), {
-          timeout: 3000,
-        });
-      } catch (error) {
-        console.error("Error removing package:", error);
-        notificationStore.error(t("error.removePackage"), {
-          timeout: 3000,
-        });
-      }
     };
 
     const removeHospitalPackage = (index) => {
@@ -3061,9 +2897,7 @@ export default {
       truncateText,
       togglePhone2,
       showPhone2,
-      addNewKanbanPackage,
       addNewHospitalPackage,
-      removeKanbanPackage,
       removeHospitalPackage,
       handleTaskCompletion,
       handleStageHover,
