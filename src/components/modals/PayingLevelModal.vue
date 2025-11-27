@@ -154,16 +154,15 @@
             </div>
 
             <!-- Add More Button -->
-            <div class="mt-2 mb-3" v-if="salaryRows.length < maxLevels">
+            <div class="mt-2 mb-3">
               <button
                 class="btn btn-outline-primary btn-sm"
                 type="button"
                 @click="addRow"
               >
                 <i class="fas fa-plus me-2"></i>
-                {{ $t("commission-modal-addmore-button") }} ({{
-                  salaryRows.length
-                }}/{{ maxLevels }})
+                {{ $t("commission-modal-addmore-button") }}
+                {{ salaryRows.length }}
               </button>
             </div>
           </form>
@@ -202,7 +201,6 @@ import { useNotificationStore } from "@/stores/notificationStore";
 import {
   createCommissionPackage,
   updateCommissionPackage,
-  payingLevels,
 } from "@/plugins/services/salaryService";
 import { useI18n } from "vue-i18n";
 
@@ -216,7 +214,6 @@ export default {
     const modal = ref(null);
     const mode = ref("add");
     const isSaving = ref(false);
-    const maxLevels = ref(10);
 
     const packageData = ref({
       id: null,
@@ -322,15 +319,13 @@ export default {
     };
 
     const addRow = () => {
-      if (salaryRows.value.length < maxLevels.value) {
-        salaryRows.value.push({
-          level_name: "",
-          basic_salary: null,
-          commission_percent: null,
-          minimum_amount: null,
-          maximum_amount: null,
-        });
-      }
+      salaryRows.value.push({
+        level_name: "",
+        basic_salary: null,
+        commission_percent: null,
+        minimum_amount: null,
+        maximum_amount: null,
+      });
     };
 
     const removeRow = (index) => {
@@ -341,19 +336,7 @@ export default {
       }
     };
 
-    const fetchMaxLevels = async () => {
-      try {
-        const response = await payingLevels();
-        maxLevels.value = response.data.count || 10;
-      } catch (error) {
-        console.error("Error fetching max levels:", error);
-        maxLevels.value = 10;
-      }
-    };
-
     const open = async (packageItem = null) => {
-      await fetchMaxLevels();
-
       if (packageItem && packageItem.id) {
         mode.value = "edit";
         packageData.value = {
@@ -445,7 +428,6 @@ export default {
       packageData,
       salaryRows,
       validationErrors,
-      maxLevels,
       isValid,
       isSaving,
       open,
