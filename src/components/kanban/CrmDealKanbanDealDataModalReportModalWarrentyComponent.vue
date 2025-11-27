@@ -29,7 +29,7 @@ export default {
   setup() {
     const { t, locale } = useI18n();
     const deal_store = useDealStore();
-    const data = deal_store.getCurrentDeal;
+    const data = computed(() => deal_store.getCurrentDeal);
     const local_data = ref({});
     const warrenty_list = computed(() => {
       return Object.fromEntries(
