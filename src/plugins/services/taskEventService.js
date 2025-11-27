@@ -1,4 +1,2 @@
 import axios from "@/plugins/axios";
-export const getTaskEvents = async () => {
-  return await axios.get(`/taskevents/`);
-};
+export const getTaskEvents = () => axios.get("/taskevents");
