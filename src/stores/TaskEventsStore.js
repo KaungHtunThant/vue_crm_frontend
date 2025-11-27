@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getTaskEvents } from "@/plugins/services/taskeventsService";
+import { getTaskEvents } from "@/plugins/services/taskEventService";
 
 export const useTaskEventsStore = defineStore("taskevents", {
   state: () => ({
