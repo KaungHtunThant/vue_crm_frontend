@@ -34,9 +34,13 @@
               :question="question"
             />
             <hr class="my-3" />
+            <h6 class="mb-3">
+              {{ t("kanban-modal-questions-subheading-package-information") }}
+            </h6>
             <initial-diagnosis-component />
             <sales-packages-component />
             <add-ons-component />
+            <warrenty-component />
             <div class="d-flex justify-content-end gap-2 mt-4 mb-2">
               <button
                 type="submit"
@@ -71,6 +75,7 @@ import { useDealStore } from "@/stores/DealStore";
 import { computed } from "vue";
 import SalesPackagesComponent from "./CrmDealKanbanDealDataModalReportModalSalesPackagesComponent.vue";
 import AddOnsComponent from "./CrmDealKanbanDealDataModalReportModalAddOnsComponent.vue";
+import WarrentyComponent from "./CrmDealKanbanDealDataModalReportModalWarrentyComponent.vue";
 
 export default {
   name: "CrmDealKanbanDealDataModalReportModal",
@@ -92,6 +97,7 @@ export default {
     InitialDiagnosisComponent,
     SalesPackagesComponent,
     AddOnsComponent,
+    WarrentyComponent,
   },
   data() {
     return {
@@ -135,6 +141,7 @@ export default {
         kanban_total_cost: this.current_deal.kanban_total_cost,
         additional_services: this.current_deal.additional_services,
         add_on_total_cost: this.current_deal.add_on_total_cost,
+        warranty: this.current_deal.warranty,
       });
       if (response_1.status === 200) {
         this.notificationStore.success(response_1.data.message, {

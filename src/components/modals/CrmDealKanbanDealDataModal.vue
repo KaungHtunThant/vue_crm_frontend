@@ -417,45 +417,6 @@
                 </div>
               </div>
               <hr />
-              <div class="row mb-3" @dblclick="handleDoubleClick">
-                <div class="col-2">
-                  <label class="form-label"
-                    ><i class="fa-solid fa-"></i>
-                    {{ t("kanban-modal-edit-label-warranty") }}
-                  </label>
-                </div>
-                <div class="col-10">
-                  <select
-                    :class="[
-                      'form-select',
-                      isEditMode ? 'bg-input-edit' : 'bg-input',
-                      'py-2',
-                    ]"
-                    v-model="customerData.warranty"
-                    :disabled="!isEditMode"
-                    name="warranty"
-                    @dblclick="handleDoubleClick"
-                  >
-                    <option
-                      :value="null"
-                      disabled
-                      v-if="!customerData.warranty"
-                    >
-                      {{
-                        t("kanban-modal-edit-placeholder-personal-companion")
-                      }}
-                    </option>
-                    <option
-                      v-for="(value, key) in warrantyList"
-                      :key="key"
-                      :value="key"
-                    >
-                      {{ value }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <hr />
               <div class="row mb-3">
                 <div class="col-2">
                   <label class="form-label"
@@ -1759,7 +1720,6 @@ export default {
       time: props.deal?.time || "",
       hospital_total_cost: props.deal?.hospital_total_cost || null,
       passports: props.deal?.passports || [],
-      warranty: props.deal?.warranty || null,
     });
     const nationalities = computed(() => {
       return Object.fromEntries(
@@ -1828,30 +1788,6 @@ export default {
         fr: "Non",
       },
     };
-    const warrantyOptions = {
-      0: {
-        en: " Not provided",
-        ar: "غير متوفر",
-        fr: "Non fourni",
-      },
-      1: {
-        en: "Provided",
-        ar: "متوفر",
-        fr: "Fournie",
-      },
-    };
-    const warrantyList = computed(() => {
-      return Object.fromEntries(
-        Object.entries(warrantyOptions).map(([key, value]) => [
-          key,
-          locale.value === "ar"
-            ? value.ar
-            : locale.value === "fr"
-            ? value.fr
-            : value.en,
-        ])
-      );
-    });
 
     const personalCompanionList = computed(() => {
       return Object.fromEntries(
@@ -2091,7 +2027,6 @@ export default {
           passports: [customerData.passport || null],
           dob: customerData.date_of_birth || [],
           passportNumber: customerData.passportNumber || [],
-          warranty: customerData.warranty || [],
         };
 
         const response = await updateDeal(props.deal.id, formData);
@@ -2944,7 +2879,6 @@ export default {
       treatment_packages,
       diagnoses_packages,
       user_role,
-      warrantyList,
       currency,
       taskEventsList,
       CommentsTagsList,

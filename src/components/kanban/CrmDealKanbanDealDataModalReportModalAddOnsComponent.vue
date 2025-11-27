@@ -131,6 +131,7 @@ export default {
     watch(
       () => local_data.value,
       (newVal) => {
+        console.log("Local data changed:", newVal);
         if (newVal?.id) {
           deal_store.setCurrentDeal(newVal);
         }
