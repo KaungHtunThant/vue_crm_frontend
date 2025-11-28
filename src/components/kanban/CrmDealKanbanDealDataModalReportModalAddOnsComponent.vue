@@ -110,7 +110,6 @@ export default {
       try {
         local_data.value.additional_services.splice(index, 1);
       } catch (error) {
-        console.error("Error removing additional service:", error);
         notification_store.error(error.message, {
           timeout: 3000,
         });
@@ -131,7 +130,6 @@ export default {
     watch(
       () => local_data.value,
       (newVal) => {
-        console.log("Local data changed:", newVal);
         if (newVal?.id) {
           deal_store.setCurrentDeal(newVal);
         }
@@ -147,7 +145,6 @@ export default {
       if (package_store.getAllPackages.length === 0) {
         package_store.fetchPackages();
       }
-      console.log("Initial data:", data.value);
       local_data.value = data.value;
     });
     return {

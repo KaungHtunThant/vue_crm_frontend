@@ -40,6 +40,7 @@ import { getBackgroundId } from "@/plugins/services/backgroundService";
 import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import { useAuthStore } from "./stores/AuthStore";
 import { useSettingStore } from "./stores/SettingStore";
+import { useNotificationStore } from "./stores/notificationStore";
 
 export default {
   name: "App",
@@ -55,6 +56,7 @@ export default {
     const permissionStore = usePermissionStore();
     const authStore = useAuthStore();
     const settingStore = useSettingStore();
+    const notificationStore = useNotificationStore();
 
     return {
       PERMISSIONS,
@@ -62,6 +64,7 @@ export default {
       permissionStore,
       authStore,
       settingStore,
+      notificationStore,
     };
   },
 
@@ -78,7 +81,6 @@ export default {
 
   computed: {
     headerClass() {
-      // return this.isSidebarCollapsed ? "col-11" : "col-10";
       if (this.isSidebarCollapsed) {
         return "col";
       }
@@ -111,9 +113,8 @@ export default {
         const bg_id = localStorage.getItem("backgroundImage_id");
         if (bg_id) {
           let response = await getBackgroundId(bg_id);
-          if (!response) {
-            console.error("No background image found");
-            return;
+          if (response.status !== 200) {
+            throw new Error(response.data.message);
           }
           const savedImage = response.data.data.url;
           document.body.style.backgroundImage = `url(${savedImage})`;
@@ -123,7 +124,7 @@ export default {
           document.body.style.backgroundAttachment = "fixed";
         }
       } catch (error) {
-        console.error("Error loading background image:", error);
+        this.notificationStore.error(error.message);
       }
     },
 

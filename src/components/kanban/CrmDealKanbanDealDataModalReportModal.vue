@@ -125,7 +125,7 @@ export default {
           };
         });
       } else {
-        console.error("Failed to fetch questions: ", response.data.message);
+        this.notificationStore.error(response.data.message);
       }
     },
     async submitForm() {
@@ -148,7 +148,6 @@ export default {
           timeout: 3000,
         });
       } else {
-        console.error("Failed to update answers: ", response_1.data.message);
         this.notificationStore.error(response_1.data.message, {
           timeout: 3000,
         });

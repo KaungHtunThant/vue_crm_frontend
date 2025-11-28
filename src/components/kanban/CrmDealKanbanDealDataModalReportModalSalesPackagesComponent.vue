@@ -103,7 +103,6 @@ export default {
       try {
         local_data.value.kanban_packages.splice(index, 1);
       } catch (error) {
-        console.error("Error removing package:", error);
         notification_store.error(error.message, {
           timeout: 3000,
         });
@@ -139,7 +138,6 @@ export default {
       if (package_store.getAllPackages.length === 0) {
         package_store.fetchPackages();
       }
-      console.log("Initial data:", data.value);
       local_data.value = data.value;
     });
     return {
