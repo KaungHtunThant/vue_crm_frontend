@@ -1586,7 +1586,6 @@ export default {
     const commentInput = ref(null);
     const user_role = ref(null);
     const isOtherTaskSelected = ref(false);
-    const commentsSection = ref(null);
     const currency = Cookies.get("currency") || "USD";
     const taskEventsStore = useTaskEventsStore();
     const commentsTagsStore = useCommentsTagsStore();
@@ -2270,13 +2269,20 @@ export default {
     };
     const handleAddTask = async () => {
       try {
+        let type = "sales";
+        if (route.path === "/crm-after-sales") {
+          type = "after-sales";
+        } else if (route.path === "/emr-kanban") {
+          type = "hospital";
+        }
         const deal_id = props.deal?.id;
         const formData = {
           description: "",
           duedate: customerData.date,
           duetime: customerData.time,
           deal_id: props.deal?.id,
-          task_events_id: customerData.task,
+          task_event_id: customerData.task,
+          type: type,
         };
         console.log("Form Data for New Task:", formData);
         const response = await createTask(formData);
@@ -2284,22 +2290,12 @@ export default {
           const selectedEvent = taskEventsList.value.find(
             (event) => event.id === customerData.task
           );
-          if (selectedEvent?.name === "Other") {
-            isOtherTaskSelected.value = true;
-            await nextTick();
-            if (commentsSection.value) {
-              commentsSection.value.scrollIntoView({
-                behavior: "smooth",
-                block: "center",
-              });
-            }
-          }
           customerData.tasks.unshift({
             id: response.data.data.id,
             description: selectedEvent?.name || "",
             duedate: customerData.date,
             duetime: customerData.time,
-            task_events_id: customerData.task,
+            task_event_id: customerData.task,
             task_event: selectedEvent
               ? { id: selectedEvent.id, name: selectedEvent.name }
               : null,
@@ -2319,6 +2315,7 @@ export default {
           customerData.task = "";
           customerData.date = "";
           customerData.time = "";
+          taskStore.toggleStatusChangeTrigger();
         } else {
           notificationStore.error(response.data.message, {
             timeout: 3000,
