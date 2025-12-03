@@ -18,7 +18,7 @@
                 v-model="email"
                 placeholder="Enter Email"
                 required
-                @keydown.enter.prevent="otp_phase = true"
+                @keydown.enter.prevent="handleOTP"
               />
               <p v-if="errors.email" class="text-danger fs-6">
                 {{ errors.email }}
@@ -36,7 +36,7 @@
                 class="form-control"
                 v-model="password"
                 placeholder="Enter Password"
-                @keydown.enter.prevent="otp_phase = true"
+                @keydown.enter.prevent="handleOTP"
               />
               <p v-if="errors.password" class="text-danger fs-6">
                 {{ errors.password }}
@@ -57,6 +57,7 @@
               <input
                 type="text"
                 class="form-control"
+                id="otp_code"
                 v-model="otp_code"
                 placeholder="Enter OTP"
               />
@@ -146,6 +147,16 @@ export default {
   methods: {
     async handleOTP() {
       this.otp_phase = true;
+      const otp_code_input = document.getElementById("otp_code");
+      console.log("OTP phase activated", otp_code_input);
+      this.$nextTick(() => {
+        if (otp_code_input) {
+          console.log("Focusing OTP input field");
+          otp_code_input.focus();
+        } else {
+          console.error("OTP input field not found");
+        }
+      });
     },
 
     async handleLogin() {
