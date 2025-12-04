@@ -81,12 +81,17 @@
     </ul>
     <hr class="my-2" />
     <div class="container-fluid w-100 text-center">
-      <small class="text-secondary">
-        {{ t("header-user-menu-item-client-version") }}: {{ appVersion }}
-      </small>
-      <small class="text-secondary">
-        {{ t("header-user-menu-item-server-version") }}: {{ backendAppVersion }}
-      </small>
+      <p class="text-secondary">
+        <small>
+          {{ t("header-user-menu-item-client-version") }}: {{ appVersion }}
+        </small>
+      </p>
+      <p class="text-secondary">
+        <small>
+          {{ t("header-user-menu-item-server-version") }}:
+          {{ backendAppVersion }}
+        </small>
+      </p>
     </div>
   </div>
   <edit-profile-modal ref="editProfileModal" />
@@ -105,11 +110,10 @@ import CalenderModal from "@/components/modals/TheTopHeaderDropDownMenuProfileEd
 import CustomBackground from "@/components/headers/sub-menu/profileMenuItems/TheTopHeaderDropDownMenuProfileEditProfileModalCustmBackgroundModal.vue";
 import { useI18n } from "vue-i18n";
 import { Modal } from "bootstrap";
-import { ref, onMounted, nextTick, watch } from "vue";
+import { ref, onMounted, nextTick, watch, computed } from "vue";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useAuthStore } from "@/stores/AuthStore";
 import { useUserStore } from "@/stores/UserStore";
-import { computed } from "vue";
 import { useSettingStore } from "@/stores/SettingStore";
 
 export default {
@@ -126,7 +130,7 @@ export default {
     const settingStore = useSettingStore();
     const notificationStore = useNotificationStore();
     const appVersion = process.env.VUE_APP_VERSION || "0.0.0";
-    const backendAppVersion = computed(() => settingStore.backendAppVersion);
+    const backendAppVersion = computed(() => settingStore.getBackendAppVersion);
     const isNotificationsEnabled = ref(notificationStore.enabled);
     const { t } = useI18n();
     const authStore = useAuthStore();
@@ -178,6 +182,7 @@ export default {
       notificationStore,
       userImage,
       appVersion,
+      backendAppVersion,
     };
   },
   data() {

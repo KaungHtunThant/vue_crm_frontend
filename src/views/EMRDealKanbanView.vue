@@ -28,7 +28,7 @@
       <div class="calendar-container p-2 bg-white rounded shadow-sm">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <div class="calendar-toolbar-title">
-            <span>{{ calendarTitle }}</span>
+            <span>{{ today_date }}</span>
           </div>
           <div
             class="calendar-toolbar-controls d-flex align-items-center gap-2"
@@ -129,6 +129,7 @@ export default {
     const fullCalendarRef = ref(null);
     const currentView = ref("dayGridMonth");
     const calendarTitle = ref("");
+    const today_date = new Date().toISOString().split("T")[0];
     const stages = ref([]);
     const calendarEvents = computed(() => taskStore.calendar_tasks);
     const selectedDeal = ref(null);
@@ -545,6 +546,7 @@ export default {
       handleDeleteSelectedTasks,
       delete_mode_loading,
       handleCancelDeleteSelectedTasks,
+      today_date,
     };
   },
 };
