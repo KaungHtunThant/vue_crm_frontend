@@ -338,6 +338,7 @@ import { closeWebSocket, initializeWebSocket } from "@/plugins/websocket";
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import { useKanbanStore } from "@/stores/KanbanStore";
 import { useDealStore } from "@/stores/DealStore";
+import { useTaskStore } from "@/stores/TaskStore";
 export default {
   name: "CrmDealKanbanBoardDeals",
   components: {
@@ -377,6 +378,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const taskStore = useTaskStore();
     const notificationStore = useNotificationStore();
     const isIdle = ref(false);
     const route = useRoute();
@@ -991,6 +993,9 @@ export default {
       const { action, data } = event;
       if (action === "create") {
         tasks.value.push(data);
+        if (data.type == "hospital") {
+          taskStore.toggleStatusChangeTrigger();
+        }
       } else if (action === "update") {
         const index = tasks.value.findIndex((t) => t.id === data.id);
         if (index !== -1) {
@@ -998,8 +1003,14 @@ export default {
         } else {
           tasks.value.push(data);
         }
+        if (data.type == "hospital") {
+          taskStore.toggleStatusChangeTrigger();
+        }
       } else if (action === "delete") {
         tasks.value = tasks.value.filter((t) => t.id !== data.id);
+        if (data.type == "hospital") {
+          taskStore.toggleStatusChangeTrigger();
+        }
       }
     };
 

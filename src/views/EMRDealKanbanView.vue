@@ -155,7 +155,7 @@ export default {
         taskStore
           .fetchCalendarTasksByDate(fetchInfo.startStr, fetchInfo.endStr)
           .then(() => {
-            successCallback(taskStore.calendar_tasks);
+            successCallback(taskStore.getCalendarTasks);
           })
           .catch(() => {
             failureCallback();
@@ -165,6 +165,7 @@ export default {
       eventReceive: (info) => {
         info.revert();
         let ticketData;
+        console.log("Event received:", info.event);
         try {
           ticketData = JSON.parse(info.draggedEl.dataset.ticket);
         } catch {
