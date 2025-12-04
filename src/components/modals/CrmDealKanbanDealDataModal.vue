@@ -32,6 +32,19 @@
               </button>
             </h5>
           </div>
+          <div class="d-flex align-items-center">
+            <i class="fas fa-money-bill me-1"></i>
+            <span class="px-1">{{ t("kanban-modal-edit-balance") }}</span>
+            <input
+              type="text"
+              :class="['form-control']"
+              v-model="customerData.balance"
+              :placeholder="t('kanban-modal-edit-placeholder-balance')"
+              :readonly="!isEditMode"
+              name="balance"
+              @dblclick="handleDoubleClick"
+            />
+          </div>
           <!-- <div class="">
             <button @click="PrintCase" class="bg-transparent border-0">
               <i class="fa-solid fa-print"></i>
@@ -1114,6 +1127,8 @@
                       class="form-control bg-input text-secondary py-2 me-1"
                       v-model="customerData.date"
                       :placeholder="t('modals.selectDate')"
+                      :min="todayDate"
+                      :max="maxDateStr"
                       @mousedown="dateTaskClick"
                       @keyup.enter="handleAddTask"
                     />
@@ -1161,7 +1176,9 @@
                     :class="{ 'delete-animation': task.toDelete }"
                   >
                     <div class="col-4">
-                      {{ task.description || task.task_event?.name || "Nill" }}
+                      {{
+                        tasks.description || tasks.task_event?.name || "Nill"
+                      }}
                     </div>
                     <div class="col-2">
                       <input
@@ -1720,6 +1737,7 @@ export default {
       time: props.deal?.time || "",
       hospital_total_cost: props.deal?.hospital_total_cost || null,
       passports: props.deal?.passports || [],
+      balance: props.deal?.balance || 0,
     });
     const nationalities = computed(() => {
       return Object.fromEntries(
@@ -2027,6 +2045,7 @@ export default {
           passports: [customerData.passport || null],
           dob: customerData.date_of_birth || [],
           passportNumber: customerData.passportNumber || [],
+          balance: customerData.balance || 0,
         };
 
         const response = await updateDeal(props.deal.id, formData);
@@ -2789,7 +2808,15 @@ export default {
     };
     const taskEventsList = computed(() => taskEventsStore.getTaskEvents);
     const CommentsTagsList = computed(() => commentsTagsStore.getcommentstags);
-
+    const todayDate = computed(() => {
+      const d = new Date();
+      return d.toISOString().split("T")[0];
+    });
+    const maxDateStr = computed(() => {
+      const d = new Date();
+      d.setDate(d.getDate() + 15);
+      return d.toISOString().split("T")[0];
+    });
     return {
       modified_id,
       getStageColor,
@@ -2885,6 +2912,8 @@ export default {
       isOtherTaskSelected,
       handleOverlayClick,
       preventRightClick,
+      todayDate,
+      maxDateStr,
     };
   },
 };
