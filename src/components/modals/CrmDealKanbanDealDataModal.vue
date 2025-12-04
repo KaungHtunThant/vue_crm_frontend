@@ -1262,7 +1262,7 @@
                       <button
                         class="btn btn-primary rounded-start-0 fixed-action-btn"
                         type="submit"
-                        @click="handleAddComment"
+                        @click="handleAddComment(null)"
                       >
                         {{ t("kanban-modal-edit-comment-button-submit") }}
                       </button>

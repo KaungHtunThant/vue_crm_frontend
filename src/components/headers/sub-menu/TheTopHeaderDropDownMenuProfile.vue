@@ -79,6 +79,10 @@
         @click="handleLogout"
       />
     </ul>
+    <hr class="my-2" />
+    <div class="container-fluid w-100 text-center">
+      <small class="text-secondary"> v{{ appVersion }} </small>
+    </div>
   </div>
   <edit-profile-modal ref="editProfileModal" />
   <change-password ref="changePasswordModal" />
@@ -113,6 +117,7 @@ export default {
     CustomBackground,
   },
   setup() {
+    const appVersion = process.env.VUE_APP_VERSION || "1.0.0";
     const notificationStore = useNotificationStore();
     const isNotificationsEnabled = ref(notificationStore.enabled);
     const { t } = useI18n();
@@ -161,6 +166,7 @@ export default {
       authStore,
       notificationStore,
       userImage,
+      appVersion,
     };
   },
   data() {
