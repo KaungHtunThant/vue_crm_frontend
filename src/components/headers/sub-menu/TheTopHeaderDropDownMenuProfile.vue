@@ -81,7 +81,12 @@
     </ul>
     <hr class="my-2" />
     <div class="container-fluid w-100 text-center">
-      <small class="text-secondary"> v{{ appVersion }} </small>
+      <small class="text-secondary">
+        {{ t("header-user-menu-item-client-version") }}: {{ appVersion }}
+      </small>
+      <small class="text-secondary">
+        {{ t("header-user-menu-item-server-version") }}: {{ backendAppVersion }}
+      </small>
     </div>
   </div>
   <edit-profile-modal ref="editProfileModal" />
@@ -105,6 +110,7 @@ import { useNotificationStore } from "@/stores/notificationStore";
 import { useAuthStore } from "@/stores/AuthStore";
 import { useUserStore } from "@/stores/UserStore";
 import { computed } from "vue";
+import { useSettingStore } from "@/stores/SettingStore";
 
 export default {
   name: "TheTopHeaderDropDownMenuProfile",
@@ -117,8 +123,10 @@ export default {
     CustomBackground,
   },
   setup() {
-    const appVersion = process.env.VUE_APP_VERSION || "1.0.0";
+    const settingStore = useSettingStore();
     const notificationStore = useNotificationStore();
+    const appVersion = process.env.VUE_APP_VERSION || "0.0.0";
+    const backendAppVersion = computed(() => settingStore.backendAppVersion);
     const isNotificationsEnabled = ref(notificationStore.enabled);
     const { t } = useI18n();
     const authStore = useAuthStore();
@@ -155,6 +163,9 @@ export default {
     };
     onMounted(() => {
       isNotificationsEnabled.value = notificationStore.enabled;
+      if (!backendAppVersion.value) {
+        settingStore.fetchServerVersion();
+      }
     });
 
     return {

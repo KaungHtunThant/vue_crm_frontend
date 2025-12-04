@@ -1,15 +1,22 @@
 import { defineStore } from "pinia";
-import { generateOTP } from "@/plugins/services/settingService";
+import {
+  generateOTP,
+  getServerVersion,
+} from "@/plugins/services/settingService";
 import { useAuthStore } from "./AuthStore";
 
 export const useSettingStore = defineStore("setting", {
   state: () => ({
     idleTimer: null,
     idleTimeLimit: 15 * 60 * 1000, // 15 minute
+    backendAppVersion: null,
   }),
   getters: {
     getOTPCode: (state) => {
       return state.otp_code;
+    },
+    getBackendAppVersion: (state) => {
+      return state.backendAppVersion;
     },
   },
   actions: {
@@ -23,6 +30,14 @@ export const useSettingStore = defineStore("setting", {
         message: response.data.message,
         otp: response.data.data.otp_code,
       };
+    },
+    async fetchServerVersion() {
+      const response = await getServerVersion();
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
+      }
+      this.backendAppVersion = response.data.data.version;
+      return response.data.data.version;
     },
     setupUserActivityListeners() {
       ["mousemove", "keydown", "mousedown", "touchstart"].forEach((event) => {
