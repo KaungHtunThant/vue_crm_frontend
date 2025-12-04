@@ -36,7 +36,7 @@
             <i class="fas fa-money-bill me-1"></i>
             <span class="px-1">{{ t("kanban-modal-edit-balance") }}</span>
             <input
-              type="text"
+              type="number"
               :class="['form-control']"
               v-model="customerData.balance"
               :placeholder="t('kanban-modal-edit-placeholder-balance')"
