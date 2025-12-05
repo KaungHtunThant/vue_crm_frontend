@@ -17,6 +17,7 @@ export const useTaskStore = defineStore("task", {
     tasks: [],
     calendar_tasks: [],
     status_change_trigger: false, // temporary solution
+    day_grid_mode: null,
   }),
   getters: {
     getOverdueCount: (state) => state.overdue_count,
@@ -25,7 +26,31 @@ export const useTaskStore = defineStore("task", {
     getIdleCount: (state) => state.idle_count,
     getCurrentTasks: (state) =>
       state.tasks.filter((task) => task.status !== "completed"),
-    getCalendarTasks: (state) => state.calendar_tasks,
+    getCalendarTasks: (state) => {
+      console.log("Day Grid Mode in Getter:", state.day_grid_mode);
+      if (state.day_grid_mode === "dayGridDay") {
+        return state.calendar_tasks.map((task) => {
+          return {
+            ...task,
+            title:
+              task.title +
+              ": " +
+              task.description +
+              " (" +
+              task.start +
+              (task.duetime ? " " : "") +
+              (task.duetime
+                ? new Date("1970-01-01T" + task.duetime).toLocaleTimeString(
+                    "en-US",
+                    { hour: "numeric", minute: "2-digit", hour12: true }
+                  )
+                : "") +
+              ")",
+          };
+        });
+      }
+      return state.calendar_tasks;
+    },
     getStatusChangeTrigger: (state) => state.status_change_trigger,
   },
   actions: {
@@ -288,6 +313,9 @@ export const useTaskStore = defineStore("task", {
           message: error.message || "Error bulk deleting tasks",
         };
       }
+    },
+    setDayGridMode(mode) {
+      this.day_grid_mode = mode;
     },
   },
 });

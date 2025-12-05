@@ -127,7 +127,7 @@ export default {
     const taskStore = useTaskStore();
     const { t } = useI18n();
     const fullCalendarRef = ref(null);
-    const currentView = ref("dayGridMonth");
+    const currentView = ref("dayGridDay");
     const calendarTitle = ref("");
     const today_date = new Date().toISOString().split("T")[0];
     const stages = ref([]);
@@ -152,6 +152,7 @@ export default {
       editable: true,
       droppable: true,
       events(fetchInfo, successCallback, failureCallback) {
+        console.log("daygrid change test:", fetchInfo);
         taskStore
           .fetchCalendarTasksByDate(fetchInfo.startStr, fetchInfo.endStr)
           .then(() => {
@@ -224,14 +225,6 @@ export default {
       fixedWeekCount: false,
       dayHeaderClassNames: "calendar-day-header",
       dayCellClassNames: "calendar-day-cell",
-      datesSet: (arg) => {
-        calendarTitle.value = formatCalendarTitle(arg.view.title);
-      },
-      viewDidMount: (arg) => {
-        nextTick(() => {
-          calendarTitle.value = formatCalendarTitle(arg.view.title);
-        });
-      },
       views: {
         dayGridMonth: {
           dayMaxEventRows: 3,
@@ -245,6 +238,7 @@ export default {
           dayMaxEventRows: false,
           dayMaxEvents: false,
           eventMaxStack: 10,
+          titleFormat: { year: "numeric", month: "long", day: "numeric" },
         },
       },
     });
@@ -300,14 +294,10 @@ export default {
       );
     };
     const changeCalendarView = () => {
+      console.log("Changing calendar view to:", currentView.value);
+      taskStore.setDayGridMode(currentView.value);
       fullCalendarRef.value.getApi().changeView(currentView.value);
-      calendarTitle.value = formatCalendarTitle(
-        fullCalendarRef.value.getApi().view.title
-      );
-      taskStore.fetchCalendarTasksByDate(
-        currentView.value,
-        new Date().toISOString().split("T")[0]
-      );
+      fullCalendarRef.value.getApi().refetchEvents();
     };
     const filters = ref({
       source: "",
@@ -511,6 +501,7 @@ export default {
       });
     };
     onMounted(async () => {
+      taskStore.setDayGridMode(currentView.value);
       await fetchStages();
       window.addEventListener("contextmenu", handleRightClick);
     });
