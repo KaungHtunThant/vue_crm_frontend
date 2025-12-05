@@ -22,7 +22,7 @@
       />
     </span>
     <span v-else-if="local_question.type == 'text'">
-      <text-input :answers="local_question.answers" @change="handleChange" />
+      <text-area :answers="local_question.answers" @change="handleChange" />
     </span>
     <div
       v-for="(childQuestion, index) in local_question.child_questions"
@@ -40,8 +40,8 @@
 <script>
 import RadioButton from "./CrmDealKanbanDealDataModalReportModalQuestionsRadioButton.vue";
 import CheckboxButton from "./CrmDealKanbanDealDataModalReportModalQuestionsCheckbox.vue";
-import TextInput from "./CrmDealKanbanDealDataModalReportModalQuestionsTextInput.vue";
-// import TextArea from "./CrmDealKanbanDealDataModalReportModalQuestionsTextArea.vue";
+// import TextInput from "./CrmDealKanbanDealDataModalReportModalQuestionsTextInput.vue";
+import TextArea from "./CrmDealKanbanDealDataModalReportModalQuestionsTextArea.vue";
 // import DateInput from "./CrmDealKanbanDealDataModalReportModalQuestionsDateInput.vue";
 // import NumberInput from "./CrmDealKanbanDealDataModalReportModalQuestionsNumberInput.vue";
 // import SelectInput from "./CrmDealKanbanDealDataModalReportModalQuestionsSelectInput.vue";
@@ -50,8 +50,8 @@ export default {
   components: {
     RadioButton,
     CheckboxButton,
-    TextInput,
-    // TextArea,
+    // TextInput,
+    TextArea,
     // DateInput,
     // NumberInput,
     // SelectInput,

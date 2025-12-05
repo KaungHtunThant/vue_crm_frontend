@@ -427,7 +427,6 @@
             :headers="headersBroadcast"
             :items="itemsBroadcast"
             :rows-per-page="10"
-            table-class-name="custom-table"
           >
             <!-- Id Column -->
             <template #item-id="item">
@@ -504,7 +503,10 @@
             <!-- Actions Column -->
             <template #item-actions="item">
               <div class="d-flex gap-2 my-1">
-                <button class="btn btn-sm btn-primary">
+                <button
+                  class="btn btn-sm btn-primary"
+                  @click="OpenCreateModal(item)"
+                >
                   <i class="fas fa-edit"></i>
                 </button>
                 <button
@@ -531,7 +533,7 @@
           </EasyDataTable>
         </div>
         <broadcast-message-create-modal
-          @submit="submit"
+          @refresh="refresh"
           @close-modal="closeCreateModal"
         />
       </div>
@@ -540,10 +542,7 @@
 </template>
 
 <script>
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
-
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
 import { useI18n } from "vue-i18n";
@@ -554,12 +553,12 @@ import { Modal } from "bootstrap";
 import RoleSettingsViewAddEditRoleModal from "@/components/modals/RoleSettingsViewAddEditRoleModal.vue";
 import Swal from "sweetalert2";
 import {
-  createBroadcast,
   getBroadcasts,
   updateBroadcast,
   updateBroadcastPosition,
 } from "@/plugins/services/broadcastService";
 import BroadcastMessageCreateModal from "@/components/modals/BroadcastSettingsViewMessageCreateModal.vue";
+import { useBroadcastStore } from "@/stores/BroadcastStore";
 export default {
   name: "GeneralSettingView",
   components: {
@@ -571,10 +570,8 @@ export default {
 
   setup() {
     const { t } = useI18n();
-    // const toast = useToast();
     const notificationStore = useNotificationStore();
     const search = ref("");
-    // const tableLoading = ref(false);
     const items = ref([]);
     const staticRoles = [
       {
@@ -902,15 +899,20 @@ export default {
         }
       }
     };
-
-    const OpenCreateModal = () => {
+    const broadcastStore = useBroadcastStore();
+    const OpenCreateModal = (data = null) => {
       const item = document.getElementById("broadcastMessageCreateModal");
       if (!item) {
         console.error("Modal element not found");
         return;
       }
+      broadcastStore.setCurrentBroadcast(data);
       const modal = new Modal(item);
       modal.show();
+    };
+
+    const refresh = () => {
+      fetchBroadcasts();
     };
 
     const closeCreateModal = () => {
@@ -926,18 +928,6 @@ export default {
         console.error("Failed to close modal:", error);
       }
     };
-
-    const submit = async (description) => {
-      // Logic to submit the form
-      const response = await createBroadcast(description);
-      if (response.status === 200) {
-        notificationStore.success(response.data.message);
-        fetchBroadcasts();
-      } else {
-        notificationStore.error("Failed to create broadcast");
-      }
-      closeCreateModal();
-    };
     onMounted(() => {
       fetchBroadcasts();
     });
@@ -947,7 +937,6 @@ export default {
       search,
       headers,
       filteredItems,
-      // tableLoading,
       currentRole,
       isEditing,
       availablePermissions,
@@ -959,7 +948,6 @@ export default {
       closeModal,
       loadData,
       t,
-      // toast,
       itemsBroadcast,
       fetchBroadcasts,
       headersBroadcast,
@@ -968,7 +956,7 @@ export default {
       updateImportant,
       OpenCreateModal,
       closeCreateModal,
-      submit,
+      refresh,
     };
   },
 

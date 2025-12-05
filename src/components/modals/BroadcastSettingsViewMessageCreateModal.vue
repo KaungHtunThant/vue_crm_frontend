@@ -47,22 +47,49 @@
     </div>
   </div>
 </template>
-
 <script>
+import { useBroadcastStore } from "@/stores/BroadcastStore";
+import { useNotificationStore } from "@/stores/notificationStore";
+import { computed, watch, ref } from "vue";
 export default {
   name: "BroadcastSettingsViewMessageCreateModal",
-  data() {
-    return {
-      description: "",
+  setup(props, { emit }) {
+    const description = ref(null);
+    const notificationStore = useNotificationStore();
+    const broadcastStore = useBroadcastStore();
+    const current_broadcast = computed(
+      () => broadcastStore.getCurrentBroadcast
+    );
+    const closeModal = () => {
+      emit("close-modal");
     };
-  },
-  methods: {
-    submit() {
-      this.$emit("submit", this.description);
-    },
-    closeModal() {
-      this.$emit("close-modal");
-    },
+    const submit = () => {
+      if (current_broadcast.value) {
+        broadcastStore.editBroadcast({
+          ...current_broadcast.value,
+          description: description.value,
+        });
+      } else {
+        broadcastStore.addBroadcast({
+          description: description.value,
+        });
+      }
+      emit("refresh");
+      notificationStore.success("Broadcast message saved successfully");
+      closeModal();
+    };
+    watch(
+      () => current_broadcast.value,
+      (newVal) => {
+        if (newVal) {
+          description.value = newVal.description;
+        } else {
+          description.value = null;
+        }
+      },
+      { immediate: true }
+    );
+    return { description, current_broadcast, submit, closeModal };
   },
 };
 </script>

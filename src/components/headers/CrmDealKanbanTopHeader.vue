@@ -95,6 +95,18 @@
                   style="padding-top: 0.4rem; padding-bottom: 0.4rem"
                 >
                   <span
+                    class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
+                    >{{ computed_unassign_count }}</span
+                  >
+                  <span class="ms-1 text-white">{{
+                    t("kanban-task-status-unassign")
+                  }}</span>
+                </div>
+                <div
+                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
+                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                >
+                  <span
                     class="badge bg-secondary-subtle text-danger fw-bold fs-6"
                     >{{ computed_overdue_count }}</span
                   >
@@ -115,7 +127,7 @@
                   }}</span>
                 </div>
                 <div
-                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0"
+                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0 rounded-end"
                   style="padding-top: 0.4rem; padding-bottom: 0.4rem"
                 >
                   <span
@@ -124,18 +136,6 @@
                   >
                   <span class="ms-1 text-white">{{
                     t("kanban-task-status-tomorrow")
-                  }}</span>
-                </div>
-                <div
-                  class="btn btn-header px-1 px-lg-2 d-flex align-items-center"
-                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-                >
-                  <span
-                    class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
-                    >{{ computed_notasks_count }}</span
-                  >
-                  <span class="ms-1 text-white">{{
-                    t("kanban-task-status-notasks")
                   }}</span>
                 </div>
               </div>
@@ -297,8 +297,8 @@ export default {
     const computed_tomorrow_count = computed(() =>
       tomorrow_count.value > 99 ? "99+" : tomorrow_count.value
     );
-    const computed_notasks_count = computed(() =>
-      notasks_count.value > 99 ? "99+" : notasks_count.value
+    const computed_unassign_count = computed(() =>
+      unassign_count.value > 99 ? "99+" : unassign_count.value
     );
     const conversation = ref(null);
     const local_new_message = ref(null);
@@ -310,7 +310,7 @@ export default {
     const overdue_count = ref(0);
     const today_count = ref(0);
     const tomorrow_count = ref(0);
-    const notasks_count = ref(0);
+    const unassign_count = ref(0);
     const searchText = ref("");
     const route = useRoute();
     const showSearchInput = computed(() => {
@@ -415,8 +415,10 @@ export default {
         );
         tomorrow_count.value = tomorrowResponse?.data?.data || 0;
 
-        const noTasksResponse = await fetchTasksCountByStageName("No Task");
-        notasks_count.value = noTasksResponse?.data?.data || 0;
+        const noTasksResponse = await fetchTasksCountByStageName(
+          "unassign-soon"
+        );
+        unassign_count.value = noTasksResponse?.data?.data || 0;
       } catch (error) {
         console.error("Error fetching task counts:", error);
       }
@@ -452,7 +454,7 @@ export default {
       overdue_count,
       today_count,
       tomorrow_count,
-      notasks_count,
+      unassign_count,
       fetchTasksCounter,
       handleSearch,
       searchText,
@@ -461,7 +463,7 @@ export default {
       computed_overdue_count,
       computed_today_count,
       computed_tomorrow_count,
-      computed_notasks_count,
+      computed_unassign_count,
       showSearchInput,
       headerSelectedStatuses,
       openAfterSalesKanban,
