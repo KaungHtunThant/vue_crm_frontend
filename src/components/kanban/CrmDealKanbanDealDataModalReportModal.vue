@@ -28,6 +28,7 @@
             {{ t("kanban-modal-questions-subheading-questions-list") }}
           </h6>
           <form @submit.prevent="submitForm">
+            <patient-notes-component />
             <questions-div
               v-for="(question, index) in questions"
               :key="index"
@@ -76,7 +77,7 @@ import { computed } from "vue";
 import SalesPackagesComponent from "./CrmDealKanbanDealDataModalReportModalSalesPackagesComponent.vue";
 import AddOnsComponent from "./CrmDealKanbanDealDataModalReportModalAddOnsComponent.vue";
 import WarrentyComponent from "./CrmDealKanbanDealDataModalReportModalWarrentyComponent.vue";
-
+import PatientNotesComponent from "./CrmDealKanbanDealDataModalReportModalPatientNotesComponent.vue";
 export default {
   name: "CrmDealKanbanDealDataModalReportModal",
   props: {
@@ -98,6 +99,7 @@ export default {
     SalesPackagesComponent,
     AddOnsComponent,
     WarrentyComponent,
+    PatientNotesComponent,
   },
   data() {
     return {
@@ -136,6 +138,7 @@ export default {
       });
       const response_1 = await updateAnswersByDealId(this.deal_id, formData);
       this.deal_store.updateDeal(this.deal_id, {
+        note: this.current_deal.note,
         diagnosis: this.current_deal.diagnoses,
         kanban_packages: this.current_deal.kanban_packages,
         kanban_total_cost: this.current_deal.kanban_total_cost,

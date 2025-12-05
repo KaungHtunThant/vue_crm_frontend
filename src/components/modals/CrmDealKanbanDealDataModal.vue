@@ -9,13 +9,13 @@
   >
     <div class="modal-dialog modal-fullscreen">
       <div class="modal-content p-relative overflow-hidden">
-        <div
+        <!-- <div
           v-if="isOtherTaskSelected"
           class="blur-overlay"
           @click="handleOverlayClick"
           @contextmenu.prevent="preventRightClick"
           v-disable-right-click
-        ></div>
+        ></div> -->
         <div
           class="modal-header py-0 d-flex justify-content-between align-items-center"
         >
@@ -52,10 +52,10 @@
             >
           </div>
           <div class="d-flex justify-content-end align-items-center gap-2">
-            <button class="btn border-none text-primary" @click="startCall">
+            <!-- <button class="btn border-none text-primary" @click="startCall">
               <i class="fa-solid fa-phone-volume fs-5"></i>
               {{ t("kanban-modal-edit-call-heading") }}
-            </button>
+            </button> -->
             <button
               class="btn border-none text-primary"
               @click="openWhatsappModal(customerData.id)"
@@ -63,10 +63,10 @@
               <i class="fab fa-whatsapp border-none text-primary fs-5"></i>
               {{ t("kanban-modal-edit-whatsapp") }}
             </button>
-            <button class="btn border-none text-primary" @click="sendEmail">
+            <!-- <button class="btn border-none text-primary" @click="sendEmail">
               <i class="fas fa-envelope fs-5"></i>
               {{ t("kanban-modal-edit-sendemail") }}
-            </button>
+            </button> -->
             <button
               type="button"
               class="btn-close"
@@ -379,27 +379,6 @@
                 </div>
               </div>
               <hr />
-              <!-- Notes -->
-              <div class="row mb-3" @dblclick="handleDoubleClick">
-                <div class="col-2">
-                  <label class="form-label"
-                    ><i class="fa-solid fa-note-sticky"></i>
-                    {{ t("kanban-modal-edit-label-notes") }}</label
-                  >
-                </div>
-                <div class="col-10">
-                  <textarea
-                    :class="[
-                      'form-control',
-                      isEditMode ? 'bg-input-edit' : 'bg-input',
-                    ]"
-                    rows="4"
-                    v-model="customerData.note"
-                    :readonly="!isEditMode"
-                  ></textarea>
-                </div>
-              </div>
-
               <div class="row mb-3">
                 <div class="col-2">
                   <label for=""
@@ -1097,7 +1076,7 @@
                       :placeholder="t('kanban-modal-edit-tasks-placeholder')"
                       @keyup.enter="handleAddTask"
                     >
-                      <option value="" disabled>
+                      <option :value="null" disabled selected>
                         {{ t("kanban-modal-edit-tasks-placeholder") }}
                       </option>
                       <option
@@ -1226,11 +1205,6 @@
               <div
                 ref="commentsSection"
                 class="comments-section position-relative mt-4"
-                :class="{
-                  'elevated-section bg-white p-4 rounded-3 shadow-lg border border-2 border-danger':
-                    isOtherTaskSelected,
-                }"
-                @contextmenu.prevent="preventRightClick"
               >
                 <div class="row">
                   <div class="col-12 px-0">
@@ -1269,18 +1243,20 @@
                     </div>
                   </div>
                   <div class="col-12 mt-2">
-                    <span
+                    <!-- <div class="row"> -->
+                    <div
                       v-for="CommentsTags in CommentsTagsList"
                       :key="CommentsTags.id"
-                      class="d-inline-block"
+                      class="d-inline-block me-2"
                     >
                       <button
                         @click="handleAddComment(CommentsTags.id)"
-                        class="btn btn-sm btn-outline-secondary me-1 mb-1"
+                        class="btn btn-sm btn-outline-secondary me-1 mb-1 w-100"
                       >
                         {{ CommentsTags.name }}
                       </button>
-                    </span>
+                    </div>
+                    <!-- </div> -->
                   </div>
                   <div class="col-12 mt-2 bg-input showComments py-2 rounded-3">
                     <div
@@ -1684,10 +1660,10 @@ export default {
       phone: props.deal?.contact.phones[0]?.phone || "",
       phone2: props.deal?.contact.phones[1]?.phone || "",
       email: props.deal?.contact.email || "",
-      note: props.deal?.note || "",
       rating: props.deal?.rating || 0,
       source_id: props.deal?.source_id || "",
       stage_id: props.deal?.stage_id || "",
+      task: null,
       tasks: props.deal?.tasks || [],
       comments:
         props.deal?.comments.map((comment) => ({
@@ -2007,7 +1983,6 @@ export default {
           marital_status: customerData.maritalStatus,
           phones: phones,
           email: customerData.email || "",
-          note: customerData.note || "",
           rating: customerData.rating || 0,
           user_id: customerData.assigned_to || "",
           is_local: customerData.is_local ? 1 : 0,
