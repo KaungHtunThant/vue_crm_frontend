@@ -4,7 +4,7 @@
       :initial-filters="filters"
       @filter-applied="applyFilters"
       @reset-filter="resetFilter"
-      @search-deals="HandleSearch"
+      @search-deals="handleSearch"
       :selected_conversation="selected_conversation"
       :new_message="new_message"
       :update_message="update_message"
@@ -116,6 +116,7 @@ import { useDealStore } from "@/stores/DealStore";
 
 export default {
   name: "EmrDealKanbanView",
+  emits: ["search-deals"],
   components: {
     CrmKanbanHeader,
     CrmKanbanKanbanBoard,
@@ -139,6 +140,8 @@ export default {
     const delete_mode = ref(false);
     const delete_mode_loading = ref(false);
     const selectedTasks = ref([]);
+    const searching = ref(false);
+    const searchVal = ref("");
     const getEventClass = (arg) => {
       if (delete_mode.value && selectedTasks.value.includes(arg.event.id)) {
         return ["selected-for-deletion"];
@@ -356,7 +359,6 @@ export default {
     const updateWhatsappMessage = (data) => {
       update_message.value = data;
     };
-    const HandleSearch = async () => {};
     const changeDealStage = async (dealId, newStageIndex, oldStageId) => {
       try {
         const newStageId = stages.value[newStageIndex].id;
@@ -418,9 +420,14 @@ export default {
       if (month && year) return ` ${year} - ${month}`;
       return title;
     }
-    const fetchStages = async () => {
+    const handleSearch = async (searchText) => {
+      searchVal.value = searchText || "";
+      await fetchStages({ search: searchText });
+    };
+    const fetchStages = async (searchText) => {
       try {
-        const response = await getEmrKanban();
+        searching.value = true;
+        const response = await getEmrKanban(searchText);
         if (response.status == 200) {
           stages.value = response.data.data;
           nextTick(() => {
@@ -516,7 +523,7 @@ export default {
       openWhatsappModal,
       receiveWhatsappMessage,
       updateWhatsappMessage,
-      HandleSearch,
+      handleSearch,
       changeDealStage,
       selected_conversation,
       new_message,
@@ -539,6 +546,8 @@ export default {
       delete_mode_loading,
       handleCancelDeleteSelectedTasks,
       today_date,
+      searching,
+      searchVal,
     };
   },
 };

@@ -136,32 +136,22 @@
                     ><i class="fa-solid fa-flag"></i>
                     {{ t("kanban-modal-edit-label-nationality") }}
                   </label>
-                  <select
+                  <v-select
                     :class="[
-                      'form-select',
+                      '',
                       isEditMode ? 'bg-input-edit' : 'bg-input',
-                      'py-2',
+                      'Myselect py-1',
                     ]"
                     v-model="customerData.nationality"
+                    :options="nationalityOptions"
                     :disabled="!isEditMode"
-                    name="nationality"
-                    @dblclick="handleDoubleClick"
-                  >
-                    <option
-                      :value="null"
-                      disabled
-                      v-if="!customerData.nationality"
-                    >
-                      {{ t("kanban-modal-edit-placeholder-nationality") }}
-                    </option>
-                    <option
-                      v-for="(value, key) in nationalities"
-                      :key="key"
-                      :value="key"
-                    >
-                      {{ value }}
-                    </option>
-                  </select>
+                    :placeholder="
+                      t('kanban-modal-edit-placeholder-nationality')
+                    "
+                    :reduce="(option) => option.code"
+                    label="name"
+                    @open="handleDoubleClick"
+                  />
                 </div>
                 <div class="col">
                   <label class="form-label" for="language">
@@ -1102,6 +1092,7 @@
                       v-model="customerData.time"
                       :placeholder="t('modals.selectTime')"
                       @keyup.enter="handleAddTask"
+                      @click="openTimePicker"
                     />
                     <button
                       class="btn btn-primary py-1 px-4 fixed-action-btn"
@@ -1472,6 +1463,8 @@ import {
   watch,
   onBeforeUnmount,
 } from "vue";
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 import { useRoute, useRouter } from "vue-router";
 import RatingStars from "@/components/CreateDealElements/CrmDealKanbanDealDataModalRatingStars.vue";
 import ViewReport from "@/components/kanban/CrmDealKanbanDealDataModalReportModal.vue";
@@ -1510,7 +1503,13 @@ import { useCommentsTagsStore } from "@/stores/CommentsTagsStore";
 
 export default {
   name: "CrmDealKanbanDealDataModal",
-  components: { RatingStars, ViewReport, TrashDeal, SuggestUserModal },
+  components: {
+    RatingStars,
+    ViewReport,
+    TrashDeal,
+    SuggestUserModal,
+    "v-select": vSelect,
+  },
   props: {
     deal: {
       type: Object,
@@ -1703,6 +1702,12 @@ export default {
           locale.value === "ar" ? value.ar : value.en,
         ])
       );
+    });
+    const nationalityOptions = computed(() => {
+      return Object.entries(nationalities.value).map(([key, value]) => ({
+        code: key,
+        name: value,
+      }));
     });
     const language_options = {
       arabic: {
@@ -2759,6 +2764,9 @@ export default {
       const stage = props.stages.find((s) => s.id === id);
       return stage ? stage.color_code : id;
     };
+    const openTimePicker = (event) => {
+      event.target.showPicker?.();
+    };
     const taskEventsList = computed(() => taskEventsStore.getTaskEvents);
     const CommentsTagsList = computed(() => commentsTagsStore.getcommentstags);
 
@@ -2857,6 +2865,8 @@ export default {
       isOtherTaskSelected,
       handleOverlayClick,
       preventRightClick,
+      nationalityOptions,
+      openTimePicker,
     };
   },
 };
@@ -3249,5 +3259,27 @@ label {
     opacity: 1;
     transform: scale(1.02);
   }
+}
+:deep(.Myselect .vs__dropdown-toggle) {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: transparent !important;
+}
+
+:deep(.Myselect .vs__search) {
+  background: transparent !important;
+}
+
+:deep(.Myselect) {
+  border-radius: 6px;
+}
+
+:deep(.Myselect.vs--disabled .vs__dropdown-toggle),
+:deep(.Myselect.vs--disabled .vs__clear),
+:deep(.Myselect.vs--disabled .vs__search),
+:deep(.Myselect.vs--disabled .vs__selected),
+:deep(.Myselect.vs--disabled .vs__open-indicator) {
+  background: transparent !important;
 }
 </style>
