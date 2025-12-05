@@ -3290,9 +3290,21 @@ label {
   box-shadow: none !important;
   outline: none !important;
   background: transparent !important;
-  border-radius: 5px !important;
 }
-:deep(.Myselect .vs__search, .vs__search:focus) {
+
+:deep(.Myselect .vs__search) {
+  background: transparent !important;
+}
+
+:deep(.Myselect) {
+  border-radius: 6px;
+}
+
+:deep(.Myselect.vs--disabled .vs__dropdown-toggle),
+:deep(.Myselect.vs--disabled .vs__clear),
+:deep(.Myselect.vs--disabled .vs__search),
+:deep(.Myselect.vs--disabled .vs__selected),
+:deep(.Myselect.vs--disabled .vs__open-indicator) {
   background: transparent !important;
 }
 </style>
