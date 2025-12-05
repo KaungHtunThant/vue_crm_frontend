@@ -1247,7 +1247,6 @@
                   'elevated-section bg-white p-4 rounded-3 shadow-lg border border-2 border-danger':
                     isOtherTaskSelected,
                 }"
-                @contextmenu.prevent="preventRightClick"
               >
                 <div class="row">
                   <div class="col-12 px-0">
