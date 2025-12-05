@@ -6,7 +6,7 @@
       {{ $t("kanban-modal-edit-label-notes") }}</label
     >
     <textarea
-      class="form-control bg-input-edit"
+      class="form-control"
       rows="4"
       v-model="local_data.note"
     ></textarea>
