@@ -41,7 +41,7 @@
           <div class="rating d-flex align-items-center">
             <rating-stars
               v-model="customerData.rating"
-              :isEditable="isEditMode"
+              :deal-id="customerData.id"
             />
           </div>
           <div class="source">

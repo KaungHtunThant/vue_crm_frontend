@@ -18,6 +18,9 @@
 </template>
 
 <script>
+import { ref } from "vue";
+import { useDealStore } from "@/stores/DealStore";
+import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
 export default {
   name: "CrmDealKanbanDealDataModalRatingStars",
@@ -27,15 +30,29 @@ export default {
       default: 0,
       required: true,
     },
-    isEditable: {
-      type: Boolean,
-      default: false,
+    dealId: {
+      type: Number,
+      required: false,
     },
   },
   emits: ["update:modelValue"],
-  setup() {
+  setup(props, { emit }) {
     const { t } = useI18n();
-    return { t };
+    const dealStore = useDealStore();
+    const notificationStore = useNotificationStore();
+    const tmp_rating = ref(null);
+    const handleClick = async (index) => {
+      try {
+        tmp_rating.value = props.modelValue;
+        emit("update:modelValue", index);
+        await dealStore.updateDeal(props.dealId, { rating: index });
+        notificationStore.success("Rating updated successfully");
+      } catch (error) {
+        emit("update:modelValue", tmp_rating.value); // Revert on error
+        notificationStore.error("Failed to update rating");
+      }
+    };
+    return { t, handleClick };
   },
   data() {
     return {
@@ -48,9 +65,6 @@ export default {
     },
     handleLeave() {
       this.hoveredStar = 0;
-    },
-    handleClick(index) {
-      this.$emit("update:modelValue", index);
     },
   },
 };
