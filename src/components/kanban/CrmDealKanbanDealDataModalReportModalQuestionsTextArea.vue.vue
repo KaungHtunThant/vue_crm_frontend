@@ -1,7 +1,9 @@
 <template>
   <div class="form-text">
     <textarea
-      :placeholder="t('modals.additionalNote')"
+      :placeholder="
+        t(placeholder || 'questions-modal-additional-notes-placeholder')
+      "
       class="form-control w-100 p-2"
       :value="local_answer"
       :name="`q-${question_id}`"
@@ -18,6 +20,10 @@ export default {
     return { t };
   },
   props: {
+    placeholder: {
+      type: String,
+      default: "",
+    },
     answers: {
       type: Array,
       default: () => [],

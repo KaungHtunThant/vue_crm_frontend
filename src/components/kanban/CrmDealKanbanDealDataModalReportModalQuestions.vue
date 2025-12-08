@@ -22,7 +22,11 @@
       />
     </span>
     <span v-else-if="local_question.type == 'text'">
-      <text-area :answers="local_question.answers" @change="handleChange" />
+      <text-area
+        :answers="local_question.answers"
+        :placeholder="local_question.placeholder"
+        @change="handleChange"
+      />
     </span>
     <div
       v-for="(childQuestion, index) in local_question.child_questions"

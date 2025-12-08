@@ -412,7 +412,8 @@ export default {
     lessThan1YearAgo: "أقل من سنة",
     moreThan1YearAgo: "أكثر من سنة",
     longerThanThat: "أطول من ذلك",
-    additionalNote: "ملاحظة إضافية",
+    additionalNote:
+      "يرجى إضافة ملاحظاتك الشخصية حول المريض لإحالة طبية ناجحة وعمولة أعلى..",
     attention: "ملاحظة إدارية",
     last_updated: "اخر تعديل",
     create_new_deal: "إنشاء صفقة جديدة",

@@ -2,7 +2,7 @@
   <div class="form-text">
     <input
       type="text"
-      :placeholder="t('modals.additionalNote')"
+      :placeholder="t('questions-modal-additional-notes-placeholder')"
       class="note w-100 rounded-3 p-2"
       :value="local_answer"
       :name="`q-${question_id}`"

@@ -373,7 +373,7 @@
               <div class="row mb-3">
                 <div class="col-2">
                   <label for=""
-                    ><i class="fa-solid fa-circle-question"></i>
+                    ><i class="fa-solid fa-handshake"></i>
                     {{ t("kanban-modal-edit-label-questions") }}</label
                   >
                 </div>
