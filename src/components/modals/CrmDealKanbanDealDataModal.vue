@@ -862,7 +862,7 @@
                             :disabled="!isEditMode"
                             @dblclick="handleDoubleClick"
                           >
-                            <option value="" disabled>
+                            <option :value="null" disabled selected>
                               {{
                                 t("kanban-modal-edit-placeholder-packages-name")
                               }}
@@ -2088,18 +2088,16 @@ export default {
     const addNewHospitalPackage = () => {
       if (!isEditMode.value) return;
       customerData.hospital_packages.push({
-        id: "",
+        id: null,
         quantity: null,
         total_price: null,
+        user_id: null,
       });
     };
 
     const removeHospitalPackage = (index) => {
       try {
         customerData.hospital_packages.splice(index, 1);
-        notificationStore.success(t("success.removePackage"), {
-          timeout: 3000,
-        });
       } catch (error) {
         console.error("Error removing package:", error);
         notificationStore.error(t("error.removePackage"), {
