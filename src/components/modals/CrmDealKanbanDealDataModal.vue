@@ -2006,7 +2006,9 @@ export default {
           time: customerData.time || "",
           hospital_total_cost: customerData.hospital_total_cost || null,
           passports: [customerData.passport || null],
-          dob: customerData.date_of_birth.toISOString().slice(0, 10) || "",
+          dob: customerData.date_of_birth
+            ? new Date(customerData.date_of_birth).toISOString().slice(0, 10)
+            : null,
           passportNumber: customerData.passportNumber || [],
         };
         const response = await updateDeal(props.deal.id, formData);
