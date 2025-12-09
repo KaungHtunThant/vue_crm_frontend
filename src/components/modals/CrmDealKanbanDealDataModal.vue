@@ -5,7 +5,8 @@
     tabindex="-1"
     aria-labelledby="dealDataCardLabel"
     aria-hidden="true"
-    data-bs-backdrop="false"
+    data-bs-backdrop="static"
+    data-bs-focus="false"
   >
     <div class="modal-dialog modal-fullscreen">
       <div class="modal-content p-relative overflow-hidden">
@@ -195,19 +196,18 @@
                       {{ t("kanban-modal-edit-label-dob")
                       }}<span class="text-danger">*</span>
                     </label>
-                    <input
-                      type="date"
-                      lang="en"
-                      :disabled="!isEditMode"
-                      :class="[
-                        'form-control',
-                        isEditMode ? 'bg-input-edit' : 'bg-input',
-                        'py-2',
-                      ]"
+                    <DatePicker
                       v-model="customerData.date_of_birth"
+                      :disabled="!isEditMode"
+                      dateFormat="yy-mm-dd"
+                      :showIcon="true"
                       :placeholder="t('kanban-modal-edit-placeholder-dob')"
-                      name="date_of_birth"
-                      @mousedown="dateTaskClick"
+                      :class="[isEditMode ? 'custom-calendar-edit' : '']"
+                      :pt="{
+                        input: {
+                          class: ['form-control', 'py-2'],
+                        },
+                      }"
                     />
                   </div>
                   <!-- maritalStatus -->
@@ -1530,6 +1530,7 @@ import { useDealStore } from "@/stores/DealStore";
 import { useUserStore } from "@/stores/UserStore";
 import { useTaskEventsStore } from "@/stores/TaskEventsStore";
 import { useCommentsTagsStore } from "@/stores/CommentsTagsStore";
+import DatePicker from "primevue/datepicker";
 
 export default {
   name: "CrmDealKanbanDealDataModal",
@@ -1538,6 +1539,7 @@ export default {
     ViewReport,
     TrashDeal,
     SuggestUserModal,
+    DatePicker,
     "v-select": vSelect,
   },
   props: {
@@ -2010,7 +2012,6 @@ export default {
         if (customerData.phone2) {
           phones.push(customerData.phone2);
         }
-
         const formData = {
           name: customerData.name,
           nationality: customerData.nationality,
@@ -2035,10 +2036,9 @@ export default {
           time: customerData.time || "",
           hospital_total_cost: customerData.hospital_total_cost || null,
           passports: [customerData.passport || null],
-          dob: customerData.date_of_birth || [],
+          dob: customerData.date_of_birth.toISOString().slice(0, 10) || "",
           passportNumber: customerData.passportNumber || [],
         };
-
         const response = await updateDeal(props.deal.id, formData);
         if (response.data) {
           notificationStore.success(response.data.message, {
@@ -2135,16 +2135,17 @@ export default {
     };
     const openQuestionsModal = async () => {
       try {
-        const child_modal = new Modal(
-          document.getElementById("questionsModal")
-        );
-        child_modal.show();
-        await nextTick();
-        const backdrop = document.querySelector(".modal-backdrop");
-        if (backdrop) {
-          console.log("Removing backdrop for questions modal", backdrop);
-          backdrop.remove();
+        //const modal = new Modal(document.getElementById("questionsModal"));
+        const modalEl = document.getElementById("questionsModal");
+        const existingInstance = Modal.getInstance(modalEl);
+        if (existingInstance) {
+          existingInstance.dispose();
         }
+        const modal = new Modal(modalEl, {
+          backdrop: true,
+          focus: true,
+        });
+        modal.show();
       } catch (error) {
         console.error("Error opening questions modal:", error);
         notificationStore.error(t("error.openQuestionsModal"), {
@@ -3322,5 +3323,43 @@ label {
 :deep(.Myselect.vs--disabled .vs__selected),
 :deep(.Myselect.vs--disabled .vs__open-indicator) {
   background: transparent !important;
+}
+</style>
+<style>
+.p-datepicker,
+.p-datepicker-panel {
+  z-index: 1066 !important;
+}
+.p-inputtext:disabled {
+  background-color: #eeeeee !important;
+  border: none !important;
+}
+.p-datepicker-dropdown {
+  background-color: #eeeeee !important;
+  border: none !important;
+  color: #0000;
+}
+.p-inputtext,
+.p-datepicker-input {
+  background-color: #eeeeee !important;
+  border: none !important;
+  border-top-left-radius: 6px !important;
+  border-bottom-left-radius: 6px !important;
+  color: #000 !important;
+}
+.modal {
+  z-index: 1050;
+}
+
+.modal.show ~ .modal.show {
+  z-index: 1060;
+}
+
+.modal-backdrop {
+  z-index: 1040;
+}
+
+.modal-backdrop ~ .modal-backdrop {
+  z-index: 1050;
 }
 </style>

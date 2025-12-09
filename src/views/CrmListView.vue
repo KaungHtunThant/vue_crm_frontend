@@ -612,7 +612,14 @@ const handleShowDealModal = async (dealId) => {
     selectedDeal.value = response.data.data;
     setTimeout(() => {
       const modalEl = document.getElementById("dealDataCard");
-      const modal = new Modal(modalEl);
+      const existingInstance = Modal.getInstance(modalEl);
+      if (existingInstance) {
+        existingInstance.dispose();
+      }
+      const modal = new Modal(modalEl, {
+        backdrop: "static",
+        focus: false,
+      });
       modal.show();
     }, 300);
   } catch (error) {
