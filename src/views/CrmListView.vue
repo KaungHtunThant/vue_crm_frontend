@@ -627,7 +627,14 @@ const handleShowDealModal = async (dealId) => {
     await nextTick();
     setTimeout(() => {
       const modalEl = document.getElementById("dealDataCard");
-      const modal = new Modal(modalEl);
+      const existingInstance = Modal.getInstance(modalEl);
+      if (existingInstance) {
+        existingInstance.dispose();
+      }
+      const modal = new Modal(modalEl, {
+        backdrop: "static",
+        focus: false,
+      });
       modal.show();
       modalEl.addEventListener(
         "hidden.bs.modal",
