@@ -36,7 +36,6 @@ export const useUserStore = defineStore("userStore", {
       return state.selected_user;
     },
     getUsersWithRole: (state) => (role) => {
-      console.log("Filtering users with role:", role);
       return state.all.filter((user) => user.role === role);
     },
   },
@@ -108,16 +107,13 @@ export const useUserStore = defineStore("userStore", {
         this.rows.unshift(normalized);
         this.totalRows += 1;
       }
-      console.log("Updated user locally", normalized, this.current_user);
       if (this.current_user && this.current_user.id == updatedUser.id) {
-        console.log("same user");
         this.current_user = updatedUser;
       }
     },
 
     async updateUser(id, data) {
       try {
-        console.log("Updating user with ID:", id, "Data:", data);
         const response = await updateUser(id, data);
         if (response.status === 200) {
           this.updateUserLocal(response.data.data);

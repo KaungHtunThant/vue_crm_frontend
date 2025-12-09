@@ -580,7 +580,6 @@ export default {
       const commission = await calculatecommission(userId);
       if (commission) {
         const salaryData = commission?.data?.data?.original?.data;
-        console.log(salaryData);
         return {
           finalBasicPay: salaryData?.basic_pay || 0,
           calculatedCommission: salaryData?.calculated_commission || 0,

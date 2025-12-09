@@ -27,7 +27,6 @@ export const useTaskStore = defineStore("task", {
     getCurrentTasks: (state) =>
       state.tasks.filter((task) => task.status !== "completed"),
     getCalendarTasks: (state) => {
-      console.log("Day Grid Mode in Getter:", state.day_grid_mode);
       if (state.day_grid_mode === "dayGridDay") {
         return state.calendar_tasks.map((task) => {
           return {

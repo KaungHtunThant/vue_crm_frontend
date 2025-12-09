@@ -41,7 +41,6 @@ export default {
     const packageStore = usePackageStore();
 
     const onChangePackage = () => {
-      console.log("Package changed:", local_package_id.value, props.user_id);
       emit("package-changed", local_package_id.value, props.user_id);
     };
 

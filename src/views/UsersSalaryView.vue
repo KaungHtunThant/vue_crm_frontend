@@ -150,7 +150,6 @@ export default {
                 : "-",
             };
           });
-        console.log("Number of deductions:", deductions.value.length);
       } catch (error) {
         console.error("Error fetching deductions:", error);
         deductions.value = [];
@@ -158,7 +157,6 @@ export default {
     };
 
     onMounted(async () => {
-      console.log("Component mounted with userId:", userId.value);
       await fetchDeductions();
     });
 
@@ -188,10 +186,8 @@ export default {
       }
     };
     const editDeduction = (item) => {
-      console.log("Editing item:", item);
       if (deductionModal.value) {
         const fullItem = deductions.value.find((d) => d.id === item.id);
-        console.log("Full item found:", fullItem);
         if (fullItem) {
           const editData = {
             id: fullItem.id,
@@ -199,14 +195,12 @@ export default {
             amount: parseFloat(fullItem.amount),
             emp_id: userId.value,
           };
-          console.log("Sending to modal:", editData);
           deductionModal.value.open(userId.value, editData);
         }
       }
     };
 
     const handleSaveDeduction = async (data) => {
-      console.log("Deduction Data:", data);
       const response = await saveDeduction(data);
       if (!response) {
         Toast.notify("error in saving data");

@@ -112,7 +112,6 @@ export default {
       if (package_store.getAllPackages.length === 0) {
         package_store.fetchPackages();
       }
-      console.log("Initial data:", data.value);
       local_data.value = data.value;
     });
 
@@ -120,7 +119,6 @@ export default {
       () => data.value,
       (newVal) => {
         if (newVal?.id != local_data.value?.id) {
-          console.log("Data changed:", newVal);
           local_data.value = newVal;
         }
       }

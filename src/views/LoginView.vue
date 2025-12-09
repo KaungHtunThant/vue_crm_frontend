@@ -148,10 +148,8 @@ export default {
     async handleOTP() {
       this.otp_phase = true;
       const otp_code_input = document.getElementById("otp_code");
-      console.log("OTP phase activated", otp_code_input);
       this.$nextTick(() => {
         if (otp_code_input) {
-          console.log("Focusing OTP input field");
           otp_code_input.focus();
         } else {
           console.error("OTP input field not found");
@@ -204,12 +202,7 @@ export default {
           } else if (response.data.user.role === "emr-admin") {
             defaultRedirect = "/emr-kanban";
           }
-          console.log("defaultRedirect", defaultRedirect);
           this.permissionStore.setPermissions(response.data.user.permissions);
-          console.log(
-            "has permission",
-            this.permissionStore.hasPermission(PERMISSIONS.EMRKANBAN)
-          );
           this.$emit("loginSuccess");
           let bg_fetch = await getBackgroundId(response.data.user.bg_image_id);
           let imageUrl = bg_fetch.data.data.url;

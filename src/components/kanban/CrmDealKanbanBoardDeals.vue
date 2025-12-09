@@ -684,8 +684,8 @@ export default {
       currentStageId = null,
       mode = null
     ) => {
-      console.log("Opening deal data card for deal ID:", dealId);
       try {
+        // stages check and fetch
         if (!allStages.value) {
           let response = null;
           if (user_role.value == "after-sales") {
@@ -699,7 +699,10 @@ export default {
             allStages.value = [];
           }
         }
+        // add view count
         addViewCount(dealId);
+
+        // mode check
         if (mode === "calendar") {
           await nextTick();
           const modalEl = document.getElementById("dealDataCard");
@@ -718,6 +721,7 @@ export default {
             { once: true }
           );
         } else {
+          // deal fetch
           const dealData = await showDeal(dealId);
           if (dealData.data) {
             const deal = dealData.data.data;
@@ -746,6 +750,7 @@ export default {
               });
             };
             await waitForStage();
+            // set deal value
             selectedDeal.value = deal;
             await nextTick();
             const modalEl = document.getElementById("dealDataCard");

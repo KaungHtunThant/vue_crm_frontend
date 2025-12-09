@@ -166,7 +166,6 @@ export default {
         this.errorMessage = "";
 
         const response = await getUserLoginLogs(this.userId);
-        console.log("Login logs response:", response);
         if (response.status === 200) {
           this.logs = response.data.data || [];
         } else {

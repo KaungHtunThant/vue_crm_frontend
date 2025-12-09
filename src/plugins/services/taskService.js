@@ -1,7 +1,6 @@
 import axios from "@/plugins/axios";
 
 export const createTask = (formData) => {
-  console.log("Creating task with formData:", formData);
   return axios.post("/tasks", formData);
 };
 

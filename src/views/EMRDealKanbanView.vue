@@ -155,7 +155,6 @@ export default {
       editable: true,
       droppable: true,
       events(fetchInfo, successCallback, failureCallback) {
-        console.log("daygrid change test:", fetchInfo);
         taskStore
           .fetchCalendarTasksByDate(fetchInfo.startStr, fetchInfo.endStr)
           .then(() => {
@@ -169,7 +168,6 @@ export default {
       eventReceive: (info) => {
         info.revert();
         let ticketData;
-        console.log("Event received:", info.event);
         try {
           ticketData = JSON.parse(info.draggedEl.dataset.ticket);
         } catch {
@@ -185,7 +183,6 @@ export default {
         if (idx !== -1) {
           calendarEvents.value[idx].start = info.event.startStr;
         }
-        console.log("Event dropped to new date:", info.event);
         const response = await taskStore.updateTask(
           info.event.id,
           info.event.startStr
@@ -209,7 +206,6 @@ export default {
             selectedTasks.value.push(info.event.id);
             el.classList.add("selected-for-deletion");
           }
-          console.log("Selected tasks for deletion:", selectedTasks.value);
         } else {
           const ticketId = info.event.extendedProps.ticketId;
           if (ticketId) {
@@ -258,7 +254,6 @@ export default {
     });
     watch(deal_scroll_status, (newStatus) => {
       if (newStatus) {
-        console.log("Re-initializing draggables after deal scroll");
         const draggables = document.querySelectorAll(
           ".deal-card-calendar:not(.draggable-initialized)"
         );
@@ -297,7 +292,6 @@ export default {
       );
     };
     const changeCalendarView = () => {
-      console.log("Changing calendar view to:", currentView.value);
       taskStore.setDayGridMode(currentView.value);
       fullCalendarRef.value.getApi().changeView(currentView.value);
       fullCalendarRef.value.getApi().refetchEvents();

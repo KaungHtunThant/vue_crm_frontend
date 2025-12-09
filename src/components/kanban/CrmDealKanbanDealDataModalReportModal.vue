@@ -2,11 +2,9 @@
   <div
     class="modal fade"
     id="questionsModal"
-    tabindex="-1"
     aria-labelledby="questionsModalLabel"
-    aria-hidden="true"
     ref="questionsModal"
-    data-bs-backdrop="true"
+    data-bs-backdrop="false"
   >
     <div
       class="modal-dialog modal-lg modal-dialog-scrollable position-fixed end-0"
@@ -188,7 +186,6 @@ export default {
   },
   mounted() {
     this.fetchQuestions();
-    // this.toast = useToast();
     this.$nextTick(() => {
       const modalEl = document.getElementById("questionsModal");
       if (modalEl) {

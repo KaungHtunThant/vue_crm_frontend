@@ -299,8 +299,6 @@ export default {
     };
 
     const handleShowLoginDetails = (user) => {
-      console.log("handleShowLoginDetails called with user:", user);
-      console.log("userLogModalRef.value:", userLogModalRef.value);
       if (userLogModalRef.value) {
         userLogModalRef.value.openModal(user);
       } else {
@@ -382,7 +380,6 @@ export default {
     };
     const handlePackageChange = async (package_id, user_id) => {
       try {
-        console.log("package_id", package_id);
         const user = store.rows.find((u) => u.id === user_id);
         if (user) {
           user.package = { id: package_id };

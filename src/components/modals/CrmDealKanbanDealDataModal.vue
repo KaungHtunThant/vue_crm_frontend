@@ -2103,10 +2103,18 @@ export default {
         });
       }
     };
-    const openQuestionsModal = () => {
+    const openQuestionsModal = async () => {
       try {
-        const modal = new Modal(document.getElementById("questionsModal"));
-        modal.show();
+        const child_modal = new Modal(
+          document.getElementById("questionsModal")
+        );
+        child_modal.show();
+        await nextTick();
+        const backdrop = document.querySelector(".modal-backdrop");
+        if (backdrop) {
+          console.log("Removing backdrop for questions modal", backdrop);
+          backdrop.remove();
+        }
       } catch (error) {
         console.error("Error opening questions modal:", error);
         notificationStore.error(t("error.openQuestionsModal"), {
@@ -2265,7 +2273,6 @@ export default {
           task_event_id: customerData.task,
           type: type,
         };
-        console.log("Form Data for New Task:", formData);
         const response = await createTask(formData);
         if (response.status === 200 || response.status === 201) {
           const selectedEvent = taskEventsList.value.find(
@@ -2490,10 +2497,6 @@ export default {
       if (modalElement) {
         modalElement.__cancelEditHandler = () => {
           dealStore.resetCurrentDeal();
-          console.log(
-            "Modal hidden, resetting current deal.",
-            dealStore.getCurrentDeal
-          );
           if (isEditMode.value) {
             closeEditMode();
           }

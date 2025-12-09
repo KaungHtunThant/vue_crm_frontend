@@ -119,10 +119,9 @@ export default {
         await props.applyActualFiltersProp({ ...headerFilterData.value });
 
         emit("update:modelValue", { ...headerFilterData.value });
-        // emit("apply-filters", { ...headerFilterData.value });
         closeFilterModal();
       } catch (error) {
-        console.log("Error applying filters:", error);
+        console.error("Error applying filters:", error);
         notificationStore.error(error.message, { timeout: 3000 });
       } finally {
         isApplyingFilters.value = false;

@@ -11,7 +11,6 @@ export const useAuthStore = defineStore("authStore", {
       return response;
     },
     async initLogout() {
-      console.log("Initiating logout from AuthStore");
       await logout();
       Cookies.remove("authToken");
       Cookies.remove("name");

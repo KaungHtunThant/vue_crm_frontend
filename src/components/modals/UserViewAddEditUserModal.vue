@@ -287,7 +287,6 @@ export default {
 
     const submitForm = async () => {
       try {
-        console.log("form submitted");
         loading.value = true;
         let response = "";
         const formVal = {

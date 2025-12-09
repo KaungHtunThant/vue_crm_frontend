@@ -36,7 +36,6 @@ export const useSettingStore = defineStore("setting", {
       if (response.status !== 200) {
         throw new Error(response.data.message);
       }
-      console.log("response", response.data);
       this.backendAppVersion = response.data.data.version;
       return response.data.data.version;
     },

@@ -280,7 +280,6 @@
   <!-- @add-deal="addNewDeal" -->
   <crm-list-create-deal-modal @add-deal="addNewDeal" ref="dealModal" />
   <import-modal @import-complete="fetchData" />
-  <show-data :formData="dealData" ref="showDataModal" />
   <deal-data-card
     :key="selectedDeal?.id"
     :deal="selectedDeal"
@@ -295,13 +294,7 @@
   />
 </template>
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick, computed } from "vue";
-// import { useToast } from "vue-toastification";
-// import {
-//   showSuccess,
-//   showError,
-//   showInfo,
-// } from "@/plugins/services/toastService";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
 import DataTable from "primevue/datatable";
@@ -322,7 +315,6 @@ import CrmListViewActionsDealModal from "@/components/modals/CrmListViewActionsD
 import CrmListViewFilterModal from "@/components/modals/CrmListViewFilterModal.vue";
 import CrmListCreateDealModal from "@/components/modals/CrmListViewCreateDealModal.vue";
 import ImportModal from "@/components/modals/CrmListViewImportModal.vue";
-import ShowData from "@/components/modals/CrmListViewShowDataModal.vue";
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Swal from "sweetalert2";
 import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
@@ -332,7 +324,6 @@ import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CountryFlagAvatar from "@/components/whatsapp/WhatsAppModalSidebarLeftCountryFlagAvatar.vue";
 import { useSourceStore } from "@/stores/SourceStore";
 const { t } = useI18n();
-// const toast = useToast();
 const permissionStore = usePermissionStore();
 const notificationStore = useNotificationStore();
 // Table state
@@ -341,7 +332,6 @@ const loading = ref(false);
 const totalRows = ref(0);
 const currentPage = ref(0);
 const rowsPerPage = ref(50);
-// const search = ref("");
 const searchInput = ref("");
 const selectedRows = ref([]);
 const selectedAction = ref("");
@@ -369,8 +359,6 @@ const filters = ref({
   sort_order: "desc",
 });
 
-const dealData = ref(null);
-const showDataModal = ref(null);
 const selectedDeal = ref(null);
 const logs = ref([]);
 const comments = ref([]);
@@ -621,26 +609,11 @@ const deleteItem = async (id) => {
 const handleShowDealModal = async (dealId) => {
   try {
     const response = await showDeal(dealId);
-    const deal = response.data.data;
-    selectedDeal.value = deal;
-
-    await nextTick();
+    selectedDeal.value = response.data.data;
     setTimeout(() => {
       const modalEl = document.getElementById("dealDataCard");
       const modal = new Modal(modalEl);
       modal.show();
-      modalEl.addEventListener(
-        "hidden.bs.modal",
-        () => {
-          const backdrop = document.querySelector(".modal-backdrop");
-          if (backdrop) {
-            backdrop.remove();
-            document.body.classList.remove("modal-open");
-            document.body.style.paddingRight = null;
-          }
-        },
-        { once: true }
-      );
     }, 300);
   } catch (error) {
     console.error("Error fetching deal data:", error);
@@ -773,6 +746,18 @@ const openDealModal = () => {
   const modalElement = document.getElementById("dealModal");
   const modal = new Modal(modalElement);
   modal.show();
+  modalElement.addEventListener(
+    "hidden.bs.modal",
+    () => {
+      const backdrop = document.querySelector(".modal-backdrop");
+      if (backdrop) {
+        backdrop.remove();
+        document.body.classList.remove("modal-open");
+        document.body.style.paddingRight = null;
+      }
+    },
+    { once: true }
+  );
 };
 
 const resetFilter = () => {

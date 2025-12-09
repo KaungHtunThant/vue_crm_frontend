@@ -126,7 +126,6 @@ export default {
     async fetchUserData() {
       try {
         this.userData = this.userStore.getCurrentUser;
-        console.log("Fetched user data:", this.userData);
         this.localNameEn = this.userData.name_en || "";
         this.localNameAr = this.userData.name_ar || "";
         this.localImage =
@@ -193,7 +192,6 @@ export default {
     if (!this.userStore.getCurrentUser) {
       this.userData = await this.userStore.fetchCurrentUser();
     }
-    console.log("Fetched user data:", this.userStore.getCurrentUser);
   },
 };
 </script>
