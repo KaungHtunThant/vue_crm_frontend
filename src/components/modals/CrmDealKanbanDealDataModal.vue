@@ -2036,7 +2036,9 @@ export default {
           time: customerData.time || "",
           hospital_total_cost: customerData.hospital_total_cost || null,
           passports: [customerData.passport || null],
-          dob: customerData.date_of_birth.toISOString().slice(0, 10) || "",
+          dob: customerData.date_of_birth
+            ? new Date(customerData.date_of_birth).toISOString().slice(0, 10)
+            : null,
           passportNumber: customerData.passportNumber || [],
         };
         const response = await updateDeal(props.deal.id, formData);
@@ -3346,20 +3348,5 @@ label {
   border-top-left-radius: 6px !important;
   border-bottom-left-radius: 6px !important;
   color: #000 !important;
-}
-.modal {
-  z-index: 1050;
-}
-
-.modal.show ~ .modal.show {
-  z-index: 1060;
-}
-
-.modal-backdrop {
-  z-index: 1040;
-}
-
-.modal-backdrop ~ .modal-backdrop {
-  z-index: 1050;
 }
 </style>
