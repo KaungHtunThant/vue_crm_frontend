@@ -2,7 +2,8 @@
   <div class="question bg-light ps-2 py-2 mb-2 rounded-3">
     <label class="form-label">
       <i class="fa-solid fa-notes-medical"></i>
-      {{ $t("kanban-modal-edit-label-initialdiagnosis") }}
+      {{ $t("kanban-modal-edit-label-initialdiagnosis")
+      }}<span class="text-danger">*</span>
     </label>
     <div class="row m-0 g-0">
       <div

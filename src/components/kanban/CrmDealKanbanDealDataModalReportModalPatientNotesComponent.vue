@@ -3,7 +3,8 @@
   <div class="question bg-light ps-2 py-2 mb-2 rounded-3">
     <label class="form-label"
       ><i class="fa-solid fa-note-sticky"></i>
-      {{ $t("kanban-modal-edit-label-notes") }}</label
+      {{ $t("kanban-modal-edit-label-notes")
+      }}<span class="text-danger">*</span></label
     >
     <textarea
       class="form-control"

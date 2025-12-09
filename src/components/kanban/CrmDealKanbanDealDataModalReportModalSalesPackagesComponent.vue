@@ -2,7 +2,8 @@
   <div class="question bg-light ps-2 py-2 mb-2 rounded-3">
     <label class="form-label">
       <i class="fa-solid fa-cubes"></i>
-      {{ $t("kanban-modal-edit-label-kanban-packages") }}
+      {{ $t("kanban-modal-edit-label-kanban-packages")
+      }}<span class="text-danger">*</span>
     </label>
     <div
       v-for="(pkg, index) in local_data?.kanban_packages || []"

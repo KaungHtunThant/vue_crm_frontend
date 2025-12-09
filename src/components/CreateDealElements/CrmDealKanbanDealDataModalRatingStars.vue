@@ -1,6 +1,7 @@
 <template>
   <label class="fs-6 w-100 mx-2">
-    {{ t("kanban-modal-edit-rating-heading") }}
+    {{ t("kanban-modal-edit-rating-heading")
+    }}<span class="text-danger">*</span>
   </label>
   <div class="w-100 d-flex align-items-center">
     <span

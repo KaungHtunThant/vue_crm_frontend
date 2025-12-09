@@ -134,7 +134,8 @@
                 <div class="col">
                   <label class="form-label" for="nationality"
                     ><i class="fa-solid fa-flag"></i>
-                    {{ t("kanban-modal-edit-label-nationality") }}
+                    {{ t("kanban-modal-edit-label-nationality")
+                    }}<span class="text-danger">*</span>
                   </label>
                   <v-select
                     :class="[
@@ -156,7 +157,8 @@
                 <div class="col">
                   <label class="form-label" for="language">
                     <i class="fa-solid fa-language"></i>
-                    {{ t("kanban-modal-edit-label-prefered-language") }}
+                    {{ t("kanban-modal-edit-label-prefered-language")
+                    }}<span class="text-danger">*</span>
                   </label>
                   <select
                     :class="[
@@ -212,7 +214,8 @@
                   <div class="col">
                     <label class="form-label" for="maritalStatus"
                       ><i class="fa-solid fa-heart"></i>
-                      {{ t("kanban-modal-edit-label-maritalstatus") }}
+                      {{ t("kanban-modal-edit-label-maritalstatus")
+                      }}<span class="text-danger">*</span>
                     </label>
                     <select
                       :class="[
@@ -245,7 +248,8 @@
                   <div class="col p-0">
                     <label class="form-label" for="personalCompanion"
                       ><i class="fa-solid fa-person-circle-plus"></i>
-                      {{ t("kanban-modal-edit-label-personal-companion") }}
+                      {{ t("kanban-modal-edit-label-personal-companion")
+                      }}<span class="text-danger">*</span>
                     </label>
                     <select
                       v-model.number="customerData.personalCompanion"

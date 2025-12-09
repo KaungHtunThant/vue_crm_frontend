@@ -23,7 +23,8 @@
         </div>
         <div class="modal-body">
           <h6 class="mb-3">
-            {{ t("kanban-modal-questions-subheading-questions-list") }}
+            {{ t("kanban-modal-questions-subheading-questions-list")
+            }}<span class="text-danger">*</span>
           </h6>
           <form @submit.prevent="submitForm">
             <patient-notes-component />
