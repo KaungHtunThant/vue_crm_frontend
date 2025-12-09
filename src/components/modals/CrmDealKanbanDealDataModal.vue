@@ -1035,7 +1035,7 @@
                 "
               >
                 <div
-                  v-for="log in logStore?.logs || []"
+                  v-for="log in logs_list || []"
                   :key="log.id"
                   class="row bg-input pt-2 text-secondary border border-top"
                 >
@@ -2387,6 +2387,7 @@ export default {
         is_trash
       );
     };
+    const logs_list = computed(() => logStore.logs);
     watch(
       () => props.deal,
       (newDeal) => {
@@ -2500,62 +2501,6 @@ export default {
       editingCommentId.value = null;
       editingCommentText.value = "";
     };
-    onMounted(async () => {
-      packageStore.fetchAll();
-      user_role.value = Cookies.get("user_role");
-      if (logStore.users.length === 0) {
-        await logStore.fetchUsers();
-      }
-      if (users.value.length === 0) {
-        await userStore.fetchUsers();
-      }
-      if (props.deal?.id) await logStore.fetchLogs(props.deal.id);
-      document.addEventListener("click", handleClickOutside);
-
-      if (commentInput.value) {
-        autoResize(commentInput.value);
-      }
-      nextTick(() => {
-        if (customerData.comments) {
-          customerData.comments.forEach((comment) => {
-            resizeDisplayedCommentWidth(comment.id);
-          });
-        }
-      });
-      originalDataValue.value = dataDealCopy(customerData);
-      const modalElement = document.getElementById("dealDataCard");
-      if (modalElement) {
-        modalElement.__cancelEditHandler = () => {
-          dealStore.resetCurrentDeal();
-          if (isEditMode.value) {
-            closeEditMode();
-          }
-        };
-        modalElement.addEventListener(
-          "hidden.bs.modal",
-          modalElement.__cancelEditHandler
-        );
-      }
-      if (props.viewType == "after-sales") {
-        getAvailableAfterSalesStages().then((response) => {
-          if (response.data && response.data.data) {
-            allStages.value = response.data.data;
-          } else {
-            allStages.value = [];
-          }
-        });
-      } else {
-        getAvailableStages().then((response) => {
-          if (response.data && response.data.data) {
-            allStages.value = response.data.data;
-          } else {
-            allStages.value = [];
-          }
-        });
-      }
-      await taskEventsStore.fetchTaskEvents();
-      await commentsTagsStore.fetchCommentsTags();
-    });
     watch(
       () => customerData.comments,
       (newComments) => {
@@ -2801,9 +2746,69 @@ export default {
     const openTimePicker = (event) => {
       event.target.showPicker?.();
     };
+
     const taskEventsList = computed(() => taskEventsStore.getTaskEvents);
     const CommentsTagsList = computed(() => commentsTagsStore.getcommentstags);
 
+    onMounted(async () => {
+      packageStore.fetchAll();
+      user_role.value = Cookies.get("user_role");
+      if (logStore.users.length === 0) {
+        await logStore.fetchUsers();
+      }
+      if (users.value.length === 0) {
+        await userStore.fetchUsers();
+      }
+      document.addEventListener("click", handleClickOutside);
+
+      if (commentInput.value) {
+        autoResize(commentInput.value);
+      }
+      nextTick(() => {
+        if (customerData.comments) {
+          customerData.comments.forEach((comment) => {
+            resizeDisplayedCommentWidth(comment.id);
+          });
+        }
+      });
+      originalDataValue.value = dataDealCopy(customerData);
+      const modalElement = document.getElementById("dealDataCard");
+      if (modalElement) {
+        modalElement.__cancelEditHandler = () => {
+          dealStore.resetCurrentDeal();
+          if (isEditMode.value) {
+            closeEditMode();
+          }
+        };
+        modalElement.addEventListener(
+          "hidden.bs.modal",
+          modalElement.__cancelEditHandler
+        );
+      }
+      if (props.viewType == "after-sales") {
+        getAvailableAfterSalesStages().then((response) => {
+          if (response.data && response.data.data) {
+            allStages.value = response.data.data;
+          } else {
+            allStages.value = [];
+          }
+        });
+      } else {
+        getAvailableStages().then((response) => {
+          if (response.data && response.data.data) {
+            allStages.value = response.data.data;
+          } else {
+            allStages.value = [];
+          }
+        });
+      }
+      if (taskEventsList.value.length === 0) {
+        await taskEventsStore.fetchTaskEvents();
+      }
+      if (CommentsTagsList.value.length === 0) {
+        await commentsTagsStore.fetchCommentsTags();
+      }
+    });
     return {
       modified_id,
       getStageColor,
@@ -2902,6 +2907,7 @@ export default {
       nationalityOptions,
       openTimePicker,
       emr_users,
+      logs_list,
     };
   },
 };
