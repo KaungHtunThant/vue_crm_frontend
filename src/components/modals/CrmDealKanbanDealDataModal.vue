@@ -848,7 +848,7 @@
                     >
                       <div class="row p-0">
                         <div
-                          class="col-7 p-1 px-1"
+                          class="col-5 p-1 px-1"
                           @dblclick="handleDoubleClick"
                         >
                           <select
@@ -869,6 +869,31 @@
                               :value="pkg.id"
                             >
                               {{ pkg.name }}
+                            </option>
+                          </select>
+                        </div>
+                        <div
+                          class="col-2 p-1 px-1"
+                          @dblclick="handleDoubleClick"
+                        >
+                          <select
+                            class="form-select py-2"
+                            :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
+                            v-model="pkg.user_id"
+                            :disabled="!isEditMode"
+                            @dblclick="handleDoubleClick"
+                          >
+                            <option :value="null" disabled selected>
+                              {{
+                                t("kanban-modal-edit-placeholder-packages-user")
+                              }}
+                            </option>
+                            <option
+                              v-for="user in emr_users"
+                              :key="user.id"
+                              :value="user.id"
+                            >
+                              {{ user.name }}
                             </option>
                           </select>
                         </div>
@@ -1544,6 +1569,7 @@ export default {
   setup(props, { emit }) {
     const userStore = useUserStore();
     const users = computed(() => userStore.getAllUsers);
+    const emr_users = computed(() => userStore.getUsersWithRole("emr-admin"));
     const notificationStore = useNotificationStore();
     const logStore = useLogStore();
     const packageStore = usePackageStore();
@@ -2871,6 +2897,7 @@ export default {
       preventRightClick,
       nationalityOptions,
       openTimePicker,
+      emr_users,
     };
   },
 };
