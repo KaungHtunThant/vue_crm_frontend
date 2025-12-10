@@ -112,177 +112,182 @@
                     {{ t("kanban-modal-edit-label-profile") }}</label
                   >
                 </div>
-                <!-- Full Name -->
-                <div class="col">
-                  <label class="form-label" for="name"
-                    ><i class="fa-solid fa-user"></i>
-                    {{ t("kanban-modal-edit-label-fullname")
-                    }}<span class="text-danger">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    :class="[
-                      'form-control',
-                      isEditMode ? 'bg-input-edit' : 'bg-input',
-                      'py-2',
-                    ]"
-                    v-model="customerData.name"
-                    :placeholder="t('kanban-modal-edit-placeholder-fullname')"
-                    :readonly="!isEditMode"
-                    name="name"
-                  />
-                </div>
-                <div class="col">
-                  <label class="form-label" for="nationality"
-                    ><i class="fa-solid fa-flag"></i>
-                    {{ t("kanban-modal-edit-label-nationality")
-                    }}<span class="text-danger">*</span>
-                  </label>
-                  <v-select
-                    :class="[
-                      '',
-                      isEditMode ? 'bg-input-edit' : 'bg-input',
-                      'Myselect py-1',
-                    ]"
-                    v-model="customerData.nationality"
-                    :options="nationalityOptions"
-                    :disabled="!isEditMode"
-                    :placeholder="
-                      t('kanban-modal-edit-placeholder-nationality')
-                    "
-                    :reduce="(option) => option.code"
-                    label="name"
-                    @open="handleDoubleClick"
-                  />
-                </div>
-                <div class="col">
-                  <label class="form-label" for="language">
-                    <i class="fa-solid fa-language"></i>
-                    {{ t("kanban-modal-edit-label-prefered-language")
-                    }}<span class="text-danger">*</span>
-                  </label>
-                  <select
-                    :class="[
-                      'form-select',
-                      isEditMode ? 'bg-input-edit' : 'bg-input',
-                      'py-2',
-                    ]"
-                    v-model="customerData.language"
-                    :disabled="!isEditMode"
-                    name="nationality"
-                    @dblclick="handleDoubleClick"
-                  >
-                    <option
-                      :value="null"
-                      disabled
-                      v-if="!customerData.language"
-                    >
-                      {{ t("kanban-modal-edit-placeholder-prefered-language") }}
-                    </option>
-                    <option
-                      v-for="(value, key) in languages"
-                      :key="key"
-                      :value="key"
-                    >
-                      {{ value }}
-                    </option>
-                  </select>
-                </div>
-                <div class="row mt-2 pe-0">
-                  <div class="col-2"></div>
-                  <div class="col" @dblclick="handleDoubleClick">
-                    <label class="form-label" for="date_of_birth"
-                      ><i class="fa-solid fa-calendar-days"></i>
-                      {{ t("kanban-modal-edit-label-dob")
-                      }}<span class="text-danger">*</span>
-                    </label>
-                    <DatePicker
-                      v-model="customerData.date_of_birth"
-                      :disabled="!isEditMode"
-                      dateFormat="yy-mm-dd"
-                      :showIcon="true"
-                      :placeholder="t('kanban-modal-edit-placeholder-dob')"
-                      :class="[isEditMode ? 'custom-calendar-edit' : '']"
-                      :pt="{
-                        input: {
-                          class: ['form-control', 'py-2'],
-                        },
-                      }"
-                    />
-                  </div>
-                  <!-- maritalStatus -->
-                  <div class="col">
-                    <label class="form-label" for="maritalStatus"
-                      ><i class="fa-solid fa-heart"></i>
-                      {{ t("kanban-modal-edit-label-maritalstatus")
-                      }}<span class="text-danger">*</span>
-                    </label>
-                    <select
-                      :class="[
-                        'form-select',
-                        isEditMode ? 'bg-input-edit' : 'bg-input',
-                        'py-2',
-                      ]"
-                      v-model="customerData.maritalStatus"
-                      :disabled="!isEditMode"
-                      name="maritalStatus"
-                      @dblclick="handleDoubleClick"
-                    >
-                      <option
-                        :value="null"
-                        disabled
-                        :selected="!customerData.maritalStatus"
+                <div class="col-10">
+                  <div class="row">
+                    <div class="col-6 col-md-4">
+                      <label class="form-label" for="name"
+                        ><i class="fa-solid fa-user"></i>
+                        {{ t("kanban-modal-edit-label-fullname")
+                        }}<span class="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        :class="[
+                          'form-control',
+                          isEditMode ? 'bg-input-edit' : 'bg-input',
+                          'py-2',
+                        ]"
+                        v-model="customerData.name"
+                        :placeholder="
+                          t('kanban-modal-edit-placeholder-fullname')
+                        "
+                        :readonly="!isEditMode"
+                        name="name"
+                      />
+                    </div>
+                    <div class="col-6 col-md-4">
+                      <label class="form-label" for="nationality"
+                        ><i class="fa-solid fa-flag"></i>
+                        {{ t("kanban-modal-edit-label-nationality")
+                        }}<span class="text-danger">*</span>
+                      </label>
+                      <v-select
+                        :class="[
+                          '',
+                          isEditMode ? 'bg-input-edit' : 'bg-input',
+                          'Myselect py-1',
+                        ]"
+                        v-model="customerData.nationality"
+                        :options="nationalityOptions"
+                        :disabled="!isEditMode"
+                        :placeholder="
+                          t('kanban-modal-edit-placeholder-nationality')
+                        "
+                        :reduce="(option) => option.code"
+                        label="name"
+                        @open="handleDoubleClick"
+                      />
+                    </div>
+                    <div class="col-6 col-md-4">
+                      <label class="form-label" for="language">
+                        <i class="fa-solid fa-language"></i>
+                        {{ t("kanban-modal-edit-label-prefered-language")
+                        }}<span class="text-danger">*</span>
+                      </label>
+                      <select
+                        :class="[
+                          'form-select',
+                          isEditMode ? 'bg-input-edit' : 'bg-input',
+                          'py-2',
+                        ]"
+                        v-model="customerData.language"
+                        :disabled="!isEditMode"
+                        name="nationality"
+                        @dblclick="handleDoubleClick"
                       >
-                        {{ t("kanban-modal-edit-maritalstatus-placeholder") }}
-                      </option>
-                      <option
-                        v-for="(value, key) in maritalStatusList"
-                        :key="key"
-                        :value="key"
+                        <option
+                          :value="null"
+                          disabled
+                          v-if="!customerData.language"
+                        >
+                          {{
+                            t("kanban-modal-edit-placeholder-prefered-language")
+                          }}
+                        </option>
+                        <option
+                          v-for="(value, key) in languages"
+                          :key="key"
+                          :value="key"
+                        >
+                          {{ value }}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="col-6 col-md-4" @dblclick="handleDoubleClick">
+                      <label class="form-label" for="date_of_birth"
+                        ><i class="fa-solid fa-calendar-days"></i>
+                        {{ t("kanban-modal-edit-label-dob")
+                        }}<span class="text-danger">*</span>
+                      </label>
+                      <DatePicker
+                        v-model="customerData.date_of_birth"
+                        :disabled="!isEditMode"
+                        dateFormat="yy-mm-dd"
+                        :showIcon="true"
+                        :placeholder="t('kanban-modal-edit-placeholder-dob')"
+                        :class="[isEditMode ? 'custom-calendar-edit' : '']"
+                        :pt="{
+                          input: {
+                            class: ['form-control', 'py-2'],
+                          },
+                        }"
+                      />
+                    </div>
+                    <!-- maritalStatus -->
+                    <div class="col-6 col-md-4">
+                      <label class="form-label" for="maritalStatus"
+                        ><i class="fa-solid fa-heart"></i>
+                        {{ t("kanban-modal-edit-label-maritalstatus")
+                        }}<span class="text-danger">*</span>
+                      </label>
+                      <select
+                        :class="[
+                          'form-select',
+                          isEditMode ? 'bg-input-edit' : 'bg-input',
+                          'py-2',
+                        ]"
+                        v-model="customerData.maritalStatus"
+                        :disabled="!isEditMode"
+                        name="maritalStatus"
+                        @dblclick="handleDoubleClick"
                       >
-                        {{ value }}
-                      </option>
-                    </select>
-                  </div>
-                  <!-- Personal Companion -->
-                  <div class="col p-0">
-                    <label class="form-label" for="personalCompanion"
-                      ><i class="fa-solid fa-person-circle-plus"></i>
-                      {{ t("kanban-modal-edit-label-personal-companion")
-                      }}<span class="text-danger">*</span>
-                    </label>
-                    <select
-                      v-model.number="customerData.personalCompanion"
-                      :class="[
-                        'form-select',
-                        isEditMode ? 'bg-input-edit' : 'bg-input',
-                        'py-2',
-                      ]"
-                      :disabled="!isEditMode"
-                      name="personalCompanion"
-                      @dblclick="handleDoubleClick"
-                    >
-                      <option
-                        :value="null"
-                        disabled
-                        v-if="!customerData.personalCompanion"
+                        <option
+                          :value="null"
+                          disabled
+                          :selected="!customerData.maritalStatus"
+                        >
+                          {{ t("kanban-modal-edit-maritalstatus-placeholder") }}
+                        </option>
+                        <option
+                          v-for="(value, key) in maritalStatusList"
+                          :key="key"
+                          :value="key"
+                        >
+                          {{ value }}
+                        </option>
+                      </select>
+                    </div>
+                    <!-- Personal Companion -->
+                    <div class="col-6 col-md-4">
+                      <label class="form-label" for="personalCompanion"
+                        ><i class="fa-solid fa-person-circle-plus"></i>
+                        {{ t("kanban-modal-edit-label-personal-companion")
+                        }}<span class="text-danger">*</span>
+                      </label>
+                      <select
+                        v-model.number="customerData.personalCompanion"
+                        :class="[
+                          'form-select',
+                          isEditMode ? 'bg-input-edit' : 'bg-input',
+                          'py-2',
+                        ]"
+                        :disabled="!isEditMode"
+                        name="personalCompanion"
+                        @dblclick="handleDoubleClick"
                       >
-                        {{
-                          t("kanban-modal-edit-placeholder-personal-companion")
-                        }}
-                      </option>
-                      <option
-                        v-for="(value, key) in personalCompanionList"
-                        :key="key"
-                        :value="key"
-                      >
-                        {{ value }}
-                      </option>
-                    </select>
+                        <option
+                          :value="null"
+                          disabled
+                          v-if="!customerData.personalCompanion"
+                        >
+                          {{
+                            t(
+                              "kanban-modal-edit-placeholder-personal-companion"
+                            )
+                          }}
+                        </option>
+                        <option
+                          v-for="(value, key) in personalCompanionList"
+                          :key="key"
+                          :value="key"
+                        >
+                          {{ value }}
+                        </option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
-
               <!-- Phone -->
               <div
                 class="row mb-3"

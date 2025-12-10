@@ -45,7 +45,6 @@ export default {
   setup() {
     const { t } = useI18n();
     const notificationStore = useNotificationStore();
-    // const toast = useToast();
     return { t, notificationStore };
   },
   data() {
@@ -102,7 +101,7 @@ export default {
         const response = await createDeal(dealData);
 
         if (response.data) {
-          this.notificationStore.success(this.t("success.createDeal"), {
+          this.notificationStore.success(response.data.message, {
             timeout: 3000,
           });
           this.$emit("add-deal", response.data);
@@ -111,7 +110,7 @@ export default {
         }
       } catch (error) {
         this.notificationStore.error(
-          error.response?.data?.message || this.t("error.createDeal"),
+          error.message || this.t("error.createDeal"),
           {
             timeout: 3000,
           }

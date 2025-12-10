@@ -209,4 +209,8 @@ export default {
   flex-grow: 1;
   overflow-x: hidden;
 }
+
+.p-inputtext {
+  min-width: 100px;
+}
 </style>
