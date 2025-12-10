@@ -35,8 +35,6 @@ import { Modal } from "bootstrap";
 import DealForm from "@/components/CreateDealElements/CrmListViewCreateDealModalFormItems.vue";
 import DealButtons from "@/components/CreateDealElements/CrmListViewCreateDealModalButtonsItems.vue";
 import { createDeal } from "@/plugins/services/dealService";
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
@@ -98,6 +96,7 @@ export default {
           name: this.formData.contact.name,
           email: this.formData.contact.email,
           phones: this.formData.contact.phones,
+          origin_id: this.formData.origin_id,
         };
 
         const response = await createDeal(dealData);

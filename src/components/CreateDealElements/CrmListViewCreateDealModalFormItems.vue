@@ -73,6 +73,23 @@
           :placeholder="t('crmlist-modal-add-deal-placeholder-description')"
         />
       </div>
+      <div class="col-12">
+        <label for="origin" class="form-label">{{
+          t("crmlist-modal-add-deal-label-origin")
+        }}</label>
+        <select
+          class="form-select"
+          id="origin"
+          v-model="localFormData.origin_id"
+        >
+          <option value="" disabled selected>
+            {{ t("crmlist-modal-add-deal-placeholder-origin") }}
+          </option>
+          <option v-for="origin in origins" :key="origin.id" :value="origin.id">
+            {{ origin.name }}
+          </option>
+        </select>
+      </div>
       <div class="col-6">
         <label for="source" class="form-label">{{
           t("crmlist-modal-add-deal-label-source")
@@ -145,8 +162,9 @@ import { getAvailableStages } from "@/plugins/services/stageService";
 import RatingStars from "@/components/CreateDealElements/CrmDealKanbanDealDataModalRatingStars.vue";
 import { useI18n } from "vue-i18n";
 import { useSourceStore } from "@/stores/SourceStore";
-import Cookies from "js-cookie";
 import { useUserStore } from "@/stores/UserStore";
+import { useOriginStore } from "@/stores/OriginStore";
+import Cookies from "js-cookie";
 export default {
   name: "CrmListViewCreateDealModalFormItems",
   components: {
@@ -173,10 +191,13 @@ export default {
         phone2: props.formData.contact.phone2 || null,
         phones: [],
       },
+      origin_id: null,
     });
     const showPhone2 = ref(false);
     const sourceStore = useSourceStore();
+    const originStore = useOriginStore();
     const sources = computed(() => sourceStore.getAllSources);
+    const origins = computed(() => originStore.getAllOrigins);
     const stages = ref([]);
     const userStore = useUserStore();
     const users = computed(() => userStore.getAllUsers);
@@ -208,6 +229,9 @@ export default {
       if (!sourceStore.getAllSources.length) {
         sourceStore.fetchSources();
       }
+      if (!originStore.getAllOrigins.length) {
+        originStore.fetchOrigins();
+      }
     });
     watch(
       () => [
@@ -237,6 +261,7 @@ export default {
       showPhone2,
       togglePhone2,
       users,
+      origins,
     };
   },
 };
