@@ -1919,7 +1919,9 @@ export default {
     };
 
     const changeStage = async (stageId) => {
+      const old_stage_id = currentStageIdLocal.value;
       try {
+        console.log("Changing stage from", old_stage_id, "to:", stageId);
         currentStageIdLocal.value = stageId;
         const stageIndex = (props.stages || []).findIndex(
           (s) => s.id === stageId
@@ -1931,6 +1933,7 @@ export default {
             stageColors[stage.id] = "";
           }
         });
+        console.log("Updated stage colors:", stageColors);
         const response = await updateDealStage(props.deal.id, stageId);
         if (response.status === 200) {
           emit("stage-change", props.deal.id, stageId, props.deal.stage_id, 0);
@@ -1942,6 +1945,21 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
+        currentStageIdLocal.value = old_stage_id;
+        console.log("Reverting stage to old stage due to error:", old_stage_id);
+        const old_stageIndex = (props.stages || []).findIndex(
+          (s) => s.id === old_stage_id
+        );
+        (props.stages || []).forEach((stage, index) => {
+          if (index <= old_stageIndex) {
+            stageColors[stage.id] = (props.stages || [])[
+              old_stageIndex
+            ].color_code;
+          } else {
+            stageColors[stage.id] = "";
+          }
+        });
+        console.log("Reverted stage colors:", stageColors);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
