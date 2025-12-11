@@ -28,7 +28,7 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     console.error("Axios error response:", error);
-    if (error.response?.status === 401 || error.code === "ERR_NETWORK") {
+    if (error.response?.status === 401) {
       Cookies.remove("authToken");
       Cookies.remove("name");
       Cookies.remove("email");
