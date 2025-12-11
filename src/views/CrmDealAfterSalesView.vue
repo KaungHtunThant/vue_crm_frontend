@@ -201,14 +201,15 @@ export default {
           sort_by: "",
           sort_order: "",
         };
-        await fetchStages();
-
-        notificationStore.success(t("success.resetFilters"), {
+        const response = await fetchStages();
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
+        notificationStore.success(response.data.message, {
           timeout: 3000,
         });
       } catch (error) {
-        console.error("Error resetting filters:", error);
-        notificationStore.error(t("error.resetFilters"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -274,7 +275,7 @@ export default {
         await fetchStages();
         window.addEventListener("contextmenu", handleRightClick);
       } catch (error) {
-        notificationStore.error(t("error.loadKanban"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }

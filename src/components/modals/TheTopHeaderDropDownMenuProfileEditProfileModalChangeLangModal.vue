@@ -78,7 +78,7 @@ export default {
       try {
         modalInstance.value.show();
       } catch (error) {
-        notificationStore.error(t("error.openModal"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
           id: "change-lang-open-error",
           singleton: true,
@@ -97,11 +97,10 @@ export default {
           localStorage.setItem("locale", selectedLang.value);
           notificationStore.success(t("languageChanged"), { timeout: 3000 });
         } else {
-          throw new Error("Failed to save language in API");
+          throw new Error(response.data.messsage);
         }
       } catch (error) {
-        console.error("Error changing language:", error);
-        notificationStore.error(t("error.savingLanguage"), { timeout: 3000 });
+        notificationStore.error(error.message, { timeout: 3000 });
       } finally {
         loadingStore.stopLoading();
       }

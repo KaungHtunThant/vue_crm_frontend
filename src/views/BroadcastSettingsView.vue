@@ -177,7 +177,7 @@ export default {
         notificationStore.success(response.data.message);
       } else {
         // Handle error response
-        notificationStore.error("Failed to fetch broadcasts");
+        notificationStore.error(response.data.message);
       }
     };
 
@@ -188,7 +188,7 @@ export default {
         notificationStore.success(response.data.message);
         fetchBroadcasts();
       } else {
-        notificationStore.error("Failed to update position");
+        notificationStore.error(response.data.message);
       }
     };
 
@@ -201,7 +201,7 @@ export default {
         if (response.status === 200) {
           notificationStore.success(response.data.message);
         } else {
-          notificationStore.error("Failed to update status");
+          notificationStore.error(response.data.message);
         }
       }
     };
@@ -220,7 +220,7 @@ export default {
         if (response.status === 200) {
           notificationStore.success(response.data.message);
         } else {
-          notificationStore.error("Failed to update important status");
+          notificationStore.error(response.data.message);
         }
       }
     };
@@ -256,7 +256,7 @@ export default {
         notificationStore.success(response.data.message);
         fetchBroadcasts();
       } else {
-        notificationStore.error("Failed to create broadcast");
+        notificationStore.error(response.data.message);
       }
       closeCreateModal();
     };

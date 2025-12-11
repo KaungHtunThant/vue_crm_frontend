@@ -356,7 +356,7 @@ export default {
           document.getElementById("contactCreateModal")
         );
       } catch (error) {
-        notificationStore.error(t("error.closeModal"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }

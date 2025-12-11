@@ -215,7 +215,7 @@ export default {
           })
           .catch((error) => {
             console.error("Error fetching deals:", error);
-            notificationStore.error(t("error-fetching-deals"));
+            notificationStore.error(error.message);
             reachedBottom.value = false;
           });
       }

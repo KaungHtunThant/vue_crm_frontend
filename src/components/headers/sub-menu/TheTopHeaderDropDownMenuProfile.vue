@@ -140,13 +140,12 @@ export default {
       try {
         notificationStore.set(isNotificationsEnabled.value);
         if (isNotificationsEnabled.value) {
-          notificationStore.success(t("notifications.enabled"));
+          notificationStore.success("Notifications enabled");
         } else {
-          notificationStore.info(t("notifications.disabled"));
+          notificationStore.info("Notifications disabled");
         }
       } catch (err) {
-        console.error(err);
-        notificationStore.error(t("notifications.error"));
+        notificationStore.error(err.message);
       }
     };
 
@@ -197,7 +196,7 @@ export default {
         this.authStore.initLogout();
       } catch (error) {
         console.error("Error logging out:", error);
-        this.notificationStore.error(this.t("topHeader.logoutError"), {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
       }

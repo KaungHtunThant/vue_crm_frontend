@@ -172,10 +172,7 @@ export default {
     async handleTrashDeal() {
       try {
         if (!this.selected_stage_id || !this.comment) {
-          this.notificationStore.error(this.t("error.requiredFields"), {
-            timeout: 3000,
-          });
-          return;
+          throw new Error("Please provide all required information.");
         }
         const selected_stage_id = this.selected_stage_id;
 
@@ -187,16 +184,11 @@ export default {
         if (commentResponse.data) {
           this.$emit("deal-trashed", this.dealId, selected_stage_id, true);
         } else {
-          this.notificationStore.error(commentResponse.data.message, {
-            timeout: 3000,
-          });
+          throw new Error(commentResponse.data.message);
         }
         this.closeTrashDealModal();
       } catch (error) {
-        console.error("Error updating deal:", error);
-        this.notificationStore.error(error.message, {
-          timeout: 3000,
-        });
+        this.notificationStore.error(error.message);
       }
     },
 
@@ -211,15 +203,10 @@ export default {
             });
           }
         } else {
-          this.notificationStore.error(response.data.message, {
-            timeout: 3000,
-          });
+          throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error("Error fetching trash stages:", error);
-        this.notificationStore.error(error.message, {
-          timeout: 3000,
-        });
+        this.notificationStore.error(error.message);
       }
     },
   },

@@ -122,14 +122,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import EasyDataTable from "vue3-easy-data-table";
 import DocumentsFolderViewAddEditFolderModal from "@/components/modals/DocumentsFolderViewAddEditFolderModal.vue";
-// import ImportFolder from "@/components/modals/ImportFolder.vue";
 import Modal from "bootstrap/js/dist/modal";
-// import { useToast } from "vue-toastification";
-// import {
-//   showSuccess,
-//   showError,
-//   showWarning,
-// } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 import Swal from "sweetalert2";
 import { useI18n } from "vue-i18n";
@@ -146,18 +139,15 @@ export default {
   components: {
     EasyDataTable,
     DocumentsFolderViewAddEditFolderModal,
-    // ImportFolder,
   },
 
   setup() {
-    // const toast = useToast();
     const notificationStore = useNotificationStore();
     const router = useRouter();
     const tableLoading = ref(false);
     const items = ref([]);
     const permissionStore = usePermissionStore();
     const folderFormModal = ref(null);
-    // const importFolderModal = ref(null);
     const selectedFolder = ref(null);
     const { t } = useI18n();
 
@@ -182,10 +172,6 @@ export default {
       folderFormModal.value.show();
     };
 
-    // const openImportModal = () => {
-    //   importFolderModal.value.show();
-    // };
-
     const editFolder = (folder) => {
       selectedFolder.value = { ...folder };
       folderFormModal.value.show();
@@ -199,6 +185,11 @@ export default {
             name: folderData.name,
             parent_id: folderData.parent_id || 1,
           });
+          if (response.status === 200) {
+            notificationStore.success(response.data.message, { timeout: 3000 });
+          } else {
+            throw new Error(response.data.message);
+          }
           fetchFolders();
         } else {
           response = await createDocuments({
@@ -206,17 +197,17 @@ export default {
             parent_id: folderData.parent_id || 1,
           });
 
-          if (response && response.data.result) {
+          if (response.status === 200) {
             items.value.push(response.data.result);
             notificationStore.success(response.data.message, { timeout: 3000 });
           } else {
-            throw new Error("❌ استجابة غير صالحة من السيرفر");
+            throw new Error(response.data.message);
           }
         }
 
         folderFormModal.value.hide();
       } catch (error) {
-        notificationStore.error(t("error.saveFailed"), { timeout: 3000 });
+        notificationStore.error(error.message, { timeout: 3000 });
       }
     };
 
@@ -235,17 +226,19 @@ export default {
         });
 
         if (result.isConfirmed) {
-          await deleteDocuments(id);
+          const response = await deleteDocuments(id);
+          if (response.status !== 200) {
+            throw new Error(response.data.message);
+          }
           items.value = items.value.filter((folder) => folder.id !== id);
-          notificationStore.success(t("success.deleteSuccess"), {
+          notificationStore.success(response.data.message, {
             timeout: 3000,
           });
         }
       } catch (error) {
-        notificationStore.error(t("error.deleteFailed"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
-        console.error("Error deleting folder:", error);
       }
     };
 
@@ -257,7 +250,7 @@ export default {
           timeout: 3000,
         });
       } catch (error) {
-        notificationStore.error(t("error.downloadFailed"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
         console.error("Error downloading folder:", error);
@@ -268,12 +261,14 @@ export default {
       try {
         tableLoading.value = true;
         const response = await getDocuments();
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
         items.value = response.data.folders;
       } catch (error) {
-        notificationStore.error(t("error.fetchFailed"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
-        console.error("Error fetching folders:", error);
       } finally {
         tableLoading.value = false;
       }
@@ -301,10 +296,12 @@ export default {
             },
           });
         } else {
-          notificationStore.warning("invalidFolderPath");
+          throw new Error("Invalid folder path.");
         }
       } catch (error) {
-        notificationStore.error("Error navigating to folder");
+        notificationStore.error(error.message, {
+          timeout: 3000,
+        });
       }
     };
 
@@ -330,9 +327,6 @@ export default {
       folderFormModal.value = new Modal(
         document.getElementById("folderFormModal")
       );
-      // importFolderModal.value = new Modal(
-      //   document.getElementById("importFolderModal")
-      // );
       window.addEventListener("contextmenu", handleRightClick);
     });
 
@@ -345,11 +339,9 @@ export default {
       tableLoading,
       selectedFolder,
       openNewFolderModal,
-      // openImportModal,
       editFolder,
       deleteFolder,
       handleFolderSubmit,
-      // handleFolderImport,
       handleRowClick,
       downloadFolder,
       t,

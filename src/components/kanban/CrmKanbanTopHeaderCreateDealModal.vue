@@ -310,7 +310,7 @@ export default {
           });
         }
       } catch (error) {
-        this.notificationStore.error(this.t("error.deal_not_created"), {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
         console.error("Error submitting form:", error);
@@ -332,12 +332,8 @@ export default {
           quantity: "",
           id: Date.now(),
         });
-        this.notificationStore.info(this.t("success.package_added"), {
-          timeout: 3000,
-        });
       } catch (error) {
-        console.error("Error adding package:", error);
-        this.notificationStore.error(this.t("error.error_adding_package"), {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -349,8 +345,7 @@ export default {
           timeout: 3000,
         });
       } catch (error) {
-        console.error("Error removing package:", error);
-        this.notificationStore.error(this.t("error.removing_package"), {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
       }

@@ -226,18 +226,20 @@ export default {
         });
 
         if (result.isConfirmed) {
-          await deleteDeduction(id);
+          const response = await deleteDeduction(id);
+          if (response.status !== 200) {
+            throw new Error(response.data.message);
+          }
           const index = deductions.value.findIndex((r) => r.id === id);
           if (index !== -1) {
             deductions.value.splice(index, 1);
-            notificationStore.success(t("success.deleted"), {
+            notificationStore.success(response.data.message, {
               timeout: 3000,
             });
           }
         }
       } catch (error) {
-        console.error("Error deleting deduction:", error);
-        notificationStore.error(t("error.deleteFailed"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }

@@ -559,11 +559,11 @@ export default {
             timeout: 3000,
           });
         } else {
-          throw new Error("Error fetching language change");
+          throw new Error(response.data.message);
         }
       } catch (error) {
         console.error("Error changing language:", error);
-        this.notificationStore.error("حدث خطأ أثناء حفظ اللغة!", {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
       }

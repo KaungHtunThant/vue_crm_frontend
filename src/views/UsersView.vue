@@ -217,10 +217,9 @@ export default {
       };
       try {
         await store.applyFilters(mapped);
-        notificationStore.success(t("success.filterSuccess"));
+        notificationStore.success("Filters applied successfully");
       } catch (e) {
-        console.error(t("error.filterFailed"), e);
-        notificationStore.error(t("error.filterFailed"));
+        notificationStore.error(e.message);
       }
     };
 
@@ -291,10 +290,9 @@ export default {
           else notificationStore.error(res.message || t("error.deleteFailed"));
         }
       } catch (error) {
-        notificationStore.error(t("error.deleteFailed"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
-        console.error("Delete User Is Failed:", error);
       }
     };
 
@@ -302,7 +300,6 @@ export default {
       if (userLogModalRef.value) {
         userLogModalRef.value.openModal(user);
       } else {
-        console.error("userLogModalRef is null");
         notificationStore.error("Unable to open login details modal");
       }
     };
@@ -312,7 +309,7 @@ export default {
       try {
         await store.resetFilters();
       } catch (error) {
-        console.error(t("error.filterFailed"), error);
+        notificationStore.error(error.message);
       }
     };
 
@@ -359,12 +356,7 @@ export default {
             }
           );
         } else {
-          notificationStore.error(
-            response.data.message || t("error.updateFailed"),
-            {
-              timeout: 3000,
-            }
-          );
+          throw new Error(response.data.message);
         }
       } catch (error) {
         notificationStore.error(error.message || t("error.updateFailed"), {
@@ -394,12 +386,7 @@ export default {
             }
           );
         } else {
-          notificationStore.error(
-            response.data.message || t("error.updateFailed"),
-            {
-              timeout: 3000,
-            }
-          );
+          throw new Error(response.data.message);
         }
       } catch (error) {
         notificationStore.error(error.message || t("error.updateFailed"), {

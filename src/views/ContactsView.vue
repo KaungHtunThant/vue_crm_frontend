@@ -139,9 +139,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted, watch } from "vue";
-// import Vue3EasyDataTable from "vue3-easy-data-table";
-// import "vue3-easy-data-table/dist/style.css";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import {
   getContacts,
   deleteContact,
@@ -149,32 +147,20 @@ import {
 } from "@/plugins/services/contactService";
 import ContactsViewCreateModal from "@/components/ContactModals/ContactsViewCreateModal.vue";
 import ContactsViewFilterModal from "@/components/ContactModals/ContactsViewFilterModal.vue";
-// import { useToast } from "vue-toastification";
-// import {
-//   showSuccess,
-//   showError,
-//   showInfo,
-// } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
-
 import Swal from "sweetalert2";
 import { useI18n } from "vue-i18n";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-// import Column from "primevue/column";
-// import { useLoadingStore } from "@/plugins/loadingStore";
 
 export default {
   name: "ContactsView",
-
   components: {
-    // Vue3EasyDataTable,
     ContactsViewCreateModal,
     ContactsViewFilterModal,
     DataTable,
     Column,
   },
-
   setup() {
     const { t } = useI18n();
     // const toast = useToast();
@@ -189,53 +175,15 @@ export default {
     const sortBy = ref("id");
     const sortType = ref("desc");
     const rows = ref([]);
-
-    // const columns = [
-    //   {
-    //     title: "#",
-    //     data: "id",
-    //   },
-    //   {
-    //     title: t("contacts-table-header-fullname"),
-    //     data: "name",
-    //   },
-    //   {
-    //     title: t("contacts-table-header-nickname"),
-    //     data: "nickname",
-    //   },
-    //   {
-    //     title: t("contacts-table-header-email"),
-    //     data: "email",
-    //   },
-    //   {
-    //     title: t("contacts-table-header-address"),
-    //     data: "address",
-    //   },
-    //   {
-    //     title: t("contacts-table-header-country"),
-    //     data: "country",
-    //   },
-    //   {
-    //     title: t("contacts-table-header-phone"),
-    //     data: "phones",
-    //     body: (rowData) =>
-    //       Array.isArray(rowData.phones) && rowData.phones.length
-    //         ? rowData.phones[0].phone
-    //         : "N/A",
-    //   },
-    // ];
-
     // Handle page change event
     const onPageChange = (event) => {
       currentPage.value = event.page;
       rowsPerPage.value = event.rows;
       fetchData(currentPage.value, rowsPerPage.value);
     };
-    // const loadingStore = useLoadingStore();
     const search = ref("");
     const contactCreateModalRef = ref(null);
     const filterModalRef = ref(null);
-
     const filteredItems = computed(() => {
       if (!tableData.value || !Array.isArray(tableData.value)) return [];
 
@@ -249,7 +197,6 @@ export default {
         );
       });
     });
-
     // Fetch data from the server
     const fetchData = async (page, perPage) => {
       try {
@@ -262,8 +209,7 @@ export default {
         rows.value = data.data;
         totalRows.value = data.meta.total;
       } catch (error) {
-        console.error("Error fetching data:", error);
-        notificationStore.error(t("error.fetchFailed"));
+        notificationStore.error(error.message);
         rows.value = [];
         totalRows.value = 0;
       } finally {
@@ -288,7 +234,7 @@ export default {
         if (index !== -1) {
           rows.value.splice(index, 1, updatedContact);
         } else {
-          notificationStore.error("There item not found");
+          notificationStore.error("Contact not found");
         }
       }
     };
@@ -326,8 +272,7 @@ export default {
           });
         }
       } catch (error) {
-        console.error("Error fetching contact details:", error);
-        notificationStore.error(t("error.fetchContactDetails"));
+        notificationStore.error(error.message);
       }
     };
 
@@ -346,13 +291,16 @@ export default {
         });
 
         if (result.isConfirmed) {
-          await deleteContact(id);
+          const response = await deleteContact(id);
+          if (response.status !== 200 && response.status !== 204) {
+            throw new Error(response.data.message);
+          }
           rows.value = rows.value.filter((item) => item.id !== id);
           totalRows.value -= 1;
-          notificationStore.success(t("success.deleteSuccess"));
+          notificationStore.success(response.data.message);
         }
       } catch (error) {
-        notificationStore.error(t("error.deleteFailed"));
+        notificationStore.error(error.message);
       }
     };
 
@@ -370,7 +318,9 @@ export default {
           if (
             new Date(filters.created_at_from) > new Date(filters.created_at_to)
           ) {
-            notificationStore.error(t("error.invalidDateRange"));
+            notificationStore.error(
+              "'From' date cannot be later than 'To' date"
+            );
             return;
           }
         }
@@ -386,21 +336,21 @@ export default {
         }
 
         const response = await getContacts(filterParams);
-        const data = response.data;
-
-        if (data && data.data) {
-          rows.value = data.data;
-          totalRows.value = data.meta.total;
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
+        if (response?.data?.data) {
+          rows.value = response.data.data;
+          totalRows.value = response.data.meta.total;
           currentPage.value = 0;
-          notificationStore.success(t("success.filterSuccess"));
+          notificationStore.success(response.data.message);
         } else {
           rows.value = [];
           totalRows.value = 0;
-          notificationStore.info(t("info.noFilterResults"));
+          notificationStore.info(response.data.message);
         }
       } catch (error) {
-        console.error("Filter application failed:", error);
-        notificationStore.error(t("error.filterFailed"));
+        notificationStore.error(error.message || "Failed to apply filters");
         rows.value = [];
         totalRows.value = 0;
       } finally {
@@ -414,12 +364,13 @@ export default {
         search.value = "";
         currentPage.value = 0;
 
-        await fetchData(0, rowsPerPage.value);
-
-        notificationStore.success(t("success.filterReset"));
+        const response = await fetchData(0, rowsPerPage.value);
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
+        notificationStore.success(response.data.message);
       } catch (error) {
-        console.error("Reset filters failed:", error);
-        notificationStore.error(t("error.filterFailed"));
+        notificationStore.error(error.message || "Failed to reset filters");
       } finally {
         loading.value = false;
       }
@@ -447,25 +398,6 @@ export default {
       window.removeEventListener("contextmenu", handleRightClick);
     });
 
-    watch(
-      tableData,
-      (newValue) => {
-        console.info("Items changed:", newValue);
-      },
-      { immediate: true, deep: true }
-    );
-
-    watch(
-      filteredItems,
-      (newFilteredItems) => {
-        console.info("Filtered items:", {
-          length: newFilteredItems?.length,
-          items: newFilteredItems,
-        });
-      },
-      { deep: true, immediate: true }
-    );
-
     const handleSearch = async () => {
       try {
         loading.value = true;
@@ -473,26 +405,25 @@ export default {
           page: currentPage.value + 1,
           per_page: rowsPerPage.value,
         };
-
         if (search.value.trim()) {
           searchParams.search = search.value.trim();
         }
-
         const response = await getContacts(searchParams);
-        const data = response.data;
-
-        if (data && data.data) {
-          rows.value = data.data;
-          totalRows.value = data.meta.total;
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
+        if (response.data.data) {
+          rows.value = response.data.data;
+          totalRows.value = response.data.meta.total;
           currentPage.value = 0;
+          notificationStore.success(response.data.message);
         } else {
           rows.value = [];
           totalRows.value = 0;
-          notificationStore.info(t("info.noSearchResults"));
+          notificationStore.info(response.data.message);
         }
       } catch (error) {
-        console.error("Error searching data:", error);
-        notificationStore.error(t("error.searchFailed"));
+        notificationStore.error(error.message);
         rows.value = [];
         totalRows.value = 0;
       } finally {
@@ -509,7 +440,6 @@ export default {
 
     return {
       logo,
-      // headers,
       tableData,
       loading,
       search,
@@ -534,7 +464,6 @@ export default {
       fetchData,
       rows,
       rowsPerPage,
-      // columns,
       onPageChange,
       handleSearch,
       resetSearch,

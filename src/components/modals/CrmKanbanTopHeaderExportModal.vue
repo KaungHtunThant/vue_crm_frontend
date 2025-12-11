@@ -76,7 +76,7 @@ export default {
     const handleExport = () => {
       try {
         if (!exportFormat.value) {
-          notificationStore.error(t("error.chooseExportFormat"), {
+          notificationStore.error("Please choose an export format", {
             timeout: 3000,
           });
           return;
@@ -91,8 +91,7 @@ export default {
 
         exportFormat.value = "";
       } catch (error) {
-        console.error("Error during export:", error);
-        notificationStore.error(t("error.exportData"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }

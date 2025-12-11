@@ -385,7 +385,7 @@ export default {
         await navigator.clipboard.writeText(props.deal.phone);
         notificationStore.success(t("phone-copied"));
       } catch (err) {
-        notificationStore.error(t("copy-failed"));
+        notificationStore.error(err.message);
       }
     };
     const getPersuasionColorClass = (persuasion_status) => {

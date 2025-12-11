@@ -72,10 +72,7 @@ export default {
     async submitForm() {
       try {
         if (!this.formData.contact.name || !this.formData.contact.phone1) {
-          this.notificationStore.error(this.t("error.requiredFields"), {
-            timeout: 3000,
-          });
-          return;
+          throw new Error("Name and primary phone are required.");
         }
 
         const phones = [];

@@ -87,8 +87,7 @@ export default {
           !filterData.value.created_at_from ||
           !filterData.value.created_at_to
         ) {
-          notificationStore.error(t("error.selectDateRange"));
-          return;
+          throw new Error("Both date fields are required.");
         }
 
         const filters = {
@@ -98,7 +97,7 @@ export default {
         emit("apply-filters", filters);
         modalInstance.value.hide();
       } catch (error) {
-        notificationStore.error(t("error.applyFilters"));
+        notificationStore.error(error.message);
       }
     };
 
@@ -110,10 +109,9 @@ export default {
         };
         emit("reset-filters");
         modalInstance.value.hide();
-        notificationStore.success(t("success.filtersCleared"));
+        notificationStore.success("Filters reset.");
       } catch (error) {
-        console.error("Error resetting filters:", error);
-        notificationStore.success(t("error.resetFilters"));
+        notificationStore.success(error.message);
       }
     };
 

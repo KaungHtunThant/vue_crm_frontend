@@ -107,8 +107,7 @@ export default {
           }
         }
       } catch (error) {
-        notificationStore.error(t("error.closeModal"), { timeout: 3000 });
-        console.error("Error closing modal:", error);
+        notificationStore.error(error.message, { timeout: 3000 });
       }
     };
     const submitFilters = () => {
@@ -120,10 +119,10 @@ export default {
         emit("update:modelValue", { ...filters.value });
         emit("apply-filters", { ...filters.value });
 
-        notificationStore.success(t("success.applyFilters"), { timeout: 3000 });
+        notificationStore.success("Filters applied", { timeout: 3000 });
         closeFilterModal();
       } catch (error) {
-        notificationStore.error(t("error.applyFilters"), { timeout: 3000 });
+        notificationStore.error(error.message, { timeout: 3000 });
       }
     };
 
@@ -152,10 +151,10 @@ export default {
         localSelectedStatuses.value = [];
         emit("update:modelValue", emptyFilters);
         emit("reset-filter");
-        notificationStore.success(t("success.resetFilters"), { timeout: 3000 });
+        notificationStore.success("Filters reset", { timeout: 3000 });
         closeFilterModal();
       } catch (error) {
-        notificationStore.error(t("error.resetFilters"), { timeout: 3000 });
+        notificationStore.error(error.message, { timeout: 3000 });
       }
     };
 

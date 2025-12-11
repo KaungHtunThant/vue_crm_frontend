@@ -1863,7 +1863,7 @@ export default {
     };
     const openTrashDealModal = () => {
       if (!props.deal?.id) {
-        notificationStore.error(t("error.dealNotFound"), {
+        notificationStore.error("Deal ID does not exist", {
           timeout: 3000,
         });
         return;
@@ -1878,15 +1878,14 @@ export default {
         modalBackdrop.style.zIndex = "9999";
         document.body.appendChild(modalBackdrop);
       } catch (error) {
-        console.error("Error opening trash modal:", error);
-        notificationStore.error(t("error.openTrashModal"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
     };
     const openSuggestApprovalModal = () => {
       if (!props.deal?.id) {
-        notificationStore.error(t("error.dealNotFound"), {
+        notificationStore.error("Deal ID does not exist", {
           timeout: 3000,
         });
         return;
@@ -1901,8 +1900,7 @@ export default {
         modalBackdrop.style.zIndex = "9999";
         document.body.appendChild(modalBackdrop);
       } catch (error) {
-        console.error("Error opening suggest user modal:", error);
-        notificationStore.error(t("error.openSuggestUserModal"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -2090,12 +2088,8 @@ export default {
     const updateRating = (newRating) => {
       try {
         rating.value = newRating;
-        notificationStore.error(t("success.updateRating"), {
-          timeout: 3000,
-        });
       } catch (error) {
-        console.error("Error updating rating:", error);
-        notificationStore.error(t("error.updateRating"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -2122,8 +2116,7 @@ export default {
       try {
         customerData.hospital_packages.splice(index, 1);
       } catch (error) {
-        console.error("Error removing package:", error);
-        notificationStore.error(t("error.removePackage"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -2137,7 +2130,7 @@ export default {
           duedate: task.duedate,
         };
         const response = await updateTask(task.id, formData);
-        if (response.data) {
+        if (response.status === 200) {
           task.status = "completed";
           notificationStore.success(t("success.taskCompleted"), {
             timeout: 3000,
@@ -2145,13 +2138,12 @@ export default {
           emit("task-finish", task.duedate);
           taskStore.toggleStatusChangeTrigger();
         } else {
-          notificationStore.error(t("error.completingTask"), {
+          notificationStore.error(response.data.message, {
             timeout: 3000,
           });
         }
       } catch (error) {
-        console.error("Error completing task:", error);
-        notificationStore.error(t("error.completingTask"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -2170,8 +2162,7 @@ export default {
         });
         modal.show();
       } catch (error) {
-        console.error("Error opening questions modal:", error);
-        notificationStore.error(t("error.openQuestionsModal"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -2214,8 +2205,7 @@ export default {
           id
         );
       } catch (error) {
-        console.error("Error opening WhatsApp modal:", error);
-        notificationStore.error(t("error.openWhatsappModal"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -2248,7 +2238,7 @@ export default {
           formData.commentstag_id = tagId;
         } else {
           if (!customerData.comment.trim()) {
-            notificationStore.error(t("error.emptyComment"), {
+            notificationStore.error("Comment cannot be empty", {
               timeout: 3000,
             });
             return;
@@ -2387,7 +2377,7 @@ export default {
     });
     const handleStageUpdate = (deal_id, new_stage_id, is_trash = false) => {
       if (!props.deal?.id) {
-        notificationStore.error(t("error.dealNotFound"), {
+        notificationStore.error("Deal ID does not exist", {
           timeout: 3000,
         });
         return;
@@ -2467,7 +2457,7 @@ export default {
           comment_id: comment.id,
         };
         const response = await updateComments(comment.id, formData);
-        if (response.data) {
+        if (response.status === 200) {
           const idx = customerData.comments.findIndex(
             (c) => c.id === comment.id
           );
@@ -2481,11 +2471,10 @@ export default {
             resizeDisplayedCommentWidth(comment.id);
           });
         } else {
-          notificationStore.error(t("error.updatingComment"));
+          throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error("Error updating comment:", error);
-        notificationStore.error(t("error.updatingComment"));
+        notificationStore.error(error.message);
       }
     };
     const togglePin = async (comment) => {
@@ -2504,10 +2493,9 @@ export default {
             timeout: 3000,
           });
         } else {
-          throw new Error(t("error.updatingCommentPin"));
+          throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error("Error updating comment pin status:", error);
         comment.isPinned = !comment.isPinned;
         notificationStore.error(error.message, {
           timeout: 3000,
@@ -2594,7 +2582,7 @@ export default {
     };
     const handleDealSuggestion = () => {
       if (!props.deal?.id) {
-        notificationStore.error(t("error.dealNotFound"), {
+        notificationStore.error("Deal ID does not exist", {
           timeout: 3000,
         });
         return;
@@ -2642,13 +2630,10 @@ export default {
             task.stage = stage;
           }
         } else {
-          notificationStore.error(response.data.message, {
-            timeout: 3000,
-          });
+          throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error("Error updating task:", error);
-        notificationStore.error(t("error.updatingTask"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -2753,8 +2738,7 @@ export default {
           }, 5000);
         };
       } catch (error) {
-        console.error("Error printing the Documents", error);
-        notificationStore.error(t("error.PrintCase"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }

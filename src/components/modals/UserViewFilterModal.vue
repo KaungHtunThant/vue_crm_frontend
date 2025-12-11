@@ -83,7 +83,7 @@ export default {
       this.loading = true;
       try {
         this.$emit("apply-filters", filters);
-        this.notificationStore.success(this.$t("success.applyFilters"), {
+        this.notificationStore.success("Filters applied", {
           timeout: 3000,
         });
         setTimeout(() => {
@@ -91,7 +91,7 @@ export default {
           this.closeFilterModal();
         }, 1000);
       } catch (error) {
-        this.notificationStore.error(this.$t("error.applyFilters"), {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
         this.loading = false;
@@ -113,7 +113,7 @@ export default {
           createdAt: this.createdAt,
           perPage: this.perPage,
         });
-        this.notificationStore.success(this.$t("success.applyFilters"), {
+        this.notificationStore.success("Filters applied", {
           timeout: 3000,
         });
         setTimeout(() => {
@@ -121,7 +121,7 @@ export default {
           this.closeFilterModal();
         }, 1000);
       } catch (error) {
-        this.notificationStore.error(this.$t("error.applyFilters"), {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
         this.loading = false;
@@ -135,12 +135,12 @@ export default {
         this.perPage = "10";
 
         this.$emit("reset-filters");
-        this.notificationStore.success(this.$t("success.resetFilters"), {
+        this.notificationStore.success("Filters reset", {
           timeout: 3000,
         });
         this.closeFilterModal();
       } catch (error) {
-        this.notificationStore.error(this.$t("error.resetFilters"), {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -148,12 +148,14 @@ export default {
     async fetchRoles() {
       try {
         const response = await getRoles();
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
         this.roles = response.data.data;
       } catch (error) {
-        this.notificationStore.error(this.$t("error.fetchRoles"), {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
-        console.error("Error fetching roles:", error);
       }
     },
   },

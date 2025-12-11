@@ -201,23 +201,13 @@ export default {
     });
 
     const loadData = async () => {
-      // tableLoading.value = true;
       try {
-        // const response = await getRoles()
-        // items.value = response.data
-
         items.value = staticRoles;
-        // toast.success("تم تحميل الأدوار بنجاح", {
-        //   timeout: 3000,
-        // });
       } catch (error) {
-        console.error("Error loading roles:", error);
-        notificationStore.error(t("error.loadFailedRoles"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
         items.value = [];
-      } finally {
-        // tableLoading.value = false;
       }
     };
 
@@ -237,11 +227,8 @@ export default {
     };
 
     onMounted(async () => {
-      // loadingStore.startLoading();
       await loadData();
       modal.value = new Modal(document.getElementById("roleModal"));
-      // loadingStore.stopLoading();
-
       window.addEventListener("contextmenu", handleRightClick);
     });
 
@@ -267,8 +254,7 @@ export default {
         }
         modal.value?.show();
       } catch (error) {
-        console.error("Error opening modal:", error);
-        notificationStore.error(t("error.openModal"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -277,14 +263,14 @@ export default {
     const saveRole = async (role) => {
       try {
         if (!role.name?.trim()) {
-          notificationStore.error(t("roleSettings.requiredRoleName"), {
+          notificationStore.error("Name is required", {
             timeout: 3000,
           });
           return;
         }
 
         if (role.permissions.length === 0) {
-          notificationStore.error(t("roleSettings.requiredPermission"), {
+          notificationStore.error("At least one permission is required", {
             timeout: 3000,
           });
           return;
@@ -298,7 +284,7 @@ export default {
               ...role,
               permissions: [...role.permissions],
             };
-            notificationStore.success(t("success.updated"), {
+            notificationStore.success("Updated successfully", {
               timeout: 3000,
             });
           }
@@ -309,14 +295,14 @@ export default {
             ...role,
             permissions: [...role.permissions],
           });
-          notificationStore.success(t("success.saved"), {
+          notificationStore.success("Saved successfully", {
             timeout: 3000,
           });
         }
         modal.value?.hide();
       } catch (error) {
         console.error("Error saving role:", error);
-        notificationStore.error(t("error.saveFailed"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -340,14 +326,14 @@ export default {
           const index = items.value.findIndex((r) => r.id === id);
           if (index !== -1) {
             items.value.splice(index, 1);
-            notificationStore.success(t("success.deleted"), {
+            notificationStore.success("Deleted successfully", {
               timeout: 3000,
             });
           }
         }
       } catch (error) {
         console.error("Error deleting role:", error);
-        notificationStore.error(t("error.deleteFailed"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -355,7 +341,7 @@ export default {
 
     const editRole = (role) => {
       if (role.name === "Admin") {
-        notificationStore.error(t("roleSettings.cannotEditAdmin"), {
+        notificationStore.error("Cannot edit Admin role", {
           timeout: 3000,
         });
         return;
@@ -374,7 +360,6 @@ export default {
       search,
       headers,
       filteredItems,
-      // tableLoading,
       currentRole,
       isEditing,
       availablePermissions,

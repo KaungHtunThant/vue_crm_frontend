@@ -96,7 +96,9 @@ export default {
 
     const handleSubmit = async () => {
       if (!folderData.value.name.trim()) {
-        notificationStore.error(t("error.emptyFolderName"), { timeout: 3000 });
+        notificationStore.error("Folder name cannot be empty", {
+          timeout: 3000,
+        });
         return;
       }
 
@@ -104,7 +106,7 @@ export default {
       try {
         emit("submit", folderData.value);
       } catch (error) {
-        notificationStore.error(t("error.saveFailed"), { timeout: 3000 });
+        notificationStore.error(error.message, { timeout: 3000 });
       } finally {
         isSubmitting.value = false;
       }

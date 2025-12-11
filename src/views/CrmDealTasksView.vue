@@ -195,12 +195,12 @@ export default {
             deals: stage.deals || [],
             deal_count: stage.deal_count,
           }));
-          notificationStore.success(t("success.loadKanban"));
+          notificationStore.success(response.data.message);
         } else {
-          notificationStore.error(t("error.loadKanban"));
+          throw new Error(response.data.message);
         }
       } catch (error) {
-        notificationStore.error(t("error.loadKanban"));
+        notificationStore.error(error.message);
       }
     };
 

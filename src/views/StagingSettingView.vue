@@ -73,7 +73,7 @@ export default {
         const response = await getStageTimers();
         stages.value = response.data.data;
       } catch (error) {
-        notificationStore.error("Error loading stages");
+        notificationStore.error(error.message);
       }
     };
 
@@ -86,7 +86,7 @@ export default {
           notificationStore.success("Stage status updated successfully");
         }
       } catch (error) {
-        notificationStore.error("Error updating stage status");
+        notificationStore.error(error.message);
       }
     };
 
@@ -94,11 +94,16 @@ export default {
       try {
         const stage = stages.value.find((stage) => stage.id == id);
         if (stage) {
-          await updateStage(id, { timer_allowed: stage.timer_allowed });
-          notificationStore.success("Stage timer updated successfully");
+          const response = await updateStage(id, {
+            timer_allowed: stage.timer_allowed,
+          });
+          if (response.status !== 200) {
+            throw new Error(response.data.message);
+          }
+          notificationStore.success(response.data.message);
         }
       } catch (error) {
-        notificationStore.error("Error updating stage timer");
+        notificationStore.error(error.message);
       }
     };
 

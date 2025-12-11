@@ -63,12 +63,9 @@ export default {
         if (importModalRef.value) {
           modalInstance = new Modal(importModalRef.value);
           modalInstance.show();
-          notificationStore.info(t("modals.importModalInfo"), {
-            timeout: 3000,
-          });
         }
       } catch (error) {
-        notificationStore.error(t("error.importModalError"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
         console.error("Error opening modal:", error);
@@ -82,7 +79,7 @@ export default {
           modalInstance.hide();
         }
       } catch (error) {
-        notificationStore.error(t("error.closeModal"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
         console.error("Error closing modal:", error);
@@ -106,24 +103,17 @@ export default {
           };
           const response = await importDeals(fields);
           if (response.status === 200) {
-            notificationStore.success(t("success.importModalSuccess"), {
+            notificationStore.success(response.data.message, {
               timeout: 3000,
             });
             emit("import-complete");
           }
         }
-        notificationStore.success(t("success.importModalSuccess"), {
-          timeout: 3000,
-        });
         closeImportModal();
       } catch (error) {
-        notificationStore.error(
-          error.response?.data?.message || t("error.importModalError"),
-          {
-            timeout: 3000,
-          }
-        );
-        console.error("Import Error:", error);
+        notificationStore.error(error.message || "Import modal error", {
+          timeout: 3000,
+        });
       } finally {
         loading.value = false;
       }

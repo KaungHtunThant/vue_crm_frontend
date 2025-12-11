@@ -140,19 +140,21 @@ export default {
         !password.value.new ||
         !password.value.confirm
       ) {
-        notificationStore.error(t("error.passwordRequired"));
+        notificationStore.error("Please fill in all fields");
         loading.value = false;
         return;
       }
 
       if (password.value.new !== password.value.confirm) {
-        notificationStore.error(t("error.passwordMismatch"));
+        notificationStore.error("Passwords do not match");
         loading.value = false;
         return;
       }
 
       if (password.value.new === password.value.old) {
-        notificationStore.error(t("error.samePassword"));
+        notificationStore.error(
+          "New password cannot be the same as the old password"
+        );
         loading.value = false;
         return;
       }
@@ -172,7 +174,7 @@ export default {
           password.value = { old: "", new: "", confirm: "" };
           closeChangePassword();
         } else {
-          notificationStore.error(result.message);
+          throw new Error(result.message);
         }
       } catch (error) {
         notificationStore.error(error.message);

@@ -107,8 +107,7 @@ export default {
           packages.value = [];
         }
       } catch (error) {
-        console.error("Error fetching packages:", error);
-        notificationStore.error("Failed to load packages");
+        notificationStore.error(error.message);
         packages.value = [];
       }
     };
@@ -133,8 +132,7 @@ export default {
         await fetchPackages();
         notificationStore.success("Package saved successfully");
       } catch (error) {
-        console.error("Error saving package:", error);
-        notificationStore.error("Failed to save package");
+        notificationStore.error(error.message);
       }
     };
 
@@ -163,10 +161,9 @@ export default {
           });
         }
       } catch (error) {
-        console.error("Error deleting package:", error);
         Swal.fire({
           title: "Error!",
-          text: error.response?.data?.message || "Failed to delete package",
+          text: error.message || "Failed to delete package",
           icon: "error",
         });
       }

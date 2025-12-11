@@ -117,7 +117,7 @@ export default {
         document.querySelectorAll(".modal-backdrop").forEach((b) => b.remove());
         document.body.classList.remove("modal-open");
       } catch (error) {
-        this.notificationStore.error(this.t("error.closeModal"), {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -147,7 +147,7 @@ export default {
         };
         reader.readAsDataURL(file);
       } else {
-        this.notificationStore.error(this.t("errors.invalidImageFormat"), {
+        this.notificationStore.error("Invalid image format", {
           timeout: 3000,
         });
       }
@@ -173,7 +173,6 @@ export default {
         });
         this.closeEditProfile();
       } catch (error) {
-        console.error("Error updating user profile:", error);
         this.notificationStore.error(
           error.message || this.t("errors.updateFailed")
         );

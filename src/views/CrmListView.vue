@@ -418,8 +418,7 @@ const bulkMergeItems = async () => {
   try {
     const ids = selectedRows.value.map((row) => row.id);
     if (ids.length === 0) {
-      notificationStore.error(t("error.noItemsSelected"), { timeout: 3000 });
-      return;
+      throw new Error("No deals selected.");
     }
     const result = await Swal.fire({
       title: t("crmlist-modal-deal-merge-title"),
@@ -434,7 +433,6 @@ const bulkMergeItems = async () => {
     });
     if (result.isConfirmed) {
       const response = await mergeDeals(ids);
-
       if (response.status === 200) {
         selectedRows.value = [];
         selectedAction.value = "";
@@ -445,7 +443,6 @@ const bulkMergeItems = async () => {
       }
     }
   } catch (error) {
-    console.error("Bulk Merge Error:", error);
     notificationStore.error(error.message, {
       timeout: 3000,
     });
@@ -737,10 +734,9 @@ const applyFilters = async (newFilters) => {
     });
 
     totalRows.value = response.data.meta.total;
-    notificationStore.success(t("success.applyFilters"), { timeout: 3000 });
+    notificationStore.success(response.data.message, { timeout: 3000 });
   } catch (error) {
-    console.error("Filter Error:", error);
-    notificationStore.error(t("error.applyFilters"), { timeout: 3000 });
+    notificationStore.error(error.message, { timeout: 3000 });
     rows.value = [];
     totalRows.value = 0;
   } finally {
@@ -824,8 +820,7 @@ const fetchStages = async () => {
       stages.value = stageRes.data.data;
     }
   } catch (error) {
-    console.error("Error fetching stages:", error);
-    notificationStore.error(t("error.fetchFailed"));
+    notificationStore.error(error.message, { timeout: 3000 });
   }
 };
 
@@ -840,7 +835,7 @@ const fetchUsers = async () => {
       }));
     }
   } catch (error) {
-    console.error("Error fetching users:", error);
+    notificationStore.error(error.message, { timeout: 3000 });
   }
 };
 
@@ -849,15 +844,11 @@ const handleBulkUpdate = async (key, value) => {
     const selectedIds = selectedRows.value.map((row) => row.id);
 
     if (selectedIds.length === 0) {
-      notificationStore.error(t("error.noItemsSelected"), { timeout: 3000 });
-      return;
+      throw new Error("No deals selected.");
     }
     const response = await bulkUpdateDeals(selectedIds, String(key), value);
 
-    if (
-      response.data.success ||
-      response.data.message === "Deals updated successfully"
-    ) {
+    if (response.status === 200) {
       await fetchData();
       selectedRows.value = [];
       selectedAction.value = "";
@@ -889,16 +880,12 @@ const handleBulkUpdate = async (key, value) => {
 
       notificationStore.success(response.data.message, { timeout: 3000 });
     } else {
-      console.error(
-        "Error updating stage:",
-        response.data.message || "Unknown error"
-      );
+      throw new Error(response.data.message);
     }
   } catch (error) {
-    notificationStore.error(error.response?.data?.message || error.message, {
+    notificationStore.error(error.message, {
       timeout: 3000,
     });
-    console.error("Bulk Update Error:", error);
   }
 };
 
@@ -907,8 +894,7 @@ const bulkDeleteItems = async () => {
     const ids = selectedRows.value.map((row) => row.id);
 
     if (ids.length === 0) {
-      notificationStore.error(t("error.noItemsSelected"), { timeout: 3000 });
-      return;
+      throw new Error("No deals selected.");
     }
 
     const result = await Swal.fire({
@@ -930,21 +916,15 @@ const bulkDeleteItems = async () => {
         selectedRows.value = [];
         selectedAction.value = "";
         fetchData();
-        notificationStore.success(t("success.deleteSuccess"), {
+        notificationStore.success(response.data.message, {
           timeout: 3000,
         });
       } else {
-        throw new Error(response.data.message || t("error.deleteFailed"));
+        throw new Error(response.data.message);
       }
     }
   } catch (error) {
-    console.error("Bulk Delete Error:", error);
-    notificationStore.error(
-      error.response?.data?.message || t("error.deleteFailed"),
-      {
-        timeout: 3000,
-      }
-    );
+    notificationStore.error(error.message, { timeout: 3000 });
   }
 };
 
@@ -975,7 +955,7 @@ const addNewDeal = (newDeal) => {
       modal.hide();
     }
   } catch (error) {
-    console.error("Error fetching user data for new deal:", error);
+    notificationStore.error(error.message, { timeout: 3000 });
   }
 };
 
@@ -990,11 +970,10 @@ const changeDealStage = async (dealId, newStageId) => {
       notificationStore.success(response.data.message, { timeout: 3000 });
       fetchData();
     } else {
-      notificationStore.error(t("error.stageChangeFailed"), { timeout: 3000 });
+      throw new Error(response.data.message);
     }
   } catch (error) {
-    console.error("Error changing deal stage:", error);
-    notificationStore.error(t("error.stageChangeFailed"), { timeout: 3000 });
+    notificationStore.error(error.message, { timeout: 3000 });
   }
 };
 

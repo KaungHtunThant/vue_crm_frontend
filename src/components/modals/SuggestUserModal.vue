@@ -88,14 +88,10 @@
 
 <script>
 import { Modal } from "bootstrap";
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
-
 import { createComment } from "@/plugins/services/commentService";
 import { createApproval } from "@/plugins/services/approvalService";
 import { ref } from "vue";
-import { useI18n } from "vue-i18n";
 export default {
   name: "SuggestUserModal",
   props: {
@@ -114,14 +110,11 @@ export default {
   },
   setup(props, { emit }) {
     const notificationStore = useNotificationStore();
-    // const toast = useToast();
     const showModal2 = ref(false);
     const comment = ref("");
-    // const selected_user_id = ref(null);
     const selected_user_id = ref("");
     const local_dealId = ref(props.dealId);
     const local_phone = ref(props.phone);
-    const { t } = useI18n();
 
     const closeSuggestUserModal = () => {
       const suggestUserModal = Modal.getInstance(
@@ -141,7 +134,7 @@ export default {
       if (selected_user_id.value && comment.value) {
         try {
           if (!selected_user_id.value || !comment.value) {
-            notificationStore.error(t("error.requiredFields"), {
+            notificationStore.error("Please fill in all required fields", {
               timeout: 3000,
             });
             return;
@@ -167,13 +160,10 @@ export default {
             }
             emit("suggest-user", selected_user_id.value);
           } else {
-            notificationStore.error(commentResponse.data.message, {
-              timeout: 3000,
-            });
+            throw new Error(commentResponse.data.message);
           }
           closeSuggestUserModal();
         } catch (error) {
-          console.error("Error updating deal:", error);
           notificationStore.error(error.message, {
             timeout: 3000,
           });
@@ -183,7 +173,6 @@ export default {
 
     const resetModal = () => {
       showModal2.value = false;
-      // selected_user_id.value = null;
       selected_user_id.value = "";
       comment.value = "";
     };

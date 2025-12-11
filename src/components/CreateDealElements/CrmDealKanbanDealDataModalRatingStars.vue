@@ -50,7 +50,7 @@ export default {
         notificationStore.success("Rating updated successfully");
       } catch (error) {
         emit("update:modelValue", tmp_rating.value); // Revert on error
-        notificationStore.error("Failed to update rating");
+        notificationStore.error(error.message);
       }
     };
     return { t, handleClick };

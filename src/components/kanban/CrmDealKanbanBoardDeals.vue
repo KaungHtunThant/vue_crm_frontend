@@ -547,8 +547,7 @@ export default {
             displayStages.value[stageIndex].deals = parentStageDeals.data.data;
           }
         } catch (error) {
-          console.error("Error fetching parent stage deals:", error);
-          notificationStore.error("Failed to load parent stage deals");
+          notificationStore.error(error.message);
         }
       } else {
         expandedStages.value[parentStage.id] = true;
@@ -773,8 +772,7 @@ export default {
           }
         }
       } catch (error) {
-        console.error("Error fetching deal data:", error);
-        notificationStore.error("something went wrong");
+        notificationStore.error(error.message);
       }
     };
 
@@ -1341,8 +1339,7 @@ export default {
           filteredDeals.value[stageId] = filtered;
         }
       } catch (error) {
-        console.error("Error filtering deals:", error);
-        notificationStore.error(t("error.filterFailed"));
+        notificationStore.error(error.message);
       }
     };
 
@@ -1362,7 +1359,7 @@ export default {
           notificationStore.error(response.data.message);
         }
       } catch (error) {
-        notificationStore.error(error.response?.data?.message);
+        notificationStore.error(error.message);
       }
     };
 

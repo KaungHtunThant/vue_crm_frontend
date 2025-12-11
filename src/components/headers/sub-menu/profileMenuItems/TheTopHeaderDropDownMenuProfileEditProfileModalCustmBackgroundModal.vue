@@ -95,8 +95,7 @@ export default {
         const response = await getBackgroundImages();
         images.value = [...response.data.data]; // Ensure reactivity by spreading the array
       } catch (error) {
-        console.error("Error fetching background images:", error);
-        notificationStore.error(t("error.fetchBackgroundImages"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       } finally {
@@ -134,8 +133,7 @@ export default {
           });
         }
       } catch (error) {
-        console.error("Error saving background ID:", error);
-        notificationStore.error(t("error.default"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }

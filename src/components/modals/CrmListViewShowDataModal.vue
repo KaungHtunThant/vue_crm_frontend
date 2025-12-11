@@ -188,10 +188,9 @@ export default {
         const modal = new Modal(modalElement);
         modal.show();
       } catch (error) {
-        notificationStore.error(t("error.showData"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
-        console.error("Error opening modal:", error);
       }
     };
 
@@ -203,10 +202,9 @@ export default {
           modal.hide();
         }
       } catch (error) {
-        notificationStore.error(t("error.closeModal"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
-        console.error("Error closing modal:", error);
       }
     };
 

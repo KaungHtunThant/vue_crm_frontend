@@ -232,8 +232,7 @@ export default {
           "deal_reassign_approval"
         );
       } catch (error) {
-        console.error("Error fetching data:", error);
-        notificationStore.error(t("error.fetchFailed"));
+        notificationStore.error(error.message);
       } finally {
         loading.value = false;
       }
@@ -299,8 +298,7 @@ export default {
           }));
         }
       } catch (error) {
-        console.error("Error fetching stages:", error);
-        notificationStore.error(t("error.fetchFailed"));
+        notificationStore.error(error.message);
       }
     };
 
@@ -330,13 +328,13 @@ export default {
           notificationStore.success(response.data.message, { timeout: 3000 });
           fetchData();
         } else {
-          notificationStore.error(t("error.stageChangeFailed"), {
+          notificationStore.error(response.data.message, {
             timeout: 3000,
           });
         }
       } catch (error) {
         console.error("Error changing deal stage:", error);
-        notificationStore.error(t("error.stageChangeFailed"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }

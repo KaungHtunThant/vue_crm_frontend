@@ -381,8 +381,7 @@ export default {
           parentFolder.value = response.data.parent;
         }
       } catch (error) {
-        console.error("Error fetching folder contents:", error);
-        notificationStore.error(t("error.fetchFailed"), { timeout: 3000 });
+        notificationStore.error(error.message, { timeout: 3000 });
       }
     };
 
@@ -403,14 +402,13 @@ export default {
 
       try {
         const response = await uploadFiles(formData);
-        if (response.data && response.data.result) {
+        if (response.status === 200) {
           fetchFiles();
         } else {
-          throw new Error("❌ استجابة غير صالحة من السيرفر");
+          throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error("Error uploading file:", error);
-        notificationStore.error(t("error.uploadFailed"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -450,12 +448,11 @@ export default {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
 
-        notificationStore.success(t("success.downloadStarted"), {
+        notificationStore.success(response.data.message, {
           timeout: 3000,
         });
       } catch (error) {
-        console.error("Error downloading file:", error);
-        notificationStore.error(t("error.downloadFailed"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -484,23 +481,25 @@ export default {
         });
 
         if (result.isConfirmed) {
-          await deleteFiles(fileId);
+          const response = await deleteFiles(fileId);
+          if (response.status !== 200) {
+            throw new Error(response.data.message);
+          }
           files.value = files.value.filter((file) => file.id !== fileId);
-          notificationStore.success(t("success.deleteSuccess"), {
+          notificationStore.success(response.data.message, {
             timeout: 3000,
           });
         }
       } catch (error) {
-        notificationStore.error(t("error.deleteFailed"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
-        console.error("Error deleting file:", error);
       }
     };
 
     const handleFolderSubmit = async (folderData) => {
       if (!folderData.name?.trim()) {
-        notificationStore.error(t("error.required"), { timeout: 3000 });
+        notificationStore.error("Folder name is required", { timeout: 3000 });
         return;
       }
 
@@ -512,7 +511,7 @@ export default {
           parent_id: parentId,
         });
 
-        if (createResponse.data && createResponse.data.result) {
+        if (createResponse.status === 200) {
           fetchFiles();
           notificationStore.success(createResponse.data.message, {
             timeout: 3000,
@@ -524,8 +523,7 @@ export default {
         folderFormModal.value.hide();
         selectedFolder.value = null;
       } catch (error) {
-        console.error("Error creating folder:", error);
-        notificationStore.error(t("error.saveFailed"), { timeout: 3000 });
+        notificationStore.error(error.message, { timeout: 3000 });
       }
     };
 
@@ -545,8 +543,7 @@ export default {
           timeout: 3000,
         });
       } catch (error) {
-        console.error("Error downloading folder:", error);
-        notificationStore.error(t("error.downloadFailed"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }

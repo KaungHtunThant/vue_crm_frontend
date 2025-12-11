@@ -109,8 +109,7 @@ export default {
             this.stageColor = this.getStageColor(newStage);
           }
         } catch (error) {
-          console.error("Error updating stage data:", error);
-          this.notificationStore.error(this.$t("error.updateStage"), {
+          this.notificationStore.error(error.message, {
             timeout: 3000,
           });
         }
@@ -124,10 +123,7 @@ export default {
     updateStage() {
       try {
         if (!this.stageName.trim()) {
-          this.notificationStore.error(this.$t("error.stageNameRequired"), {
-            timeout: 3000,
-          });
-          return;
+          throw new Error("Stage name cannot be empty");
         }
 
         this.$emit("update-stage", {
@@ -141,13 +137,8 @@ export default {
         if (modal) {
           modal.hide();
         }
-
-        this.notificationStore.success(this.$t("success.stageUpdated"), {
-          timeout: 3000,
-        });
       } catch (error) {
-        console.error("Error updating stage:", error);
-        this.notificationStore.error(this.$t("error.updateStage"), {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -160,14 +151,8 @@ export default {
         if (modal) {
           modal.hide();
         }
-        this.notificationStore.success(this.$t("success.stageDeleted"), {
-          timeout: 3000,
-        });
       } catch (error) {
-        this.notificationStore.error("Error deleting stage:", error);
-        this.notificationStore.error(this.$t("error.deleteStage"), {
-          timeout: 3000,
-        });
+        this.notificationStore.error(error.message);
       }
     },
   },

@@ -650,23 +650,13 @@ export default {
     });
 
     const loadData = async () => {
-      // tableLoading.value = true;
       try {
-        // const response = await getRoles()
-        // items.value = response.data
-
         items.value = staticRoles;
-        // toast.success("تم تحميل الأدوار بنجاح", {
-        //   timeout: 3000,
-        // });
       } catch (error) {
-        console.error("Error loading roles:", error);
-        notificationStore.error(t("error.loadFailedRoles"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
         items.value = [];
-      } finally {
-        // tableLoading.value = false;
       }
     };
 
@@ -716,8 +706,7 @@ export default {
         }
         modal.value?.show();
       } catch (error) {
-        console.error("Error opening modal:", error);
-        notificationStore.error(t("error.openModal"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -726,17 +715,11 @@ export default {
     const saveRole = async (role) => {
       try {
         if (!role.name?.trim()) {
-          notificationStore.error(t("roleSettings.requiredRoleName"), {
-            timeout: 3000,
-          });
-          return;
+          throw new Error("Role name is required");
         }
 
         if (role.permissions.length === 0) {
-          notificationStore.error(t("roleSettings.requiredPermission"), {
-            timeout: 3000,
-          });
-          return;
+          throw new Error("At least one permission must be selected");
         }
 
         if (isEditing.value) {
@@ -747,7 +730,7 @@ export default {
               ...role,
               permissions: [...role.permissions],
             };
-            notificationStore.success(t("success.updated"), {
+            notificationStore.success("Role updated successfully", {
               timeout: 3000,
             });
           }
@@ -758,14 +741,13 @@ export default {
             ...role,
             permissions: [...role.permissions],
           });
-          notificationStore.success(t("success.saved"), {
+          notificationStore.success("Role saved successfully", {
             timeout: 3000,
           });
         }
         modal.value?.hide();
       } catch (error) {
-        console.error("Error saving role:", error);
-        notificationStore.error(t("error.saveFailed"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -789,14 +771,13 @@ export default {
           const index = items.value.findIndex((r) => r.id === id);
           if (index !== -1) {
             items.value.splice(index, 1);
-            notificationStore.success(t("success.deleted"), {
+            notificationStore.success("Role deleted successfully", {
               timeout: 3000,
             });
           }
         }
       } catch (error) {
-        console.error("Error deleting role:", error);
-        notificationStore.error(t("error.deleteFailed"), {
+        notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -804,7 +785,7 @@ export default {
 
     const editRole = (role) => {
       if (role.name === "Admin") {
-        notificationStore.error(t("roleSettings.cannotEditAdmin"), {
+        notificationStore.error("Cannot edit Admin role", {
           timeout: 3000,
         });
         return;
@@ -851,24 +832,21 @@ export default {
         }));
         notificationStore.success(response.data.message);
       } else {
-        // Handle error response
-        notificationStore.error("Failed to fetch broadcasts");
+        notificationStore.error(response.data.message);
       }
     };
 
     const updatePosition = async (id, direction) => {
-      // Logic to update position
       const response = await updateBroadcastPosition(id, direction);
       if (response.status === 200) {
         notificationStore.success(response.data.message);
         fetchBroadcasts();
       } else {
-        notificationStore.error("Failed to update position");
+        notificationStore.error(response.data.message);
       }
     };
 
     const changeStatus = async (id) => {
-      // Logic to change status
       const broadcast = itemsBroadcast.value.find((item) => item.id === id);
       if (broadcast) {
         broadcast.status = broadcast.status ? 0 : 1;
@@ -876,13 +854,12 @@ export default {
         if (response.status === 200) {
           notificationStore.success(response.data.message);
         } else {
-          notificationStore.error("Failed to update status");
+          notificationStore.error(response.data.message);
         }
       }
     };
 
     const updateImportant = async (id) => {
-      // Logic to update important status
       const broadcast = itemsBroadcast.value.find((item) => item.id === id);
       if (broadcast) {
         broadcast.important = broadcast.important ? 0 : 1;
@@ -895,7 +872,7 @@ export default {
         if (response.status === 200) {
           notificationStore.success(response.data.message);
         } else {
-          notificationStore.error("Failed to update important status");
+          notificationStore.error(response.data.message);
         }
       }
     };
@@ -903,7 +880,7 @@ export default {
     const OpenCreateModal = (data = null) => {
       const item = document.getElementById("broadcastMessageCreateModal");
       if (!item) {
-        console.error("Modal element not found");
+        notificationStore.error("Modal element not found");
         return;
       }
       broadcastStore.setCurrentBroadcast(data);
@@ -918,14 +895,14 @@ export default {
     const closeCreateModal = () => {
       const item = document.getElementById("broadcastMessageCreateModal");
       if (!item) {
-        console.error("Modal element not found");
+        notificationStore.error("Modal element not found");
         return;
       }
       try {
         const modal = Modal.getInstance(item) || new Modal(item);
         modal.hide();
       } catch (error) {
-        console.error("Failed to close modal:", error);
+        notificationStore.error(error.message);
       }
     };
     onMounted(() => {
@@ -1038,34 +1015,28 @@ export default {
     saveSettings() {
       try {
         if (!this.settings.appName?.trim()) {
-          this.notificationStore.error(this.$t("error.required"), {
+          this.notificationStore.error("Name is required", {
             timeout: 3000,
           });
           return;
         }
 
         if (!this.settings.planExpireDays) {
-          this.notificationStore.error(
-            this.$t("error.requiredplanExpireDays"),
-            {
-              timeout: 3000,
-            }
-          );
+          this.notificationStore.error("Plan expire days is required", {
+            timeout: 3000,
+          });
           return;
         }
 
         if (!this.settings.defaultCountry) {
-          this.notificationStore.error(
-            this.$t("error.requiredDefaultCountry"),
-            {
-              timeout: 3000,
-            }
-          );
+          this.notificationStore.error("Default country code is required", {
+            timeout: 3000,
+          });
           return;
         }
 
         if (!this.settings.currency) {
-          this.notificationStore.error(this.$t("error.requiredCurrency"), {
+          this.notificationStore.error("Currency is required", {
             timeout: 3000,
           });
           return;
@@ -1073,30 +1044,23 @@ export default {
 
         if (this.settings.enableRecaptcha) {
           if (!this.settings.googleCaptchaKey?.trim()) {
-            this.notificationStore.error(
-              this.$t("error.requiredGoogleCaptchaKey"),
-              {
-                timeout: 3000,
-              }
-            );
+            this.notificationStore.error("Google Captcha Key is required", {
+              timeout: 3000,
+            });
             return;
           }
           if (!this.settings.googleCaptchaSecret?.trim()) {
-            this.notificationStore.error(
-              this.$t("error.requiredGoogleCaptchaSecret"),
-              {
-                timeout: 3000,
-              }
-            );
+            this.notificationStore.error("Google Captcha Secret is required", {
+              timeout: 3000,
+            });
             return;
           }
         }
-        this.notificationStore.success(this.$t("success.saved"), {
+        this.notificationStore.success("Settings saved successfully", {
           timeout: 3000,
         });
       } catch (error) {
-        console.error("Error saving settings:", error);
-        this.notificationStore.error(this.$t("error.saveFailed"), {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
@@ -1107,19 +1071,18 @@ export default {
         const file = event.target.files[0];
         if (file) {
           if (!file.type.startsWith("image/")) {
-            this.notificationStore.error(this.$t("error.invalidFile"), {
+            this.notificationStore.error("Invalid file type", {
               timeout: 3000,
             });
             return;
           }
           this.settings.appLogo = URL.createObjectURL(file);
-          this.notificationStore.success(this.$t("success.updatedAppLogo"), {
+          this.notificationStore.success("App logo updated successfully", {
             timeout: 3000,
           });
         }
       } catch (error) {
-        console.error("Error uploading logo:", error);
-        this.notificationStore.error(this.$t("error.uploadFailed"), {
+        this.notificationStore.error("Failed to upload logo", {
           timeout: 3000,
         });
       }
@@ -1130,19 +1093,15 @@ export default {
         const file = event.target.files[0];
         if (file) {
           if (!file.type.startsWith("image/")) {
-            this.notificationStore.error(this.$t("error.invalidFile"), {
-              timeout: 3000,
-            });
-            return;
+            throw new Error("Invalid file type");
           }
           this.settings.favicon = URL.createObjectURL(file);
-          this.notificationStore.success(this.$t("success.updatedFavicon"), {
+          this.notificationStore.success("Favicon updated successfully", {
             timeout: 3000,
           });
         }
       } catch (error) {
-        console.error("Error uploading favicon:", error);
-        this.notificationStore.error(this.$t("error.uploadFaviconFailed"), {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
