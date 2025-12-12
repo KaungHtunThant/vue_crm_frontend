@@ -55,21 +55,21 @@ export const useDealStore = defineStore("deal", {
       }
     },
     async updateDeal(deal_id, updated_data) {
-      // Optimistically update the deal in the local state
+      let previousDeals = [];
       const indexes = this.deals
         .map((deal, idx) => (deal.id === deal_id ? idx : -1))
         .filter((idx) => idx !== -1);
-      let previousDeals = [];
-      if (indexes.length > 0) {
-        previousDeals = indexes.map((idx) => ({ ...this.deals[idx] }));
-        indexes.forEach((idx) => {
-          this.deals[idx] = {
-            ...this.deals[idx],
-            ...updated_data,
-          };
-        });
-      }
       try {
+        // Optimistically update the deal in the local state
+        if (indexes.length > 0) {
+          previousDeals = indexes.map((idx) => ({ ...this.deals[idx] }));
+          indexes.forEach((idx) => {
+            this.deals[idx] = {
+              ...this.deals[idx],
+              ...updated_data,
+            };
+          });
+        }
         const response = await updateDeal(deal_id, updated_data);
         if (response.status !== 200) {
           throw new Error(response.data.message);

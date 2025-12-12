@@ -889,7 +889,7 @@ export default {
       }
     };
 
-    const dealUpdateEvent = (data, message) => {
+    const dealUpdateEvent = (data, message = null) => {
       const id = data.id;
       const updatedData = data.updated_data;
       const oldStageId = data.stage_id;
@@ -964,7 +964,7 @@ export default {
           );
         }
       }
-      notificationStore.success(message);
+      if (message) notificationStore.success(message);
     };
 
     const dealDeleteEvent = (deal, message) => {
@@ -1474,7 +1474,7 @@ export default {
     };
 
     const updateDeal = (data) => {
-      dealUpdateEvent(data, "Deal updated successfully");
+      dealUpdateEvent(data, null);
     };
     const handleHighlight = async (deal_id) => {
       for (const stage of displayStages.value) {

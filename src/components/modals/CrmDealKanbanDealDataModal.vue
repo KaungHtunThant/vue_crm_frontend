@@ -2063,7 +2063,7 @@ export default {
           passportNumber: customerData.passportNumber || [],
         };
         const response = await updateDeal(props.deal.id, formData);
-        if (response.data) {
+        if (response.status === 200) {
           notificationStore.success(response.data.message, {
             timeout: 3000,
           });

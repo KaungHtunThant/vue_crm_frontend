@@ -147,14 +147,10 @@ export default {
             add_on_total_cost: this.current_deal.add_on_total_cost,
             warranty: this.current_deal.warranty,
           });
-          if (response_2.success) {
-            this.notificationStore.success(response_2.message, {
-              timeout: 3000,
-            });
-          } else {
+          if (!response_2.success) {
             throw new Error(response_2.message);
           }
-          this.notificationStore.success(response_2.data.message, {
+          this.notificationStore.success(response_2.message, {
             timeout: 3000,
           });
         } else {
