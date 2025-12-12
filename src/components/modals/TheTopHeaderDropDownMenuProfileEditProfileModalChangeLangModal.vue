@@ -29,6 +29,7 @@
               <option value="tr">🇹🇷 Türkçe</option>
               <option value="ru">🇷🇺 Русский</option>
               <option value="fr">🇫🇷 Français</option>
+              <option value="mm">🇲🇲 ဗမာစာ</option>
             </select>
           </div>
           <div class="modal-footer">

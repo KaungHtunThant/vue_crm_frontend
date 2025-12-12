@@ -130,27 +130,38 @@ export default {
       }
     },
     async submitForm() {
-      let formData = [];
-      this.questions.forEach((question) => {
-        const questionAnswers = this.getFormDataByQuestion(question);
-        formData.push(...questionAnswers);
-      });
-      const response_1 = await updateAnswersByDealId(this.deal_id, formData);
-      this.deal_store.updateDeal(this.deal_id, {
-        note: this.current_deal.note,
-        diagnosis: this.current_deal.diagnoses,
-        kanban_packages: this.current_deal.kanban_packages,
-        kanban_total_cost: this.current_deal.kanban_total_cost,
-        additional_services: this.current_deal.additional_services,
-        add_on_total_cost: this.current_deal.add_on_total_cost,
-        warranty: this.current_deal.warranty,
-      });
-      if (response_1.status === 200) {
-        this.notificationStore.success(response_1.data.message, {
-          timeout: 3000,
+      try {
+        let formData = [];
+        this.questions.forEach((question) => {
+          const questionAnswers = this.getFormDataByQuestion(question);
+          formData.push(...questionAnswers);
         });
-      } else {
-        this.notificationStore.error(response_1.data.message, {
+        const response_1 = await updateAnswersByDealId(this.deal_id, formData);
+        if (response_1.status === 200) {
+          const response_2 = await this.deal_store.updateDeal(this.deal_id, {
+            note: this.current_deal.note,
+            diagnosis: this.current_deal.diagnoses,
+            kanban_packages: this.current_deal.kanban_packages,
+            kanban_total_cost: this.current_deal.kanban_total_cost,
+            additional_services: this.current_deal.additional_services,
+            add_on_total_cost: this.current_deal.add_on_total_cost,
+            warranty: this.current_deal.warranty,
+          });
+          if (response_2.success) {
+            this.notificationStore.success(response_2.message, {
+              timeout: 3000,
+            });
+          } else {
+            throw new Error(response_2.message);
+          }
+          this.notificationStore.success(response_2.data.message, {
+            timeout: 3000,
+          });
+        } else {
+          throw new Error(response_1.data.message);
+        }
+      } catch (error) {
+        this.notificationStore.error(error.message, {
           timeout: 3000,
         });
       }

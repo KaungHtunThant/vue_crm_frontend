@@ -74,6 +74,10 @@ export const useDealStore = defineStore("deal", {
         if (response.status !== 200) {
           throw new Error(response.data.message);
         }
+        return {
+          success: true,
+          message: response.data.message,
+        };
       } catch (error) {
         // Rollback if update fails
         if (indexes.length > 0 && previousDeals.length === indexes.length) {
@@ -81,7 +85,10 @@ export const useDealStore = defineStore("deal", {
             this.deals[idx] = previousDeals[i];
           });
         }
-        throw error;
+        return {
+          success: false,
+          message: error.message,
+        };
       }
     },
     async deleteDeal(deal_ids) {
