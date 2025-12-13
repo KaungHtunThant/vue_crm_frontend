@@ -47,14 +47,14 @@
                 class="btn btn-success text-white"
                 data-bs-dismiss="modal"
               >
-                {{ t("buttons.submit") }}
+                {{ t("kanban-modal-questions-button-submit") }}
               </button>
               <button
                 type="button"
                 class="btn btn-danger text-white"
                 data-bs-dismiss="modal"
               >
-                {{ t("buttons.close") }}
+                {{ t("kanban-modal-questions-button-reset") }}
               </button>
             </div>
           </form>
