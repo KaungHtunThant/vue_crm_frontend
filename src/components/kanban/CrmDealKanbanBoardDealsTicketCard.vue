@@ -11,7 +11,7 @@
           ? `3px solid ${getUserColor(deal.responsible_user?.id)}`
           : '',
       //  background: deal.highlighted ? '#ffdc73' : '#fff',
-      background: dealHighlight ? '#ffdc73' : '#fff',
+      background: deal.highlighted ? '#ffdc73' : '#fff',
     }"
   >
     <div
@@ -23,7 +23,7 @@
     <div
       class="row"
       :style="{
-        background: dealHighlight
+        background: deal.highlighted
           ? '#ffdc73'
           : 'linear-gradient(to left, white, rgb(231, 227, 227))',
       }"
@@ -51,7 +51,7 @@
             <!-- <i class="fa-solid fa-star text-warning"></i> -->
             <i
               class="fa-solid fa-bookmark position-absolute"
-              :class="dealHighlight ? 'text-white' : 'text-warning'"
+              :class="deal.highlighted ? 'text-white' : 'text-warning'"
               style="right: 8px; top: 1px; font-size: 18px"
             ></i>
           </button>
@@ -274,16 +274,6 @@ export default {
     const { t } = useI18n();
     // const toast = useToast();
 
-    const dealHighlight = computed(() => {
-      const highlightBy = props.deal.highlighted_by;
-      const highlighted = props.deal.highlighted;
-      const currentUser = parseInt(Cookies.get("user_id"));
-      if (highlighted && highlightBy === currentUser) {
-        return true;
-      } else {
-        return false;
-      }
-    });
     const ticketValue = computed(() => {
       const dealCreatedDate = new Date(props.deal.created_at);
       const today = new Date();
@@ -463,7 +453,6 @@ export default {
       handleHighlight,
       onDragStart,
       ticketValue,
-      dealHighlight,
     };
   },
   methods: {},
