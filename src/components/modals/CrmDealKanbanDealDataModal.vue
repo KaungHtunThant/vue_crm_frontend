@@ -882,7 +882,8 @@
                           </select>
                         </div>
                         <div
-                          class="col-2 p-1 px-1"
+                          :class="isEditMode ? 'col-2' : 'col-3'"
+                          class="p-1 px-1"
                           @dblclick="handleDoubleClick"
                         >
                           <select
@@ -1502,15 +1503,15 @@
             class="btn bg-warning py-2 px-3 rounded-3 me-2"
             @click="openSuggestApprovalModal"
           >
-            <i class="fa-solid fa-user text-white"></i>
+            <i class="fa-solid fa-user"></i>
             {{ t("kanban-modal-edit-button-suggest-user") }}
           </button>
           <button
             v-if="this.user_role !== 'after-sales'"
-            class="btn bg-danger py-2 px-3 rounded-3"
+            class="btn bg-danger py-2 px-3 rounded-3 text-light"
             @click="openTrashDealModal"
           >
-            <i class="fa-solid fa-trash text-white"></i>
+            <i class="fa-solid fa-trash"></i>
             {{ t("kanban-modal-edit-button-trash-deal") }}
           </button>
         </div>

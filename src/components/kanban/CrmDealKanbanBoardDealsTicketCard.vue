@@ -10,7 +10,6 @@
         deal.responsible_user && getUserColor(deal.responsible_user?.id)
           ? `3px solid ${getUserColor(deal.responsible_user?.id)}`
           : '',
-      //  background: deal.highlighted ? '#ffdc73' : '#fff',
       background: deal.highlighted ? '#ffdc73' : '#fff',
     }"
   >
@@ -39,16 +38,12 @@
             style="width: 22px; height: 20px !important"
           />
           {{ deal.name.length > 20 ? deal.name.slice(0, 20) + "…" : deal.name }}
-        </span>
-        <!-- <span class="text-dark fs-7">
-          {{ deal.view_count }} <i class="fa-solid fa-eye"></i>
-        </span> -->
-        <span v-if="ticketValue">
-          <i class="fa-solid fa-fire text-danger"></i>
+          <span v-if="ticketValue">
+            <i class="fa-solid fa-fire text-danger ms-2"></i>
+          </span>
         </span>
         <span class="d-flex align-items-center">
           <button class="btn btn-link m-0 p-0" @click.stop="handleHighlight">
-            <!-- <i class="fa-solid fa-star text-warning"></i> -->
             <i
               class="fa-solid fa-bookmark position-absolute"
               :class="deal.highlighted ? 'text-white' : 'text-warning'"
@@ -76,10 +71,6 @@
         <span class="fw-normal text-dark fs-7">
           <i :class="getIcon(deal.source_id)"></i>
         </span>
-
-        <!-- <span class="text-dark" style="font-size: 12px">
-          {{ deal.view_count }} <i class="fa-solid fa-eye"></i>
-        </span> -->
       </div>
 
       <!-- النجوم -->
@@ -99,20 +90,9 @@
             ></i>
           </template>
         </div>
-        <!-- <div class="d-flex align-items-center" v-if="!showCalendarDrag">
-          <button
-            class="btn btn-link fs-7 m-0 p-0"
-            @click.stop="handleHighlight"
-          >
-            <i class="fa-solid fa-star text-warning"></i>
-          </button>
-        </div> -->
         <span class="text-dark fs-7" v-if="!showCalendarDrag">
           {{ deal.view_count }} <i class="fa-solid fa-eye"></i>
         </span>
-        <!-- <span class="fw-normal text-dark">
-          <i :class="getIcon(deal.source_id)"></i>
-        </span> -->
         <span
           v-if="showCalendarDrag"
           class="deal-card-calendar"
