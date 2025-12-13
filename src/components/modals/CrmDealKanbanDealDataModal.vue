@@ -932,7 +932,9 @@
                         </div>
                         <div class="col-2 p-1 px-0">
                           <div class="input-group">
-                            <span class="input-group-text">$</span>
+                            <span class="input-group-text">
+                              <i class="fa-solid fa-money-bill"></i>
+                            </span>
                             <input
                               type="number"
                               lang="en"
@@ -981,7 +983,7 @@
                     <div class="input-group">
                       <span class="input-group-text">
                         {{ t("kanban-modal-edit-label-total-cost") }}
-                        {{ currency }}
+                        <!-- {{ currency }} -->
                       </span>
                       <input
                         type="number"
@@ -1004,7 +1006,6 @@
                   </div>
                 </div>
               </div>
-              <!-- History -->
               <div class="row">
                 <div class="col-6 pt-2">
                   <h5
@@ -1031,6 +1032,7 @@
                   </button>
                 </div>
               </div>
+              <!-- History -->
               <div
                 class="history ps-2 mt-2"
                 v-if="
@@ -1460,6 +1462,7 @@
             @click="openSuggestApprovalModal"
           >
             <i class="fa-solid fa-user text-white"></i>
+            {{ t("kanban-modal-edit-button-suggest-user") }}
           </button>
           <button
             v-if="this.user_role !== 'after-sales'"
@@ -1467,6 +1470,7 @@
             @click="openTrashDealModal"
           >
             <i class="fa-solid fa-trash text-white"></i>
+            {{ t("kanban-modal-edit-button-trash-deal") }}
           </button>
         </div>
       </div>
@@ -2317,6 +2321,12 @@ export default {
           task_event_id: customerData.task,
           type: type,
         };
+        if (!formData.duetime) {
+          notificationStore.error("Time Required on adding task.", {
+            timeout: 3000,
+          });
+          return;
+        }
         const response = await createTask(formData);
         if (response.status === 200 || response.status === 201) {
           const selectedEvent = taskEventsList.value.find(

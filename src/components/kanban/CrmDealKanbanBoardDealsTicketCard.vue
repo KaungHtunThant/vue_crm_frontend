@@ -11,11 +11,7 @@
           ? `3px solid ${getUserColor(deal.responsible_user?.id)}`
           : '',
       //  background: deal.highlighted ? '#ffdc73' : '#fff',
-      background: deal.highlighted
-        ? '#ffdc73'
-        : deal.old_deal
-        ? '#E2E2E2'
-        : '#fff',
+      background: dealHighlight ? '#ffdc73' : '#fff',
     }"
   >
     <div
@@ -27,10 +23,8 @@
     <div
       class="row"
       :style="{
-        background: deal.highlighted
+        background: dealHighlight
           ? '#ffdc73'
-          : deal.old_deal
-          ? '#E2E2E2'
           : 'linear-gradient(to left, white, rgb(231, 227, 227))',
       }"
     >
@@ -49,12 +43,15 @@
         <!-- <span class="text-dark fs-7">
           {{ deal.view_count }} <i class="fa-solid fa-eye"></i>
         </span> -->
+        <span v-if="ticketValue">
+          <i class="fa-solid fa-fire text-danger"></i>
+        </span>
         <span class="d-flex align-items-center">
           <button class="btn btn-link m-0 p-0" @click.stop="handleHighlight">
             <!-- <i class="fa-solid fa-star text-warning"></i> -->
             <i
               class="fa-solid fa-bookmark position-absolute"
-              :class="deal.highlighted ? 'text-white' : 'text-warning'"
+              :class="dealHighlight ? 'text-white' : 'text-warning'"
               style="right: 8px; top: 1px; font-size: 18px"
             ></i>
           </button>
@@ -277,6 +274,23 @@ export default {
     const { t } = useI18n();
     // const toast = useToast();
 
+    const dealHighlight = computed(() => {
+      const highlightBy = props.deal.highlighted_by;
+      const highlighted = props.deal.highlighted;
+      const currentUser = parseInt(Cookies.get("user_id"));
+      if (highlighted && highlightBy === currentUser) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    const ticketValue = computed(() => {
+      const dealCreatedDate = new Date(props.deal.created_at);
+      const today = new Date();
+      const differenceInDays =
+        (today - dealCreatedDate) / (1000 * 60 * 60 * 24);
+      return differenceInDays <= 30;
+    });
     const formatDate = (dateString) => {
       if (!dateString) return "";
 
@@ -448,6 +462,8 @@ export default {
       currentStageIcon,
       handleHighlight,
       onDragStart,
+      ticketValue,
+      dealHighlight,
     };
   },
   methods: {},

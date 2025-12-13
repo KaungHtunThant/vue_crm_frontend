@@ -306,10 +306,16 @@
           class="col-4 btnHeaderBg text-white d-flex justify-content-center align-items-center rounded-1 mx-2"
         >
           <i class="fa-solid fa-sack-dollar"></i>
-          <span class="px-2">
+          <span v-if="showSalary" class="px-2">
             {{ salaryInfo.finalBasicPay }} +
             {{ salaryInfo.calculatedCommission }} {{ currency }}
           </span>
+          <i
+            class="fa-solid ms-2"
+            :class="showSalary ? 'fa-eye-slash' : 'fa-eye'"
+            @click="showSalary = !showSalary"
+            style="cursor: pointer"
+          ></i>
         </div>
       </div>
       <div class="col-4 d-flex justify-content-end align-items-center">
@@ -415,6 +421,7 @@ export default {
         totalSalary: 0,
         totalDeductions: 0,
       },
+      showSalary: false,
     };
   },
   setup() {
