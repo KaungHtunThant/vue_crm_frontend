@@ -2302,8 +2302,10 @@ export default {
     };
     const handleAddTask = async () => {
       try {
+        const role = Cookies.get("user_role");
+        console.log("role:", role);
         let type = "sales";
-        if (route.path === "/crm-after-sales") {
+        if (route.path === "/crm-after-sales" || role === "after-sales") {
           type = "after-sales";
         } else if (route.path === "/emr-kanban") {
           type = "hospital";
