@@ -26,7 +26,7 @@
             {{ t("kanban-modal-questions-subheading-questions-list")
             }}<span class="text-danger">*</span>
           </h6>
-          <form @submit.prevent="submitForm">
+          <form>
             <patient-notes-component />
             <questions-div
               v-for="(question, index) in questions"
@@ -43,8 +43,9 @@
             <warrenty-component />
             <div class="d-flex justify-content-end gap-2 mt-4 mb-2">
               <button
-                type="submit"
+                type="button"
                 class="btn btn-success text-white"
+                @click="submitForm"
                 data-bs-dismiss="modal"
               >
                 {{ t("kanban-modal-questions-button-submit") }}
@@ -131,6 +132,7 @@ export default {
     },
     async submitForm() {
       try {
+        console.log("Submitting form...");
         let formData = [];
         this.questions.forEach((question) => {
           const questionAnswers = this.getFormDataByQuestion(question);
@@ -142,7 +144,6 @@ export default {
             note: this.current_deal.note,
             diagnosis: this.current_deal.diagnoses,
             kanban_packages: this.current_deal.kanban_packages,
-            kanban_total_cost: this.current_deal.kanban_total_cost,
             additional_services: this.current_deal.additional_services,
             add_on_total_cost: this.current_deal.add_on_total_cost,
             warranty: this.current_deal.warranty,
@@ -157,6 +158,7 @@ export default {
           throw new Error(response_1.data.message);
         }
       } catch (error) {
+        console.log("Error submitting form:", error);
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });

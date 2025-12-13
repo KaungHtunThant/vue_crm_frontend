@@ -965,6 +965,52 @@
                         </div>
                       </div>
                     </div>
+                    <div
+                      class="w-100 d-flex mt-2 justify-content-between gap-2"
+                    >
+                      <div class="input-group">
+                        <span class="input-group-text">
+                          {{
+                            t("kanban-modal-edit-label-agreement-total-cost")
+                          }}
+                        </span>
+                        <input
+                          type="number"
+                          lang="en"
+                          :class="[
+                            'bg-input',
+                            'p-2',
+                            'rounded-right-2',
+                            'form-control',
+                          ]"
+                          v-model="agreement_total_cost"
+                          readonly
+                          min="0.00"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="w-100 d-flex mt-2 justify-content-between gap-2"
+                    >
+                      <div class="input-group">
+                        <span class="input-group-text">
+                          {{ t("kanban-modal-edit-label-extra-total-cost") }}
+                        </span>
+                        <input
+                          type="number"
+                          lang="en"
+                          :class="[
+                            'bg-input',
+                            'p-2',
+                            'rounded-right-2',
+                            'form-control',
+                          ]"
+                          v-model="extra_total_cost"
+                          readonly
+                          min="0.00"
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div class="pt-2" v-else-if="!isEditMode">
                     {{ t("kanban-modal-edit-label-no-packages") }}
@@ -981,24 +1027,19 @@
                     <div class="input-group">
                       <span class="input-group-text">
                         {{ t("kanban-modal-edit-label-total-cost") }}
-                        {{ currency }}
                       </span>
                       <input
                         type="number"
                         lang="en"
                         :class="[
                           'bg-input',
-                          isEditMode ? 'bg-input-edit' : 'bg-input',
                           'p-2',
                           'rounded-right-2',
                           'form-control',
                         ]"
-                        v-model="customerData.hospital_total_cost"
-                        :placeholder="`${t(
-                          'kanban-modal-edit-placeholder-total-cost'
-                        )} ${currency}`"
-                        :readonly="!isEditMode"
-                        min="0"
+                        v-model="total_cost"
+                        readonly
+                        min="0.00"
                       />
                     </div>
                   </div>
@@ -1027,7 +1068,7 @@
                     class="btn btn-danger text-white px-4 py-2"
                     @click="closeEditMode"
                   >
-                    {{ t("kanban-modal-edit-button-cancel") }}
+                    {{ t("kanban-modal-edit-button-reset") }}
                   </button>
                 </div>
               </div>
@@ -1580,7 +1621,10 @@ export default {
   setup(props, { emit }) {
     const userStore = useUserStore();
     const users = computed(() => userStore.getAllUsers);
-    const emr_users = computed(() => userStore.getUsersWithRole("emr-admin"));
+    const emr_users = computed(() => [
+      ...userStore.getUsersWithRole("emr-admin"),
+      userStore.getUserById(customerData.assigned_to),
+    ]);
     const notificationStore = useNotificationStore();
     const logStore = useLogStore();
     const packageStore = usePackageStore();
@@ -1730,7 +1774,6 @@ export default {
       hotel_gmap_link: props.deal?.hotel_gmap_link || "",
       transportation: props.deal?.transportation || 0,
       time: props.deal?.time || "",
-      hospital_total_cost: props.deal?.hospital_total_cost || null,
       passports: props.deal?.passports || [],
     });
     const nationalities = computed(() => {
@@ -2055,7 +2098,6 @@ export default {
           hotel_gmap_link: customerData.hotel_gmap_link || "",
           transportation: customerData.transportation || 0,
           time: customerData.time || "",
-          hospital_total_cost: customerData.hospital_total_cost || null,
           passports: [customerData.passport || null],
           dob: customerData.date_of_birth
             ? new Date(customerData.date_of_birth).toISOString().slice(0, 10)
@@ -2819,7 +2861,34 @@ export default {
         await commentsTagsStore.fetchCommentsTags();
       }
     });
+    const total_cost = computed(() => {
+      return customerData.hospital_packages.reduce((sum, pkg) => {
+        const total_price = parseFloat(pkg.total_price) || 0;
+        return sum + total_price;
+      }, 0);
+    });
+    const agreement_total_cost = computed(() => {
+      const filtered_packages = customerData.hospital_packages.filter(
+        (p) => p.user_id === customerData.assigned_to
+      );
+      return filtered_packages.reduce((sum, pkg) => {
+        const total_price = parseFloat(pkg.total_price) || 0;
+        return sum + total_price;
+      }, 0);
+    });
+    const extra_total_cost = computed(() => {
+      const filtered_packages = customerData.hospital_packages.filter(
+        (p) => p.user_id && p.user_id !== customerData.assigned_to
+      );
+      return filtered_packages.reduce((sum, pkg) => {
+        const total_price = parseFloat(pkg.total_price) || 0;
+        return sum + total_price;
+      }, 0);
+    });
     return {
+      agreement_total_cost,
+      extra_total_cost,
+      total_cost,
       modified_id,
       getStageColor,
       getStageName,

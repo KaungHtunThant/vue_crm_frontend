@@ -11,7 +11,7 @@
       class="packages mb-2 px-2"
     >
       <div class="row p-0">
-        <div class="col-8 p-1 px-1">
+        <div class="col-5 p-1 px-1">
           <select class="form-select py-2 bg-input-edit" v-model="pkg.id">
             <option value="" disabled>
               {{ $t("kanban-modal-edit-placeholder-packages-name") }}
@@ -37,6 +37,21 @@
                 $t('kanban-modal-edit-placeholder-packages-quantity')
               "
               min="1"
+            />
+          </div>
+        </div>
+        <div class="col-3 p-1 px-1">
+          <div class="input-group">
+            <span class="input-group-text"
+              ><i class="fa-solid fa-money-bill"></i
+            ></span>
+            <input
+              type="number"
+              lang="en"
+              class="bg-input bg-input-edit p-2 rounded-right-2 form-control"
+              v-model="pkg.total_price"
+              :placeholder="$t('kanban-modal-edit-placeholder-packages-price')"
+              min="0.01"
             />
           </div>
         </div>
@@ -68,11 +83,9 @@
           type="number"
           lang="en"
           class="bg-input bg-input-edit p-2 rounded-right-2 form-control"
-          v-model="local_data.kanban_total_cost"
-          :placeholder="`${$t(
-            'kanban-modal-edit-placeholder-total-cost'
-          )} ${currency}`"
+          v-model="kanban_total_cost"
           min="0"
+          readonly
         />
       </div>
     </div>
@@ -109,6 +122,17 @@ export default {
         });
       }
     };
+    const kanban_total_cost = computed(() => {
+      let total = 0;
+      if (local_data.value.kanban_packages) {
+        local_data.value.kanban_packages.forEach((pkg) => {
+          if (pkg.total_price) {
+            total += parseFloat(pkg.total_price);
+          }
+        });
+      }
+      return total.toFixed(2);
+    });
     watch(
       () => data.value,
       (newVal) => {
@@ -146,6 +170,7 @@ export default {
       local_data,
       addNewKanbanPackage,
       removeKanbanPackage,
+      kanban_total_cost,
     };
   },
 };
