@@ -13,6 +13,7 @@ export const useDealStore = defineStore("deal", {
     deals: [],
     current_deal: {},
     deal_scroll_status: false,
+    deal_modal_status: false,
     deal_fetch_indicator: false,
   }),
   getters: {
@@ -33,6 +34,9 @@ export const useDealStore = defineStore("deal", {
     },
     getDealFetchIndicator: (state) => {
       return state.deal_fetch_indicator;
+    },
+    getDealModalStatus: (state) => {
+      return state.deal_modal_status;
     },
   },
   actions: {
@@ -174,6 +178,9 @@ export const useDealStore = defineStore("deal", {
     },
     toggleFetchStagesIndicator(status = false) {
       this.deal_fetch_indicator = status;
+    },
+    toggleDealModalStatus(status = false) {
+      this.deal_modal_status = status;
     },
   },
 });

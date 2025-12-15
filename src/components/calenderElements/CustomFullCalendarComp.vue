@@ -76,7 +76,7 @@
 </template>
 <script>
 import { useSettingStore } from "@/stores/SettingStore";
-import { ref, computed, nextTick, watch } from "vue";
+import { ref, computed, nextTick, watch, onMounted } from "vue";
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -99,7 +99,7 @@ export default {
     const permissionStore = usePermissionStore();
     const permissions = PERMISSIONS;
     const fullCalendarRef = ref(null);
-    const currentView = ref("dayGridMonth");
+    const currentView = ref("dayGridDay");
     const delete_mode = ref(false);
     const delete_mode_loading = ref(false);
     const today_date = new Date().toISOString().split("T")[0];
@@ -161,23 +161,26 @@ export default {
         }
       },
       eventClick: async (info) => {
-        if (delete_mode.value) {
-          const el = info.el;
-          if (selectedTasks.value.includes(info.event.id)) {
-            selectedTasks.value = selectedTasks.value.filter(
-              (id) => id !== info.event.id
-            );
-            el.classList.remove("selected-for-deletion");
+        if (permissionStore.hasPermission(PERMISSIONS.READ_EMR_TASK)) {
+          if (delete_mode.value) {
+            const el = info.el;
+            if (selectedTasks.value.includes(info.event.id)) {
+              selectedTasks.value = selectedTasks.value.filter(
+                (id) => id !== info.event.id
+              );
+              el.classList.remove("selected-for-deletion");
+            } else {
+              selectedTasks.value.push(info.event.id);
+              el.classList.add("selected-for-deletion");
+            }
           } else {
-            selectedTasks.value.push(info.event.id);
-            el.classList.add("selected-for-deletion");
-          }
-        } else {
-          const ticketId = info.event.extendedProps.ticketId;
-          if (ticketId) {
-            dealStore.changeCurrentDeal(ticketId);
-          } else {
-            notificationStore.error("Task has no deal");
+            const ticketId = info.event.extendedProps.ticketId;
+            if (ticketId) {
+              dealStore.changeCurrentDeal(ticketId);
+              dealStore.toggleDealModalStatus(true);
+            } else {
+              notificationStore.error("Task has no deal");
+            }
           }
         }
       },
@@ -204,7 +207,12 @@ export default {
           dayMaxEventRows: false,
           dayMaxEvents: false,
           eventMaxStack: 10,
-          titleFormat: { year: "numeric", month: "long", day: "numeric" },
+          dayHeaderFormat: {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          },
         },
       },
     });
@@ -221,12 +229,15 @@ export default {
 
     const goToToday = () => {
       const calendarApi = fullCalendarRef.value.getApi();
+      calendarApi.changeView(currentView.value);
       calendarApi.today();
     };
 
     const changeCalendarView = () => {
+      taskStore.setDayGridMode(currentView.value);
       const calendarApi = fullCalendarRef.value.getApi();
       calendarApi.changeView(currentView.value);
+      calendarApi.refetchEvents();
     };
 
     const toggleEMRCalendarDrawer = () => {
@@ -282,10 +293,15 @@ export default {
         if (is_open) {
           nextTick(() => {
             fullCalendarRef.value.getApi().render();
+            stop();
           });
         }
       }
     );
+
+    onMounted(() => {
+      taskStore.setDayGridMode(currentView.value);
+    });
 
     return {
       deletable,

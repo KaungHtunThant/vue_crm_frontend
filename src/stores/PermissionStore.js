@@ -43,6 +43,7 @@ export const PERMISSIONS = {
   GENERATE_OTP: "generate-otp",
   STAY_IDLE: "stay-idle",
   VIEW_EMR_CALENDAR: "view-emr-calendar",
+  READ_EMR_TASK: "view-emr-task",
   UPDATE_EMR_TASK: "edit-emr-task",
   DELETE_EMR_TASK: "delete-emr-task",
 };

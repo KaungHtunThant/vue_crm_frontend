@@ -66,9 +66,7 @@ export default {
     const settingStore = useSettingStore();
     const notificationStore = useNotificationStore();
     const hasPermissionTo = (permission) => {
-      // return permissionStore.hasPermission(permission);
-      console.log("Permission check bypassed for:", permission);
-      return true;
+      return permissionStore.hasPermission(permission);
     };
 
     return {

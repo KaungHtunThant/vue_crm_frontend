@@ -33,6 +33,7 @@ import { useI18n } from "vue-i18n";
 import { getDealsKanban } from "@/plugins/services/kanbanService";
 import { useSourceStore } from "@/stores/SourceStore";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { useDealStore } from "@/stores/DealStore";
 
 export default {
   name: "CrmDealKanbanView",
@@ -45,10 +46,11 @@ export default {
   setup() {
     const { t } = useI18n();
     const notificationStore = useNotificationStore();
+    const dealStore = useDealStore();
+    const sourceStore = useSourceStore();
     const stages = ref([]);
     const selected_conversation = ref(null);
     const searchVal = ref("");
-    const sourceStore = useSourceStore();
     const filters = ref({
       source_id: "",
       stage_id: "",
@@ -215,6 +217,7 @@ export default {
           const closeButton = modal.querySelector('[data-bs-dismiss="modal"]');
           if (closeButton) {
             closeButton.click();
+            dealStore.toggleDealModalStatus();
           }
         }
       });
