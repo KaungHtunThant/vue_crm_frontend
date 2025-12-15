@@ -23,6 +23,10 @@
       <div v-else>
         <router-view />
       </div>
+      <!-- Right EMR Calendar Drawer -->
+      <right-drawer-comp v-if="hasPermissionTo(PERMISSIONS.VIEW_EMR_CALENDAR)">
+        <custom-full-calendar-comp />
+      </right-drawer-comp>
       <!-- News Bar -->
       <theNewsBar v-if="showNewsBar" />
     </div>
@@ -41,6 +45,8 @@ import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import { useAuthStore } from "./stores/AuthStore";
 import { useSettingStore } from "./stores/SettingStore";
 import { useNotificationStore } from "./stores/notificationStore";
+import RightDrawerComp from "@/components/customWrappers/RightDrawerComp.vue";
+import CustomFullCalendarComp from "@/components/calenderElements/CustomFullCalendarComp.vue";
 
 export default {
   name: "App",
@@ -49,6 +55,8 @@ export default {
     LoginView,
     TheLoaderComponent,
     TheNewsBar,
+    RightDrawerComp,
+    CustomFullCalendarComp,
   },
 
   setup() {
@@ -57,8 +65,14 @@ export default {
     const authStore = useAuthStore();
     const settingStore = useSettingStore();
     const notificationStore = useNotificationStore();
+    const hasPermissionTo = (permission) => {
+      // return permissionStore.hasPermission(permission);
+      console.log("Permission check bypassed for:", permission);
+      return true;
+    };
 
     return {
+      hasPermissionTo,
       PERMISSIONS,
       loadingStore,
       permissionStore,

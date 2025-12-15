@@ -10,6 +10,7 @@ export const useSettingStore = defineStore("setting", {
     idleTimer: null,
     idleTimeLimit: 15 * 60 * 1000, // 15 minute
     backendAppVersion: null,
+    emr_calendar_drawer_open: false,
   }),
   getters: {
     getOTPCode: (state) => {
@@ -17,6 +18,9 @@ export const useSettingStore = defineStore("setting", {
     },
     getBackendAppVersion: (state) => {
       return state.backendAppVersion;
+    },
+    getIsEmrCalendarDrawerOpen: (state) => {
+      return state.emr_calendar_drawer_open;
     },
   },
   actions: {
@@ -56,6 +60,9 @@ export const useSettingStore = defineStore("setting", {
         clearTimeout(this.idleTimer);
         this.idleTimer = null;
       }
+    },
+    toggleEmrCalendarDrawer() {
+      this.emr_calendar_drawer_open = !this.emr_calendar_drawer_open;
     },
   },
 });

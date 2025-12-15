@@ -10,93 +10,18 @@
       :update_message="update_message"
     />
   </div>
-  <div class="row g-0 align-items-start">
-    <div style="width: 49%">
-      <crm-kanban-kanban-board
-        :stages="stages"
-        :isDraggable="false"
-        defaultColor="#333"
-        :show-calendar-drag="true"
-        :view-type="'emr'"
-        @open-whatsapp-modal="openWhatsappModal"
-        @receive-whatsapp-message="receiveWhatsappMessage"
-        @update-whatsapp-message="updateWhatsappMessage"
-        @change-deal-stage="changeDealStage"
-      />
-    </div>
-    <div style="width: 51%" class="mt-1">
-      <div class="calendar-container p-2 bg-white rounded shadow-sm">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <div class="calendar-toolbar-title">
-            <span>{{ today_date }}</span>
-          </div>
-          <div
-            class="calendar-toolbar-controls d-flex align-items-center gap-2"
-          >
-            <button
-              class="btn btn-outline-danger px-0 py-1 me-2 fs-6"
-              @click="delete_mode = !delete_mode"
-              v-show="!delete_mode"
-            >
-              <i class="fa fa-trash"></i>
-            </button>
-            <button
-              class="btn btn-outline-primary px-0 py-1 me-2 fs-6"
-              @click="handleCancelDeleteSelectedTasks"
-              v-show="delete_mode && !delete_mode_loading"
-            >
-              <i class="fa fa-times"></i>
-            </button>
-            <button
-              class="btn btn-danger px-0 py-1 me-2 fs-6"
-              @click="handleDeleteSelectedTasks"
-              v-show="delete_mode && !delete_mode_loading"
-            >
-              <i class="fa fa-check"></i>
-            </button>
-            <button
-              class="btn btn-danger px-0 py-1 me-2 fs-6"
-              v-show="delete_mode_loading"
-              disabled
-            >
-              <i class="fa fa-spinner spin-icon"></i>
-            </button>
-            <button
-              class="btn btn-primary text-white px-0 py-1 fs-6"
-              @click="goToNext"
-            >
-              <i class="fa fa-chevron-left"></i>
-            </button>
-            <button
-              class="btn btn-primary text-white px-0 py-1 fs-6"
-              @click="goToPrev"
-            >
-              <i class="fa fa-chevron-right"></i>
-            </button>
-            <button class="btn btn-primary px-0 py-1 fs-6" @click="goToToday">
-              {{ $t("emr-calendar-go-to-today") }}
-            </button>
-            <select
-              v-model="currentView"
-              class="form-select form-select-sm ms-2"
-              style="width: 120px"
-              @change="changeCalendarView"
-            >
-              <option value="dayGridMonth">
-                {{ $t("emr-calendar-view-type-month") }}
-              </option>
-              <option value="dayGridWeek">
-                {{ $t("emr-calendar-view-type-week") }}
-              </option>
-              <option value="dayGridDay">
-                {{ $t("emr-calendar-view-type-day") }}
-              </option>
-            </select>
-          </div>
-        </div>
-        <FullCalendar ref="fullCalendarRef" :options="calendarOptions" />
-      </div>
-    </div>
+  <div :class="kanbanSizeAdjust">
+    <crm-kanban-kanban-board
+      :stages="stages"
+      :isDraggable="false"
+      defaultColor="#333"
+      :show-calendar-drag="true"
+      :view-type="'emr'"
+      @open-whatsapp-modal="openWhatsappModal"
+      @receive-whatsapp-message="receiveWhatsappMessage"
+      @update-whatsapp-message="updateWhatsappMessage"
+      @change-deal-stage="changeDealStage"
+    />
   </div>
 </template>
 
@@ -106,13 +31,13 @@ import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
-import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
 import { getEmrKanban } from "@/plugins/services/kanbanService";
 import { createTask } from "@/plugins/services/taskService";
 import { useTaskStore } from "@/stores/TaskStore";
 import { useDealStore } from "@/stores/DealStore";
+import { useSettingStore } from "@/stores/SettingStore";
 
 export default {
   name: "EmrDealKanbanView",
@@ -120,7 +45,6 @@ export default {
   components: {
     CrmKanbanHeader,
     CrmKanbanKanbanBoard,
-    FullCalendar,
   },
   setup() {
     const notificationStore = useNotificationStore();
@@ -142,6 +66,13 @@ export default {
     const selectedTasks = ref([]);
     const searching = ref(false);
     const searchVal = ref("");
+    const setting_store = useSettingStore();
+    const toggleEMRCalendarDrawer = () => {
+      setting_store.toggleEmrCalendarDrawer();
+    };
+    const kanbanSizeAdjust = computed(() => {
+      return setting_store.getIsEmrCalendarDrawerOpen ? "w-50" : "w-100";
+    });
     const getEventClass = (arg) => {
       if (delete_mode.value && selectedTasks.value.includes(arg.event.id)) {
         return ["selected-for-deletion"];
@@ -501,6 +432,15 @@ export default {
         });
       });
     };
+    watch(
+      () => dealStore.getDealFetchIndicator,
+      (is_true) => {
+        if (is_true) {
+          fetchStages();
+          dealStore.toggleFetchStagesIndicator();
+        }
+      }
+    );
     onMounted(async () => {
       taskStore.setDayGridMode(currentView.value);
       await fetchStages();
@@ -510,6 +450,8 @@ export default {
       window.removeEventListener("contextmenu", handleRightClick);
     });
     return {
+      kanbanSizeAdjust,
+      toggleEMRCalendarDrawer,
       stages,
       filters,
       applyFilters,

@@ -212,7 +212,7 @@
                     :stage-id="deal.stage_id"
                     :all-stages="allStages"
                     :is-draggable="isDraggable"
-                    @open-deal-data-card="openDealDataCard(deal.id, stage.id)"
+                    @open-deal-data-card="openDealDataCard(deal.id)"
                     @toggle-highlight="handleHighlight(deal.id)"
                     :show-calendar-drag="showCalendarDrag"
                   />
@@ -246,7 +246,7 @@
       style="pointer-events: none"
     >
       <div
-        v-if="showRight"
+        v-show="showRight"
         class="rigthArrow text-white position-absolute bg-primary p-2 opacity-25 z-3"
         style="pointer-events: auto; width: fit-content"
         @mouseenter="scrollDeals(1)"
@@ -255,7 +255,7 @@
         <i class="fa-solid fa-chevron-right fs-1 p-3"></i>
       </div>
       <div
-        v-if="showLeft"
+        v-show="showLeft"
         class="leftArrow text-white position-absolute bg-primary p-2 opacity-25 z-3"
         style="pointer-events: auto; width: fit-content"
         @mouseenter="scrollDeals(-1)"
@@ -688,9 +688,9 @@ export default {
         if (!allStages.value) {
           let response = null;
           if (user_role.value == "after-sales") {
-            response = await getAvailableAfterSalesStages();
+            response = getAvailableAfterSalesStages();
           } else {
-            response = await getAvailableStages();
+            response = getAvailableStages();
           }
           if (response.data && response.data.data) {
             allStages.value = response.data.data;
@@ -725,48 +725,8 @@ export default {
           if (dealData.data) {
             const deal = dealData.data.data;
             selectedStageId.value = deal.stage_id;
-            const checkStageLoaded = () => {
-              if (isTasksView.value) {
-                return displayStages.value.find(
-                  (stage) => stage.id === currentStageId
-                );
-              } else {
-                return displayStages.value.some(
-                  (stage) => stage.id === deal.stage_id
-                );
-              }
-            };
-            const waitForStage = () => {
-              return new Promise((resolve) => {
-                if (checkStageLoaded()) {
-                  resolve();
-                } else {
-                  console.warn(
-                    `Deal's stage (ID: ${deal.stage_id}) not currently displayed.`
-                  );
-                  resolve();
-                }
-              });
-            };
-            await waitForStage();
-            // set deal value
+            console.log("currentStageId", currentStageId);
             selectedDeal.value = deal;
-            await nextTick();
-            const modalEl = document.getElementById("dealDataCard");
-            const modal = new Modal(modalEl);
-            modal.show();
-            modalEl.addEventListener(
-              "hidden.bs.modal",
-              () => {
-                const backdrop = document.querySelector(".modal-backdrop");
-                if (backdrop) {
-                  backdrop.remove();
-                  document.body.classList.remove("modal-open");
-                  document.body.style.paddingRight = null;
-                }
-              },
-              { once: true }
-            );
           } else {
             console.error("No matching deal found for ID:", dealId);
           }

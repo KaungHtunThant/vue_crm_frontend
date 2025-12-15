@@ -298,6 +298,8 @@
         >
         <div
           class="btnHeaderBg px-3 text-white d-flex justify-content-center align-items-center rounded-1"
+          style="cursor: pointer"
+          @click="toggleEMRCalendarDrawer"
         >
           <i class="fa-solid fa-calendar-days"></i>
         </div>
@@ -436,6 +438,9 @@ export default {
     const otp_code = ref(null);
     const userStore = useUserStore();
     const userImage = computed(() => userStore.getCurrentUser?.image || "");
+    const toggleEMRCalendarDrawer = () => {
+      settingStore.toggleEmrCalendarDrawer();
+    };
     const handleOTPGenerate = async () => {
       try {
         if (otp_code.value) {
@@ -531,6 +536,7 @@ export default {
     }
     const logo = require("@/assets/" + process.env.VUE_APP_LOGO_NAME);
     return {
+      toggleEMRCalendarDrawer,
       logo,
       currentTime,
       pageTitle,

@@ -42,6 +42,9 @@ export const PERMISSIONS = {
   EDIT_CONTACT_PHONE: "edit-contact-phone",
   GENERATE_OTP: "generate-otp",
   STAY_IDLE: "stay-idle",
+  VIEW_EMR_CALENDAR: "view-emr-calendar",
+  UPDATE_EMR_TASK: "edit-emr-task",
+  DELETE_EMR_TASK: "delete-emr-task",
 };
 
 export const usePermissionStore = defineStore("permissions", {
