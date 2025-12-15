@@ -864,7 +864,11 @@
                             class="form-select py-2"
                             :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
                             v-model="pkg.id"
-                            :disabled="!isEditMode"
+                            :disabled="
+                              !permissionStore.hasPermission(
+                                PERMISSIONS.EDIT_HOSPITAL_PACKAGE
+                              ) || !isEditMode
+                            "
                             @dblclick="handleDoubleClick"
                           >
                             <option :value="null" disabled selected>
@@ -889,7 +893,11 @@
                             class="form-select py-2"
                             :class="isEditMode ? 'bg-input-edit' : 'bg-input'"
                             v-model="pkg.user_id"
-                            :disabled="!isEditMode"
+                            :disabled="
+                              !permissionStore.hasPermission(
+                                PERMISSIONS.EDIT_HOSPITAL_PACKAGE
+                              ) || !isEditMode
+                            "
                             @dblclick="handleDoubleClick"
                           >
                             <option :value="null" disabled selected>
@@ -925,7 +933,11 @@
                                   'kanban-modal-edit-placeholder-packages-quantity'
                                 )
                               "
-                              :readonly="!isEditMode"
+                              :readonly="
+                                !permissionStore.hasPermission(
+                                  PERMISSIONS.EDIT_HOSPITAL_PACKAGE
+                                ) || !isEditMode
+                              "
                               min="1"
                             />
                           </div>
@@ -949,7 +961,11 @@
                                   'kanban-modal-edit-placeholder-packages-price'
                                 )
                               "
-                              :readonly="!isEditMode"
+                              :readonly="
+                                !permissionStore.hasPermission(
+                                  PERMISSIONS.EDIT_HOSPITAL_PACKAGE
+                                ) || !isEditMode
+                              "
                               min="0"
                             />
                           </div>
@@ -959,6 +975,11 @@
                             class="btn btn-primary"
                             @click="removeHospitalPackage(index)"
                             v-show="isEditMode"
+                            :hidden="
+                              !permissionStore.hasPermission(
+                                PERMISSIONS.EDIT_HOSPITAL_PACKAGE
+                              )
+                            "
                           >
                             x
                           </button>
@@ -973,7 +994,11 @@
                     <button
                       class="btn btn-primary fs-5 px-3"
                       @click="addNewHospitalPackage"
-                      :disabled="!isEditMode"
+                      :hidden="
+                        !permissionStore.hasPermission(
+                          PERMISSIONS.EDIT_HOSPITAL_PACKAGE
+                        ) || !isEditMode
+                      "
                       v-if="isEditMode"
                     >
                       +

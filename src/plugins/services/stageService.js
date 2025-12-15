@@ -50,3 +50,6 @@ export const fetchTasksCountByStageName = (stageName) => {
 export const getStagesByBoardId = (board_id) => {
   return axios.get(`/stages/board/${board_id}`);
 };
+export const getConfirmedStage = async () => {
+  return axios.get("/stages/confirmed-stage");
+};

@@ -42,6 +42,8 @@ export const PERMISSIONS = {
   EDIT_CONTACT_PHONE: "edit-contact-phone",
   GENERATE_OTP: "generate-otp",
   STAY_IDLE: "stay-idle",
+  EDIT_HOSPITAL_PACKAGE: "edit-hospital-package",
+  EDIT_SALES_PACKAGE: "edit-sales-package",
 };
 
 export const usePermissionStore = defineStore("permissions", {

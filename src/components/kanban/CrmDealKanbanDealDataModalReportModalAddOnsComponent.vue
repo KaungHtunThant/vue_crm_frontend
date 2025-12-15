@@ -12,7 +12,11 @@
       >
         <div class="row m-0 gx-0">
           <div class="col-7 pe-2">
-            <select class="form-select py-2 bg-input-edit" v-model="service.id">
+            <select
+              class="form-select py-2 bg-input-edit"
+              v-model="service.id"
+              :disabled="packagesRules"
+            >
               <option value="" disabled>
                 {{ $t("kanban-modal-edit-placeholder-addon") }}
               </option>
@@ -34,6 +38,7 @@
               "
               class="form-control py-2 bg-input-edit"
               min="1"
+              :readonly="packagesRules"
             />
           </div>
           <div class="col-1 pe-2">
@@ -41,6 +46,7 @@
               type="button"
               class="btn btn-primary h-100"
               @click="removeAdditionalService(index)"
+              :hidden="packagesRules"
             >
               x
             </button>
@@ -56,6 +62,7 @@
         type="button"
         class="btn btn-primary fs-5 px-3"
         @click="addNewAdditionalService"
+        :hidden="packagesRules"
       >
         +
       </button>
@@ -79,6 +86,7 @@
             'kanban-modal-edit-placeholder-total-cost'
           )} ${currency}`"
           min="0"
+          :readonly="packagesRules"
         />
       </div>
     </div>
@@ -88,13 +96,19 @@
 import { useDealStore } from "@/stores/DealStore";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { usePackageStore } from "@/stores/PackageStore";
+import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import { computed, onMounted, ref, watch } from "vue";
+import Cookies from "js-cookie";
+import { useStageStore } from "@/stores/StageStore";
 export default {
   name: "AddOnsComponent",
   setup() {
     const deal_store = useDealStore();
     const package_store = usePackageStore();
     const notification_store = useNotificationStore();
+    const permissionStore = usePermissionStore();
+    const stage_store = useStageStore();
+    const ConfirmedStageId = ref(null);
     const data = computed(() => deal_store.getCurrentDeal);
     const local_data = ref({});
     const additional_packages = computed(() =>
@@ -105,7 +119,16 @@ export default {
         id: "",
       });
     };
-
+    const packagesRules = computed(() => {
+      const $userRole = Cookies.get("user_role");
+      if ($userRole === "super-admin" || $userRole === "crm-admin") {
+        return false;
+      }
+      return (
+        !permissionStore.hasPermission(PERMISSIONS.EDIT_SALES_PACKAGE) ||
+        ConfirmedStageId.value === local_data.value.stage_id
+      );
+    });
     const removeAdditionalService = (index) => {
       try {
         local_data.value.additional_services.splice(index, 1);
@@ -138,20 +161,35 @@ export default {
         }
       }
     );
-    onMounted(() => {
+    onMounted(async () => {
       if (package_store.getCategories.length === 0) {
         package_store.fetchCategories();
       }
       if (package_store.getAllPackages.length === 0) {
         package_store.fetchPackages();
       }
-      local_data.value = data.value;
+      local_data.value = {
+        ...data.value,
+        additional_services: data.value?.additional_services || [],
+      };
+      try {
+        const confirmedStage = await stage_store.fetchConfirmedStage();
+        ConfirmedStageId.value = confirmedStage.id;
+      } catch (error) {
+        console.error("Failed to fetch confirmed stage:", error);
+        notification_store.error("Failed to load stage information", {
+          timeout: 3000,
+        });
+      }
     });
     return {
       local_data,
       additional_packages,
       addNewAdditionalService,
       removeAdditionalService,
+      permissionStore,
+      PERMISSIONS,
+      packagesRules,
     };
   },
 };

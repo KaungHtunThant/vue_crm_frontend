@@ -12,7 +12,11 @@
     >
       <div class="row p-0">
         <div class="col-8 p-1 px-1">
-          <select class="form-select py-2 bg-input-edit" v-model="pkg.id">
+          <select
+            class="form-select py-2 bg-input-edit"
+            v-model="pkg.id"
+            :disabled="packagesRules"
+          >
             <option value="" disabled>
               {{ $t("kanban-modal-edit-placeholder-packages-name") }}
             </option>
@@ -37,6 +41,7 @@
                 $t('kanban-modal-edit-placeholder-packages-quantity')
               "
               min="1"
+              :readonly="packagesRules"
             />
           </div>
         </div>
@@ -45,6 +50,7 @@
             type="button"
             class="btn btn-primary"
             @click="removeKanbanPackage(index)"
+            :hidden="packagesRules"
           >
             x
           </button>
@@ -56,6 +62,7 @@
         type="button"
         class="btn btn-primary fs-5 px-3"
         @click="addNewKanbanPackage"
+        :hidden="packagesRules"
       >
         +
       </button>
@@ -73,6 +80,7 @@
             'kanban-modal-edit-placeholder-total-cost'
           )} ${currency}`"
           min="0"
+          :readonly="packagesRules"
         />
       </div>
     </div>
@@ -83,6 +91,9 @@ import { useDealStore } from "@/stores/DealStore";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { usePackageStore } from "@/stores/PackageStore";
 import { computed, watch, ref, onMounted } from "vue";
+import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
+import Cookies from "js-cookie";
+import { useStageStore } from "@/stores/StageStore";
 export default {
   name: "SalesPackagesComponent",
   setup() {
@@ -91,6 +102,9 @@ export default {
     const notification_store = useNotificationStore();
     const data = computed(() => deal_store.getCurrentDeal);
     const local_data = ref({});
+    const permissionStore = usePermissionStore();
+    const stage_store = useStageStore();
+    const ConfirmedStageId = ref(null);
     const treatment_packages = computed(() =>
       package_store.getPackagesWithCategory("treatments")
     );
@@ -100,6 +114,16 @@ export default {
         quantity: null,
       });
     };
+    const packagesRules = computed(() => {
+      const $userRole = Cookies.get("user_role");
+      if ($userRole === "super-admin" || $userRole === "crm-admin") {
+        return false;
+      }
+      return (
+        !permissionStore.hasPermission(PERMISSIONS.EDIT_SALES_PACKAGE) ||
+        ConfirmedStageId.value === local_data.value.stage_id
+      );
+    });
     const removeKanbanPackage = (index) => {
       try {
         local_data.value.kanban_packages.splice(index, 1);
@@ -132,20 +156,34 @@ export default {
         }
       }
     );
-    onMounted(() => {
+    onMounted(async () => {
       if (package_store.getCategories.length === 0) {
         package_store.fetchCategories();
       }
       if (package_store.getAllPackages.length === 0) {
         package_store.fetchPackages();
       }
-      local_data.value = data.value;
+      local_data.value = {
+        ...data.value,
+        kanban_packages: data.value?.kanban_packages || [],
+      };
+      try {
+        const confirmedStage = await stage_store.fetchConfirmedStage();
+        ConfirmedStageId.value = confirmedStage.id;
+      } catch (error) {
+        notification_store.error(error.message, {
+          timeout: 3000,
+        });
+      }
     });
     return {
       treatment_packages,
       local_data,
       addNewKanbanPackage,
       removeKanbanPackage,
+      permissionStore,
+      PERMISSIONS,
+      packagesRules,
     };
   },
 };

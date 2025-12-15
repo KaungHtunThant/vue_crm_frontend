@@ -4,6 +4,7 @@ import {
   getAllStages,
   getStagesByBoardId,
   updateStage,
+  getConfirmedStage,
 } from "@/plugins/services/stageService";
 import { defineStore } from "pinia";
 
@@ -169,6 +170,13 @@ export const useStageStore = defineStore("stage", {
         merge_view: false,
         minimized: false,
       }));
+    },
+    async fetchConfirmedStage() {
+      const response = await getConfirmedStage();
+      if (response.status !== 200) {
+        throw new Error("Failed to fetch confirmed stage");
+      }
+      return response.data.data;
     },
   },
 });
