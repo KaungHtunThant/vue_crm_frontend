@@ -684,6 +684,7 @@ export default {
       mode = null
     ) => {
       try {
+        dealStore.toggleDealModalStatus(true);
         // stages check and fetch
         if (!allStages.value) {
           let response = null;

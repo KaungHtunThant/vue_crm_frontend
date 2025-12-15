@@ -1497,23 +1497,32 @@
             </div>
           </div>
         </div>
-        <div class="position-fixed trashCustm" v-if="viewType !== 'emr'">
-          <button
-            v-if="this.user_role !== 'after-sales'"
-            class="btn bg-warning py-2 px-3 rounded-3 me-2"
-            @click="openSuggestApprovalModal"
-          >
-            <i class="fa-solid fa-user"></i>
-            {{ t("kanban-modal-edit-button-suggest-user") }}
-          </button>
-          <button
-            v-if="this.user_role !== 'after-sales'"
-            class="btn bg-danger py-2 px-3 rounded-3 text-light"
-            @click="openTrashDealModal"
-          >
-            <i class="fa-solid fa-trash"></i>
-            {{ t("kanban-modal-edit-button-trash-deal") }}
-          </button>
+        <div class="position-fixed trashCustm">
+          <div v-if="viewType !== 'emr' && this.user_role !== 'after-sales'">
+            <button
+              class="btn bg-warning py-2 px-3 rounded-3 me-2"
+              @click="openSuggestApprovalModal"
+            >
+              <i class="fa-solid fa-user"></i>
+              {{ t("kanban-modal-edit-button-suggest-user") }}
+            </button>
+            <button
+              class="btn bg-danger py-2 px-3 rounded-3 text-light"
+              @click="openTrashDealModal"
+            >
+              <i class="fa-solid fa-trash"></i>
+              {{ t("kanban-modal-edit-button-trash-deal") }}
+            </button>
+          </div>
+          <div v-else-if="viewType === 'emr'">
+            <button
+              class="btn bg-warning py-2 px-3 rounded-3"
+              @click="setTasksProcessing(deal.id)"
+            >
+              {{ t("kanban-modal-edit-processing") }}
+              <i class="fa fa-check ms-2"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1665,6 +1674,22 @@ export default {
     const taskDataModified = ref(false);
     const modified_id = ref(null);
     const taskStore = useTaskStore();
+    const setTasksProcessingLoading = ref(false);
+    const setTasksProcessing = async (id) => {
+      try {
+        setTasksProcessingLoading.value = true;
+        const response = await taskStore.setTasksProcessing(id);
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        notificationStore.success(response.message);
+        taskStore.toggleStatusChangeTrigger(true);
+      } catch (error) {
+        notificationStore.error(error.message);
+      } finally {
+        setTasksProcessingLoading.value = false;
+      }
+    };
 
     const resizeDisplayedCommentWidth = (commentId) => {
       nextTick(() => {
@@ -2129,6 +2154,7 @@ export default {
       }
     };
     const closeEditMode = () => {
+      dealStore.toggleDealModalStatus();
       Object.assign(customerData, dataDealCopy(originalDataValue.value));
       isEditMode.value = false;
     };
@@ -2183,7 +2209,7 @@ export default {
             timeout: 3000,
           });
           emit("task-finish", task.duedate);
-          taskStore.toggleStatusChangeTrigger();
+          taskStore.toggleStatusChangeTrigger(true);
         } else {
           notificationStore.error(response.data.message, {
             timeout: 3000,
@@ -2402,7 +2428,7 @@ export default {
           customerData.task = "";
           customerData.date = "";
           customerData.time = "";
-          taskStore.toggleStatusChangeTrigger();
+          taskStore.toggleStatusChangeTrigger(true);
         } else {
           notificationStore.error(response.data.message, {
             timeout: 3000,
@@ -2897,6 +2923,7 @@ export default {
       }, 0);
     });
     return {
+      setTasksProcessing,
       agreement_total_cost,
       extra_total_cost,
       total_cost,

@@ -179,7 +179,6 @@ export default {
     watch(task_status_change_trigger, () => {
       if (task_status_change_trigger.value) {
         fetchStages();
-        fullCalendarRef.value.getApi().refetchEvents();
         taskStore.toggleStatusChangeTrigger();
       }
     });

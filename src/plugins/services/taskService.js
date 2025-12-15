@@ -26,3 +26,7 @@ export const bulkDeleteTasks = async (ids) => {
     ids: ids,
   });
 };
+
+export const setTasksProcessing = async (id) => {
+  return await axios.post(`/tasks/set-processing/${id}`);
+};

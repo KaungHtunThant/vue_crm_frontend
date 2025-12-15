@@ -286,6 +286,9 @@ export default {
         });
       }
     };
+    const task_status_change_trigger = computed(
+      () => taskStore.status_change_trigger
+    );
 
     watch(
       () => settingStore.getIsEmrCalendarDrawerOpen,
@@ -298,6 +301,11 @@ export default {
         }
       }
     );
+    watch(task_status_change_trigger, () => {
+      if (task_status_change_trigger.value) {
+        fullCalendarRef.value.getApi().refetchEvents();
+      }
+    });
 
     onMounted(() => {
       taskStore.setDayGridMode(currentView.value);

@@ -7,16 +7,23 @@
 </template>
 <script>
 import { useSettingStore } from "@/stores/SettingStore";
+import { useDealStore } from "@/stores/DealStore";
 import { computed, onMounted } from "vue";
 
 export default {
   name: "RightDrawerComp",
   setup() {
     const settingStore = useSettingStore();
+    const dealStore = useDealStore();
     const isOpen = computed(() => settingStore.getIsEmrCalendarDrawerOpen);
+    const deal_modal_open = computed(() => dealStore.getDealModalStatus);
     onMounted(() => {
       window.addEventListener("contextmenu", () => {
-        if (isOpen.value) {
+        if (isOpen.value && !deal_modal_open.value) {
+          console.log("Closing Right Drawer from context menu", {
+            isOpen: isOpen.value,
+            deal_modal_open: deal_modal_open.value,
+          });
           settingStore.toggleEmrCalendarDrawer();
         }
       });

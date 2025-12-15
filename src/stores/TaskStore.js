@@ -3,6 +3,7 @@ import {
   getTasksByDate,
   getTasksByDealId,
   updateTask,
+  setTasksProcessing,
   bulkDeleteTasks as bulkDelete,
 } from "@/plugins/services/taskService";
 import { fetchTasksCountByStageName } from "@/plugins/services/stageService";
@@ -28,7 +29,6 @@ export const useTaskStore = defineStore("task", {
       state.tasks.filter((task) => task.status !== "completed"),
     getCalendarTasks: (state) => {
       if (state.day_grid_mode === "dayGridDay") {
-        console.log("Formatting calendar tasks for dayGridDay mode");
         return state.calendar_tasks.map((task) => {
           return {
             ...task,
@@ -225,7 +225,6 @@ export const useTaskStore = defineStore("task", {
           this.tasks[index] = { ...res.data.data };
         });
       } catch (error) {
-        console.error("Error updating task:", error);
         this.tasks[index] = backup_task;
         throw error;
       }
@@ -252,7 +251,6 @@ export const useTaskStore = defineStore("task", {
           message: response.data.message || "Task updated successfully",
         };
       } catch (error) {
-        console.error("Error updating task:", error);
         return {
           success: false,
           message: error.message || "Error updating task",
@@ -285,15 +283,14 @@ export const useTaskStore = defineStore("task", {
         this.calendar_tasks = response.data.data || [];
         return response.data.data;
       } catch (error) {
-        console.error("Error fetching calendar tasks:", error);
         return {
           success: false,
           message: error.message || "Error fetching calendar tasks",
         };
       }
     },
-    toggleStatusChangeTrigger() {
-      this.status_change_trigger = !this.status_change_trigger;
+    toggleStatusChangeTrigger(status = false) {
+      this.status_change_trigger = status;
     },
     async bulkDeleteTasks(task_ids) {
       try {
@@ -307,7 +304,6 @@ export const useTaskStore = defineStore("task", {
           throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error("Error bulk deleting tasks:", error);
         return {
           success: false,
           message: error.message || "Error bulk deleting tasks",
@@ -315,8 +311,24 @@ export const useTaskStore = defineStore("task", {
       }
     },
     setDayGridMode(mode) {
-      console.log("Setting day grid mode to:", mode);
       this.day_grid_mode = mode;
+    },
+    async setTasksProcessing(id) {
+      try {
+        const response = await setTasksProcessing(id);
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
+        return {
+          success: true,
+          message: response.data.message,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          message: error.message,
+        };
+      }
     },
   },
 });

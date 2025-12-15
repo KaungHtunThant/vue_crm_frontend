@@ -1,5 +1,5 @@
 <template>
-  <div class="" @contextmenu.prevent="closeAllModals">
+  <div class="">
     <the-loader-component
       :is-loading="loadingStore.isLoading"
       :loader-image="loaderImage"
@@ -47,6 +47,7 @@ import { useSettingStore } from "./stores/SettingStore";
 import { useNotificationStore } from "./stores/notificationStore";
 import RightDrawerComp from "@/components/customWrappers/RightDrawerComp.vue";
 import CustomFullCalendarComp from "@/components/calenderElements/CustomFullCalendarComp.vue";
+import { useDealStore } from "./stores/DealStore";
 
 export default {
   name: "App",
@@ -65,11 +66,13 @@ export default {
     const authStore = useAuthStore();
     const settingStore = useSettingStore();
     const notificationStore = useNotificationStore();
+    const dealStore = useDealStore();
     const hasPermissionTo = (permission) => {
       return permissionStore.hasPermission(permission);
     };
 
     return {
+      dealStore,
       hasPermissionTo,
       PERMISSIONS,
       loadingStore,
@@ -156,6 +159,7 @@ export default {
     },
 
     closeAllModals() {
+      this.dealStore.toggleDealModalStatus();
       this.$root.$emit("close-all-modals");
     },
   },
