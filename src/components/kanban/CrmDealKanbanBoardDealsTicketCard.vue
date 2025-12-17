@@ -220,6 +220,7 @@ import { useNotificationStore } from "@/stores/notificationStore";
 import { computed } from "vue";
 import CountryFlagAvatar from "@/components/whatsapp/WhatsAppModalSidebarLeftCountryFlagAvatar.vue";
 import Cookies from "js-cookie";
+import { useDealStore } from "@/stores/DealStore";
 
 export default {
   name: "CrmDealKanbanBoardDealsTicketCard",
@@ -252,8 +253,7 @@ export default {
     const notificationStore = useNotificationStore();
     const userRole = Cookies.get("user_role");
     const { t } = useI18n();
-    // const toast = useToast();
-
+    const dealStore = useDealStore();
     const ticketValue = computed(() => {
       const dealCreatedDate = new Date(props.deal.created_at);
       const today = new Date();
@@ -285,7 +285,7 @@ export default {
       return `${day}/${month}`;
     };
     const openDealDataCard = () => {
-      emit("open-deal-data-card", props.deal.id);
+      dealStore.changeCurrentDeal(props.deal.id);
     };
     const getUserColor = (userId) => {
       return localStorage.getItem(`user_${userId}_color`) || "#292929";

@@ -212,7 +212,6 @@
                     :stage-id="deal.stage_id"
                     :all-stages="allStages"
                     :is-draggable="isDraggable"
-                    @open-deal-data-card="openDealDataCard(deal.id)"
                     @toggle-highlight="handleHighlight(deal.id)"
                     :show-calendar-drag="showCalendarDrag"
                   />
@@ -317,7 +316,6 @@ import { useRoute } from "vue-router";
 import { useNotificationStore } from "@/stores/notificationStore";
 import {
   updateDealStage,
-  showDeal,
   fetchAdditionalDealsByStageId,
   addViewCount,
   toggleHighlight,
@@ -425,7 +423,7 @@ export default {
       (newDeal) => {
         if (newDeal) {
           selectedDeal.value = newDeal;
-          openDealDataCard(newDeal.id, null, "calendar");
+          openDealDataCard(newDeal.id);
         }
       }
     );
@@ -678,14 +676,9 @@ export default {
         .catch((error) => console.error("Failed to play sound:", error));
     };
 
-    const openDealDataCard = async (
-      dealId,
-      currentStageId = null,
-      mode = null
-    ) => {
+    const openDealDataCard = async (dealId) => {
       try {
         dealStore.toggleDealModalStatus(true);
-        // stages check and fetch
         if (!allStages.value) {
           let response = null;
           if (user_role.value == "after-sales") {
@@ -701,37 +694,24 @@ export default {
         }
         // add view count
         addViewCount(dealId);
-
-        // mode check
-        if (mode === "calendar") {
-          await nextTick();
-          const modalEl = document.getElementById("dealDataCard");
-          const modal = new Modal(modalEl);
-          modal.show();
-          modalEl.addEventListener(
-            "hidden.bs.modal",
-            () => {
-              const backdrop = document.querySelector(".modal-backdrop");
-              if (backdrop) {
-                backdrop.remove();
-                document.body.classList.remove("modal-open");
-                document.body.style.paddingRight = null;
-              }
-            },
-            { once: true }
-          );
-        } else {
-          // deal fetch
-          const dealData = await showDeal(dealId);
-          if (dealData.data) {
-            const deal = dealData.data.data;
-            selectedStageId.value = deal.stage_id;
-            console.log("currentStageId", currentStageId);
-            selectedDeal.value = deal;
-          } else {
-            console.error("No matching deal found for ID:", dealId);
-          }
-        }
+        // deal fetch
+        selectedStageId.value = selectedDeal.value.stage_id;
+        await nextTick();
+        const modalEl = document.getElementById("dealDataCard");
+        const modal = new Modal(modalEl);
+        modal.show();
+        modalEl.addEventListener(
+          "hidden.bs.modal",
+          () => {
+            const backdrop = document.querySelector(".modal-backdrop");
+            if (backdrop) {
+              backdrop.remove();
+              document.body.classList.remove("modal-open");
+              document.body.style.paddingRight = null;
+            }
+          },
+          { once: true }
+        );
       } catch (error) {
         notificationStore.error(error.message);
       }

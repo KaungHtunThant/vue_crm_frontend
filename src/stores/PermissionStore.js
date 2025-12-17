@@ -35,7 +35,7 @@ export const PERMISSIONS = {
   ADD_ASSIGN_BY_DEAL: "add-assign-by-deal",
   ADD_ASSIGNED_TO_DEAL: "add-assigned-to-deal",
   ADD_OWNER_DEAL: "add-owner-deal",
-  VIEW_HOSPITAL_PACKAGE: "view-hospital-packages",
+  VIEW_HOSPITAL_PACKAGE: "view-hospital-package",
   EXPORT_DEAL: "export-deal",
   IMPORT_DEAL: "import-deal",
   AFTER_SALES_KANBAN: "view-aftersales-kanban-page",
