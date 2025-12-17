@@ -73,6 +73,7 @@
               class="btn-close"
               data-bs-dismiss="modal"
               aria-label="Close"
+              @click="closeModal"
             ></button>
           </div>
         </div>
@@ -2922,7 +2923,13 @@ export default {
         return sum + total_price;
       }, 0);
     });
+    const closeModal = () => {
+      setTimeout(() => {
+        dealStore.toggleDealModalStatus();
+      }, 300);
+    };
     return {
+      closeModal,
       setTasksProcessing,
       agreement_total_cost,
       extra_total_cost,
