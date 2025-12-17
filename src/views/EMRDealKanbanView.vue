@@ -31,13 +31,11 @@ import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
 import { getEmrKanban } from "@/plugins/services/kanbanService";
-import { createTask } from "@/plugins/services/taskService";
 import { useTaskStore } from "@/stores/TaskStore";
 import { useDealStore } from "@/stores/DealStore";
 import { useSettingStore } from "@/stores/SettingStore";
+import { Draggable } from "@fullcalendar/interaction";
 
 export default {
   name: "EmrDealKanbanView",
@@ -61,9 +59,6 @@ export default {
     const logs = ref([]);
     const comments = ref([]);
     const packages = ref([]);
-    const delete_mode = ref(false);
-    const delete_mode_loading = ref(false);
-    const selectedTasks = ref([]);
     const searching = ref(false);
     const searchVal = ref("");
     const setting_store = useSettingStore();
@@ -73,107 +68,8 @@ export default {
     const kanbanSizeAdjust = computed(() => {
       return setting_store.getIsEmrCalendarDrawerOpen ? "w-50" : "w-100";
     });
-    const getEventClass = (arg) => {
-      if (delete_mode.value && selectedTasks.value.includes(arg.event.id)) {
-        return ["selected-for-deletion"];
-      }
-      return [];
-    };
-    const calendarOptions = ref({
-      plugins: [dayGridPlugin, interactionPlugin],
-      initialView: currentView.value,
-      locale: localStorage.getItem("locale") || "ar",
-      editable: true,
-      droppable: true,
-      events(fetchInfo, successCallback, failureCallback) {
-        taskStore
-          .fetchCalendarTasksByDate(fetchInfo.startStr, fetchInfo.endStr)
-          .then(() => {
-            successCallback(taskStore.getCalendarTasks);
-          })
-          .catch(() => {
-            failureCallback();
-          });
-      },
-      dropAccept: ".deal-card-calendar",
-      eventReceive: (info) => {
-        info.revert();
-        let ticketData;
-        try {
-          ticketData = JSON.parse(info.draggedEl.dataset.ticket);
-        } catch {
-          ticketData = { name: info.event.title };
-        }
-        handleAddTask(ticketData.id, info.event.startStr);
-        fetchStages();
-      },
-      eventDrop: async (info) => {
-        const idx = calendarEvents.value.findIndex(
-          (e) => e.id == info.event.id
-        );
-        if (idx !== -1) {
-          calendarEvents.value[idx].start = info.event.startStr;
-        }
-        const response = await taskStore.updateTask(
-          info.event.id,
-          info.event.startStr
-        );
-        if (response.success) {
-          notificationStore.success(response.message);
-        } else {
-          notificationStore.error(response.message);
-          info.revert();
-        }
-      },
-      eventClick: async (info) => {
-        if (delete_mode.value) {
-          const el = info.el;
-          if (selectedTasks.value.includes(info.event.id)) {
-            selectedTasks.value = selectedTasks.value.filter(
-              (id) => id !== info.event.id
-            );
-            el.classList.remove("selected-for-deletion");
-          } else {
-            selectedTasks.value.push(info.event.id);
-            el.classList.add("selected-for-deletion");
-          }
-        } else {
-          const ticketId = info.event.extendedProps.ticketId;
-          if (ticketId) {
-            dealStore.changeCurrentDeal(ticketId);
-          } else {
-            notificationStore.error("Task has no deal");
-          }
-        }
-      },
-      headerToolbar: false,
-      height: "calc(100vh - 150px)",
-      eventBackgroundColor: "#2d2e2e",
-      eventBorderColor: "#2d2e2e",
-      eventClassNames: getEventClass,
-      dayMaxEventRows: 3,
-      fixedWeekCount: false,
-      dayHeaderClassNames: "calendar-day-header",
-      dayCellClassNames: "calendar-day-cell",
-      views: {
-        dayGridMonth: {
-          dayMaxEventRows: 3,
-        },
-        dayGridWeek: {
-          dayMaxEventRows: false,
-          dayMaxEvents: false,
-          eventMaxStack: 10,
-        },
-        dayGridDay: {
-          dayMaxEventRows: false,
-          dayMaxEvents: false,
-          eventMaxStack: 10,
-          titleFormat: { year: "numeric", month: "long", day: "numeric" },
-        },
-      },
-    });
     const task_status_change_trigger = computed(
-      () => taskStore.status_change_trigger
+      () => taskStore.getStatusChangeTrigger
     );
     const deal_scroll_status = computed(() => dealStore.getDealScrollStatus);
     watch(task_status_change_trigger, () => {
@@ -377,60 +273,6 @@ export default {
         console.error("Error fetching stages:", error);
       }
     };
-    const handleAddTask = async (deal_id, date) => {
-      try {
-        const formData = {
-          description: "Appointment",
-          duedate: date,
-          duetime: null,
-          deal_id: deal_id,
-          type: "hospital",
-        };
-        const response = await createTask(formData);
-        if (response.status === 200 || response.status === 201) {
-          fullCalendarRef.value.getApi().refetchEvents();
-          notificationStore.success(response.data.message, {
-            timeout: 3000,
-          });
-        } else {
-          notificationStore.error(response.data.message, {
-            timeout: 3000,
-          });
-        }
-      } catch (error) {
-        console.error("Error adding task:", error);
-        notificationStore.error(error.message, {
-          timeout: 3000,
-        });
-      }
-    };
-    const handleDeleteSelectedTasks = async () => {
-      delete_mode_loading.value = true;
-      if (selectedTasks.value.length === 0) {
-        notificationStore.error("No tasks selected for deletion");
-      } else {
-        const response = await taskStore.bulkDeleteTasks(selectedTasks.value);
-        if (response.success) {
-          fullCalendarRef.value.getApi().refetchEvents();
-          fetchStages();
-          notificationStore.success(response.message);
-          selectedTasks.value = [];
-          delete_mode.value = false;
-        } else {
-          notificationStore.error(response.message);
-        }
-      }
-      delete_mode_loading.value = false;
-    };
-    const handleCancelDeleteSelectedTasks = () => {
-      delete_mode.value = false;
-      selectedTasks.value = [];
-      nextTick(() => {
-        document.querySelectorAll(".selected-for-deletion").forEach((el) => {
-          el.classList.remove("selected-for-deletion");
-        });
-      });
-    };
     watch(
       () => dealStore.getDealFetchIndicator,
       (is_true) => {
@@ -463,7 +305,6 @@ export default {
       selected_conversation,
       new_message,
       update_message,
-      calendarOptions,
       fullCalendarRef,
       currentView,
       calendarTitle,
@@ -476,10 +317,6 @@ export default {
       comments,
       packages,
       calendarEvents,
-      delete_mode,
-      handleDeleteSelectedTasks,
-      delete_mode_loading,
-      handleCancelDeleteSelectedTasks,
       today_date,
       searching,
       searchVal,

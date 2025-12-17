@@ -244,19 +244,32 @@ export default {
       settingStore.toggleEmrCalendarDrawer();
     };
 
-    const handleCancelDeleteSelectedTasks = () => {
-      // Logic to cancel delete mode
-      delete_mode.value = false;
-    };
-
-    const handleDeleteSelectedTasks = () => {
-      // Logic to delete selected tasks
+    const handleDeleteSelectedTasks = async () => {
       delete_mode_loading.value = true;
-      // Simulate async operation
-      setTimeout(() => {
-        delete_mode_loading.value = false;
-        delete_mode.value = false;
-      }, 2000);
+      if (selectedTasks.value.length === 0) {
+        notificationStore.error("No tasks selected for deletion");
+      } else {
+        const response = await taskStore.bulkDeleteTasks(selectedTasks.value);
+        if (response.success) {
+          fullCalendarRef.value.getApi().refetchEvents();
+          dealStore.toggleFetchStagesIndicator(true);
+          notificationStore.success(response.message);
+          selectedTasks.value = [];
+          delete_mode.value = false;
+        } else {
+          notificationStore.error(response.message);
+        }
+      }
+      delete_mode_loading.value = false;
+    };
+    const handleCancelDeleteSelectedTasks = () => {
+      delete_mode.value = false;
+      selectedTasks.value = [];
+      nextTick(() => {
+        document.querySelectorAll(".selected-for-deletion").forEach((el) => {
+          el.classList.remove("selected-for-deletion");
+        });
+      });
     };
 
     const handleAddTask = async (deal_id, date) => {
@@ -287,7 +300,7 @@ export default {
       }
     };
     const task_status_change_trigger = computed(
-      () => taskStore.status_change_trigger
+      () => taskStore.getStatusChangeTrigger
     );
 
     watch(
