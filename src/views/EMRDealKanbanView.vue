@@ -286,6 +286,7 @@ export default {
       taskStore.setDayGridMode(currentView.value);
       await fetchStages();
       window.addEventListener("contextmenu", handleRightClick);
+      setting_store.toggleEmrCalendarDrawer(true);
     });
     onUnmounted(() => {
       window.removeEventListener("contextmenu", handleRightClick);

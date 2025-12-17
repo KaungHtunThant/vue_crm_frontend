@@ -309,7 +309,6 @@ export default {
         if (is_open) {
           nextTick(() => {
             fullCalendarRef.value.getApi().render();
-            stop();
           });
         }
       }

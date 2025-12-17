@@ -1521,7 +1521,7 @@
               @click="setTasksProcessing(deal.id)"
             >
               {{ t("kanban-modal-edit-processing") }}
-              <i class="fa fa-check ms-2"></i>
+              <i class="fa fa-heart-pulse ms-2"></i>
             </button>
           </div>
         </div>
