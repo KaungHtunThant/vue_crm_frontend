@@ -12,7 +12,11 @@
     >
       <div class="row p-0">
         <div class="col-5 p-1 px-1">
-          <select class="form-select py-2 bg-input-edit" v-model="pkg.id">
+          <select
+            class="form-select py-2 bg-input-edit"
+            v-model="pkg.id"
+            :disabled="!can_edit_packages"
+          >
             <option value="" disabled>
               {{ $t("kanban-modal-edit-placeholder-packages-name") }}
             </option>
@@ -33,6 +37,7 @@
               lang="en"
               class="bg-input bg-input-edit p-2 rounded-right-2 form-control"
               v-model="pkg.quantity"
+              :readonly="!can_edit_packages"
               :placeholder="
                 $t('kanban-modal-edit-placeholder-packages-quantity')
               "
@@ -50,6 +55,7 @@
               lang="en"
               class="bg-input bg-input-edit p-2 rounded-right-2 form-control"
               v-model="pkg.total_price"
+              :readonly="!can_edit_packages"
               :placeholder="$t('kanban-modal-edit-placeholder-packages-price')"
               min="0.01"
             />
@@ -59,6 +65,7 @@
           <button
             type="button"
             class="btn btn-primary"
+            v-if="can_edit_packages"
             @click="removeKanbanPackage(index)"
           >
             x
@@ -70,6 +77,7 @@
       <button
         type="button"
         class="btn btn-primary fs-5 px-3"
+        v-if="can_edit_packages"
         @click="addNewKanbanPackage"
       >
         +
@@ -93,12 +101,14 @@
 </template>
 <script>
 import { useDealStore } from "@/stores/DealStore";
+import { PERMISSIONS, usePermissionStore } from "@/stores/PermissionStore";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { usePackageStore } from "@/stores/PackageStore";
 import { computed, watch, ref, onMounted } from "vue";
 export default {
   name: "SalesPackagesComponent",
   setup() {
+    const permissionStore = usePermissionStore();
     const deal_store = useDealStore();
     const package_store = usePackageStore();
     const notification_store = useNotificationStore();
@@ -133,6 +143,9 @@ export default {
       }
       return total.toFixed(2);
     });
+    const can_edit_packages = computed(() =>
+      permissionStore.hasPermission(PERMISSIONS.EDIT_SALES_PACKAGE)
+    );
     watch(
       () => data.value,
       (newVal) => {
@@ -166,6 +179,7 @@ export default {
       local_data.value = data.value;
     });
     return {
+      can_edit_packages,
       treatment_packages,
       local_data,
       addNewKanbanPackage,
