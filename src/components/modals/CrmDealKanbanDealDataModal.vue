@@ -33,6 +33,19 @@
               </button>
             </h5>
           </div>
+          <div class="d-flex align-items-center">
+            <i class="fas fa-money-bill me-1"></i>
+            <span class="px-1">{{ t("kanban-modal-edit-balance") }}</span>
+            <input
+              type="number"
+              :class="['form-control']"
+              v-model="customerData.balance"
+              :placeholder="t('kanban-modal-edit-placeholder-balance')"
+              :readonly="!isEditMode"
+              name="balance"
+              @dblclick="handleDoubleClick"
+            />
+          </div>
           <!-- <div class="">
             <button @click="PrintCase" class="bg-transparent border-0">
               <i class="fa-solid fa-print"></i>
@@ -1163,6 +1176,8 @@
                       class="form-control bg-input text-secondary py-2 me-1"
                       v-model="customerData.date"
                       :placeholder="t('modals.selectDate')"
+                      :min="todayDate"
+                      :max="maxDateStr"
                       @mousedown="dateTaskClick"
                       @keyup.enter="handleAddTask"
                     />
@@ -1211,7 +1226,9 @@
                     :class="{ 'delete-animation': task.toDelete }"
                   >
                     <div class="col-4">
-                      {{ task.description || task.task_event?.name || "Nill" }}
+                      {{
+                        tasks.description || tasks.task_event?.name || "Nill"
+                      }}
                     </div>
                     <div class="col-2">
                       <input
@@ -1276,6 +1293,10 @@
               <div
                 ref="commentsSection"
                 class="comments-section position-relative mt-4"
+                :class="{
+                  'elevated-section bg-white p-4 rounded-3 shadow-lg border border-2 border-danger':
+                    isOtherTaskSelected,
+                }"
               >
                 <div class="row">
                   <div class="col-12 px-0">
@@ -1806,6 +1827,7 @@ export default {
       transportation: props.deal?.transportation || 0,
       time: props.deal?.time || "",
       passports: props.deal?.passports || [],
+      balance: props.deal?.balance || 0,
     });
     const nationalities = computed(() => {
       return Object.fromEntries(
@@ -2134,6 +2156,7 @@ export default {
             ? new Date(customerData.date_of_birth).toISOString().slice(0, 10)
             : null,
           passportNumber: customerData.passportNumber || [],
+          balance: customerData.balance || 0,
         };
         const response = await updateDeal(props.deal.id, formData);
         if (response.status === 200) {
@@ -2839,7 +2862,15 @@ export default {
 
     const taskEventsList = computed(() => taskEventsStore.getTaskEvents);
     const CommentsTagsList = computed(() => commentsTagsStore.getcommentstags);
-
+    const todayDate = computed(() => {
+      const d = new Date();
+      return d.toISOString().split("T")[0];
+    });
+    const maxDateStr = computed(() => {
+      const d = new Date();
+      d.setDate(d.getDate() + 15);
+      return d.toISOString().split("T")[0];
+    });
     onMounted(async () => {
       packageStore.fetchAll();
       user_role.value = Cookies.get("user_role");
@@ -3028,6 +3059,8 @@ export default {
       isOtherTaskSelected,
       handleOverlayClick,
       preventRightClick,
+      todayDate,
+      maxDateStr,
       nationalityOptions,
       openTimePicker,
       emr_users,
