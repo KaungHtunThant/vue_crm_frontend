@@ -1226,9 +1226,7 @@
                     :class="{ 'delete-animation': task.toDelete }"
                   >
                     <div class="col-4">
-                      {{
-                        tasks.description || tasks.task_event?.name || "Nill"
-                      }}
+                      {{ task.description || task.task_event?.name }}
                     </div>
                     <div class="col-2">
                       <input
