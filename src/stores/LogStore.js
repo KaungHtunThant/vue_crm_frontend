@@ -97,6 +97,7 @@ export const useLogStore = defineStore("log", () => {
           log.new_values || {},
           "assigned_to_id"
         ) && log.old_values?.assigned_to_id !== log.new_values.assigned_to_id;
+      const warrentyChanged = log.new_values?.warrenty;
 
       if (oldStageId && newStageId && log.new_values?.assigned_to_id === null) {
         const newStageName = getStageName(newStageId);
@@ -148,12 +149,21 @@ export const useLogStore = defineStore("log", () => {
         return parts;
       }
 
+      if (warrentyChanged !== null) {
+        const warrenty_val = log.new_values.warrenty
+          ? "Provided"
+          : "Not Provided";
+        parts.push(` updated the deal's warrenty to "${warrenty_val}".`);
+        return parts;
+      }
+
       const ignoreKeys = new Set([
         "view_count",
         "recontact_count",
         "position",
         "assigned_to_id",
         "stage_id",
+        "last_moved_date",
       ]);
 
       const importantFields = {
