@@ -347,13 +347,13 @@ const filters = ref({
   user_id: null,
   package: "",
   country: "",
-  updated_at_start: null,
-  updated_at_end: null,
+  updated_date_start: null,
+  updated_date_end: null,
   source_id: null,
   excluded_user_id: null,
   stage_id: null,
-  created_at_start: null,
-  created_at_end: null,
+  created_date_start: null,
+  created_date_end: null,
   status: [],
   sort_by: "created_at",
   sort_order: "desc",
@@ -490,13 +490,13 @@ const fetchData = async () => {
       formattedFilters["filters[country]"] = apiFilters.filters.country;
     }
 
-    if (apiFilters.filters.created_at_start) {
-      formattedFilters["filters[created_at_start]"] =
-        apiFilters.filters.created_at_start;
+    if (apiFilters.filters.created_date_start) {
+      formattedFilters["filters[created_date_start]"] =
+        apiFilters.filters.created_date_start;
     }
-    if (apiFilters.filters.created_at_end) {
-      formattedFilters["filters[created_at_end]"] =
-        apiFilters.filters.created_at_end;
+    if (apiFilters.filters.created_date_end) {
+      formattedFilters["filters[created_date_end]"] =
+        apiFilters.filters.created_date_end;
     }
 
     if (Array.isArray(apiFilters.filters.status)) {
@@ -657,21 +657,21 @@ const applyFilters = async (newFilters) => {
         apiFilters.filters.excluded_user_id;
     }
 
-    if (apiFilters.filters.created_at_start) {
-      formattedFilters["filters[created_at_start]"] =
-        apiFilters.filters.created_at_start;
+    if (apiFilters.filters.created_date_start) {
+      formattedFilters["filters[created_date_start]"] =
+        apiFilters.filters.created_date_start;
     }
-    if (apiFilters.filters.created_at_end) {
-      formattedFilters["filters[created_at_end]"] =
-        apiFilters.filters.created_at_end;
+    if (apiFilters.filters.created_date_end) {
+      formattedFilters["filters[created_date_end]"] =
+        apiFilters.filters.created_date_end;
     }
-    if (apiFilters.filters.updated_at_start) {
-      formattedFilters["filters[updated_at_start]"] =
-        apiFilters.filters.updated_at_start;
+    if (apiFilters.filters.updated_date_start) {
+      formattedFilters["filters[updated_date_start]"] =
+        apiFilters.filters.updated_date_start;
     }
-    if (apiFilters.filters.updated_at_end) {
-      formattedFilters["filters[updated_at_end]"] =
-        apiFilters.filters.updated_at_end;
+    if (apiFilters.filters.updated_date_end) {
+      formattedFilters["filters[updated_date_end]"] =
+        apiFilters.filters.updated_date_end;
     }
 
     if (Array.isArray(apiFilters.filters.status)) {
@@ -770,12 +770,12 @@ const resetFilter = () => {
     supervisor: "",
     representative: "",
     package: "",
-    updated_at_start: null,
-    updated_at_end: null,
+    updated_date_start: null,
+    updated_date_end: null,
     source_id: null,
     stage_id: null,
-    created_at_start: null,
-    created_at_end: null,
+    created_date_start: null,
+    created_date_end: null,
     status: [],
     sort_by: "created_at",
     sort_order: "desc",

@@ -201,13 +201,13 @@
               type="date"
               lang="en"
               class="form-control text-secondary"
-              v-model="localFilters.created_at_start"
+              v-model="localFilters.created_date_start"
             />
             <input
               type="date"
               lang="en"
               class="form-control text-secondary"
-              v-model="localFilters.created_at_end"
+              v-model="localFilters.created_date_end"
             />
           </div>
         </div>
@@ -224,13 +224,13 @@
               type="date"
               lang="en"
               class="form-control text-secondary"
-              v-model="localFilters.updated_at_start"
+              v-model="localFilters.updated_date_start"
             />
             <input
               type="date"
               lang="en"
               class="form-control text-secondary"
-              v-model="localFilters.updated_at_end"
+              v-model="localFilters.updated_date_end"
             />
           </div>
         </div>
@@ -319,10 +319,10 @@ export default {
       user_id: null,
       excluded_user_id: null,
       country: null,
-      created_at_start: null,
-      created_at_end: null,
-      updated_at_start: null,
-      updated_at_end: null,
+      created_date_start: null,
+      created_date_end: null,
+      updated_date_start: null,
+      updated_date_end: null,
       status: [],
       sort_by: "created_at",
       sort_order: "desc",
