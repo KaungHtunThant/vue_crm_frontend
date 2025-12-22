@@ -137,14 +137,15 @@ export default {
       try {
         const emptyFilters = {
           package_id: null,
-          updated_at_start: null,
-          updated_at_end: null,
           source_id: null,
           stage_id: null,
           user_id: null,
-          country: null,
-          created_at_start: null,
-          created_at_end: null,
+          nationality: null,
+          country_code: null,
+          created_date_start: null,
+          created_date_end: null,
+          updated_date_start: null,
+          updated_date_end: null,
           status: [],
         };
         filters.value = emptyFilters;

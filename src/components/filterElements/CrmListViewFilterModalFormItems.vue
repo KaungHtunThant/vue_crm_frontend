@@ -167,23 +167,47 @@
         </div> -->
         <div class="row">
           <div class="col-3">
-            <span>{{ t("crmlist-modal-filter-label-country") }}</span>
+            <span>{{ t("crmlist-modal-filter-label-nationality") }}</span>
           </div>
           <div class="col-9">
             <div class="mb-3">
               <select
-                v-model="localFilters.country"
+                v-model="localFilters.nationality"
                 class="form-select text-secondary"
               >
                 <option value="" selected>
                   {{ t("crmlist-modal-filter-label-all") }}
                 </option>
                 <option
-                  v-for="country in nationalities"
-                  :key="country"
-                  :value="country"
+                  v-for="nationality in nationalities"
+                  :key="nationality"
+                  :value="nationality"
                 >
-                  {{ country }}
+                  {{ nationality }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-3">
+            <span>{{ t("crmlist-modal-filter-label-country-code") }}</span>
+          </div>
+          <div class="col-9">
+            <div class="mb-3">
+              <select
+                v-model="localFilters.country_code"
+                class="form-select text-secondary"
+              >
+                <option value="" selected>
+                  {{ t("crmlist-modal-filter-label-all") }}
+                </option>
+                <option
+                  v-for="country_code in countries"
+                  :key="country_code.code"
+                  :value="country_code.code"
+                >
+                  {{ country_code.name }} (+{{ country_code.code }})
                 </option>
               </select>
             </div>
@@ -290,6 +314,7 @@ import { useI18n } from "vue-i18n";
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import { useUserStore } from "@/stores/UserStore";
 import { nationalities as nationalities_enum } from "@/enums/NationalitiesEnum";
+import { countries as countries_enum } from "@/enums/CountriesEnum";
 
 export default {
   name: "CrmListViewFilterModalFormItems",
@@ -318,7 +343,7 @@ export default {
       stage_id: null,
       user_id: null,
       excluded_user_id: null,
-      country: null,
+      nationality: null,
       created_date_start: null,
       created_date_end: null,
       updated_date_start: null,
@@ -334,6 +359,7 @@ export default {
     const local_users = computed(() => userStore.getAllUsers);
     const local_packages = ref([]);
     const nationalities_options = nationalities_enum;
+    const countries = countries_enum;
 
     const nationalities = computed(() => {
       return Object.fromEntries(
@@ -446,6 +472,7 @@ export default {
     });
 
     return {
+      countries,
       nationalities,
       localFilters,
       statuses,

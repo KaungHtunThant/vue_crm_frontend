@@ -133,6 +133,58 @@
           </div>
         </div> -->
 
+        <!-- Nationality -->
+        <div class="row">
+          <div class="col-3">
+            <span>{{ t("crmlist-modal-filter-label-nationality") }}</span>
+          </div>
+          <div class="col-9">
+            <div class="mb-3">
+              <select
+                v-model="localHeaderFilters.nationality"
+                class="form-select text-secondary"
+              >
+                <option value="" selected>
+                  {{ t("crmlist-modal-filter-label-all") }}
+                </option>
+                <option
+                  v-for="nationality in nationalities"
+                  :key="nationality"
+                  :value="nationality"
+                >
+                  {{ nationality }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Country code -->
+        <div class="row">
+          <div class="col-3">
+            <span>{{ t("crmlist-modal-filter-label-country-code") }}</span>
+          </div>
+          <div class="col-9">
+            <div class="mb-3">
+              <select
+                v-model="localHeaderFilters.country_code"
+                class="form-select text-secondary"
+              >
+                <option value="" selected>
+                  {{ t("crmlist-modal-filter-label-all") }}
+                </option>
+                <option
+                  v-for="country_code in countries"
+                  :key="country_code.code"
+                  :value="country_code.code"
+                >
+                  {{ country_code.name }} (+{{ country_code.code }})
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         <!-- Created Date Range -->
         <div class="row mb-3">
           <div class="col-3">
@@ -145,13 +197,13 @@
               type="date"
               lang="en"
               class="form-control text-secondary"
-              v-model="localHeaderFilters.created_at_start"
+              v-model="localHeaderFilters.created_date_start"
             />
             <input
               type="date"
               lang="en"
               class="form-control text-secondary"
-              v-model="localHeaderFilters.created_at_end"
+              v-model="localHeaderFilters.created_date_end"
             />
           </div>
         </div>
@@ -168,13 +220,13 @@
               type="date"
               lang="en"
               class="form-control text-secondary"
-              v-model="localHeaderFilters.updated_at_start"
+              v-model="localHeaderFilters.updated_date_start"
             />
             <input
               type="date"
               lang="en"
               class="form-control text-secondary"
-              v-model="localHeaderFilters.updated_at_end"
+              v-model="localHeaderFilters.updated_date_end"
             />
           </div>
         </div>
@@ -236,6 +288,8 @@ import { getAvailableStages } from "@/plugins/services/stageService";
 import { useSourceStore } from "@/stores/SourceStore";
 import { computed } from "vue";
 import { useUserStore } from "@/stores/UserStore";
+import { nationalities as nationalities_enum } from "@/enums/NationalitiesEnum";
+import { countries as countries_enum } from "@/enums/CountriesEnum";
 
 export default {
   name: "CrmDealKanbanViewTopHeaderFilterModalFormItems",
@@ -250,13 +304,15 @@ export default {
       source_id: null,
       stage_id: null,
       user_id: null,
-      created_at_start: null,
-      created_at_end: null,
-      updated_at_start: null,
-      updated_at_end: null,
+      created_date_start: null,
+      created_date_end: null,
+      updated_date_start: null,
+      updated_date_end: null,
       status: [],
       sort_by: "created_at",
       sort_order: "desc",
+      nationality: null,
+      country_code: null,
       ...props.headerFilters,
     });
     const stages = ref([]);
@@ -265,6 +321,14 @@ export default {
     const local_packages = ref([]);
     const userStore = useUserStore();
     const users = computed(() => userStore.getAllUsers);
+    const { locale } = useI18n();
+    const nationalities = Object.fromEntries(
+      Object.entries(nationalities_enum).map(([key, value]) => [
+        key,
+        locale.value === "ar" ? value.ar : value.en,
+      ])
+    );
+    const countries = countries_enum;
 
     const statuses = ref([
       {
@@ -374,6 +438,8 @@ export default {
     }
 
     return {
+      countries,
+      nationalities,
       localHeaderFilters,
       statuses,
       toggleStatus,

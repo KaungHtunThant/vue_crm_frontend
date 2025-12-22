@@ -468,21 +468,27 @@ export default {
       if (props.filters.user_id) {
         formattedFilters["filters[user_id]"] = props.filters.user_id;
       }
-      if (props.filters.created_at_start) {
+      if (props.filters.created_date_start) {
         formattedFilters["filters[created_date_start]"] =
-          props.filters.created_at_start;
+          props.filters.created_date_start;
       }
-      if (props.filters.created_at_end) {
+      if (props.filters.created_date_end) {
         formattedFilters["filters[created_date_end]"] =
-          props.filters.created_at_end;
+          props.filters.created_date_end;
       }
-      if (props.filters.updated_at_start) {
+      if (props.filters.updated_date_start) {
         formattedFilters["filters[updated_date_start]"] =
-          props.filters.updated_at_start;
+          props.filters.updated_date_start;
       }
-      if (props.filters.updated_at_end) {
+      if (props.filters.updated_date_end) {
         formattedFilters["filters[updated_date_end]"] =
-          props.filters.updated_at_end;
+          props.filters.updated_date_end;
+      }
+      if (props.filters.nationality) {
+        formattedFilters["filters[nationality]"] = props.filters.nationality;
+      }
+      if (props.filters.country_code) {
+        formattedFilters["filters[country_code]"] = props.filters.country_code;
       }
       if (Array.isArray(props.filters.status)) {
         if (props.filters.status.includes("unassigned")) {

@@ -72,7 +72,15 @@ export const useLogStore = defineStore("log", () => {
           parts.push(` "${log.new_values.text_body}"`);
         }
       } else if (log.entity_type === "Task") {
-        parts.push(` created a new Task.`);
+        parts.push(
+          ` created a new Task "${log.new_values?.description?.slice(0, 25)}${
+            log.new_values?.description?.length > 25 ? "..." : ""
+          }".`
+        );
+      } else if (log.entity_type === "Phone") {
+        parts.push(
+          ` added a new phone number "${log.new_values?.phone ?? "unknown"}".`
+        );
       } else {
         parts.push(` created a new ${log.entity_type}.`);
       }
@@ -84,7 +92,11 @@ export const useLogStore = defineStore("log", () => {
       log.entity_type === "Task" &&
       log.new_values?.status === "completed"
     ) {
-      parts.push(` completed Task.`);
+      parts.push(
+        ` completed Task "${log.new_values?.description?.slice(0, 25)}${
+          log.new_values?.description?.length > 25 ? "..." : ""
+        }".`
+      );
       return parts;
     }
 

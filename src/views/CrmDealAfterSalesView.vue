@@ -63,10 +63,10 @@ export default {
       supervisor_id: "",
       representative_id: "",
       package_id: "",
-      created_at_start: "",
-      created_at_end: "",
-      updated_at_start: "",
-      updated_at_end: "",
+      created_date_start: "",
+      created_date_end: "",
+      updated_date_start: "",
+      updated_date_end: "",
       status: [],
       sort_by: "",
       sort_order: "",
@@ -123,21 +123,21 @@ export default {
         if (filters.value.user_id) {
           formattedFilters["filters[user_id]"] = filters.value.user_id;
         }
-        if (filters.value.created_at_start) {
+        if (filters.value.created_date_start) {
           formattedFilters["filters[created_date_start]"] =
-            filters.value.created_at_start;
+            filters.value.created_date_start;
         }
-        if (filters.value.created_at_end) {
+        if (filters.value.created_date_end) {
           formattedFilters["filters[created_date_end]"] =
-            filters.value.created_at_end;
+            filters.value.created_date_end;
         }
-        if (filters.value.updated_at_start) {
+        if (filters.value.updated_date_start) {
           formattedFilters["filters[updated_date_start]"] =
-            filters.value.updated_at_start;
+            filters.value.updated_date_start;
         }
-        if (filters.value.updated_at_end) {
+        if (filters.value.updated_date_end) {
           formattedFilters["filters[updated_date_end]"] =
-            filters.value.updated_at_end;
+            filters.value.updated_date_end;
         }
         if (Array.isArray(filters.value.status)) {
           if (filters.value.status.includes("unassigned")) {
@@ -193,10 +193,10 @@ export default {
           supervisor_id: "",
           representative_id: "",
           package_id: "",
-          created_at_start: "",
-          created_at_end: "",
-          updated_at_start: "",
-          updated_at_end: "",
+          created_date_start: "",
+          created_date_end: "",
+          updated_date_start: "",
+          updated_date_end: "",
           status: [],
           sort_by: "",
           sort_order: "",

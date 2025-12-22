@@ -128,10 +128,10 @@ export default {
       supervisor: "",
       representative: "",
       package: "",
-      created_at_start: "",
-      created_at_end: "",
-      updated_at_start: "",
-      updated_at_end: "",
+      created_date_start: "",
+      created_date_end: "",
+      updated_date_start: "",
+      updated_date_end: "",
       status: [],
     });
     const selected_conversation = ref(null);
@@ -151,10 +151,10 @@ export default {
         supervisor: "",
         representative: "",
         package: "",
-        created_at_start: "",
-        created_at_end: "",
-        updated_at_start: "",
-        updated_at_end: "",
+        created_date_start: "",
+        created_date_end: "",
+        updated_date_start: "",
+        updated_date_end: "",
         status: [],
       };
     };

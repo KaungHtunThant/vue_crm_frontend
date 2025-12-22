@@ -673,6 +673,13 @@ const applyFilters = async (newFilters) => {
       formattedFilters["filters[updated_date_end]"] =
         apiFilters.filters.updated_date_end;
     }
+    if (apiFilters.filters.nationality) {
+      formattedFilters["filters[nationality]"] = apiFilters.filters.nationality;
+    }
+    if (apiFilters.filters.country_code) {
+      formattedFilters["filters[country_code]"] =
+        apiFilters.filters.country_code;
+    }
 
     if (Array.isArray(apiFilters.filters.status)) {
       if (apiFilters.filters.status.includes("unassigned")) {
@@ -765,17 +772,19 @@ const openDealModal = () => {
 
 const resetFilter = () => {
   filters.value = {
-    source: "",
-    stage: "",
-    supervisor: "",
-    representative: "",
-    package: "",
+    source: null,
+    stage: null,
+    supervisor: null,
+    representative: null,
+    package: null,
     updated_date_start: null,
     updated_date_end: null,
     source_id: null,
     stage_id: null,
     created_date_start: null,
     created_date_end: null,
+    nationality: null,
+    country_code: null,
     status: [],
     sort_by: "created_at",
     sort_order: "desc",
