@@ -129,6 +129,23 @@ export const useDealStore = defineStore("deal", {
       );
       this.deals = [...this.deals, ...new_deals];
     },
+    async fetchDealById(deal_id) {
+      try {
+        const response = await showDeal(deal_id);
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
+        return {
+          success: true,
+          data: response.data.data,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          message: error.message,
+        };
+      }
+    },
     async changeCurrentDeal(deal_id) {
       if (this.getCurrentDeal?.id === deal_id) {
         return this.getCurrentDeal; // No change needed

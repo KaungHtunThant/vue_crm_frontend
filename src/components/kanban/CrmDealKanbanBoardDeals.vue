@@ -969,6 +969,7 @@ export default {
 
       if (action === "create") {
         comments.value.push(data);
+        IncreaseUnreadCount(data.deal_id);
       } else if (action === "update") {
         const index = comments.value.findIndex((c) => c.id === data.id);
         if (index !== -1) {
@@ -1062,15 +1063,30 @@ export default {
       }
     };
 
-    const IncreaseUnreadCount = (dealId) => {
+    const IncreaseUnreadCount = async (dealId) => {
       for (const stage of displayStages.value) {
         if (stage.deals) {
-          const deal = stage.deals.find((d) => d.id === dealId);
+          const deal = stage.deals.find((d) => d.id == dealId);
           if (deal) {
             deal.unread_count = (deal.unread_count || 0) + 1;
+            stage.deals.unshift(
+              stage.deals.splice(stage.deals.indexOf(deal), 1)[0]
+            );
             return;
           }
         }
+      }
+      const response = await dealStore.fetchDealById(dealId);
+      if (response.success) {
+        const deal = response.data.map();
+        deal.unread_count = (deal.unread_count || 0) + 1;
+        for (const stage of displayStages.value) {
+          if (stage.id == deal.stage_id) {
+            stage.deals.unshift(deal);
+            return;
+          }
+        }
+        return;
       }
     };
 
