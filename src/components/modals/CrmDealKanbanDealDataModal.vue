@@ -1179,18 +1179,31 @@
                     >
                       {{ t("kanban-modal-edit-tasks-heading") }}
                     </span>
-                    <!-- <input
+                    <input
+                      v-if="showInput"
                       type="text"
-                      class="form-control bg-input text-secondary py-2 me-1"
-                      v-model="customerData.task"
-                      :placeholder="t('kanban-modal-edit-tasks-placeholder')"
+                      class="form-control bg-input text-secondary py-2"
+                      v-model="customerData.description"
+                      :placeholder="
+                        t('kanban-modal-edit-tasks-input-placeholder')
+                      "
                       @keyup.enter="handleAddTask"
-                    /> -->
+                    />
+                    <button
+                      v-if="showInput"
+                      type="button"
+                      class="btn btn-link text-secondary px-1 bg-input me-1"
+                      @click="resetToSelect"
+                    >
+                      <i class="fas fa-close"></i>
+                    </button>
                     <select
+                      v-if="!showInput"
                       class="form-select bg-input py-2 me-1"
                       v-model="customerData.task"
                       :placeholder="t('kanban-modal-edit-tasks-placeholder')"
                       @keyup.enter="handleAddTask"
+                      @change="handleSelectChange"
                     >
                       <option :value="null" disabled selected>
                         {{ t("kanban-modal-edit-tasks-placeholder") }}
@@ -1643,6 +1656,7 @@ import { useDealStore } from "@/stores/DealStore";
 import { useUserStore } from "@/stores/UserStore";
 import { useTaskEventsStore } from "@/stores/TaskEventsStore";
 import { useCommentsTagsStore } from "@/stores/CommentsTagsStore";
+import { useSettingStore } from "@/stores/SettingStore";
 import DatePicker from "primevue/datepicker";
 
 export default {
@@ -1728,6 +1742,8 @@ export default {
     const modified_id = ref(null);
     const taskStore = useTaskStore();
     const setTasksProcessingLoading = ref(false);
+    const showInput = ref(false);
+    const SettingStore = useSettingStore();
     const setTasksProcessing = async (id) => {
       try {
         setTasksProcessingLoading.value = true;
@@ -2440,11 +2456,11 @@ export default {
         }
         const deal_id = props.deal?.id;
         const formData = {
-          description: "",
+          description: customerData.description || "",
           duedate: customerData.date,
           duetime: customerData.time,
           deal_id: props.deal?.id,
-          task_event_id: customerData.task,
+          task_event_id: customerData.task || null,
           type: type,
         };
         if (!formData.duetime) {
@@ -2460,7 +2476,7 @@ export default {
           );
           customerData.tasks.unshift({
             id: response.data.data.id,
-            description: selectedEvent?.name || "",
+            description: customerData.description || selectedEvent?.name || "",
             duedate: customerData.date,
             duetime: customerData.time,
             task_event_id: customerData.task,
@@ -2495,6 +2511,23 @@ export default {
           timeout: 3000,
         });
       }
+    };
+    const handleSelectChange = () => {
+      const selectedTask = taskEventsList.value.find(
+        (event) => event.id === customerData.task
+      );
+      console.log("Selected Task Changed:", typeof selectedTask.id);
+      const TreatmentTaskId = SettingStore.getTreatmentTaskEventId;
+      console.log("Treatment Task:", typeof TreatmentTaskId);
+      if (selectedTask.id === TreatmentTaskId) {
+        console.log("Treatment Task selected, showing input.");
+        showInput.value = true;
+        customerData.description = "";
+      }
+    };
+    const resetToSelect = () => {
+      customerData.task = "";
+      showInput.value = false;
     };
     const removeBlur = () => {
       isOtherTaskSelected.value = false;
@@ -2960,6 +2993,7 @@ export default {
       if (CommentsTagsList.value.length === 0) {
         await commentsTagsStore.fetchCommentsTags();
       }
+      await SettingStore.fetchTreatmentTaskEventId();
     });
     const total_cost = computed(() => {
       return customerData.hospital_packages.reduce((sum, pkg) => {
@@ -3096,6 +3130,10 @@ export default {
       openTimePicker,
       emr_users,
       logs_list,
+      handleSelectChange,
+      resetToSelect,
+      showInput,
+      SettingStore,
     };
   },
 };
