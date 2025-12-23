@@ -2516,11 +2516,8 @@ export default {
       const selectedTask = taskEventsList.value.find(
         (event) => event.id === customerData.task
       );
-      console.log("Selected Task Changed:", typeof selectedTask.id);
       const TreatmentTaskId = SettingStore.getTreatmentTaskEventId;
-      console.log("Treatment Task:", typeof TreatmentTaskId);
       if (selectedTask.id === TreatmentTaskId) {
-        console.log("Treatment Task selected, showing input.");
         showInput.value = true;
         customerData.description = "";
       }
