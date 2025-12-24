@@ -1082,9 +1082,8 @@ export default {
           const existing_deal = stage.deals.find((d) => d.id == deal.id);
           if (existing_deal) {
             stage.deals.splice(stage.deals.indexOf(existing_deal), 1);
-          } else {
-            stage.deals.unshift(deal);
           }
+          stage.deals.unshift(deal);
           return;
         }
       }
