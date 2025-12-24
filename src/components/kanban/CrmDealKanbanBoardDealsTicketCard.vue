@@ -190,7 +190,10 @@
         {{ formatDate(deal.updated_at) }}</span
       >
     </div>
-    <div class="col-12 mt-1" v-if="deal.responsible_user">
+    <div
+      class="col-12 mt-1"
+      v-if="can_view_responsible_user && deal.responsible_user"
+    >
       <span
         class="badge fw-medium text-white py-1 px-2"
         :style="{
@@ -221,6 +224,7 @@ import { computed } from "vue";
 import CountryFlagAvatar from "@/components/whatsapp/WhatsAppModalSidebarLeftCountryFlagAvatar.vue";
 import Cookies from "js-cookie";
 import { useDealStore } from "@/stores/DealStore";
+import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 
 export default {
   name: "CrmDealKanbanBoardDealsTicketCard",
@@ -251,6 +255,10 @@ export default {
   },
   setup(props, { emit }) {
     const notificationStore = useNotificationStore();
+    const permissionStore = usePermissionStore();
+    const can_view_responsible_user = permissionStore.hasPermission(
+      PERMISSIONS.VIEW_RESPONSIBLE_USER
+    );
     const userRole = Cookies.get("user_role");
     const { t } = useI18n();
     const dealStore = useDealStore();
@@ -433,6 +441,7 @@ export default {
       handleHighlight,
       onDragStart,
       ticketValue,
+      can_view_responsible_user,
     };
   },
   methods: {},

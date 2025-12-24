@@ -53,6 +53,7 @@ export const PERMISSIONS = {
   READ_EMR_TASK: "view-emr-task",
   UPDATE_EMR_TASK: "edit-emr-task",
   DELETE_EMR_TASK: "delete-emr-task",
+  VIEW_RESPONSIBLE_USER: "view-responsible-user",
 };
 
 export const usePermissionStore = defineStore("permissions", {

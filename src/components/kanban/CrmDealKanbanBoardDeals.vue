@@ -969,7 +969,8 @@ export default {
 
       if (action === "create") {
         comments.value.push(data);
-        IncreaseUnreadCount(data.deal_id);
+        pushDealToTop(data.deal);
+        IncreaseUnreadCount(data.deal.id);
       } else if (action === "update") {
         const index = comments.value.findIndex((c) => c.id === data.id);
         if (index !== -1) {
@@ -1069,41 +1070,23 @@ export default {
           const deal = stage.deals.find((d) => d.id == dealId);
           if (deal) {
             deal.unread_count = (deal.unread_count || 0) + 1;
-            stage.deals.unshift(
-              stage.deals.splice(stage.deals.indexOf(deal), 1)[0]
-            );
             return;
           }
         }
       }
-      const response = await dealStore.fetchDealById(dealId);
-      if (response.success) {
-        const deal = {
-          id: response.data.id,
-          note: "عبدالكريم اليحيري",
-          stage_id: response.data.stage_id,
-          source_id: response.data.source_id,
-          responsible_user: response.data.responsible_user,
-          rating: response.data.rating,
-          created_at: response.data.created_at,
-          updated_at: response.data.updated_at,
-          name: response.data.contact.name,
-          phone: response.data.contact.phones[0].phone,
-          view_count: response.data.view_count,
-          unread_count: response.data.unread_count + 1,
-          has_admin_comment: response.data.has_admin_comment,
-          tags: response.data.tags,
-          highlighted: response.data.highlighted,
-          old_deal: response.data.old_deal,
-        };
-        deal.unread_count = (deal.unread_count || 0) + 1;
-        for (const stage of displayStages.value) {
-          if (stage.id == deal.stage_id) {
+    };
+
+    const pushDealToTop = (deal) => {
+      for (const stage of displayStages.value) {
+        if (stage.id == deal.stage_id) {
+          const existing_deal = stage.deals.find((d) => d.id == deal.id);
+          if (existing_deal) {
+            stage.deals.splice(stage.deals.indexOf(existing_deal), 1);
+          } else {
             stage.deals.unshift(deal);
-            return;
           }
+          return;
         }
-        return;
       }
     };
 
