@@ -116,3 +116,7 @@ export const getAfterSalesKanban = async (params = {}) => {
     params,
   });
 };
+
+export const moveToSalesEndStage = async (deal_id) => {
+  return await axios.patch(`/deals/sales-end-stage/${deal_id}`);
+};

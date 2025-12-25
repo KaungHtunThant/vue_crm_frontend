@@ -1575,6 +1575,13 @@
               {{ t("kanban-modal-edit-processing") }}
               <i class="fa fa-heart-pulse ms-2"></i>
             </button>
+            <button
+              class="btn bg-success py-2 px-3 rounded-3 ms-2 text-light"
+              @click="moveToSalesEndStage(deal.id)"
+            >
+              {{ t("kanban-modal-edit-done") }}
+              <i class="fa fa-circle-check ms-2"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -1741,6 +1748,18 @@ export default {
         notificationStore.error(error.message);
       } finally {
         setTasksProcessingLoading.value = false;
+      }
+    };
+    const moveToSalesEndStage = async (id) => {
+      try {
+        const response = await dealStore.moveToSalesEndStage(id);
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        notificationStore.success(response.message);
+        taskStore.toggleStatusChangeTrigger(true);
+      } catch (error) {
+        notificationStore.error(error.message);
       }
     };
 
@@ -3096,6 +3115,7 @@ export default {
       openTimePicker,
       emr_users,
       logs_list,
+      moveToSalesEndStage,
     };
   },
 };

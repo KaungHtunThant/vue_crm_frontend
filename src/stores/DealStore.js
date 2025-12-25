@@ -4,6 +4,7 @@ import {
   fetchAdditionalDealsByStageId,
   showDeal,
   updateDeal,
+  moveToSalesEndStage as moveDealToSalesEndStage,
 } from "@/plugins/services/dealService";
 import { defineStore } from "pinia";
 import { rules } from "@/enums/StageRulesEnum";
@@ -198,6 +199,23 @@ export const useDealStore = defineStore("deal", {
     },
     toggleDealModalStatus(status = false) {
       this.deal_modal_status = status;
+    },
+    async moveToSalesEndStage(deal_id) {
+      try {
+        const response = await moveDealToSalesEndStage(deal_id);
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
+        return {
+          success: true,
+          message: response.data.message,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          message: error.message,
+        };
+      }
     },
   },
 });
