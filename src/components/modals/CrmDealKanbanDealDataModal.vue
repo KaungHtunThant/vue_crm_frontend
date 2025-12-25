@@ -3150,6 +3150,7 @@ export default {
       resetToSelect,
       showInput,
       SettingStore,
+      moveToSalesEndStage,
     };
   },
 };
