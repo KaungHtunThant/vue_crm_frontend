@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import {
   generateOTP,
   getServerVersion,
-  getTreatmentTask,
+  getCustomTask,
 } from "@/plugins/services/settingService";
 import { useAuthStore } from "./AuthStore";
 
@@ -12,7 +12,7 @@ export const useSettingStore = defineStore("setting", {
     idleTimeLimit: 15 * 60 * 1000, // 15 minute
     backendAppVersion: null,
     emr_calendar_drawer_open: false,
-    treatmentTaskEventId: null,
+    customTaskEventId: null,
   }),
   getters: {
     getOTPCode: (state) => {
@@ -24,8 +24,8 @@ export const useSettingStore = defineStore("setting", {
     getIsEmrCalendarDrawerOpen: (state) => {
       return state.emr_calendar_drawer_open;
     },
-    getTreatmentTaskEventId: (state) => {
-      return state.treatmentTaskEventId;
+    getCustomTaskEventId: (state) => {
+      return state.customTaskEventId;
     },
   },
   actions: {
@@ -69,15 +69,15 @@ export const useSettingStore = defineStore("setting", {
     toggleEmrCalendarDrawer() {
       this.emr_calendar_drawer_open = !this.emr_calendar_drawer_open;
     },
-    async fetchTreatmentTaskEventId() {
-      if (this.treatmentTaskEventId === null) {
-        const response = await getTreatmentTask();
+    async fetchCustomTaskEventId() {
+      if (this.customTaskEventId === null) {
+        const response = await getCustomTask();
         if (response.status !== 200) {
           throw new Error(response.data.message);
         }
-        this.treatmentTaskEventId = Number(response.data.data.id);
+        this.customTaskEventId = Number(response.data.data.id);
       }
-      return this.treatmentTaskEventId;
+      return this.customTaskEventId;
     },
   },
 });

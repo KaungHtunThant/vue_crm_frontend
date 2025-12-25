@@ -2535,8 +2535,8 @@ export default {
       const selectedTask = taskEventsList.value.find(
         (event) => event.id === customerData.task
       );
-      const TreatmentTaskId = SettingStore.getTreatmentTaskEventId;
-      if (selectedTask.id === TreatmentTaskId) {
+      const CustomTaskId = SettingStore.getCustomTaskEventId;
+      if (selectedTask.id === CustomTaskId) {
         showInput.value = true;
         customerData.description = "";
       }
@@ -3009,7 +3009,7 @@ export default {
       if (CommentsTagsList.value.length === 0) {
         await commentsTagsStore.fetchCommentsTags();
       }
-      await SettingStore.fetchTreatmentTaskEventId();
+      await SettingStore.fetchCustomTaskEventId();
     });
     const total_cost = computed(() => {
       return customerData.hospital_packages.reduce((sum, pkg) => {
