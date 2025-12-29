@@ -149,7 +149,7 @@ export default {
 
       if (!token && this.$route.path !== "/login") {
         this.$router.push("/login");
-      } else if (token && this.$route.path === "/login") {
+      } else if (token) {
         if (!this.permissionStore.hasPermission(PERMISSIONS.STAY_IDLE)) {
           this.settingStore.startIdleTimer();
           this.settingStore.setupUserActivityListeners();

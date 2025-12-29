@@ -45,6 +45,7 @@ export const useSettingStore = defineStore("setting", {
     },
     setupUserActivityListeners() {
       ["mousemove", "keydown", "mousedown", "touchstart"].forEach((event) => {
+        console.log(`Setting up listener for ${event}`);
         window.addEventListener(event, this.startIdleTimer);
       });
     },
