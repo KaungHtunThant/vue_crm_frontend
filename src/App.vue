@@ -154,7 +154,9 @@ export default {
           this.settingStore.startIdleTimer();
           this.settingStore.setupUserActivityListeners();
         }
-        this.$router.push("/dashboard");
+        if (this.$route.path === "/login") {
+          this.$router.push("/dashboard");
+        }
       }
     },
 
