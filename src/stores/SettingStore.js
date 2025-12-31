@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import {
   generateOTP,
   getServerVersion,
+  getCustomTask,
 } from "@/plugins/services/settingService";
 import { useAuthStore } from "./AuthStore";
 
@@ -11,6 +12,7 @@ export const useSettingStore = defineStore("setting", {
     idleTimeLimit: 15 * 60 * 1000, // 15 minute
     backendAppVersion: null,
     emr_calendar_drawer_open: false,
+    customTaskEventId: null,
   }),
   getters: {
     getOTPCode: (state) => {
@@ -21,6 +23,9 @@ export const useSettingStore = defineStore("setting", {
     },
     getIsEmrCalendarDrawerOpen: (state) => {
       return state.emr_calendar_drawer_open;
+    },
+    getCustomTaskEventId: (state) => {
+      return state.customTaskEventId;
     },
   },
   actions: {
@@ -63,6 +68,16 @@ export const useSettingStore = defineStore("setting", {
     },
     toggleEmrCalendarDrawer() {
       this.emr_calendar_drawer_open = !this.emr_calendar_drawer_open;
+    },
+    async fetchCustomTaskEventId() {
+      if (this.customTaskEventId === null) {
+        const response = await getCustomTask();
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
+        this.customTaskEventId = Number(response.data.data.id);
+      }
+      return this.customTaskEventId;
     },
   },
 });

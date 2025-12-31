@@ -871,7 +871,7 @@
                     >
                       <div class="row p-0">
                         <div
-                          class="col-5 p-1 px-1"
+                          class="col-4 p-1 px-1"
                           @dblclick="handleDoubleClick"
                         >
                           <select
@@ -995,7 +995,20 @@
                             />
                           </div>
                         </div>
-                        <div class="col-1 py-1">
+                        <div class="col-1 py-1 px-1">
+                          <button
+                            class="btn btn-success"
+                            @click="payHospitalPackage(pkg.id)"
+                            v-show="
+                              permissionStore.hasPermission(
+                                PERMISSIONS.EDIT_HOSPITAL_PACKAGE
+                              ) && !pkg.paid_on
+                            "
+                          >
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                          </button>
+                        </div>
+                        <div class="col-1 py-1 px-1">
                           <button
                             class="btn btn-primary"
                             @click="removeHospitalPackage(index)"
@@ -1179,18 +1192,31 @@
                     >
                       {{ t("kanban-modal-edit-tasks-heading") }}
                     </span>
-                    <!-- <input
+                    <input
+                      v-if="showInput"
                       type="text"
-                      class="form-control bg-input text-secondary py-2 me-1"
-                      v-model="customerData.task"
-                      :placeholder="t('kanban-modal-edit-tasks-placeholder')"
+                      class="form-control bg-input text-secondary py-2"
+                      v-model="customerData.description"
+                      :placeholder="
+                        t('kanban-modal-edit-tasks-input-placeholder')
+                      "
                       @keyup.enter="handleAddTask"
-                    /> -->
+                    />
+                    <button
+                      v-if="showInput"
+                      type="button"
+                      class="btn btn-link text-secondary px-1 bg-input me-1"
+                      @click="resetToSelect"
+                    >
+                      <i class="fas fa-close"></i>
+                    </button>
                     <select
+                      v-if="!showInput"
                       class="form-select bg-input py-2 me-1"
                       v-model="customerData.task"
                       :placeholder="t('kanban-modal-edit-tasks-placeholder')"
                       @keyup.enter="handleAddTask"
+                      @change="handleSelectChange"
                     >
                       <option :value="null" disabled selected>
                         {{ t("kanban-modal-edit-tasks-placeholder") }}
@@ -1650,7 +1676,9 @@ import { useDealStore } from "@/stores/DealStore";
 import { useUserStore } from "@/stores/UserStore";
 import { useTaskEventsStore } from "@/stores/TaskEventsStore";
 import { useCommentsTagsStore } from "@/stores/CommentsTagsStore";
+import { useSettingStore } from "@/stores/SettingStore";
 import DatePicker from "primevue/datepicker";
+import { updateHospitalPackage } from "@/plugins/services/dealService";
 
 export default {
   name: "CrmDealKanbanDealDataModal",
@@ -1735,6 +1763,8 @@ export default {
     const modified_id = ref(null);
     const taskStore = useTaskStore();
     const setTasksProcessingLoading = ref(false);
+    const showInput = ref(false);
+    const SettingStore = useSettingStore();
     const setTasksProcessing = async (id) => {
       try {
         setTasksProcessingLoading.value = true;
@@ -2268,6 +2298,32 @@ export default {
         });
       }
     };
+    const payHospitalPackage = async (pkgId) => {
+      try {
+        const pkg = customerData.hospital_packages.find((p) => p.id === pkgId);
+        if (!pkg) return;
+
+        const response = await updateHospitalPackage({
+          deal_id: customerData.id,
+          package_id: pkg.id,
+          paid_on: new Date().toISOString().slice(0, 19).replace("T", " "),
+        });
+        if (response.status === 200) {
+          pkg.paid_on = new Date();
+          notificationStore.success(response.data.message, {
+            timeout: 3000,
+          });
+        } else {
+          notificationStore.error(response.data.message, {
+            timeout: 3000,
+          });
+        }
+      } catch (error) {
+        notificationStore.error(error.message, {
+          timeout: 3000,
+        });
+      }
+    };
 
     const handleTaskCompletion = async (taskId) => {
       try {
@@ -2459,11 +2515,11 @@ export default {
         }
         const deal_id = props.deal?.id;
         const formData = {
-          description: "",
+          description: customerData.description || "",
           duedate: customerData.date,
           duetime: customerData.time,
           deal_id: props.deal?.id,
-          task_event_id: customerData.task,
+          task_event_id: customerData.task || null,
           type: type,
         };
         if (!formData.duetime) {
@@ -2479,7 +2535,7 @@ export default {
           );
           customerData.tasks.unshift({
             id: response.data.data.id,
-            description: selectedEvent?.name || "",
+            description: customerData.description || selectedEvent?.name || "",
             duedate: customerData.date,
             duetime: customerData.time,
             task_event_id: customerData.task,
@@ -2514,6 +2570,20 @@ export default {
           timeout: 3000,
         });
       }
+    };
+    const handleSelectChange = () => {
+      const selectedTask = taskEventsList.value.find(
+        (event) => event.id === customerData.task
+      );
+      const CustomTaskId = SettingStore.getCustomTaskEventId;
+      if (selectedTask.id === CustomTaskId) {
+        showInput.value = true;
+        customerData.description = "";
+      }
+    };
+    const resetToSelect = () => {
+      customerData.task = "";
+      showInput.value = false;
     };
     const removeBlur = () => {
       isOtherTaskSelected.value = false;
@@ -2979,6 +3049,7 @@ export default {
       if (CommentsTagsList.value.length === 0) {
         await commentsTagsStore.fetchCommentsTags();
       }
+      await SettingStore.fetchCustomTaskEventId();
     });
     const total_cost = computed(() => {
       return customerData.hospital_packages.reduce((sum, pkg) => {
@@ -3115,7 +3186,12 @@ export default {
       openTimePicker,
       emr_users,
       logs_list,
+      handleSelectChange,
+      resetToSelect,
+      showInput,
+      SettingStore,
       moveToSalesEndStage,
+      payHospitalPackage,
     };
   },
 };
