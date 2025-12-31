@@ -871,7 +871,7 @@
                     >
                       <div class="row p-0">
                         <div
-                          class="col-5 p-1 px-1"
+                          class="col-4 p-1 px-1"
                           @dblclick="handleDoubleClick"
                         >
                           <select
@@ -995,7 +995,20 @@
                             />
                           </div>
                         </div>
-                        <div class="col-1 py-1">
+                        <div class="col-1 py-1 px-1">
+                          <button
+                            class="btn btn-success"
+                            @click="payHospitalPackage(pkg.id)"
+                            v-show="
+                              permissionStore.hasPermission(
+                                PERMISSIONS.EDIT_HOSPITAL_PACKAGE
+                              ) && !pkg.paid_on
+                            "
+                          >
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                          </button>
+                        </div>
+                        <div class="col-1 py-1 px-1">
                           <button
                             class="btn btn-primary"
                             @click="removeHospitalPackage(index)"
@@ -1665,6 +1678,7 @@ import { useTaskEventsStore } from "@/stores/TaskEventsStore";
 import { useCommentsTagsStore } from "@/stores/CommentsTagsStore";
 import { useSettingStore } from "@/stores/SettingStore";
 import DatePicker from "primevue/datepicker";
+import { updateHospitalPackage } from "@/plugins/services/dealService";
 
 export default {
   name: "CrmDealKanbanDealDataModal",
@@ -2278,6 +2292,32 @@ export default {
     const removeHospitalPackage = (index) => {
       try {
         customerData.hospital_packages.splice(index, 1);
+      } catch (error) {
+        notificationStore.error(error.message, {
+          timeout: 3000,
+        });
+      }
+    };
+    const payHospitalPackage = async (pkgId) => {
+      try {
+        const pkg = customerData.hospital_packages.find((p) => p.id === pkgId);
+        if (!pkg) return;
+
+        const response = await updateHospitalPackage({
+          deal_id: customerData.id,
+          package_id: pkg.id,
+          paid_on: new Date().toISOString().slice(0, 19).replace("T", " "),
+        });
+        if (response.status === 200) {
+          pkg.paid_on = new Date();
+          notificationStore.success(response.data.message, {
+            timeout: 3000,
+          });
+        } else {
+          notificationStore.error(response.data.message, {
+            timeout: 3000,
+          });
+        }
       } catch (error) {
         notificationStore.error(error.message, {
           timeout: 3000,
@@ -3151,6 +3191,7 @@ export default {
       showInput,
       SettingStore,
       moveToSalesEndStage,
+      payHospitalPackage,
     };
   },
 };
