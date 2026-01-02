@@ -18,7 +18,7 @@
                 v-model="email"
                 placeholder="Enter Email"
                 required
-                @keydown.enter.prevent="handleOTP"
+                @keydown.enter.prevent="handleLogin"
               />
               <p v-if="errors.email" class="text-danger fs-6">
                 {{ errors.email }}
@@ -36,7 +36,7 @@
                 class="form-control"
                 v-model="password"
                 placeholder="Enter Password"
-                @keydown.enter.prevent="handleOTP"
+                @keydown.enter.prevent="handleLogin"
               />
               <p v-if="errors.password" class="text-danger fs-6">
                 {{ errors.password }}
@@ -80,7 +80,7 @@
               <button
                 type="button"
                 class="btn w-100 bg-black text-white"
-                @click="handleOTP"
+                @click="handleLogin"
               >
                 Login
               </button>
