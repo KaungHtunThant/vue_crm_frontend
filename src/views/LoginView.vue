@@ -167,7 +167,7 @@ export default {
         const response = await login({
           email: this.email,
           password: this.password,
-          otp_code: this.otp_code,
+          // otp_code: this.otp_code,
         });
 
         if (response.status === 200) {
