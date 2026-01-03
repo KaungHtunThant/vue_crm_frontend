@@ -153,6 +153,20 @@
             </select>
           </div>
         </div>
+        <div class="col-12">
+          <div class="mb-3">
+            <label for="import_label" class="form-label">
+              {{ t("kanban-modal-import-label-import_label") }}
+            </label>
+            <input
+              type="text"
+              name="import_label"
+              id="import_label"
+              class="form-control"
+              v-model="import_label"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -183,6 +197,7 @@ export default {
     const originStore = useOriginStore();
     const origins = computed(() => originStore.getAllOrigins);
     const origin = ref(null);
+    const import_label = ref("");
 
     // handle file change
     const handleFileChange = async (event) => {
@@ -287,6 +302,7 @@ export default {
       t,
       origins,
       origin,
+      import_label,
     };
   },
 };

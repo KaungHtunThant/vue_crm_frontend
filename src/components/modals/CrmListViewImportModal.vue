@@ -100,6 +100,7 @@ export default {
             comment: importFormRef.value.comment,
             email: importFormRef.value.email,
             origin_id: importFormRef.value.origin,
+            import_label: importFormRef.value.import_label,
           };
           const response = await importDeals(fields);
           if (response.status === 200) {
