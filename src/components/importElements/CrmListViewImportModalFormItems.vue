@@ -156,7 +156,7 @@
         <div class="col-12">
           <div class="mb-3">
             <label for="import_label" class="form-label">
-              {{ t("kanban-modal-import-label-import_label") }}
+              {{ t("kanban-modal-import-label-import-label") }}
             </label>
             <input
               type="text"
@@ -164,6 +164,7 @@
               id="import_label"
               class="form-control"
               v-model="import_label"
+              :placeholder="t('kanban-modal-import-placeholder-import-label')"
             />
           </div>
         </div>
