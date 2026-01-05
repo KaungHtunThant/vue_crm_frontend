@@ -1011,99 +1011,8 @@
                         </div>
                       </div>
                     </div>
-                    <div
-                      class="w-100 d-flex mt-2 justify-content-between gap-2"
-                    >
-                      <div class="input-group">
-                        <span class="input-group-text">
-                          {{ t("kanban-modal-edit-balance") }}
-                        </span>
-                        <input
-                          type="number"
-                          name="balance"
-                          lang="en"
-                          :readonly="!isEditMode"
-                          :class="[
-                            'bg-input',
-                            'p-2',
-                            'rounded-right-2',
-                            'form-control',
-                          ]"
-                          v-model="customerData.balance"
-                          min="0"
-                          @dblclick="handleDoubleClick"
-                        />
-                      </div>
-                    </div>
-                    <div
-                      class="w-100 d-flex mt-2 justify-content-between gap-2"
-                    >
-                      <div class="input-group">
-                        <span class="input-group-text">
-                          {{ t("kanban-modal-edit-placeholder-paid") }}
-                        </span>
-                        <input
-                          type="number"
-                          name="totalPaid"
-                          lang="en"
-                          readonly
-                          :class="[
-                            'bg-input',
-                            'p-2',
-                            'rounded-right-2',
-                            'form-control',
-                          ]"
-                          v-model="paid_total_cost"
-                          min="0"
-                        />
-                      </div>
-                    </div>
-                    <div
-                      class="w-100 d-flex mt-2 justify-content-between gap-2"
-                    >
-                      <div class="input-group">
-                        <span class="input-group-text">
-                          {{ t("kanban-modal-edit-placeholder-due-payment") }}
-                        </span>
-                        <input
-                          type="number"
-                          name="balance"
-                          lang="en"
-                          readonly
-                          :class="[
-                            'bg-input',
-                            'p-2',
-                            'rounded-right-2',
-                            'form-control',
-                          ]"
-                          v-model="due_payment"
-                        />
-                      </div>
-                    </div>
-                    <div
-                      class="w-100 d-flex mt-2 justify-content-between gap-2"
-                    >
-                      <div class="input-group">
-                        <span class="input-group-text">
-                          {{ t("kanban-modal-edit-label-total-cost") }}
-                        </span>
-                        <input
-                          type="number"
-                          lang="en"
-                          :class="[
-                            'bg-input',
-                            'p-2',
-                            'rounded-right-2',
-                            'form-control',
-                          ]"
-                          v-model="agreement_total_cost"
-                          readonly
-                          min="0.00"
-                        />
-                      </div>
-                    </div>
                   </div>
-                  <div class="pt-2" v-else-if="!isEditMode">
+                  <div class="pt-2" v-show="!isEditMode">
                     {{ t("kanban-modal-edit-label-no-packages") }}
                   </div>
                   <div class="w-100 d-flex mt-2 justify-content-between gap-2">
@@ -1119,6 +1028,100 @@
                     >
                       +
                     </button>
+                  </div>
+                  <div v-show="customerData.hospital_packages.length > 0">
+                    <div class="input-group mt-2">
+                      <span class="input-group-text">
+                        {{ t("kanban-modal-edit-balance") }}
+                      </span>
+                      <input
+                        type="number"
+                        name="balance"
+                        lang="en"
+                        :readonly="!isEditMode"
+                        :class="[
+                          'bg-input',
+                          'p-2',
+                          'rounded-right-2',
+                          'form-control',
+                        ]"
+                        v-model="customerData.balance"
+                        min="0"
+                        @dblclick="handleDoubleClick"
+                      />
+                    </div>
+                    <div class="input-group mt-2">
+                      <span class="input-group-text">
+                        {{ t("kanban-modal-edit-label-agreement-total-cost") }}
+                      </span>
+                      <input
+                        type="number"
+                        lang="en"
+                        :class="[
+                          'bg-input',
+                          'p-2',
+                          'rounded-right-2',
+                          'form-control',
+                        ]"
+                        v-model="agreement_total_cost"
+                        readonly
+                        min="0.00"
+                      />
+                    </div>
+                    <div class="input-group mt-2">
+                      <span class="input-group-text">
+                        {{ t("kanban-modal-edit-label-extra-total-cost") }}
+                      </span>
+                      <input
+                        type="number"
+                        lang="en"
+                        :class="[
+                          'bg-input',
+                          'p-2',
+                          'rounded-right-2',
+                          'form-control',
+                        ]"
+                        v-model="extra_total_cost"
+                        readonly
+                        min="0.00"
+                      />
+                    </div>
+                    <div class="input-group mt-2">
+                      <span class="input-group-text">
+                        {{ t("kanban-modal-edit-placeholder-due-payment") }}
+                      </span>
+                      <input
+                        type="number"
+                        name="balance"
+                        lang="en"
+                        readonly
+                        :class="[
+                          'bg-input',
+                          'p-2',
+                          'rounded-right-2',
+                          'form-control',
+                        ]"
+                        v-model="due_payment"
+                      />
+                    </div>
+                    <div class="input-group mt-2">
+                      <span class="input-group-text">
+                        {{ t("kanban-modal-edit-label-total-cost") }}
+                      </span>
+                      <input
+                        type="number"
+                        lang="en"
+                        :class="[
+                          'bg-input',
+                          'p-2',
+                          'rounded-right-2',
+                          'form-control',
+                        ]"
+                        v-model="total_cost"
+                        readonly
+                        min="0.00"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -3074,6 +3077,15 @@ export default {
         return sum + total_price;
       }, 0);
     });
+    const extra_total_cost = computed(() => {
+      const filtered_packages = customerData.hospital_packages.filter(
+        (p) => p.user_id && p.user_id !== customerData.assigned_to
+      );
+      return filtered_packages.reduce((sum, pkg) => {
+        const total_price = parseFloat(pkg.total_price) || 0;
+        return sum + total_price;
+      }, 0);
+    });
     const paid_total_cost = computed(() => {
       const filtered_packages = customerData.hospital_packages.filter(
         (p) => p.paid_on && p.paid_on !== ""
@@ -3086,16 +3098,23 @@ export default {
     const due_payment = computed(() =>
       Math.max(0, paid_total_cost.value - customerData.balance)
     );
+    const total_cost = computed(() => {
+      return customerData.hospital_packages.reduce((sum, pkg) => {
+        const total_price = parseFloat(pkg.total_price) || 0;
+        return sum + total_price;
+      }, 0);
+    });
     const closeModal = () => {
       setTimeout(() => {
         dealStore.toggleDealModalStatus();
       }, 300);
     };
     return {
+      total_cost,
+      extra_total_cost,
       closeModal,
       setTasksProcessing,
       agreement_total_cost,
-      paid_total_cost,
       due_payment,
       modified_id,
       getStageColor,
