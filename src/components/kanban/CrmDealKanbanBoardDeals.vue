@@ -490,6 +490,13 @@ export default {
       if (props.filters.country_code) {
         formattedFilters["filters[country_code]"] = props.filters.country_code;
       }
+      if (props.filters.origin_id) {
+        formattedFilters["filters[origin_id]"] = props.filters.origin_id;
+      }
+      if (props.filters.import_label_id) {
+        formattedFilters["filters[import_label_id]"] =
+          props.filters.import_label_id;
+      }
       if (Array.isArray(props.filters.status)) {
         if (props.filters.status.includes("unassigned")) {
           formattedFilters["filters[unassigned]"] = 1;

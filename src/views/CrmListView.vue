@@ -680,6 +680,13 @@ const applyFilters = async (newFilters) => {
       formattedFilters["filters[country_code]"] =
         apiFilters.filters.country_code;
     }
+    if (apiFilters.filters.origin_id) {
+      formattedFilters["filters[origin_id]"] = apiFilters.filters.origin_id;
+    }
+    if (apiFilters.filters.import_label_id) {
+      formattedFilters["filters[import_label_id]"] =
+        apiFilters.filters.import_label_id;
+    }
 
     if (Array.isArray(apiFilters.filters.status)) {
       if (apiFilters.filters.status.includes("unassigned")) {
