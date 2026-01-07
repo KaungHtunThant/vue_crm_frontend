@@ -193,7 +193,7 @@
           <div class="col-9">
             <div class="mb-3">
               <select
-                v-model="localHeaderFilters.origin"
+                v-model="localHeaderFilters.origin_id"
                 class="form-select text-secondary"
               >
                 <option value="" selected>
@@ -340,6 +340,7 @@ export default {
       sort_order: "desc",
       nationality: null,
       country_code: null,
+      origin_id: null,
       ...props.headerFilters,
     });
     const stages = ref([]);
