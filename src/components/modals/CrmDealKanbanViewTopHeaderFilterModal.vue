@@ -146,6 +146,7 @@ export default {
           created_date_start: null,
           created_date_end: null,
           status: [],
+          origin_id: null,
         };
         headerFilterData.value = emptyFilters;
         headerSelectedStatuses.value = [];

@@ -185,6 +185,32 @@
           </div>
         </div>
 
+        <!-- Origin -->
+        <div class="row">
+          <div class="col-3">
+            <span>{{ t("crmlist-modal-filter-label-origin") }}</span>
+          </div>
+          <div class="col-9">
+            <div class="mb-3">
+              <select
+                v-model="localHeaderFilters.origin"
+                class="form-select text-secondary"
+              >
+                <option value="" selected>
+                  {{ t("crmlist-modal-filter-label-all") }}
+                </option>
+                <option
+                  v-for="origin in origins"
+                  :key="origin.id"
+                  :value="origin.id"
+                >
+                  {{ origin.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         <!-- Created Date Range -->
         <div class="row mb-3">
           <div class="col-3">
@@ -286,6 +312,7 @@ import { useI18n } from "vue-i18n";
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import { getAvailableStages } from "@/plugins/services/stageService";
 import { useSourceStore } from "@/stores/SourceStore";
+import { useOriginStore } from "@/stores/OriginStore";
 import { computed } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import { nationalities as nationalities_enum } from "@/enums/NationalitiesEnum";
@@ -317,6 +344,7 @@ export default {
     });
     const stages = ref([]);
     const sourceStore = useSourceStore();
+    const originStore = useOriginStore();
     const sources = computed(() => sourceStore.getAllSources);
     const local_packages = ref([]);
     const userStore = useUserStore();
@@ -329,6 +357,8 @@ export default {
       ])
     );
     const countries = countries_enum;
+
+    const origins = computed(() => originStore.getAllOrigins);
 
     const statuses = ref([
       {
@@ -419,6 +449,9 @@ export default {
       if (!userStore.getAllUsers.length) {
         userStore.fetchAllUsers();
       }
+      if (!originStore.getAllOrigins.length) {
+        originStore.fetchAllOrigins();
+      }
 
       if (permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)) {
         statuses.value.push({
@@ -438,6 +471,7 @@ export default {
     }
 
     return {
+      origins,
       countries,
       nationalities,
       localHeaderFilters,

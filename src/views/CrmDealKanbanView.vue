@@ -140,6 +140,13 @@ export default {
           formattedFilters["filters[country_code]"] =
             filters.value.country_code;
         }
+        if (filters.value.origin_id) {
+          formattedFilters["filters[origin_id]"] = filters.value.origin_id;
+        }
+        if (filters.value.import_label_id) {
+          formattedFilters["filters[import_label_id]"] =
+            filters.value.import_label_id;
+        }
         if (Array.isArray(filters.value.status)) {
           if (filters.value.status.includes("unassigned")) {
             formattedFilters["filters[unassigned]"] = 1;
