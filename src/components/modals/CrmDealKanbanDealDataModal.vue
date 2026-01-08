@@ -1740,10 +1740,14 @@ export default {
   setup(props, { emit }) {
     const userStore = useUserStore();
     const users = computed(() => userStore.getAllUsers);
-    const emr_users = computed(() => [
-      ...userStore.getUsersWithRole("emr-admin"),
-      userStore.getUserById(customerData.assigned_to),
-    ]);
+    const emr_users = computed(() => {
+      var user_list = userStore.getUsersWithRole("emr-admin");
+      const sales_user = userStore.getUserById(customerData.assigned_to);
+      if (sales_user) {
+        user_list.push(sales_user);
+      }
+      return user_list;
+    });
     const notificationStore = useNotificationStore();
     const logStore = useLogStore();
     const packageStore = usePackageStore();
