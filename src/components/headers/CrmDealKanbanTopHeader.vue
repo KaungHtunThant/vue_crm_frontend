@@ -39,6 +39,17 @@
               </button>
               <button
                 class="btn text-white me-2 fs-7 btnKanban btn-hover"
+                @click="openEMRKanban"
+                v-if="
+                  permissionStore.hasPermission(PERMISSIONS.EMRKANBAN) &&
+                  !permissionStore.hasPermission(PERMISSIONS.DEALS_KANBAN)
+                "
+                style="padding: 0.5rem 2rem"
+              >
+                {{ t("sidebar-nav-item-emr-kanban") }}
+              </button>
+              <button
+                class="btn text-white me-2 fs-7 btnKanban btn-hover"
                 @click="openCrmTasks"
                 v-if="permissionStore.hasPermission(PERMISSIONS.TASKS_KANBAN)"
                 style="padding: 0.5rem 2rem"
@@ -372,6 +383,9 @@ export default {
     const openAfterSalesKanban = () => {
       router.push({ name: "CrmDealAfterSalesView" });
     };
+    const openEMRKanban = () => {
+      router.push({ name: "EmrDealKanbanView" });
+    };
     const isSmallScreen = ref(window.innerWidth < 1050);
     const handleResize = () => {
       isSmallScreen.value = window.innerWidth < 1050;
@@ -431,6 +445,7 @@ export default {
       local_update_message.value = data;
     };
     return {
+      openEMRKanban,
       headerFilterData,
       openFilterModal,
       handleFilters,
