@@ -311,6 +311,9 @@ const fetchStages = async () => {
     }
   } catch (error) {
     console.error("Error fetching stages:", error);
+    notificationStore.error(error.message, {
+      timeout: 3000,
+    });
   }
 };
 

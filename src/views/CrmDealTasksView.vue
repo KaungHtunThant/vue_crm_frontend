@@ -200,6 +200,7 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message);
       }
     };

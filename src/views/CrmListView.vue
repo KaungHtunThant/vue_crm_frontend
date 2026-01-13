@@ -443,6 +443,7 @@ const bulkMergeItems = async () => {
       }
     }
   } catch (error) {
+    console.error(error);
     notificationStore.error(error.message, {
       timeout: 3000,
     });
@@ -750,6 +751,7 @@ const applyFilters = async (newFilters) => {
     totalRows.value = response.data.meta.total;
     notificationStore.success(response.data.message, { timeout: 3000 });
   } catch (error) {
+    console.error(error);
     notificationStore.error(error.message, { timeout: 3000 });
     rows.value = [];
     totalRows.value = 0;
@@ -836,6 +838,7 @@ const fetchStages = async () => {
       stages.value = stageRes.data.data;
     }
   } catch (error) {
+    console.error(error);
     notificationStore.error(error.message, { timeout: 3000 });
   }
 };
@@ -851,6 +854,7 @@ const fetchUsers = async () => {
       }));
     }
   } catch (error) {
+    console.error(error);
     notificationStore.error(error.message, { timeout: 3000 });
   }
 };
@@ -899,6 +903,7 @@ const handleBulkUpdate = async (key, value) => {
       throw new Error(response.data.message);
     }
   } catch (error) {
+    console.error(error);
     notificationStore.error(error.message, {
       timeout: 3000,
     });
@@ -940,6 +945,7 @@ const bulkDeleteItems = async () => {
       }
     }
   } catch (error) {
+    console.error(error);
     notificationStore.error(error.message, { timeout: 3000 });
   }
 };
@@ -971,6 +977,7 @@ const addNewDeal = (newDeal) => {
       modal.hide();
     }
   } catch (error) {
+    console.error(error);
     notificationStore.error(error.message, { timeout: 3000 });
   }
 };
@@ -989,6 +996,7 @@ const changeDealStage = async (dealId, newStageId) => {
       throw new Error(response.data.message);
     }
   } catch (error) {
+    console.error(error);
     notificationStore.error(error.message, { timeout: 3000 });
   }
 };

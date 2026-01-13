@@ -1796,6 +1796,7 @@ export default {
         notificationStore.success(response.message);
         taskStore.toggleStatusChangeTrigger(true);
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message);
       } finally {
         setTasksProcessingLoading.value = false;
@@ -1810,6 +1811,7 @@ export default {
         notificationStore.success(response.message);
         taskStore.toggleStatusChangeTrigger(true);
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message);
       }
     };
@@ -2075,19 +2077,17 @@ export default {
         modalBackdrop.style.zIndex = "9999";
         document.body.appendChild(modalBackdrop);
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
       }
     };
     const openSuggestApprovalModal = () => {
-      if (!props.deal?.id) {
-        notificationStore.error("Deal ID does not exist", {
-          timeout: 3000,
-        });
-        return;
-      }
       try {
+        if (!props.deal?.id) {
+          throw new Error("Deal ID does not exist");
+        }
         const suggestUserModal = new Modal(
           document.getElementById("suggestUserModal")
         );
@@ -2097,6 +2097,7 @@ export default {
         modalBackdrop.style.zIndex = "9999";
         document.body.appendChild(modalBackdrop);
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2160,6 +2161,7 @@ export default {
           }
         });
         console.log("Reverted stage colors:", stageColors);
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2267,9 +2269,7 @@ export default {
           isEditMode.value = false;
           emit("update-deal", formData);
         } else {
-          notificationStore.error(response.data.message, {
-            timeout: 3000,
-          });
+          throw new Error(response.data.message);
         }
       } catch (error) {
         console.error("Error saving changes:", error);
@@ -2287,6 +2287,7 @@ export default {
       try {
         rating.value = newRating;
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2314,6 +2315,7 @@ export default {
       try {
         customerData.hospital_packages.splice(index, 1);
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2340,6 +2342,7 @@ export default {
           });
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2362,11 +2365,10 @@ export default {
           emit("task-finish", task.duedate);
           taskStore.toggleStatusChangeTrigger(true);
         } else {
-          notificationStore.error(response.data.message, {
-            timeout: 3000,
-          });
+          throw new Error(response.data.message);
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2386,6 +2388,7 @@ export default {
         });
         modal.show();
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2429,6 +2432,7 @@ export default {
           id
         );
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2720,6 +2724,7 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message);
       }
     };
@@ -2742,6 +2747,7 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
+        console.error(error);
         comment.isPinned = !comment.isPinned;
         notificationStore.error(error.message, {
           timeout: 3000,
@@ -2879,6 +2885,7 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2984,6 +2991,7 @@ export default {
           }, 5000);
         };
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });

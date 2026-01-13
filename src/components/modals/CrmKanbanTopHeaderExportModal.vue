@@ -60,8 +60,6 @@
 <script>
 import { ref } from "vue";
 import { Modal } from "bootstrap";
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
@@ -70,16 +68,12 @@ export default {
   setup() {
     const { t } = useI18n();
     const notificationStore = useNotificationStore();
-    // const toast = useToast();
     const exportFormat = ref("");
 
     const handleExport = () => {
       try {
         if (!exportFormat.value) {
-          notificationStore.error("Please choose an export format", {
-            timeout: 3000,
-          });
-          return;
+          throw new Error("Please select an export format.");
         }
 
         const modal = Modal.getInstance(document.getElementById("exportModal"));
@@ -91,6 +85,7 @@ export default {
 
         exportFormat.value = "";
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });

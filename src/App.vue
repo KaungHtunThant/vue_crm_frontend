@@ -139,6 +139,7 @@ export default {
           document.body.style.backgroundAttachment = "fixed";
         }
       } catch (error) {
+        console.error(error);
         this.notificationStore.error(error.message);
       }
     },

@@ -209,6 +209,7 @@ export default {
           timeout: 3000,
         });
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -275,6 +276,7 @@ export default {
         await fetchStages();
         window.addEventListener("contextmenu", handleRightClick);
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });

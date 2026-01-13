@@ -156,6 +156,7 @@ export default {
         if (response.success) {
           notificationStore.success(response.message);
         } else {
+          console.error(response.message);
           notificationStore.error(response.message);
           info.revert();
         }

@@ -188,6 +188,7 @@ export default {
         }
         this.closeTrashDealModal();
       } catch (error) {
+        console.error(error);
         this.notificationStore.error(error.message);
       }
     },
@@ -206,6 +207,7 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
+        console.error(error);
         this.notificationStore.error(error.message);
       }
     },

@@ -177,6 +177,7 @@ export default {
           throw new Error(result.message);
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message);
       } finally {
         loading.value = false;

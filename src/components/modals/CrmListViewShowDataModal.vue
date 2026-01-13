@@ -188,6 +188,7 @@ export default {
         const modal = new Modal(modalElement);
         modal.show();
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -202,6 +203,7 @@ export default {
           modal.hide();
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });

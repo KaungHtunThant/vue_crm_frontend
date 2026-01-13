@@ -211,17 +211,8 @@
     </div>
   </div>
 </template>
-
 <script>
-// import { useToast } from "vue-toastification";
-// import {
-//   showSuccess,
-//   showError,
-//   showInfo,
-//   showWarning,
-// } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
-
 import { useI18n } from "vue-i18n";
 import { getUser } from "@/plugins/services/userService";
 import { createDeal } from "@/plugins/services/dealService";
@@ -231,7 +222,6 @@ export default {
   setup() {
     const { t } = useI18n();
     const notificationStore = useNotificationStore();
-    // const toast = useToast();
     return { t, notificationStore };
   },
   data() {
@@ -250,18 +240,6 @@ export default {
           phones: [],
         },
       },
-      // sources: [
-      //   { id: 1, name: "Facebook", icon: "fab fa-facebook" },
-      //   { id: 2, name: "Whatsapp", icon: "fab fa-whatsapp" },
-      //   { id: 3, name: "Google", icon: "fab fa-google" },
-      //   { id: 4, name: "Instagram", icon: "fab fa-instagram" },
-      //   { id: 5, name: "Twitter", icon: "fab fa-twitter" },
-      //   { id: 6, name: "TikTok", icon: "fab fa-tiktok" },
-      //   { id: 7, name: "Snapchat", icon: "fab fa-snapchat" },
-      //   { id: 8, name: "WeChat", icon: "fa-brands fa-vk" },
-      //   { id: 9, name: "Telegram", icon: "fab fa-telegram" },
-      //   { id: 10, name: "Other", icon: "fa-brands fa-microsoft" },
-      // ],
     };
   },
   computed: {
@@ -274,7 +252,8 @@ export default {
       try {
         const response = await getUser();
         this.users = response.data.data || [];
-      } catch (e) {
+      } catch (error) {
+        console.error(error);
         this.users = [];
       }
     },
@@ -305,9 +284,7 @@ export default {
           });
           this.resetForm();
         } else {
-          this.notificationStore.error(response.data.message, {
-            timeout: 3000,
-          });
+          throw new Error(response.data.message);
         }
       } catch (error) {
         this.notificationStore.error(error.message, {
@@ -333,6 +310,7 @@ export default {
           id: Date.now(),
         });
       } catch (error) {
+        console.error(error);
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -345,6 +323,7 @@ export default {
           timeout: 3000,
         });
       } catch (error) {
+        console.error(error);
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });

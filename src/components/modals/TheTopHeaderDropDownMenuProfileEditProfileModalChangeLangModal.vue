@@ -79,6 +79,7 @@ export default {
       try {
         modalInstance.value.show();
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
           id: "change-lang-open-error",
@@ -101,6 +102,7 @@ export default {
           throw new Error(response.data.messsage);
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, { timeout: 3000 });
       } finally {
         loadingStore.stopLoading();

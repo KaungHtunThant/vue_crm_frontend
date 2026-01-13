@@ -145,6 +145,7 @@ export default {
           notificationStore.info("Notifications disabled");
         }
       } catch (err) {
+        console.error(err);
         notificationStore.error(err.message);
       }
     };

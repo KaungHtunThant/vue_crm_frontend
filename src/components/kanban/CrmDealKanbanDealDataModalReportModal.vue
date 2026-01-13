@@ -127,6 +127,7 @@ export default {
           };
         });
       } else {
+        console.error(response.data.message);
         this.notificationStore.error(response.data.message);
       }
     },

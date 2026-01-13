@@ -224,6 +224,7 @@ export default {
           "idle_deal_assign_approval"
         );
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message);
       } finally {
         loading.value = false;
@@ -288,6 +289,7 @@ export default {
           }));
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message);
       }
     };
@@ -318,11 +320,10 @@ export default {
           notificationStore.success(response.data.message, { timeout: 3000 });
           fetchData();
         } else {
-          notificationStore.error(response.data.message, {
-            timeout: 3000,
-          });
+          throw new Error(response.data.message);
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, { timeout: 3000 });
       }
     };

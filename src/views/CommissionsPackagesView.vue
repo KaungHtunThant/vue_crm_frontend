@@ -107,6 +107,7 @@ export default {
           packages.value = [];
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message);
         packages.value = [];
       }
@@ -132,6 +133,7 @@ export default {
         await fetchPackages();
         notificationStore.success("Package saved successfully");
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message);
       }
     };

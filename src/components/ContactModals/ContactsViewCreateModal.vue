@@ -335,9 +335,7 @@ export default {
           resetForm();
         }
       } catch (error) {
-        if (error.response?.data?.errors) {
-          errors.value = error.response.data.errors;
-        }
+        console.error(error);
         notificationStore.error(error.message || t("error.saveContact"), {
           timeout: 3000,
         });
@@ -356,6 +354,7 @@ export default {
           document.getElementById("contactCreateModal")
         );
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });

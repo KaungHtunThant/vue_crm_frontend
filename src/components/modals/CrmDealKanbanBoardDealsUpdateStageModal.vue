@@ -109,6 +109,7 @@ export default {
             this.stageColor = this.getStageColor(newStage);
           }
         } catch (error) {
+          console.error(error);
           this.notificationStore.error(error.message, {
             timeout: 3000,
           });
@@ -138,6 +139,7 @@ export default {
           modal.hide();
         }
       } catch (error) {
+        console.error(error);
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -152,6 +154,7 @@ export default {
           modal.hide();
         }
       } catch (error) {
+        console.error(error);
         this.notificationStore.error(error.message);
       }
     },

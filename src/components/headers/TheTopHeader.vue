@@ -470,6 +470,7 @@ export default {
           throw new Error(response.message);
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, { timeout: 3000 });
       }
     };

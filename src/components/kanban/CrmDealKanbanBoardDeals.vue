@@ -558,6 +558,7 @@ export default {
             displayStages.value[stageIndex].deals = parentStageDeals.data.data;
           }
         } catch (error) {
+          console.error(error);
           notificationStore.error(error.message);
         }
       } else {
@@ -575,6 +576,7 @@ export default {
           }
         } catch (error) {
           expandedStages.value[parentStage.id] = false;
+          console.error(error);
           notificationStore.error(error.message);
         }
       }
@@ -677,6 +679,7 @@ export default {
               }
             }
           }
+          console.error(error);
           notificationStore.error(error.message);
         }
       }
@@ -726,6 +729,7 @@ export default {
           { once: true }
         );
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message);
       }
     };
@@ -846,18 +850,27 @@ export default {
     const dealUpdateEvent = (data, message = null) => {
       const id = data.id;
       const updatedData = data.updated_data;
-      const oldStageId = data.stage_id;
+      var oldStageId = data.stage_id;
       const newStageId = updatedData?.stage_id;
 
       const oldStageIndexInDisplay = displayStages.value.findIndex(
         (stage) => stage.id == oldStageId
       );
-      const dealIndexInOldStage =
+      var dealIndexInOldStage =
         oldStageIndexInDisplay !== -1
           ? displayStages.value[oldStageIndexInDisplay].deals.findIndex(
               (deal) => deal.id == id
             )
           : -1;
+      if (dealIndexInOldStage === -1) {
+        for (const stage of displayStages.value) {
+          dealIndexInOldStage = stage.deals.findIndex((deal) => deal.id == id);
+          if (dealIndexInOldStage !== -1) {
+            oldStageId = stage.id;
+            break;
+          }
+        }
+      }
 
       if (oldStageId != newStageId) {
         if (
@@ -1135,12 +1148,23 @@ export default {
           const newStage = ref(
             stages.value.find((stage) => stage.id == newStageId)
           );
-          const oldStage = ref(
-            stages.value.find((stage) => stage.id == oldStageId)
-          );
-          const deal =
-            newStage?.value?.deals.find((d) => d.id == dealId) ??
-            oldStage?.value?.deals.find((d) => d.id == dealId);
+          const oldStage = ref(null);
+          var deal = null;
+          console.log("deal id: ", dealId);
+          for (const stage of displayStages.value) {
+            console.log(stage.name);
+            if (stage.deals) {
+              oldStage.value = stages.value.find((s) => s.id == stage.id);
+              console.log(stage.deals);
+              deal = stage.deals.find((d) => d.id == dealId);
+              if (deal) break;
+            }
+          }
+          if (!deal) {
+            console.error("Deal not found in any stage:", dealId);
+            notificationStore.error("Deal not found.");
+            return;
+          }
           const response = await updateDealStage(dealId, newStageId);
           if (response.status !== 200) {
             console.error("Error updating deal stage:", response.data.message);
@@ -1151,10 +1175,12 @@ export default {
             if (oldStage.value) oldStage.value.deal_count -= 1;
             if (newStage.value) newStage.value.deal_count += 1;
             if (!kanban) {
-              oldStage.value.deals.splice(
-                oldStage.value.deals.findIndex((d) => d.id == dealId),
-                1
-              );
+              if (displayStages.value.some((s) => s.id == oldStageId)) {
+                oldStage.value.deals.splice(
+                  oldStage.value.deals.findIndex((d) => d.id == dealId),
+                  1
+                );
+              }
               if (newStage.value) newStage.value.deals.unshift(deal);
             }
             notificationStore.success(response.data.message);
@@ -1308,6 +1334,7 @@ export default {
           filteredDeals.value[stageId] = filtered;
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message);
       }
     };
@@ -1328,6 +1355,7 @@ export default {
           notificationStore.error(response.data.message);
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message);
       }
     };

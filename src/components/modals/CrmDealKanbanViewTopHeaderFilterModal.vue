@@ -45,8 +45,6 @@ import { ref, watch } from "vue";
 import { Modal } from "bootstrap";
 import FilterModalFormItems from "@/components/filterElements/CrmDealKanbanViewTopHeaderFilterModalFormItems.vue";
 import FilterModalButtonsItems from "@/components/filterElements/CrmDealKanbanViewTopHeaderFilterModalButtonsItems.vue";
-// import { useToast } from "vue-toastification";
-// import { showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 
 import { useI18n } from "vue-i18n";
@@ -104,6 +102,7 @@ export default {
         document.querySelector(".modal-backdrop")?.remove();
         document.body.classList.remove("modal-open");
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, { timeout: 3000 });
       }
     };
@@ -120,6 +119,7 @@ export default {
         emit("update:modelValue", { ...headerFilterData.value });
         closeFilterModal();
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, { timeout: 3000 });
       } finally {
         isApplyingFilters.value = false;
@@ -156,6 +156,7 @@ export default {
         emit("update:modelValue", emptyFilters);
         closeFilterModal();
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message);
       } finally {
         isResettingFilters.value = false;

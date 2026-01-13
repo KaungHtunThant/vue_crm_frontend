@@ -207,6 +207,7 @@ export default {
 
         folderFormModal.value.hide();
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, { timeout: 3000 });
       }
     };
@@ -236,6 +237,7 @@ export default {
           });
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -250,6 +252,7 @@ export default {
           timeout: 3000,
         });
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -266,6 +269,7 @@ export default {
         }
         items.value = response.data.folders;
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -299,6 +303,7 @@ export default {
           throw new Error("Invalid folder path.");
         }
       } catch (error) {
+        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
