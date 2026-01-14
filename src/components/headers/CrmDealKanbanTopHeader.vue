@@ -104,6 +104,11 @@
                 <div
                   class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0 rounded-start"
                   style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                  v-if="
+                    permissionStore.hasPermission(
+                      PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
+                    )
+                  "
                 >
                   <span
                     class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
@@ -116,6 +121,11 @@
                 <div
                   class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
                   style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                  v-if="
+                    permissionStore.hasPermission(
+                      PERMISSIONS.READ_OVERDUE_TASK_STAGE
+                    )
+                  "
                 >
                   <span
                     class="badge bg-secondary-subtle text-danger fw-bold fs-6"
@@ -123,6 +133,23 @@
                   >
                   <span class="ms-1 text-white">{{
                     t("kanban-task-status-overdue")
+                  }}</span>
+                </div>
+                <div
+                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
+                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                  v-if="
+                    permissionStore.hasPermission(
+                      PERMISSIONS.READ_CHECKING_OUT_TASK_STAGE
+                    )
+                  "
+                >
+                  <span
+                    class="badge bg-secondary-subtle text-danger fw-bold fs-6"
+                    >{{ computed_checking_out_count }}</span
+                  >
+                  <span class="ms-1 text-white">{{
+                    t("kanban-task-status-checking-out")
                   }}</span>
                 </div>
                 <div
@@ -311,6 +338,9 @@ export default {
     const computed_unassign_count = computed(() =>
       unassign_count.value > 99 ? "99+" : unassign_count.value
     );
+    const computed_checking_out_count = computed(() =>
+      checking_out_count.value > 99 ? "99+" : checking_out_count.value
+    );
     const conversation = ref(null);
     const local_new_message = ref(null);
     const local_update_message = ref(null);
@@ -323,6 +353,7 @@ export default {
     const tomorrow_count = ref(0);
     const unassign_count = ref(0);
     const searchText = ref("");
+    const checking_out_count = ref(0);
     const route = useRoute();
     const showSearchInput = computed(() => {
       return route.name !== "CrmListView";
@@ -418,8 +449,32 @@ export default {
     const fetchTasksCounter = async () => {
       // Simulate fetching data from an API
       try {
-        const overdueResponse = await fetchTasksCountByStageName("Overdue");
-        overdue_count.value = overdueResponse?.data?.data || 0;
+        if (
+          permissionStore.hasPermission(
+            PERMISSIONS.READ_CHECKING_OUT_TASK_STAGE
+          )
+        ) {
+          const checkingOutResponse = await fetchTasksCountByStageName(
+            "Checking Out"
+          );
+          checking_out_count.value = checkingOutResponse?.data?.data || 0;
+        }
+        if (
+          permissionStore.hasPermission(PERMISSIONS.READ_OVERDUE_TASK_STAGE)
+        ) {
+          const overdueResponse = await fetchTasksCountByStageName("Overdue");
+          overdue_count.value = overdueResponse?.data?.data || 0;
+        }
+        if (
+          permissionStore.hasPermission(
+            PERMISSIONS.READ_CHECKING_OUT_TASK_STAGE
+          )
+        ) {
+          const checkingOutResponse = await fetchTasksCountByStageName(
+            "checking-out"
+          );
+          checking_out_count.value = checkingOutResponse?.data?.data || 0;
+        }
 
         const todayResponse = await fetchTasksCountByStageName("Due Today");
         today_count.value = todayResponse?.data?.data || 0;
@@ -482,6 +537,7 @@ export default {
       showSearchInput,
       headerSelectedStatuses,
       openAfterSalesKanban,
+      computed_checking_out_count,
     };
   },
 

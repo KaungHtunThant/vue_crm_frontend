@@ -54,6 +54,9 @@ export const PERMISSIONS = {
   UPDATE_EMR_TASK: "edit-emr-task",
   DELETE_EMR_TASK: "delete-emr-task",
   VIEW_RESPONSIBLE_USER: "view-responsible-user",
+  READ_UNASSIGN_SOON_TASK_STAGE: "view-unassign-soon-task-stage",
+  READ_OVERDUE_TASK_STAGE: "view-overdue-task-stage",
+  READ_CHECKING_OUT_TASK_STAGE: "view-checking-out-task-stage",
 };
 
 export const usePermissionStore = defineStore("permissions", {
