@@ -90,20 +90,32 @@ export default {
             formattedFilters["filters[user_id]"] = filters.value.user_id;
           }
           if (filters.value.created_date_start) {
-            formattedFilters["filters[created_date_start]"] =
-              filters.value.created_date_start;
+            formattedFilters["filters[created_date_start]"] = new Date(
+              filters.value.created_date_start
+            )
+              .toISOString()
+              .slice(0, 10);
           }
           if (filters.value.created_date_end) {
-            formattedFilters["filters[created_date_end]"] =
-              filters.value.created_date_end;
+            formattedFilters["filters[created_date_end]"] = new Date(
+              filters.value.created_date_end
+            )
+              .toISOString()
+              .slice(0, 10);
           }
           if (filters.value.updated_date_start) {
-            formattedFilters["filters[updated_date_start]"] =
-              filters.value.updated_date_start;
+            formattedFilters["filters[updated_date_start]"] = new Date(
+              filters.value.updated_date_start
+            )
+              .toISOString()
+              .slice(0, 10);
           }
           if (filters.value.updated_date_end) {
-            formattedFilters["filters[updated_date_end]"] =
-              filters.value.updated_date_end;
+            formattedFilters["filters[updated_date_end]"] = new Date(
+              filters.value.updated_date_end
+            )
+              .toISOString()
+              .slice(0, 10);
           }
           if (Array.isArray(filters.value.status)) {
             if (filters.value.status.includes("unassigned")) {

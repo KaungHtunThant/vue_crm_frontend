@@ -218,21 +218,27 @@
           <div class="col-3">
             <span>{{ t("crmlist-modal-filter-label-created-at") }}</span>
           </div>
-          <div
-            class="col-9 d-flex justify-content-center align-items-center gap-3"
-          >
-            <input
-              type="date"
-              lang="en"
-              class="form-control text-secondary"
-              v-model="localFilters.created_date_start"
-            />
-            <input
-              type="date"
-              lang="en"
-              class="form-control text-secondary"
-              v-model="localFilters.created_date_end"
-            />
+          <div class="col-9">
+            <div class="row">
+              <div class="col-6">
+                <DatePicker
+                  v-model="localFilters.created_date_start"
+                  dateFormat="yy-mm-dd"
+                  :showIcon="true"
+                  class="w-100"
+                  inputClass="form-control py-2 w-100"
+                />
+              </div>
+              <div class="col-6">
+                <DatePicker
+                  v-model="localFilters.created_date_end"
+                  dateFormat="yy-mm-dd"
+                  class="w-100"
+                  :showIcon="true"
+                  inputClass="form-control py-2 w-100"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -241,21 +247,27 @@
           <div class="col-3">
             <span>{{ t("crmlist-modal-filter-label-updated-at") }}</span>
           </div>
-          <div
-            class="col-9 d-flex justify-content-center align-items-center gap-3"
-          >
-            <input
-              type="date"
-              lang="en"
-              class="form-control text-secondary"
-              v-model="localFilters.updated_date_start"
-            />
-            <input
-              type="date"
-              lang="en"
-              class="form-control text-secondary"
-              v-model="localFilters.updated_date_end"
-            />
+          <div class="col-9">
+            <div class="row">
+              <div class="col-6">
+                <DatePicker
+                  v-model="localFilters.updated_date_start"
+                  dateFormat="yy-mm-dd"
+                  :showIcon="true"
+                  class="w-100"
+                  inputClass="form-control py-2 w-100"
+                />
+              </div>
+              <div class="col-6">
+                <DatePicker
+                  v-model="localFilters.updated_date_end"
+                  dateFormat="yy-mm-dd"
+                  class="w-100"
+                  :showIcon="true"
+                  inputClass="form-control py-2 w-100"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -265,7 +277,7 @@
             <span>{{ t("crmlist-modal-filter-label-sort-by") }}</span>
           </div>
           <div class="col-9">
-            <div class="d-flex gap-3">
+            <div class="d-flex gap-4">
               <select
                 v-model="localFilters.sort_by"
                 class="form-select text-secondary"
@@ -315,9 +327,11 @@ import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import { useUserStore } from "@/stores/UserStore";
 import { nationalities as nationalities_enum } from "@/enums/NationalitiesEnum";
 import { countries as countries_enum } from "@/enums/CountriesEnum";
+import DatePicker from "primevue/datepicker";
 
 export default {
   name: "CrmListViewFilterModalFormItems",
+  components: { DatePicker },
   props: {
     filters: { type: Object, required: true },
     selectedStatuses: {

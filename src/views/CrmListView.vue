@@ -659,20 +659,32 @@ const applyFilters = async (newFilters) => {
     }
 
     if (apiFilters.filters.created_date_start) {
-      formattedFilters["filters[created_date_start]"] =
-        apiFilters.filters.created_date_start;
+      formattedFilters["filters[created_date_start]"] = new Date(
+        apiFilters.filters.created_date_start
+      )
+        .toISOString()
+        .slice(0, 10);
     }
     if (apiFilters.filters.created_date_end) {
-      formattedFilters["filters[created_date_end]"] =
-        apiFilters.filters.created_date_end;
+      formattedFilters["filters[created_date_end]"] = new Date(
+        apiFilters.filters.created_date_end
+      )
+        .toISOString()
+        .slice(0, 10);
     }
     if (apiFilters.filters.updated_date_start) {
-      formattedFilters["filters[updated_date_start]"] =
-        apiFilters.filters.updated_date_start;
+      formattedFilters["filters[updated_date_start]"] = new Date(
+        apiFilters.filters.updated_date_start
+      )
+        .toISOString()
+        .slice(0, 10);
     }
     if (apiFilters.filters.updated_date_end) {
-      formattedFilters["filters[updated_date_end]"] =
-        apiFilters.filters.updated_date_end;
+      formattedFilters["filters[updated_date_end]"] = new Date(
+        apiFilters.filters.updated_date_end
+      )
+        .toISOString()
+        .slice(0, 10);
     }
     if (apiFilters.filters.nationality) {
       formattedFilters["filters[nationality]"] = apiFilters.filters.nationality;
