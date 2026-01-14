@@ -450,16 +450,6 @@ export default {
       // Simulate fetching data from an API
       try {
         if (
-          permissionStore.hasPermission(
-            PERMISSIONS.READ_CHECKING_OUT_TASK_STAGE
-          )
-        ) {
-          const checkingOutResponse = await fetchTasksCountByStageName(
-            "Checking Out"
-          );
-          checking_out_count.value = checkingOutResponse?.data?.data || 0;
-        }
-        if (
           permissionStore.hasPermission(PERMISSIONS.READ_OVERDUE_TASK_STAGE)
         ) {
           const overdueResponse = await fetchTasksCountByStageName("Overdue");
