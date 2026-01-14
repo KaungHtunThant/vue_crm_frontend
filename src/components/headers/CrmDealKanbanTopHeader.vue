@@ -153,6 +153,23 @@
                   }}</span>
                 </div>
                 <div
+                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
+                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                  v-if="
+                    permissionStore.hasPermission(
+                      PERMISSIONS.READ_OVERDUE_AFTER_SALES_TASK_STAGE
+                    )
+                  "
+                >
+                  <span
+                    class="badge bg-secondary-subtle text-danger fw-bold fs-6"
+                    >{{ computed_overdue_after_sales_count }}</span
+                  >
+                  <span class="ms-1 text-white">{{
+                    t("kanban-task-status-overdue")
+                  }}</span>
+                </div>
+                <div
                   class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0"
                   style="padding-top: 0.4rem; padding-bottom: 0.4rem"
                 >
@@ -341,6 +358,11 @@ export default {
     const computed_checking_out_count = computed(() =>
       checking_out_count.value > 99 ? "99+" : checking_out_count.value
     );
+    const computed_overdue_after_sales_count = computed(() =>
+      overdue_after_sales_count.value > 99
+        ? "99+"
+        : overdue_after_sales_count.value
+    );
     const conversation = ref(null);
     const local_new_message = ref(null);
     const local_update_message = ref(null);
@@ -354,6 +376,7 @@ export default {
     const unassign_count = ref(0);
     const searchText = ref("");
     const checking_out_count = ref(0);
+    const overdue_after_sales_count = ref(0);
     const route = useRoute();
     const showSearchInput = computed(() => {
       return route.name !== "CrmListView";
@@ -457,6 +480,17 @@ export default {
         }
         if (
           permissionStore.hasPermission(
+            PERMISSIONS.READ_OVERDUE_AFTER_SALES_TASK_STAGE
+          )
+        ) {
+          const overdueAfterSalesResponse = await fetchTasksCountByStageName(
+            "overdue-after-sales"
+          );
+          overdue_after_sales_count.value =
+            overdueAfterSalesResponse?.data?.data || 0;
+        }
+        if (
+          permissionStore.hasPermission(
             PERMISSIONS.READ_CHECKING_OUT_TASK_STAGE
           )
         ) {
@@ -528,6 +562,7 @@ export default {
       headerSelectedStatuses,
       openAfterSalesKanban,
       computed_checking_out_count,
+      computed_overdue_after_sales_count,
     };
   },
 
