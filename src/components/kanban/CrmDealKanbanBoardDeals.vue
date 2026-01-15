@@ -1128,7 +1128,6 @@ export default {
       kanban = 1,
       is_trash = false
     ) => {
-      console.log("called changeDealStage");
       try {
         const stages = displayStages;
         if (props.viewType == "task" && is_trash) {
@@ -1156,7 +1155,6 @@ export default {
           const oldStage = ref(null);
           var deal = null;
           for (const stage of displayStages.value) {
-            console.log("searching deal in: ", stage.name);
             if (
               stage.deals &&
               ((stage.has_children && !expandedStages.value[stage.id]) ||
@@ -1181,10 +1179,8 @@ export default {
             deal.stage_id = newStageId;
             if (oldStage.value) oldStage.value.deal_count -= 1;
             if (newStage.value) newStage.value.deal_count += 1;
-            console.log("is kanban", kanban);
             if (!kanban) {
               if (oldStage.value?.deals) {
-                console.log("Removing deal from old stage");
                 oldStage.value.deals.splice(
                   oldStage.value.deals.findIndex((d) => d.id == dealId),
                   1
