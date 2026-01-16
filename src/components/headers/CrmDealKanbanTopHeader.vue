@@ -138,7 +138,7 @@
                 <div
                   class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
                   style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-                  v-if="
+                  v-else-if="
                     permissionStore.hasPermission(
                       PERMISSIONS.READ_CHECKING_OUT_TASK_STAGE
                     )
@@ -155,7 +155,7 @@
                 <div
                   class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
                   style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-                  v-if="
+                  v-else-if="
                     permissionStore.hasPermission(
                       PERMISSIONS.READ_OVERDUE_AFTER_SALES_TASK_STAGE
                     )
@@ -473,12 +473,6 @@ export default {
       // Simulate fetching data from an API
       try {
         if (
-          permissionStore.hasPermission(PERMISSIONS.READ_OVERDUE_TASK_STAGE)
-        ) {
-          const overdueResponse = await fetchTasksCountByStageName("Overdue");
-          overdue_count.value = overdueResponse?.data?.data || 0;
-        }
-        if (
           permissionStore.hasPermission(
             PERMISSIONS.READ_OVERDUE_AFTER_SALES_TASK_STAGE
           )
@@ -488,8 +482,12 @@ export default {
           );
           overdue_after_sales_count.value =
             overdueAfterSalesResponse?.data?.data || 0;
-        }
-        if (
+        } else if (
+          permissionStore.hasPermission(PERMISSIONS.READ_OVERDUE_TASK_STAGE)
+        ) {
+          const overdueResponse = await fetchTasksCountByStageName("Overdue");
+          overdue_count.value = overdueResponse?.data?.data || 0;
+        } else if (
           permissionStore.hasPermission(
             PERMISSIONS.READ_CHECKING_OUT_TASK_STAGE
           )
@@ -499,19 +497,22 @@ export default {
           );
           checking_out_count.value = checkingOutResponse?.data?.data || 0;
         }
-
+        if (
+          permissionStore.hasPermission(
+            PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
+          )
+        ) {
+          const unassignSoonResponse = await fetchTasksCountByStageName(
+            "unassign-soon"
+          );
+          unassign_count.value = unassignSoonResponse?.data?.data || 0;
+        }
         const todayResponse = await fetchTasksCountByStageName("Due Today");
         today_count.value = todayResponse?.data?.data || 0;
-
         const tomorrowResponse = await fetchTasksCountByStageName(
           "Due Tomorrow"
         );
         tomorrow_count.value = tomorrowResponse?.data?.data || 0;
-
-        const noTasksResponse = await fetchTasksCountByStageName(
-          "unassign-soon"
-        );
-        unassign_count.value = noTasksResponse?.data?.data || 0;
       } catch (error) {
         console.error("Error fetching task counts:", error);
       }

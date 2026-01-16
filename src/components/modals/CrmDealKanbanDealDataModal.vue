@@ -82,7 +82,7 @@
           <div
             class="stages-container mb-4"
             @dblclick="handleDoubleClick"
-            v-if="viewType !== 'emr'"
+            v-if="viewType !== 'emr' && stages?.length > 0"
           >
             <div class="d-flex stages-wrapper">
               <button
