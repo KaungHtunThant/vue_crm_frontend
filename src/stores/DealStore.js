@@ -4,6 +4,7 @@ import {
   fetchAdditionalDealsByStageId,
   showDeal,
   updateDeal,
+  distributeInactiveDeals,
   moveToSalesEndStage as moveDealToSalesEndStage,
 } from "@/plugins/services/dealService";
 import { defineStore } from "pinia";
@@ -203,6 +204,23 @@ export const useDealStore = defineStore("deal", {
     async moveToSalesEndStage(deal_id) {
       try {
         const response = await moveDealToSalesEndStage(deal_id);
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
+        return {
+          success: true,
+          message: response.data.message,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          message: error.message,
+        };
+      }
+    },
+    async distributeInactiveDeals() {
+      try {
+        const response = await distributeInactiveDeals();
         if (response.status !== 200) {
           throw new Error(response.data.message);
         }

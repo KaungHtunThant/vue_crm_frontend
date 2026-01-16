@@ -58,6 +58,7 @@ export const PERMISSIONS = {
   READ_OVERDUE_TASK_STAGE: "view-overdue-task-stage",
   READ_CHECKING_OUT_TASK_STAGE: "view-checking-out-task-stage",
   READ_OVERDUE_AFTER_SALES_TASK_STAGE: "view-overdue-after-sales-task-stage",
+  DISTRIBUTE_INACTIVE_DEALS: "distribute-inactive-deals",
 };
 
 export const usePermissionStore = defineStore("permissions", {

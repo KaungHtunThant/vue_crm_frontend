@@ -91,6 +91,18 @@
             class="col-auto mt-2 mt-lg-0 text-center d-flex align-items-center justify-content-end gap-2"
           >
             <button
+              class="btn btn-primary rounded-2 fs-7"
+              v-if="
+                permissionStore.hasPermission(
+                  PERMISSIONS.DISTRIBUTE_INACTIVE_DEALS
+                )
+              "
+              @click="distributeInactiveDeals"
+            >
+              <i class="fa-solid fa-dice me-2"></i>
+              <span>{{ t("crmlist-button-distribute-inactive-deals") }}</span>
+            </button>
+            <button
               class="btn btn-header rounded-2 d-flex align-items-center"
               @click="$router.back()"
               v-if="
@@ -102,10 +114,11 @@
               <span class="text-white">{{ t("crmlist-button-back") }}</span>
             </button>
             <button
-              class="btn btn-primary rounded-2 me-2 fs-7"
+              class="btn btn-primary rounded-2 fs-7"
               v-if="permissionStore.hasPermission(PERMISSIONS.CREATE_DEAL)"
               @click="openDealModal"
             >
+              <i class="fa-solid fa-circle-plus me-2"></i>
               <span>{{ t("kanban-button-add-deal") }}</span>
             </button>
             <button
@@ -323,9 +336,11 @@ import Cookies from "js-cookie";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CountryFlagAvatar from "@/components/whatsapp/WhatsAppModalSidebarLeftCountryFlagAvatar.vue";
 import { useSourceStore } from "@/stores/SourceStore";
+import { useDealStore } from "@/stores/DealStore";
 const { t } = useI18n();
 const permissionStore = usePermissionStore();
 const notificationStore = useNotificationStore();
+const dealStore = useDealStore();
 // Table state
 const rows = ref([]);
 const loading = ref(false);
@@ -1006,6 +1021,21 @@ const changeDealStage = async (dealId, newStageId) => {
       fetchData();
     } else {
       throw new Error(response.data.message);
+    }
+  } catch (error) {
+    console.error(error);
+    notificationStore.error(error.message, { timeout: 3000 });
+  }
+};
+
+const distributeInactiveDeals = async () => {
+  try {
+    const response = await dealStore.distributeInactiveDeals();
+    if (response.success) {
+      notificationStore.success(response.message, { timeout: 3000 });
+      fetchData();
+    } else {
+      throw new Error(response.message);
     }
   } catch (error) {
     console.error(error);
