@@ -605,12 +605,12 @@ export default {
               showCancelButton: true,
               confirmButtonColor: "#3085d6",
               cancelButtonColor: "#d33",
-              confirmButtonText: t("success.moveConfirm"),
-              cancelButtonText: t("error.moveCancel"),
+              confirmButtonText: t("deal-move-button-confirm"),
+              cancelButtonText: t("deal-move-button-cancel"),
               reverseButtons: true,
             });
             if (!confirmed.isConfirmed) {
-              throw new Error(t("approval-confirmation-cancelled"));
+              throw new Error("Deal move cancelled.");
             }
           }
           const request = await updateDealStage(deal.id, newStageId);
@@ -1167,12 +1167,12 @@ export default {
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: t("success.moveConfirm"),
-            cancelButtonText: t("error.moveCancel"),
+            confirmButtonText: t("deal-move-button-confirm"),
+            cancelButtonText: t("deal-move-button-cancel"),
             reverseButtons: true,
           });
           if (!confirmed.isConfirmed) {
-            throw new Error(t("approval-confirmation-cancelled"));
+            throw new Error("Deal move cancelled.");
           }
         }
         const stages = displayStages;
