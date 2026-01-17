@@ -37,6 +37,7 @@
             <h6 class="mb-3">
               {{ t("kanban-modal-questions-subheading-package-information") }}
             </h6>
+            <hospital-component />
             <initial-diagnosis-component />
             <sales-packages-component />
             <add-ons-component />
@@ -78,6 +79,7 @@ import SalesPackagesComponent from "./CrmDealKanbanDealDataModalReportModalSales
 import AddOnsComponent from "./CrmDealKanbanDealDataModalReportModalAddOnsComponent.vue";
 import WarrentyComponent from "./CrmDealKanbanDealDataModalReportModalWarrentyComponent.vue";
 import PatientNotesComponent from "./CrmDealKanbanDealDataModalReportModalPatientNotesComponent.vue";
+import HospitalComponent from "./CrmDealKanbanDealDataModalReportModalHospitalComponent.vue";
 export default {
   name: "CrmDealKanbanDealDataModalReportModal",
   props: {
@@ -100,6 +102,7 @@ export default {
     AddOnsComponent,
     WarrentyComponent,
     PatientNotesComponent,
+    HospitalComponent,
   },
   data() {
     return {
@@ -148,6 +151,7 @@ export default {
             additional_services: this.current_deal.additional_services,
             add_on_total_cost: this.current_deal.add_on_total_cost,
             warranty: this.current_deal.warranty,
+            hospital_id: this.current_deal.hospital_id,
           });
           if (!response_2.success) {
             throw new Error(response_2.message);
