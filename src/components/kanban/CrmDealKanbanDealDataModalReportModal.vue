@@ -37,9 +37,9 @@
             <h6 class="mb-3">
               {{ t("kanban-modal-questions-subheading-package-information") }}
             </h6>
-            <hospital-component />
             <initial-diagnosis-component />
             <sales-packages-component />
+            <hospital-component />
             <add-ons-component />
             <warrenty-component />
             <div class="d-flex justify-content-end gap-2 mt-4 mb-2">

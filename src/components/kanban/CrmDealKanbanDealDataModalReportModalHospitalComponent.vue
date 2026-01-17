@@ -1,7 +1,7 @@
 <template>
   <div class="question bg-light ps-2 py-2 mb-2 rounded-3">
     <label class="form-label">
-      <i class="fa-solid fa-shield"></i>
+      <i class="fa-solid fa-map-location"></i>
       {{ $t("kanban-modal-edit-label-locations") }}
     </label>
     <select

@@ -43,7 +43,7 @@
                 v-model="localHeaderFilters.source_id"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-all") }}
                 </option>
                 <option
@@ -68,7 +68,7 @@
                 v-model="localHeaderFilters.stage_id"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-all") }}
                 </option>
                 <option
@@ -99,7 +99,7 @@
                 v-model="localHeaderFilters.user_id"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-all") }}
                 </option>
                 <option v-for="user in users" :key="user.id" :value="user.id">
@@ -144,7 +144,7 @@
                 v-model="localHeaderFilters.nationality"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-label-all") }}
                 </option>
                 <option
@@ -170,7 +170,7 @@
                 v-model="localHeaderFilters.country_code"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-label-all") }}
                 </option>
                 <option
@@ -196,7 +196,7 @@
                 v-model="localHeaderFilters.origin_id"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-label-all") }}
                 </option>
                 <option
@@ -225,6 +225,7 @@
                   :showIcon="true"
                   class="w-100"
                   inputClass="form-control py-2 w-100"
+                  placeholder="yyyy-mm-dd"
                 />
               </div>
               <div class="col-6">
@@ -234,6 +235,7 @@
                   class="w-100"
                   :showIcon="true"
                   inputClass="form-control py-2 w-100"
+                  placeholder="yyyy-mm-dd"
                 />
               </div>
             </div>
@@ -254,6 +256,7 @@
                   :showIcon="true"
                   class="w-100"
                   inputClass="form-control py-2 w-100"
+                  placeholder="yyyy-mm-dd"
                 />
               </div>
               <div class="col-6">
@@ -263,6 +266,7 @@
                   class="w-100"
                   :showIcon="true"
                   inputClass="form-control py-2 w-100"
+                  placeholder="yyyy-mm-dd"
                 />
               </div>
             </div>
@@ -280,7 +284,7 @@
                 v-model="localHeaderFilters.sort_by"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-none") }}
                 </option>
                 <option value="created_at">
@@ -300,7 +304,7 @@
                 v-model="localHeaderFilters.sort_order"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-none") }}
                 </option>
                 <option value="desc">

@@ -58,18 +58,18 @@ export default {
     const selected_conversation = ref(null);
     const searchVal = ref("");
     const filters = ref({
-      source_id: "",
-      stage_id: "",
-      supervisor_id: "",
-      representative_id: "",
-      package_id: "",
-      created_date_start: "",
-      created_date_end: "",
-      updated_date_start: "",
-      updated_date_end: "",
+      source_id: null,
+      stage_id: null,
+      supervisor_id: null,
+      representative_id: null,
+      package_id: null,
+      created_date_start: null,
+      created_date_end: null,
+      updated_date_start: null,
+      updated_date_end: null,
       status: [],
-      sort_by: "",
-      sort_order: "",
+      sort_by: null,
+      sort_order: null,
     });
 
     const new_message = ref(null);
@@ -214,23 +214,20 @@ export default {
     const resetFilter = async () => {
       try {
         filters.value = {
-          source_id: "",
-          stage_id: "",
-          supervisor_id: "",
-          representative_id: "",
-          package_id: "",
-          created_date_start: "",
-          created_date_end: "",
-          updated_date_start: "",
-          updated_date_end: "",
+          source_id: null,
+          stage_id: null,
+          supervisor_id: null,
+          representative_id: null,
+          package_id: null,
+          created_date_start: null,
+          created_date_end: null,
+          updated_date_start: null,
+          updated_date_end: null,
           status: [],
-          sort_by: "",
-          sort_order: "",
+          sort_by: null,
+          sort_order: null,
         };
         const response = await fetchStages();
-        if (response.status !== 200) {
-          throw new Error(response.data.message);
-        }
         notificationStore.success(response.data.message, {
           timeout: 3000,
         });
