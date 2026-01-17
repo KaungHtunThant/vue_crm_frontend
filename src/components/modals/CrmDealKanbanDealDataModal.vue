@@ -1666,7 +1666,7 @@ import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
 import TrashDeal from "@/components/modals/CrmDealKanbanDealDataModalTrashDealModal.vue";
 import SuggestUserModal from "@/components/modals/SuggestUserModal.vue";
-import { updateDealStage, updateDeal } from "@/plugins/services/dealService";
+import { updateDeal } from "@/plugins/services/dealService";
 import {
   getAvailableStages,
   getAvailableAfterSalesStages,
@@ -2122,7 +2122,6 @@ export default {
     const changeStage = async (stageId) => {
       const old_stage_id = currentStageIdLocal.value;
       try {
-        console.log("Changing stage from", old_stage_id, "to:", stageId);
         currentStageIdLocal.value = stageId;
         const stageIndex = (props.stages || []).findIndex(
           (s) => s.id === stageId
@@ -2134,17 +2133,8 @@ export default {
             stageColors[stage.id] = "";
           }
         });
-        console.log("Updated stage colors:", stageColors);
-        const response = await updateDealStage(props.deal.id, stageId);
-        if (response.status === 200) {
-          emit("stage-change", props.deal.id, stageId, props.deal.stage_id, 0);
-          playSound();
-          notificationStore.success(response.data.message, {
-            timeout: 3000,
-          });
-        } else {
-          throw new Error(response.data.message);
-        }
+        emit("stage-change", props.deal.id, stageId, props.deal.stage_id, 0);
+        playSound();
       } catch (error) {
         currentStageIdLocal.value = old_stage_id;
         console.log("Reverting stage to old stage due to error:", old_stage_id);

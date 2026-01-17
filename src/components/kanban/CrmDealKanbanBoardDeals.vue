@@ -337,6 +337,9 @@ import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import { useKanbanStore } from "@/stores/KanbanStore";
 import { useDealStore } from "@/stores/DealStore";
 import { useTaskStore } from "@/stores/TaskStore";
+import { useStageStore } from "@/stores/StageStore";
+import Swal from "sweetalert2";
+import { rules } from "@/enums/StageRulesEnum";
 export default {
   name: "CrmDealKanbanBoardDeals",
   components: {
@@ -378,6 +381,7 @@ export default {
   setup(props, { emit }) {
     const taskStore = useTaskStore();
     const notificationStore = useNotificationStore();
+    const stageStore = useStageStore();
     const isIdle = ref(false);
     const route = useRoute();
     const dealsContainer = ref(null);
@@ -588,6 +592,27 @@ export default {
         const oldStageId = deal.stage_id;
         const originalStageId = deal.stage_id;
         try {
+          if (
+            !permissionStore.hasPermission(PERMISSIONS.IGNORE_STAGE_RULES) &&
+            stageStore.hasRules(newStageId, [
+              rules.MOVEFROMREQUIRECOOLDOWNMINUTESAFTERDEALLASTMOVEDDATE,
+            ])
+          ) {
+            const confirmed = await Swal.fire({
+              title: t("deal-move-confirmation-title"),
+              text: t("deal-move-confirmation-description"),
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              confirmButtonText: t("success.moveConfirm"),
+              cancelButtonText: t("error.moveCancel"),
+              reverseButtons: true,
+            });
+            if (!confirmed.isConfirmed) {
+              throw new Error(t("approval-confirmation-cancelled"));
+            }
+          }
           const request = await updateDealStage(deal.id, newStageId);
           if (request.status !== 200) {
             console.error("Error updating deal stage:", request.data.message);
@@ -1129,6 +1154,27 @@ export default {
       is_trash = false
     ) => {
       try {
+        if (
+          !permissionStore.hasPermission(PERMISSIONS.IGNORE_STAGE_RULES) &&
+          stageStore.hasRules(newStageId, [
+            rules.MOVEFROMREQUIRECOOLDOWNMINUTESAFTERDEALLASTMOVEDDATE,
+          ])
+        ) {
+          const confirmed = await Swal.fire({
+            title: t("deal-move-confirmation-title"),
+            text: t("deal-move-confirmation-description"),
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: t("success.moveConfirm"),
+            cancelButtonText: t("error.moveCancel"),
+            reverseButtons: true,
+          });
+          if (!confirmed.isConfirmed) {
+            throw new Error(t("approval-confirmation-cancelled"));
+          }
+        }
         const stages = displayStages;
         if (props.viewType == "task" && is_trash) {
           const response = await updateDealStage(dealId, newStageId);
@@ -1394,6 +1440,9 @@ export default {
 
       try {
         await initializeWebSocket();
+        if (stageStore.getAllStages.length === 0) {
+          stageStore.fetchStages();
+        }
         const userRole = Cookies.get("user_role");
         const user_id = Cookies.get("user_id");
         let userChannel =

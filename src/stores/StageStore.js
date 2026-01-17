@@ -170,5 +170,11 @@ export const useStageStore = defineStore("stage", {
         minimized: false,
       }));
     },
+    hasRules(stage_id, rules) {
+      return rules.every((rule) => {
+        const stage = this.getStageById(stage_id);
+        return stage?.rules?.includes(rule);
+      });
+    },
   },
 });

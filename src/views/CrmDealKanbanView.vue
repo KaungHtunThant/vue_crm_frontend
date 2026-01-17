@@ -34,6 +34,10 @@ import { getDealsKanban } from "@/plugins/services/kanbanService";
 import { useSourceStore } from "@/stores/SourceStore";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useDealStore } from "@/stores/DealStore";
+import { useStageStore } from "@/stores/StageStore";
+import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
+import { rules } from "@/enums/StageRulesEnum";
+import Swal from "sweetalert2";
 
 export default {
   name: "CrmDealKanbanView",
@@ -48,6 +52,8 @@ export default {
     const notificationStore = useNotificationStore();
     const dealStore = useDealStore();
     const sourceStore = useSourceStore();
+    const stageStore = useStageStore();
+    const permissionStore = usePermissionStore();
     const stages = ref([]);
     const selected_conversation = ref(null);
     const searchVal = ref("");
@@ -269,6 +275,27 @@ export default {
     const changeDealStage = async (dealId, newStageIndex, oldStageId) => {
       try {
         const newStageId = stages.value[newStageIndex].id;
+        if (
+          !permissionStore.hasPermission(PERMISSIONS.IGNORE_STAGE_RULES) &&
+          stageStore.hasRules(newStageId, [
+            rules.MOVEFROMREQUIRECOOLDOWNMINUTESAFTERDEALLASTMOVEDDATE,
+          ])
+        ) {
+          const confirmed = await Swal.fire({
+            title: t("deal-move-confirmation-title"),
+            text: t("deal-move-confirmation-description"),
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: t("success.moveConfirm"),
+            cancelButtonText: t("error.moveCancel"),
+            reverseButtons: true,
+          });
+          if (!confirmed.isConfirmed) {
+            return;
+          }
+        }
         const oldStageIndex = stages.value.findIndex(
           (stage) => stage.id == oldStageId
         );
@@ -296,6 +323,9 @@ export default {
         sourceStore.fetchSources();
         await fetchStages();
         window.addEventListener("contextmenu", handleRightClick);
+        if (stageStore.getAllStages.length === 0) {
+          stageStore.fetchStages();
+        }
       } catch (error) {
         console.error(error);
         notificationStore.error(error.message, {
