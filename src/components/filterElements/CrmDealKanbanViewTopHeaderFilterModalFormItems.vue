@@ -225,7 +225,7 @@
                   :showIcon="true"
                   class="w-100"
                   inputClass="form-control py-2 w-100"
-                  placeholder="yyyy-mm-dd"
+                  placeholder="YYYY-MM-DD"
                 />
               </div>
               <div class="col-6">
@@ -235,7 +235,7 @@
                   class="w-100"
                   :showIcon="true"
                   inputClass="form-control py-2 w-100"
-                  placeholder="yyyy-mm-dd"
+                  placeholder="YYYY-MM-DD"
                 />
               </div>
             </div>
@@ -256,7 +256,7 @@
                   :showIcon="true"
                   class="w-100"
                   inputClass="form-control py-2 w-100"
-                  placeholder="yyyy-mm-dd"
+                  placeholder="YYYY-MM-DD"
                 />
               </div>
               <div class="col-6">
@@ -266,7 +266,7 @@
                   class="w-100"
                   :showIcon="true"
                   inputClass="form-control py-2 w-100"
-                  placeholder="yyyy-mm-dd"
+                  placeholder="YYYY-MM-DD"
                 />
               </div>
             </div>

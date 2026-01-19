@@ -1309,6 +1309,8 @@
                         type="date"
                         lang="en"
                         class="form-control bg-secondary-subtle text-secondary py-2 me-1"
+                        :min="todayDate"
+                        :max="maxDateStr"
                         v-model="task.duedate"
                         :placeholder="t('modals.selectDate')"
                         @mousedown="dateTaskClick"

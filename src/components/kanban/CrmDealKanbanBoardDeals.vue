@@ -103,7 +103,7 @@
                   @click="toggleExpandStage(stage)"
                 >
                   <span v-if="expandedStages[stage.id]"
-                    ><i class="fa-solid fa-compress text-white"></i
+                    ><i class="fa-solid fa-compress text-dark"></i
                   ></span>
                   <span v-else
                     ><i class="fa-solid fa-expand text-white"></i

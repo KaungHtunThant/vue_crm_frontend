@@ -43,7 +43,7 @@
                 v-model="localFilters.source_id"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-all") }}
                 </option>
                 <option
@@ -68,7 +68,7 @@
                 v-model="localFilters.stage_id"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-all") }}
                 </option>
                 <option
@@ -99,7 +99,7 @@
                 v-model="localFilters.user_id"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-all") }}
                 </option>
                 <option
@@ -128,7 +128,7 @@
                 v-model="localFilters.excluded_user_id"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-all") }}
                 </option>
                 <option
@@ -175,7 +175,7 @@
                 v-model="localFilters.nationality"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-label-all") }}
                 </option>
                 <option
@@ -199,7 +199,7 @@
                 v-model="localFilters.country_code"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-label-all") }}
                 </option>
                 <option
@@ -227,6 +227,7 @@
                   :showIcon="true"
                   class="w-100"
                   inputClass="form-control py-2 w-100"
+                  placeholder="YYYY-MM-DD"
                 />
               </div>
               <div class="col-6">
@@ -236,6 +237,7 @@
                   class="w-100"
                   :showIcon="true"
                   inputClass="form-control py-2 w-100"
+                  placeholder="YYYY-MM-DD"
                 />
               </div>
             </div>
@@ -256,6 +258,7 @@
                   :showIcon="true"
                   class="w-100"
                   inputClass="form-control py-2 w-100"
+                  placeholder="YYYY-MM-DD"
                 />
               </div>
               <div class="col-6">
@@ -265,6 +268,7 @@
                   class="w-100"
                   :showIcon="true"
                   inputClass="form-control py-2 w-100"
+                  placeholder="YYYY-MM-DD"
                 />
               </div>
             </div>
@@ -282,7 +286,7 @@
                 v-model="localFilters.sort_by"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-none") }}
                 </option>
                 <option value="created_at">
@@ -302,7 +306,7 @@
                 v-model="localFilters.sort_order"
                 class="form-select text-secondary"
               >
-                <option value="" selected>
+                <option :value="null" selected>
                   {{ t("crmlist-modal-filter-none") }}
                 </option>
                 <option value="desc">
@@ -357,6 +361,7 @@ export default {
       stage_id: null,
       user_id: null,
       excluded_user_id: null,
+      country_code: null,
       nationality: null,
       created_date_start: null,
       created_date_end: null,
