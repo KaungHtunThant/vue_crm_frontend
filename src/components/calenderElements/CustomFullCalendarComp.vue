@@ -71,7 +71,49 @@
         </select>
       </div>
     </div>
-    <FullCalendar ref="fullCalendarRef" :options="calendarOptions" />
+    <FullCalendar ref="fullCalendarRef" :options="calendarOptions">
+      <template v-slot:eventContent="arg">
+        <span class="align-middle">{{ arg.event.title }}</span>
+        <button
+          v-show="
+            currentView === 'dayGridDay' &&
+            permissionStore.hasPermission(permissions.UPDATE_EMR_TASK)
+          "
+          class="btn btn-success btn-sm ms-3"
+          @click.stop="
+            handleCalendarTaskStatusChange(arg.event.id, 'completed')
+          "
+          :title="$t('emr-calendar-item-button-tooltip-complete')"
+        >
+          <i class="fa fa-check"></i>
+        </button>
+        <button
+          v-show="
+            currentView === 'dayGridDay' &&
+            permissionStore.hasPermission(permissions.UPDATE_EMR_TASK) &&
+            !arg.event.extendedProps.is_processing
+          "
+          class="btn btn-warning btn-sm ms-2"
+          @click.stop="handleCalendarTaskStatusChange(arg.event.id, null, true)"
+          :title="$t('emr-calendar-item-button-tooltip-processing')"
+        >
+          <i class="fa fa-spinner"></i>
+        </button>
+        <button
+          v-show="
+            currentView === 'dayGridDay' &&
+            permissionStore.hasPermission(permissions.UPDATE_EMR_TASK)
+          "
+          class="btn btn-danger btn-sm ms-2"
+          @click.stop="
+            handleCalendarTaskStatusChange(arg.event.id, 'cancelled')
+          "
+          :title="$t('emr-calendar-item-button-tooltip-cancel')"
+        >
+          <i class="fa fa-times"></i>
+        </button>
+      </template>
+    </FullCalendar>
   </div>
 </template>
 <script>
@@ -303,6 +345,31 @@ export default {
     const task_status_change_trigger = computed(
       () => taskStore.getStatusChangeTrigger
     );
+    const handleCalendarTaskStatusChange = async (
+      task_id,
+      status,
+      is_processing
+    ) => {
+      try {
+        const response = await taskStore.updateTask(
+          task_id,
+          null,
+          null,
+          null,
+          status,
+          is_processing
+        );
+        if (response.success) {
+          fullCalendarRef.value.getApi().refetchEvents();
+          notificationStore.success(response.message);
+        } else {
+          notificationStore.error(response.message);
+        }
+      } catch (error) {
+        console.error("Error completing task:", error);
+        notificationStore.error("An error occurred while completing the task.");
+      }
+    };
 
     watch(
       () => settingStore.getIsEmrCalendarDrawerOpen,
@@ -341,6 +408,7 @@ export default {
       toggleEMRCalendarDrawer,
       handleCancelDeleteSelectedTasks,
       handleDeleteSelectedTasks,
+      handleCalendarTaskStatusChange,
     };
   },
 };

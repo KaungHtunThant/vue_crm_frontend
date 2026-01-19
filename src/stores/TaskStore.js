@@ -234,7 +234,8 @@ export const useTaskStore = defineStore("task", {
       duedate,
       duetime = null,
       description = null,
-      status = null
+      status = null,
+      is_processing = null
     ) {
       try {
         const response = await updateTask(id, {
@@ -242,6 +243,7 @@ export const useTaskStore = defineStore("task", {
           duetime: duetime,
           description: description,
           status: status,
+          is_processing: is_processing,
         });
         if (response.status !== 200) {
           throw new Error(response.data.message);
