@@ -5,19 +5,21 @@ import {
   // update,
   // destroy,
   // show,
-} from "@/plugins/services/hospitalService";
+} from "@/plugins/services/importLabelService";
 import { defineStore } from "pinia";
 
-export const useHospitalStore = defineStore("hospital", {
+export const useImportLabelStore = defineStore("importLabel", {
   state: () => ({
-    hospitals: [],
+    import_labels: [],
   }),
   getters: {
     getAll: (state) => {
-      return state.hospitals;
+      return state.import_labels;
     },
-    getHospitalById: (state) => (hospital_id) => {
-      return state.hospitals.find((hospital) => hospital.id === hospital_id);
+    getImportLabelById: (state) => (import_label_id) => {
+      return state.import_labels.find(
+        (import_label) => import_label.id === import_label_id
+      );
     },
   },
   actions: {
@@ -25,7 +27,7 @@ export const useHospitalStore = defineStore("hospital", {
       try {
         const response = await all();
         if (response.status === 200) {
-          this.hospitals = response.data.data;
+          this.import_labels = response.data.data;
         } else {
           throw new Error(response.data.message);
         }

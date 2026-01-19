@@ -506,6 +506,15 @@ const fetchData = async () => {
       formattedFilters["filters[country]"] = apiFilters.filters.country;
     }
 
+    if (apiFilters.filters.origin_id) {
+      formattedFilters["filters[origin_id]"] = apiFilters.filters.origin_id;
+    }
+
+    if (apiFilters.filters.import_label_id) {
+      formattedFilters["filters[import_label_id]"] =
+        apiFilters.filters.import_label_id;
+    }
+
     if (apiFilters.filters.created_date_start) {
       formattedFilters["filters[created_date_start]"] =
         apiFilters.filters.created_date_start;

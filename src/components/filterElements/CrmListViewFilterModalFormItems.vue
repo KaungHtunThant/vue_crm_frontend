@@ -213,6 +213,57 @@
             </div>
           </div>
         </div>
+        <!-- Origin -->
+        <div class="row">
+          <div class="col-3">
+            <span>{{ t("crmlist-modal-filter-label-origin") }}</span>
+          </div>
+          <div class="col-9">
+            <div class="mb-3">
+              <select
+                v-model="localFilters.origin_id"
+                class="form-select text-secondary"
+              >
+                <option :value="null" selected>
+                  {{ t("crmlist-modal-filter-label-all") }}
+                </option>
+                <option
+                  v-for="origin in origins"
+                  :key="origin.id"
+                  :value="origin.id"
+                >
+                  {{ origin.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Import Label -->
+        <div class="row">
+          <div class="col-3">
+            <span>{{ t("crmlist-modal-filter-label-import-label") }}</span>
+          </div>
+          <div class="col-9">
+            <div class="mb-3">
+              <select
+                v-model="localFilters.import_label_id"
+                class="form-select text-secondary"
+              >
+                <option :value="null" selected>
+                  {{ t("crmlist-modal-filter-label-all") }}
+                </option>
+                <option
+                  v-for="import_label in import_labels"
+                  :key="import_label.id"
+                  :value="import_label.id"
+                >
+                  {{ import_label.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
         <!-- Created Date Range -->
         <div class="row mb-3">
           <div class="col-3">
@@ -332,6 +383,8 @@ import { useUserStore } from "@/stores/UserStore";
 import { nationalities as nationalities_enum } from "@/enums/NationalitiesEnum";
 import { countries as countries_enum } from "@/enums/CountriesEnum";
 import DatePicker from "primevue/datepicker";
+import { useOriginStore } from "@/stores/OriginStore";
+import { useImportLabelStore } from "@/stores/ImportLabelStore";
 
 export default {
   name: "CrmListViewFilterModalFormItems",
@@ -370,11 +423,17 @@ export default {
       status: [],
       sort_by: "created_at",
       sort_order: "desc",
+      origin_id: null,
+      import_label_id: null,
       ...props.filters,
     });
     const local_stages = ref(props.stages);
     const local_sources = ref(props.sources);
     const userStore = useUserStore();
+    const originStore = useOriginStore();
+    const importLabelStore = useImportLabelStore();
+    const origins = computed(() => originStore.getAllOrigins);
+    const import_labels = computed(() => importLabelStore.getAll);
     const local_users = computed(() => userStore.getAllUsers);
     const local_packages = ref([]);
     const nationalities_options = nationalities_enum;
@@ -482,6 +541,12 @@ export default {
       if (!userStore.getAllUsers.length) {
         userStore.fetchAllUsers();
       }
+      if (!originStore.getAllOrigins.length) {
+        originStore.fetchAllOrigins();
+      }
+      if (!importLabelStore.getAll.length) {
+        importLabelStore.fetchAll();
+      }
       if (permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)) {
         statuses.value.push({
           value: "unassigned",
@@ -503,6 +568,8 @@ export default {
       local_sources,
       permissionStore,
       PERMISSIONS,
+      origins,
+      import_labels,
     };
   },
 };

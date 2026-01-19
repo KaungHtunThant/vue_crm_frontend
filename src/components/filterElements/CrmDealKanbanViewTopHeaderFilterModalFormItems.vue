@@ -211,6 +211,32 @@
           </div>
         </div>
 
+        <!-- Import Label -->
+        <div class="row">
+          <div class="col-3">
+            <span>{{ t("crmlist-modal-filter-label-import-label") }}</span>
+          </div>
+          <div class="col-9">
+            <div class="mb-3">
+              <select
+                v-model="localHeaderFilters.import_label_id"
+                class="form-select text-secondary"
+              >
+                <option :value="null" selected>
+                  {{ t("crmlist-modal-filter-label-all") }}
+                </option>
+                <option
+                  v-for="import_label in import_labels"
+                  :key="import_label.id"
+                  :value="import_label.id"
+                >
+                  {{ import_label.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         <!-- Created Date Range -->
         <div class="row mb-3">
           <div class="col-3">
@@ -334,6 +360,7 @@ import { useUserStore } from "@/stores/UserStore";
 import { nationalities as nationalities_enum } from "@/enums/NationalitiesEnum";
 import { countries as countries_enum } from "@/enums/CountriesEnum";
 import DatePicker from "primevue/datepicker";
+import { useImportLabelStore } from "@/stores/ImportLabelStore";
 
 export default {
   name: "CrmDealKanbanViewTopHeaderFilterModalFormItems",
@@ -361,11 +388,14 @@ export default {
       nationality: null,
       country_code: null,
       origin_id: null,
+      import_label_id: null,
       ...props.headerFilters,
     });
     const stages = ref([]);
     const sourceStore = useSourceStore();
     const originStore = useOriginStore();
+    const importLabelStore = useImportLabelStore();
+    const import_labels = computed(() => importLabelStore.getAll);
     const sources = computed(() => sourceStore.getAllSources);
     const local_packages = ref([]);
     const userStore = useUserStore();
@@ -473,6 +503,9 @@ export default {
       if (!originStore.getAllOrigins.length) {
         originStore.fetchAllOrigins();
       }
+      if (!importLabelStore.getAll.length) {
+        importLabelStore.fetchAll();
+      }
 
       if (permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)) {
         statuses.value.push({
@@ -506,6 +539,7 @@ export default {
       sources,
       permissionStore,
       PERMISSIONS,
+      import_labels,
     };
   },
 };
