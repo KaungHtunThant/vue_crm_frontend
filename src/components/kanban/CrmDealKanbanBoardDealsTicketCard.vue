@@ -181,9 +181,17 @@
 
     <!-- التواريخ -->
     <div class="col-12 mt-2 d-flex justify-content-between align-items-center">
-      <span class="text-dark fs-7 bg-secondary-50 rounded px-1"
+      <span
+        class="text-dark fs-7 bg-secondary-50 rounded px-1"
+        v-show="can_view_created_at"
         ><i class="ms-1 mt-1 fa-solid fa-square-plus fs-6"></i>
         {{ formatDate(deal.created_at) }}</span
+      >
+      <span
+        class="text-dark fs-7 bg-secondary-50 rounded px-1"
+        v-show="!can_view_created_at"
+        ><i class="ms-1 mt-1 fa-solid fa-user fs-6"></i>
+        {{ formatDate(deal.last_assigned_at) }}</span
       >
       <span class="text-dark fs-7 bg-secondary-50 rounded px-1"
         ><i class="ms-1 mt-1 fa-solid fa-square-pen fs-6"></i>
@@ -258,6 +266,9 @@ export default {
     const permissionStore = usePermissionStore();
     const can_view_responsible_user = permissionStore.hasPermission(
       PERMISSIONS.VIEW_RESPONSIBLE_USER
+    );
+    const can_view_created_at = permissionStore.hasPermission(
+      PERMISSIONS.READ_DEALS_CREATED_AT
     );
     const userRole = Cookies.get("user_role");
     const { t } = useI18n();
@@ -443,6 +454,7 @@ export default {
       onDragStart,
       ticketValue,
       can_view_responsible_user,
+      can_view_created_at,
     };
   },
   methods: {},

@@ -61,6 +61,7 @@ export const PERMISSIONS = {
   DISTRIBUTE_INACTIVE_DEALS: "distribute-inactive-deals",
   IGNORE_STAGE_RULES: "ignore-stage-rules",
   BYPASS_WARNINGS: "bypass-warnings",
+  READ_DEALS_CREATED_AT: "view-deals-created-at",
 };
 
 export const usePermissionStore = defineStore("permissions", {
