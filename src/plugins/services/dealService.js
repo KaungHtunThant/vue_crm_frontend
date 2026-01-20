@@ -126,3 +126,6 @@ export const updateHospitalPackage = async (data) => {
 export const distributeInactiveDeals = async () => {
   return await axios.post(`/deals/force-roll`);
 };
+export const getRecontactCounts = async () => {
+  return await axios.get(`/deals/recontact-counts`);
+};

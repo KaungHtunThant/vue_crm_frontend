@@ -237,6 +237,32 @@
           </div>
         </div>
 
+        <!-- Recontact Count -->
+        <div class="row">
+          <div class="col-3">
+            <span>{{ t("crmlist-modal-filter-label-recontact-count") }}</span>
+          </div>
+          <div class="col-9">
+            <div class="mb-3">
+              <select
+                v-model="localHeaderFilters.recontact_count"
+                class="form-select text-secondary"
+              >
+                <option :value="null" selected>
+                  {{ t("crmlist-modal-filter-label-all") }}
+                </option>
+                <option
+                  v-for="recontact_count in recontact_counts"
+                  :key="recontact_count"
+                  :value="recontact_count"
+                >
+                  {{ recontact_count }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         <!-- Created Date Range -->
         <div class="row mb-3">
           <div class="col-3">
@@ -361,6 +387,7 @@ import { nationalities as nationalities_enum } from "@/enums/NationalitiesEnum";
 import { countries as countries_enum } from "@/enums/CountriesEnum";
 import DatePicker from "primevue/datepicker";
 import { useImportLabelStore } from "@/stores/ImportLabelStore";
+import { useDealStore } from "@/stores/DealStore";
 
 export default {
   name: "CrmDealKanbanViewTopHeaderFilterModalFormItems",
@@ -389,12 +416,15 @@ export default {
       country_code: null,
       origin_id: null,
       import_label_id: null,
+      recontact_count: null,
       ...props.headerFilters,
     });
     const stages = ref([]);
     const sourceStore = useSourceStore();
     const originStore = useOriginStore();
     const importLabelStore = useImportLabelStore();
+    const dealStore = useDealStore();
+    const recontact_counts = computed(() => dealStore.getRecontactCounts);
     const import_labels = computed(() => importLabelStore.getAll);
     const sources = computed(() => sourceStore.getAllSources);
     const local_packages = ref([]);
@@ -506,6 +536,9 @@ export default {
       if (!importLabelStore.getAll.length) {
         importLabelStore.fetchAll();
       }
+      if (!dealStore.getRecontactCounts.length) {
+        dealStore.fetchRecontactCounts();
+      }
 
       if (permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)) {
         statuses.value.push({
@@ -526,6 +559,7 @@ export default {
     }
 
     return {
+      recontact_counts,
       origins,
       countries,
       nationalities,

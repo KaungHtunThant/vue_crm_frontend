@@ -123,6 +123,10 @@ export default {
         if (filters.value.user_id) {
           formattedFilters["filters[user_id]"] = filters.value.user_id;
         }
+        if (filters.value.recontact_count) {
+          formattedFilters["filters[recontact_count]"] =
+            filters.value.recontact_count;
+        }
         if (filters.value.created_date_start) {
           formattedFilters["filters[created_date_start]"] = new Date(
             filters.value.created_date_start

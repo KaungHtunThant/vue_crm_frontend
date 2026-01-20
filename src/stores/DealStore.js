@@ -5,6 +5,7 @@ import {
   showDeal,
   updateDeal,
   distributeInactiveDeals,
+  getRecontactCounts,
   moveToSalesEndStage as moveDealToSalesEndStage,
 } from "@/plugins/services/dealService";
 import { defineStore } from "pinia";
@@ -17,6 +18,7 @@ export const useDealStore = defineStore("deal", {
     deal_scroll_status: false,
     deal_modal_status: false,
     deal_fetch_indicator: false,
+    recontact_counts: [],
   }),
   getters: {
     getAllDeals: (state) => {
@@ -39,6 +41,9 @@ export const useDealStore = defineStore("deal", {
     },
     getDealModalStatus: (state) => {
       return state.deal_modal_status;
+    },
+    getRecontactCounts: (state) => {
+      return state.recontact_counts;
     },
   },
   actions: {
@@ -224,6 +229,24 @@ export const useDealStore = defineStore("deal", {
         if (response.status !== 200) {
           throw new Error(response.data.message);
         }
+        return {
+          success: true,
+          message: response.data.message,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          message: error.message,
+        };
+      }
+    },
+    async fetchRecontactCounts() {
+      try {
+        const response = await getRecontactCounts();
+        if (!response.status === 200) {
+          throw new Error(response.data.message);
+        }
+        this.recontact_counts = response.data.data;
         return {
           success: true,
           message: response.data.message,
