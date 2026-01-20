@@ -453,6 +453,10 @@ export default {
         value: "admin_comments",
         label: t("kanban-modal-filter-status-admincomments"),
       },
+      {
+        value: "recontact_only",
+        label: t("kanban-modal-filter-status-recontactonly"),
+      },
     ]);
 
     const updateLocalFilters = (newFilters) => {

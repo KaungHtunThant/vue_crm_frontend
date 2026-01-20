@@ -548,6 +548,9 @@ const fetchData = async () => {
       if (apiFilters.filters.status.includes("admin_comments")) {
         formattedFilters["filters[admin_comments]"] = 1;
       }
+      if (apiFilters.filters.status.includes("recontact_only")) {
+        formattedFilters["filters[recontact_only]"] = 1;
+      }
     }
 
     const dealsRes = await getDeals({
@@ -752,6 +755,9 @@ const applyFilters = async (newFilters) => {
       }
       if (apiFilters.filters.status.includes("admin_comments")) {
         formattedFilters["filters[admin_comments]"] = 1;
+      }
+      if (apiFilters.filters.status.includes("recontact_only")) {
+        formattedFilters["filters[recontact_only]"] = 1;
       }
     }
 
