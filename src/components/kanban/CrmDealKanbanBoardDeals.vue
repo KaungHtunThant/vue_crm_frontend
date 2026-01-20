@@ -593,7 +593,7 @@ export default {
         const originalStageId = deal.stage_id;
         try {
           if (
-            !permissionStore.hasPermission(PERMISSIONS.IGNORE_STAGE_RULES) &&
+            !permissionStore.hasPermission(PERMISSIONS.BYPASS_WARNINGS) &&
             stageStore.hasRules(newStageId, [
               rules.MOVEFROMREQUIRECOOLDOWNMINUTESAFTERDEALLASTMOVEDDATE,
             ])
