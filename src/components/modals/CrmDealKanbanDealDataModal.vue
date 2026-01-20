@@ -1038,7 +1038,7 @@
                         type="number"
                         name="balance"
                         lang="en"
-                        :readonly="!isEditMode"
+                        readonly
                         :class="[
                           'bg-input',
                           'p-2',
@@ -1049,6 +1049,13 @@
                         min="0"
                         @dblclick="handleDoubleClick"
                       />
+                      <button
+                        class="btn btn-success"
+                        @click="addbalance"
+                        v-show="isEditMode"
+                      >
+                        {{ t("kanban-modal-edit-button-add-balance") }}
+                      </button>
                     </div>
                     <div class="input-group mt-2">
                       <span class="input-group-text">
@@ -1084,6 +1091,24 @@
                         v-model="extra_total_cost"
                         readonly
                         min="0.00"
+                      />
+                    </div>
+                    <div class="input-group mt-2">
+                      <span class="input-group-text">
+                        {{ t("kanban-modal-edit-placeholder-paid-payment") }}
+                      </span>
+                      <input
+                        type="number"
+                        name="paid_payment"
+                        lang="en"
+                        readonly
+                        :class="[
+                          'bg-input',
+                          'p-2',
+                          'rounded-right-2',
+                          'form-control',
+                        ]"
+                        v-model="paid_total_cost"
                       />
                     </div>
                     <div class="input-group mt-2">
@@ -1309,8 +1334,6 @@
                         type="date"
                         lang="en"
                         class="form-control bg-secondary-subtle text-secondary py-2 me-1"
-                        :min="todayDate"
-                        :max="maxDateStr"
                         v-model="task.duedate"
                         :placeholder="t('modals.selectDate')"
                         @mousedown="dateTaskClick"
@@ -1633,6 +1656,11 @@
     </div>
   </div>
   <view-report ref="questionsModalRef" :deal_id="deal?.id" />
+  <add-balance
+    ref="addBalanceModal"
+    :deal_id="deal?.id"
+    @balance-added="handleBalanceAdded"
+  />
   <suggest-user-modal
     ref="suggestUserModalRef"
     :users="users"
@@ -1663,6 +1691,7 @@ import "vue-select/dist/vue-select.css";
 import { useRoute, useRouter } from "vue-router";
 import RatingStars from "@/components/CreateDealElements/CrmDealKanbanDealDataModalRatingStars.vue";
 import ViewReport from "@/components/kanban/CrmDealKanbanDealDataModalReportModal.vue";
+import AddBalance from "@/components/kanban/AddBalanceModal.vue";
 import { Modal } from "bootstrap";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
@@ -1707,6 +1736,7 @@ export default {
     TrashDeal,
     SuggestUserModal,
     DatePicker,
+    AddBalance,
     "v-select": vSelect,
   },
   props: {
@@ -2386,7 +2416,18 @@ export default {
         });
       }
     };
-
+    const addbalance = async () => {
+      const modalbalance = document.getElementById("addBalanceModal");
+      const existingInstance = Modal.getInstance(modalbalance);
+      if (existingInstance) {
+        existingInstance.dispose();
+      }
+      const modal = new Modal(modalbalance, {
+        backdrop: true,
+        focus: true,
+      });
+      modal.show();
+    };
     const toggleEditMode = () => {
       isEditMode.value = !isEditMode.value;
     };
@@ -2833,6 +2874,18 @@ export default {
       }
       emit("suggest-user", props.deal.id);
     };
+    const handleBalanceAdded = (balanceData) => {
+      console.log("Balance data received:", balanceData);
+      customerData.balance =
+        Number(customerData.balance) + Number(balanceData.data);
+      console.log("Updated balance:", customerData.balance);
+      notificationStore.success(
+        `Balance updated. New balance: ${customerData.balance}`,
+        {
+          timeout: 3000,
+        }
+      );
+    };
     const old_duedate = ref("");
     const old_task_id = ref("");
     const storeOldValue = (task_id, duedate) => {
@@ -3116,6 +3169,7 @@ export default {
     return {
       total_cost,
       extra_total_cost,
+      paid_total_cost,
       closeModal,
       setTasksProcessing,
       agreement_total_cost,
@@ -3226,6 +3280,8 @@ export default {
       SettingStore,
       moveToSalesEndStage,
       payHospitalPackage,
+      addbalance,
+      handleBalanceAdded,
     };
   },
 };
