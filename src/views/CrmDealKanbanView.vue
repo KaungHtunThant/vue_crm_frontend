@@ -227,6 +227,7 @@ export default {
           created_date_end: null,
           updated_date_start: null,
           updated_date_end: null,
+          recontact_count: null,
           status: [],
           sort_by: null,
           sort_order: null,

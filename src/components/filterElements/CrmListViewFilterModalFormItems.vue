@@ -264,6 +264,33 @@
             </div>
           </div>
         </div>
+
+        <!-- Recontact count -->
+        <div class="row">
+          <div class="col-3">
+            <span>{{ t("crmlist-modal-filter-label-recontact-count") }}</span>
+          </div>
+          <div class="col-9">
+            <div class="mb-3">
+              <select
+                v-model="localFilters.recontact_count"
+                class="form-select text-secondary"
+              >
+                <option :value="null" selected>
+                  {{ t("crmlist-modal-filter-label-all") }}
+                </option>
+                <option
+                  v-for="recontact_count in recontact_counts"
+                  :key="recontact_count"
+                  :value="recontact_count"
+                >
+                  {{ recontact_count }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         <!-- Created Date Range -->
         <div class="row mb-3">
           <div class="col-3">
@@ -385,6 +412,7 @@ import { countries as countries_enum } from "@/enums/CountriesEnum";
 import DatePicker from "primevue/datepicker";
 import { useOriginStore } from "@/stores/OriginStore";
 import { useImportLabelStore } from "@/stores/ImportLabelStore";
+import { useDealStore } from "@/stores/DealStore";
 
 export default {
   name: "CrmListViewFilterModalFormItems",
@@ -425,6 +453,7 @@ export default {
       sort_order: "desc",
       origin_id: null,
       import_label_id: null,
+      recontact_count: null,
       ...props.filters,
     });
     const local_stages = ref(props.stages);
@@ -432,6 +461,8 @@ export default {
     const userStore = useUserStore();
     const originStore = useOriginStore();
     const importLabelStore = useImportLabelStore();
+    const dealStore = useDealStore();
+    const recontact_counts = computed(() => dealStore.getRecontactCounts);
     const origins = computed(() => originStore.getAllOrigins);
     const import_labels = computed(() => importLabelStore.getAll);
     const local_users = computed(() => userStore.getAllUsers);
@@ -547,6 +578,9 @@ export default {
       if (!importLabelStore.getAll.length) {
         importLabelStore.fetchAll();
       }
+      if (!dealStore.getRecontactCounts.length) {
+        dealStore.fetchRecontactCounts();
+      }
       if (permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)) {
         statuses.value.push({
           value: "unassigned",
@@ -556,6 +590,7 @@ export default {
     });
 
     return {
+      recontact_counts,
       countries,
       nationalities,
       localFilters,

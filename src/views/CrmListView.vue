@@ -515,6 +515,11 @@ const fetchData = async () => {
         apiFilters.filters.import_label_id;
     }
 
+    if (apiFilters.filters.recontact_count) {
+      formattedFilters["filters[recontact_count]"] =
+        apiFilters.filters.recontact_count;
+    }
+
     if (apiFilters.filters.created_date_start) {
       formattedFilters["filters[created_date_start]"] =
         apiFilters.filters.created_date_start;
@@ -724,6 +729,10 @@ const applyFilters = async (newFilters) => {
       formattedFilters["filters[import_label_id]"] =
         apiFilters.filters.import_label_id;
     }
+    if (apiFilters.filters.recontact_count) {
+      formattedFilters["filters[recontact_count]"] =
+        apiFilters.filters.recontact_count;
+    }
 
     if (Array.isArray(apiFilters.filters.status)) {
       if (apiFilters.filters.status.includes("unassigned")) {
@@ -830,6 +839,7 @@ const resetFilter = () => {
     created_date_end: null,
     nationality: null,
     country_code: null,
+    recontact_count: null,
     status: [],
     sort_by: "created_at",
     sort_order: "desc",
