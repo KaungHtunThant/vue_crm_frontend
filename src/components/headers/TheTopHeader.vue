@@ -304,7 +304,6 @@
           <i class="fa-solid fa-calendar-days"></i>
         </div>
         <div
-          v-if="user_role == 'sales' || user_role == 'emr-admin'"
           class="col-4 btnHeaderBg text-white d-flex justify-content-center align-items-center rounded-1 mx-2"
         >
           <i class="fa-solid fa-sack-dollar"></i>
@@ -592,7 +591,7 @@ export default {
     async CommissionAndSalary() {
       const userId = Cookies.get("user_id");
       const commission = await calculatecommission(userId);
-      if (commission) {
+      if (commission && commission.status === 200) {
         const salaryData = commission?.data?.data?.original?.data;
         return {
           finalBasicPay: salaryData?.basic_pay || 0,
