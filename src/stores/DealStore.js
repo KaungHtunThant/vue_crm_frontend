@@ -19,6 +19,8 @@ export const useDealStore = defineStore("deal", {
     deal_modal_status: false,
     deal_fetch_indicator: false,
     recontact_counts: [],
+    filters: {},
+    search_val: "",
   }),
   getters: {
     getAllDeals: (state) => {
@@ -44,6 +46,12 @@ export const useDealStore = defineStore("deal", {
     },
     getRecontactCounts: (state) => {
       return state.recontact_counts;
+    },
+    getFilters: (state) => {
+      return state.filters;
+    },
+    getSearchVal: (state) => {
+      return state.search_val;
     },
   },
   actions: {
@@ -257,6 +265,13 @@ export const useDealStore = defineStore("deal", {
           message: error.message,
         };
       }
+    },
+    setFilters(filters) {
+      this.filters = filters;
+    },
+    setSearchVal(search_val) {
+      this.search_val = search_val;
+      console.log("Search Value Set To:", this.search_val);
     },
   },
 });

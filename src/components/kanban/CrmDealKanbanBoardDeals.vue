@@ -1,6 +1,6 @@
 <template>
   <div class="position-relative">
-    <div class="kanban-wrapper overflow-y-hidden mt-3" ref="dealsContainer">
+    <div class="kanban-wrapper overflow-y-hidden mt-2" ref="dealsContainer">
       <div
         class="kanban-board d-flex"
         :style="
@@ -1805,7 +1805,6 @@ export default {
   /* width: 307px;
   min-width: 307px; */
   height: 100%;
-  padding: 0.5rem 0rem 0 0;
   /* border-right: 2px dashed #eee; */
   position: relative;
 }

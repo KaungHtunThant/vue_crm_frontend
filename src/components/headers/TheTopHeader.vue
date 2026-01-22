@@ -1,5 +1,5 @@
 <template>
-  <div class="top-bar pe-1 position-relative pt-1 me-2">
+  <div class="top-bar pe-1 position-relative me-2">
     <div class="row">
       <div class="col-4 d-flex align-items-center text-white fs-6">
         <!-- v-show="user_role === 'sales'" -->
@@ -269,58 +269,9 @@
       <div
         class="col-4 d-flex justify-content-center align-items-center pt-0 mt-0"
       >
-        <button
-          class="border-0 btnHeaderBg position-relative rounded-1 px-3 me-2"
-          ref="notifiButton"
-          @click="toggleMenu('notifications', $refs.notifiButton)"
-        >
-          <i class="fa-solid fa-bell fs-5 text-white"></i>
-          <transition name="fade">
-            <notifications-head
-              v-if="activeMenu === 'notifications'"
-              :style="listNotifiStyle"
-            />
-          </transition>
-        </button>
-        <button
-          v-if="hasNewChanges"
-          class="refresh border-0 d-flex align-items-center gap-2 text-white rounded-1 me-2 h-100 px-2"
-          style="font-size: 14px"
-          @click="refreshPage"
-        >
-          <i class="fa-solid fa-rotate"></i>
-          <span class="refresh-text">{{ $t("header-refresh-button") }}</span>
-        </button>
-        <span
-          v-else
-          class="fs-4 text-white btnHeaderBg d-flex justify-content-center align-items-center px-4 rounded-1 me-2"
-          >{{ currentTime }}</span
-        >
-        <div
-          class="btnHeaderBg px-3 text-white d-flex justify-content-center align-items-center rounded-1"
-          style="cursor: pointer"
-          @click="toggleEMRCalendarDrawer"
-        >
-          <i class="fa-solid fa-calendar-days"></i>
-        </div>
-        <div
-          v-if="user_role == 'sales'"
-          class="col-4 btnHeaderBg text-white d-flex justify-content-center align-items-center rounded-1 mx-2"
-        >
-          <i class="fa-solid fa-sack-dollar"></i>
-          <span v-if="showSalary" class="px-2">
-            {{ salaryInfo.finalBasicPay }} +
-            {{ salaryInfo.calculatedCommission }} {{ currency }}
-          </span>
-          <i
-            class="fa-solid ms-2"
-            :class="showSalary ? 'fa-eye-slash' : 'fa-eye'"
-            @click="showSalary = !showSalary"
-            style="cursor: pointer"
-          ></i>
-        </div>
+        <SearchbarComp />
       </div>
-      <div class="col-4 d-flex justify-content-end align-items-center">
+      <div class="col-4 d-flex justify-content-end align-items-center pe-0">
         <div
           class="user-info d-flex justify-content-end align-items-center h-100"
         >
@@ -378,7 +329,6 @@
 
 <script>
 import MenuProfile from "@/components/headers/sub-menu/TheTopHeaderDropDownMenuProfile.vue";
-import NotificationsHead from "@/components/headers/sub-menu/TheTopHeaderNotificationsHeader.vue";
 import Cookies from "js-cookie";
 import { changeLanguage } from "@/i18n";
 import { useLoadingStore } from "@/plugins/loadingStore";
@@ -399,13 +349,14 @@ import { useI18n } from "vue-i18n";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useSettingStore } from "@/stores/SettingStore";
 import { useUserStore } from "@/stores/UserStore";
+import SearchbarComp from "@/components/headers/TopHeaderSearchBarComp.vue";
 
 export default {
   name: "TheTopHeader",
   components: {
     MenuProfile,
-    NotificationsHead,
     ScoureUser,
+    SearchbarComp,
   },
   data() {
     return {
@@ -433,7 +384,6 @@ export default {
     const hasNewChanges = computed(() => kanbanStore.hasNewChanges);
     const user_role = Cookies.get("user_role");
     const loadingStore = useLoadingStore();
-    const currentTime = ref("");
     const { t, locale } = useI18n();
     const otp_code = ref(null);
     const userStore = useUserStore();
@@ -475,17 +425,6 @@ export default {
       }
     };
 
-    const updateTime = () => {
-      const now = new Date();
-
-      currentTime.value = now.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-      });
-    };
-
     let interval;
 
     const handleRightClick = (event) => {
@@ -502,10 +441,8 @@ export default {
     };
 
     // upload data
-    onMounted(async () => {
+    onMounted(() => {
       window.addEventListener("contextmenu", handleRightClick);
-      updateTime();
-      interval = setInterval(updateTime, 1000);
     });
     onUnmounted(() => {
       window.removeEventListener("contextmenu", handleRightClick);
@@ -539,7 +476,6 @@ export default {
     return {
       toggleEMRCalendarDrawer,
       logo,
-      currentTime,
       pageTitle,
       showRoleSettings,
       showGeneralSettings,

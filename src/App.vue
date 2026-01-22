@@ -13,7 +13,7 @@
         v-if="!$route.meta.hideNavigation"
         class="row g-0 flex-nowrap app-layout"
       >
-        <div :class="headerClass" class="ms-2 main-content">
+        <div :class="headerClass" class="ps-2 pe-2 pt-2 main-content">
           <the-top-header />
           <div class="content">
             <router-view />

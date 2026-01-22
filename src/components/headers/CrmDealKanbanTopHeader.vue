@@ -4,26 +4,132 @@
       <div class="row">
         <div class="col-12">
           <div class="d-flex flex-wrap align-items-center">
+            <!-- Tasks Status -->
+            <div
+              class="col-md-auto mb-2 mb-md-0 me-3 d-flex align-items-center"
+            >
+              <div class="btn-group w-100">
+                <div
+                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0 rounded-start"
+                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                  v-if="
+                    permissionStore.hasPermission(
+                      PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
+                    )
+                  "
+                >
+                  <span
+                    class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
+                    >{{ computed_unassign_count }}</span
+                  >
+                  <span class="ms-2 text-white">{{
+                    t("kanban-task-status-unassign")
+                  }}</span>
+                </div>
+                <div
+                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
+                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                  v-if="
+                    permissionStore.hasPermission(
+                      PERMISSIONS.READ_OVERDUE_TASK_STAGE
+                    )
+                  "
+                >
+                  <span
+                    class="badge bg-secondary-subtle text-danger fw-bold fs-6"
+                    >{{ computed_overdue_count }}</span
+                  >
+                  <span class="ms-2 text-white">{{
+                    t("kanban-task-status-overdue")
+                  }}</span>
+                </div>
+                <div
+                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
+                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                  v-else-if="
+                    permissionStore.hasPermission(
+                      PERMISSIONS.READ_CHECKING_OUT_TASK_STAGE
+                    )
+                  "
+                >
+                  <span
+                    class="badge bg-secondary-subtle text-danger fw-bold fs-6"
+                    >{{ computed_checking_out_count }}</span
+                  >
+                  <span class="ms-2 text-white">{{
+                    t("kanban-task-status-checking-out")
+                  }}</span>
+                </div>
+                <div
+                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
+                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                  v-else-if="
+                    permissionStore.hasPermission(
+                      PERMISSIONS.READ_OVERDUE_AFTER_SALES_TASK_STAGE
+                    )
+                  "
+                >
+                  <span
+                    class="badge bg-secondary-subtle text-danger fw-bold fs-6"
+                    >{{ computed_overdue_after_sales_count }}</span
+                  >
+                  <span class="ms-2 text-white">{{
+                    t("kanban-task-status-overdue")
+                  }}</span>
+                </div>
+                <div
+                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0"
+                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                >
+                  <span
+                    class="badge bg-secondary-subtle text-warning fw-bold fs-6"
+                    >{{ computed_today_count }}</span
+                  >
+                  <span class="ms-2 text-white">{{
+                    t("kanban-task-status-today")
+                  }}</span>
+                </div>
+                <div
+                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0 rounded-end"
+                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                >
+                  <span
+                    class="badge bg-secondary-subtle text-info fw-bold fs-6"
+                    >{{ computed_tomorrow_count }}</span
+                  >
+                  <span class="ms-2 text-white">{{
+                    t("kanban-task-status-tomorrow")
+                  }}</span>
+                </div>
+              </div>
+              <div class="ms-2">
+                <!-- v-if="permissionStore.hasPermission(PERMISSIONS.DOCUMENTS)" -->
+                <router-link
+                  to="/documents"
+                  class="text-decoration-none documents btn btn-hover text-white py-2"
+                >
+                  <div
+                    class="d-flex align-items-center fs-7 justify-content-center gap-2 documentsIpad"
+                    :title="$t('sidebar-nav-item-documents')"
+                  >
+                    <i class="fa-regular fa-folder-open fs-6"></i>
+                    <span class="fs-7 removeIpad">{{
+                      $t("sidebar-nav-item-documents")
+                    }}</span>
+                  </div>
+                </router-link>
+              </div>
+            </div>
             <!-- Buttons Group -->
             <div class="col-md-auto">
-              <button
-                v-if="permissionStore.hasPermission(PERMISSIONS.CREATE_DEAL)"
-                class="btn text-white me-2 fs-7 btnAddKanban btn-hover"
-                @click="openCreateDealModal"
-                style="padding: 0.5rem 1.3rem"
-              >
-                <span class="textAddKanban">{{
-                  t("kanban-button-add-deal")
-                }}</span>
-                <span class="iconAddKanban d-none">+</span>
-              </button>
               <button
                 class="btn text-white me-2 fs-7 btnKanban btn-hover"
                 @click="openCrmKanban"
                 v-if="permissionStore.hasPermission(PERMISSIONS.DEALS_KANBAN)"
                 style="padding: 0.5rem 2rem"
               >
-                {{ t("header-subnav-item-kanban-crm") }}
+                <!-- {{ t("header-subnav-item-kanban-crm") }} -->
+                Kanban View
               </button>
               <button
                 class="btn text-white me-2 fs-7 btnKanban btn-hover"
@@ -67,187 +173,95 @@
               >
                 {{ t("sidebar-nav-item-crmlist") }}
               </router-link>
+              <button
+                class="btn rounded-2 fs-7 ms-2 btn-whatsapp me-2"
+                @click="openWhatsappModal"
+              >
+                <i class="fa-brands fa-whatsapp fs-5"></i>
+                <span class="textAddKanban ms-2">Whatsapp</span>
+              </button>
+              <button
+                class="btn btn-header px-0 px-lg-2 text-white ms-3"
+                ref="notifiButton"
+                @click="toggleMenu('notifications', $refs.notifiButton)"
+              >
+                <i class="fa-solid fa-bell fs-6 text-white"></i>
+                <transition name="fade">
+                  <notifications-head
+                    v-if="activeMenu === 'notifications'"
+                    :style="listNotifiStyle"
+                  />
+                </transition>
+                <span class="ms-2">Notifications</span>
+              </button>
             </div>
 
             <!-- Search Form -->
-            <div :class="lgIpadClass" v-if="showSearchInput">
-              <div class="input-group px-1">
-                <button
-                  class="btn btn-hover btnSearchIpad text-white"
-                  @click="openSearchModalIpad"
-                >
-                  <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-                <input
-                  type="search"
-                  class="form-control bg-light border-light py-2 inputSearchIpad"
-                  :placeholder="t('crmlist-placeholder-search')"
-                  @search="handleSearch"
-                  v-model="searchText"
-                  id="dealSearchInput"
-                />
-                <button
-                  class="btn btn-hover py-2 btnFilterIpad text-white"
-                  :title="t('kanban-modal-filter-heading')"
-                  @click="openFilterModal"
-                >
-                  <i class="fa-solid fa-filter"></i>
-                </button>
-              </div>
-            </div>
-
-            <!-- Tasks Status -->
-            <div
-              class="col-md-auto mb-2 mb-md-0 me-2 d-flex align-items-center"
-            >
-              <div class="btn-group w-100">
-                <div
-                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0 rounded-start"
-                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-                  v-if="
-                    permissionStore.hasPermission(
-                      PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
-                    )
-                  "
-                >
-                  <span
-                    class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
-                    >{{ computed_unassign_count }}</span
-                  >
-                  <span class="ms-1 text-white">{{
-                    t("kanban-task-status-unassign")
-                  }}</span>
-                </div>
-                <div
-                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
-                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-                  v-if="
-                    permissionStore.hasPermission(
-                      PERMISSIONS.READ_OVERDUE_TASK_STAGE
-                    )
-                  "
-                >
-                  <span
-                    class="badge bg-secondary-subtle text-danger fw-bold fs-6"
-                    >{{ computed_overdue_count }}</span
-                  >
-                  <span class="ms-1 text-white">{{
-                    t("kanban-task-status-overdue")
-                  }}</span>
-                </div>
-                <div
-                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
-                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-                  v-else-if="
-                    permissionStore.hasPermission(
-                      PERMISSIONS.READ_CHECKING_OUT_TASK_STAGE
-                    )
-                  "
-                >
-                  <span
-                    class="badge bg-secondary-subtle text-danger fw-bold fs-6"
-                    >{{ computed_checking_out_count }}</span
-                  >
-                  <span class="ms-1 text-white">{{
-                    t("kanban-task-status-checking-out")
-                  }}</span>
-                </div>
-                <div
-                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
-                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-                  v-else-if="
-                    permissionStore.hasPermission(
-                      PERMISSIONS.READ_OVERDUE_AFTER_SALES_TASK_STAGE
-                    )
-                  "
-                >
-                  <span
-                    class="badge bg-secondary-subtle text-danger fw-bold fs-6"
-                    >{{ computed_overdue_after_sales_count }}</span
-                  >
-                  <span class="ms-1 text-white">{{
-                    t("kanban-task-status-overdue")
-                  }}</span>
-                </div>
-                <div
-                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0"
-                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-                >
-                  <span
-                    class="badge bg-secondary-subtle text-warning fw-bold fs-6"
-                    >{{ computed_today_count }}</span
-                  >
-                  <span class="ms-1 text-white">{{
-                    t("kanban-task-status-today")
-                  }}</span>
-                </div>
-                <div
-                  class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0 rounded-end"
-                  style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-                >
-                  <span
-                    class="badge bg-secondary-subtle text-info fw-bold fs-6"
-                    >{{ computed_tomorrow_count }}</span
-                  >
-                  <span class="ms-1 text-white">{{
-                    t("kanban-task-status-tomorrow")
-                  }}</span>
-                </div>
-              </div>
-              <div class="watsappIcon me-2">
-                <button
-                  class="rounded-2 d-flex align-items-center justify-content-center gap-1 border-0 fs-7 ms-2 whatsappIpad btn-whatsapp py-2 px-4"
-                  @click="openWhatsappModal"
-                >
-                  <i class="fa-brands fa-whatsapp fs-5"></i>
-                  <span class="removeIpad" style="font-size: 16px">{{
-                    $t("kanban-modal-edit-whatsapp")
-                  }}</span>
-                </button>
-              </div>
-              <div class="">
-                <!-- v-if="permissionStore.hasPermission(PERMISSIONS.DOCUMENTS)" -->
-                <router-link
-                  to="/documents"
-                  class="text-decoration-none documents btn btn-hover text-white py-2"
-                >
-                  <div
-                    class="d-flex align-items-center fs-7 justify-content-center gap-2 documentsIpad"
-                    :title="$t('sidebar-nav-item-documents')"
-                  >
-                    <i class="fa-regular fa-folder-open fs-6"></i>
-                    <span class="fs-7 removeIpad">{{
-                      $t("sidebar-nav-item-documents")
-                    }}</span>
-                  </div>
-                </router-link>
-              </div>
-            </div>
-            <!-- Import/Export Buttons -->
-            <div
-              v-if="permissionStore.hasPermission(PERMISSIONS.CREATE_DEAL)"
-              class="col-md-auto d-flex align-items-center gap-2"
-            >
-              <button
-                class="btn btn-hover flex-fill btnImport text-white"
-                @click="openImportModal"
-                style="padding: 0.5rem 1.7rem"
+            <div class="btn-group ms-2">
+              <div
+                class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0 rounded-start"
+                style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                v-if="
+                  permissionStore.hasPermission(
+                    PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
+                  )
+                "
               >
-                <span class="fs-7 textImport">{{
-                  t("kanban-button-import")
-                }}</span>
-                <i class="fa-solid fa-upload ms-1 fs-7"></i>
-              </button>
-              <button
-                v-if="permissionStore.hasPermission(PERMISSIONS.EXPORT_DEAL)"
-                class="btn btn-hover flex-fill btnExport text-white"
-                @click="openExportModal"
-                style="padding: 0.5rem 1.7rem"
+                <span class="me-2 text-white">Salary</span>
+                <span
+                  class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
+                  >$$$$</span
+                >
+              </div>
+              <div
+                class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
+                style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                v-if="
+                  permissionStore.hasPermission(
+                    PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
+                  )
+                "
               >
-                <span class="fs-7 textExport">{{
-                  t("kanban-button-export")
-                }}</span>
-                <i class="fa-solid fa-download ms-1 fs-7"></i>
+                <span class="me-2 text-white">Bonus</span>
+                <span
+                  class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
+                  >$$$</span
+                >
+              </div>
+              <div
+                class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
+                style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                v-if="
+                  permissionStore.hasPermission(
+                    PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
+                  )
+                "
+              >
+                <span class="me-2 text-white">Deductions</span>
+                <span
+                  class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
+                  >$$$</span
+                >
+              </div>
+              <div
+                class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
+                style="padding-top: 0.4rem; padding-bottom: 0.4rem"
+                v-if="
+                  permissionStore.hasPermission(
+                    PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
+                  )
+                "
+              >
+                <span class="me-2 text-white">Total</span>
+                <span
+                  class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
+                  >$$$$</span
+                >
+              </div>
+              <button
+                class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
+              >
+                <i class="fa-solid fa-eye fs-7 text-white"></i>
               </button>
             </div>
           </div>
@@ -261,8 +275,6 @@
       :applyActualFiltersProp="applyActualFiltersProp"
       :resetActualFiltersProp="resetActualFiltersProp"
     />
-    <import-modal ref="importModalRef" />
-    <export-modal ref="exportModalRef" />
     <create-deal-modal ref="createDealModalRef" />
     <whats-app-modal
       :conversation="conversation"
@@ -277,8 +289,6 @@
 import { ref, watch, onMounted, onUnmounted, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import FilterModal from "@/components/modals/CrmDealKanbanViewTopHeaderFilterModal.vue";
-import ImportModal from "@/components/modals/CrmListViewImportModal.vue";
-import ExportModal from "@/components/modals/CrmKanbanTopHeaderExportModal.vue";
 import { Modal } from "bootstrap";
 import CreateDealModal from "@/components/kanban/CrmKanbanTopHeaderCreateDealModal.vue";
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
@@ -288,16 +298,16 @@ import SearchModalIpad from "@/components/headers/CrmKanbanTopHeaderSearchModalI
 import { getconversations } from "@/plugins/services/whatsappService";
 import { fetchTasksCountByStageName } from "@/plugins/services/stageService";
 import Cookies from "js-cookie";
+import NotificationsHead from "@/components/headers/sub-menu/TheTopHeaderNotificationsHeader.vue";
 
 export default {
   name: "CrmDealKanbanTopHeader",
   components: {
     FilterModal,
-    ImportModal,
-    ExportModal,
     CreateDealModal,
     WhatsAppModal,
     SearchModalIpad,
+    NotificationsHead,
   },
   props: {
     initialFilters: {
@@ -680,8 +690,7 @@ input:focus {
     /* padding-right: 8px !important;
     padding-top: 10px !important;
     padding-bottom: 10px !important; */
-    padding: 4px 13px 4px 10px !important;
-    font-size: 1.2rem !important;
+    /* font-size: 1.2rem !important; */
   }
   .btnExport {
     padding: 4px 13px 4px 10px !important;
