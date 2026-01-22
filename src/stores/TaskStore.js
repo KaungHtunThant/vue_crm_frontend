@@ -15,6 +15,9 @@ export const useTaskStore = defineStore("task", {
     today_count: 0,
     tomorrow_count: 0,
     idle_count: 0,
+    unassign_count: 0,
+    checking_out_count: 0,
+    overdue_after_sales_count: 0,
     tasks: [],
     calendar_tasks: [],
     status_change_trigger: false, // temporary solution
@@ -25,6 +28,9 @@ export const useTaskStore = defineStore("task", {
     getTodayCount: (state) => state.today_count,
     getTomorrowCount: (state) => state.tomorrow_count,
     getIdleCount: (state) => state.idle_count,
+    getUnassignCount: (state) => state.unassign_count,
+    getCheckingOutCount: (state) => state.checking_out_count,
+    getOverdueAfterSalesCount: (state) => state.overdue_after_sales_count,
     getCurrentTasks: (state) =>
       state.tasks.filter((task) => task.status !== "completed"),
     getCalendarTasks: (state) => {
@@ -56,17 +62,25 @@ export const useTaskStore = defineStore("task", {
   actions: {
     async fetchTaskCounts() {
       try {
-        const task_stages = ["Overdue", "Today", "Tomorrow", "Idle"];
+        const task_stages = [
+          "Overdue",
+          "Due Today",
+          "Due Tomorrow",
+          "Idle",
+          "unassign-soon",
+          "checking-out",
+          "overdue-after-sales",
+        ];
         for (const stage of task_stages) {
           await fetchTasksCountByStageName(stage).then((res) => {
             if (res.status !== 200) {
               throw new Error(res.data.message);
             }
             switch (stage) {
-              case "Today":
+              case "Due Today":
                 this.today_count = res.data.data || 0;
                 break;
-              case "Tomorrow":
+              case "Due Tomorrow":
                 this.tomorrow_count = res.data.data || 0;
                 break;
               case "Idle":
@@ -74,6 +88,15 @@ export const useTaskStore = defineStore("task", {
                 break;
               case "Overdue":
                 this.overdue_count = res.data.data || 0;
+                break;
+              case "unassign-soon":
+                this.unassign_count = res.data.data || 0;
+                break;
+              case "checking-out":
+                this.checking_out_count = res.data.data || 0;
+                break;
+              case "overdue-after-sales":
+                this.overdue_after_sales_count = res.data.data || 0;
                 break;
               default:
                 console.warn(`Unknown stage: ${stage}`);

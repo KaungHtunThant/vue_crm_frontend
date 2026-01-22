@@ -1,17 +1,15 @@
 <template>
-  <div class="mt-2">
-    <crm-kanban-header
-      :initial-filters="filters"
-      @filter-applied="applyFilters"
-      @reset-filter="resetFilter"
-      @search-deals="HandleSearch"
-      :selected_conversation="selected_conversation"
-      :new_message="new_message"
-      :update_message="update_message"
-      :apply-actual-filters-prop="applyFilters"
-      :reset-actual-filters-prop="resetFilter"
-    />
-  </div>
+  <crm-kanban-header
+    :initial-filters="filters"
+    @filter-applied="applyFilters"
+    @reset-filter="resetFilter"
+    @search-deals="HandleSearch"
+    :selected_conversation="selected_conversation"
+    :new_message="new_message"
+    :update_message="update_message"
+    :apply-actual-filters-prop="applyFilters"
+    :reset-actual-filters-prop="resetFilter"
+  />
   <crm-kanban-kanban-board
     :stages="stages"
     :searchVal="searchVal"
