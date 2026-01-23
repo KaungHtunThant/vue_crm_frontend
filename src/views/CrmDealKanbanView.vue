@@ -3,7 +3,6 @@
     :initial-filters="filters"
     @filter-applied="applyFilters"
     @reset-filter="resetFilter"
-    @search-deals="HandleSearch"
     :selected_conversation="selected_conversation"
     :new_message="new_message"
     :update_message="update_message"
@@ -24,7 +23,7 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
 import CrmKanbanHeader from "@/components/headers/CrmDealKanbanTopHeader.vue";
 import CrmKanbanKanbanBoard from "@/components/kanban/CrmDealKanbanBoardDeals.vue";
 import { useI18n } from "vue-i18n";
@@ -320,6 +319,13 @@ export default {
         console.error("Error updating deal stage:", error.response?.data);
       }
     };
+
+    watch(
+      () => dealStore.getSearchVal,
+      (newVal) => {
+        HandleSearch(newVal);
+      }
+    );
 
     onMounted(async () => {
       try {

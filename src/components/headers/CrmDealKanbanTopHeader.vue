@@ -1,250 +1,79 @@
 <template>
   <header class="mt-2" :class="{ 'crm-list-page': currentPage === 'crm-list' }">
     <nav class="container-fluid p-0">
-      <div class="d-flex flex-wrap">
-        <kanban-top-header-task-counter-comp />
-        <!-- Tasks Status -->
-        <!-- <div class="d-flex">
-          <div
-            class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0 rounded-start"
-            style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-            v-if="
-              permissionStore.hasPermission(
-                PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
-              )
-            "
-          >
-            <span
-              class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
-              >{{ computed_unassign_count }}</span
-            >
-            <span class="ms-2 text-white">{{
-              t("kanban-task-status-unassign")
-            }}</span>
-          </div>
-          <div
-            class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0"
-            style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-            v-if="
-              permissionStore.hasPermission(PERMISSIONS.READ_OVERDUE_TASK_STAGE)
-            "
-          >
-            <span class="badge bg-secondary-subtle text-danger fw-bold fs-6">
-              {{ computed_overdue_count }}
-            </span>
-            <span class="ms-2 text-white">{{
-              t("kanban-task-status-overdue")
-            }}</span>
-          </div>
-          <div
-            class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0 rounded-start"
-            style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-            v-else-if="
-              permissionStore.hasPermission(
-                PERMISSIONS.READ_CHECKING_OUT_TASK_STAGE
-              )
-            "
-          >
-            <span
-              class="badge bg-secondary-subtle text-danger fw-bold fs-6 rounded-0 rounded-start"
-              >{{ computed_checking_out_count }}</span
-            >
-            <span class="ms-2 text-white">{{
-              t("kanban-task-status-checking-out")
-            }}</span>
-          </div>
-          <div
-            class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
-            style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-            v-else-if="
-              permissionStore.hasPermission(
-                PERMISSIONS.READ_OVERDUE_AFTER_SALES_TASK_STAGE
-              )
-            "
-          >
-            <span class="badge bg-secondary-subtle text-danger fw-bold fs-6">{{
-              computed_overdue_after_sales_count
-            }}</span>
-            <span class="ms-2 text-white">{{
-              t("kanban-task-status-overdue")
-            }}</span>
-          </div>
-          <div
-            class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0"
-            style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-          >
-            <span class="badge bg-secondary-subtle text-warning fw-bold fs-6">{{
-              computed_today_count
-            }}</span>
-            <span class="ms-2 text-white">{{
-              t("kanban-task-status-today")
-            }}</span>
-          </div>
-          <div
-            class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0 rounded-end"
-            style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-          >
-            <span class="badge bg-secondary-subtle text-info fw-bold fs-6">
-              {{ computed_tomorrow_count }}
-            </span>
-            <span class="ms-2 text-white">{{
-              t("kanban-task-status-tomorrow")
-            }}</span>
-          </div>
-        </div> -->
-        <div class="ms-2">
-          <!-- v-if="permissionStore.hasPermission(PERMISSIONS.DOCUMENTS)" -->
-          <router-link
-            to="/documents"
-            class="text-decoration-none documents btn btn-hover text-white py-2"
-          >
+      <div class="row">
+        <div class="col-md-3">
+          <kanban-top-header-task-counter-comp />
+        </div>
+        <div
+          class="col-md-6 d-flex gap-2 justify-content-center align-items-center"
+        >
+          <kanban-top-header-button-group-comp />
+        </div>
+        <div class="col-md-3 d-flex justify-content-end">
+          <div class="btn-group">
             <div
-              class="d-flex align-items-center fs-7 justify-content-center gap-2 documentsIpad"
-              :title="$t('sidebar-nav-item-documents')"
+              class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0 rounded-start"
+              v-if="
+                permissionStore.hasPermission(
+                  PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
+                )
+              "
             >
-              <i class="fa-regular fa-folder-open fs-6"></i>
-              <span class="fs-7 removeIpad">{{
-                $t("sidebar-nav-item-documents")
-              }}</span>
+              <span class="me-2 text-white">Salary</span>
+              <span
+                class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
+                >$$$$</span
+              >
             </div>
-          </router-link>
-        </div>
-        <!-- Buttons Group -->
-        <div class="col-md-auto">
-          <button
-            class="btn text-white me-2 fs-7 btnKanban btn-hover"
-            @click="openCrmKanban"
-            v-if="permissionStore.hasPermission(PERMISSIONS.DEALS_KANBAN)"
-            style="padding: 0.5rem 2rem"
-          >
-            <!-- {{ t("header-subnav-item-kanban-crm") }} -->
-            Kanban View
-          </button>
-          <button
-            class="btn text-white me-2 fs-7 btnKanban btn-hover"
-            @click="openAfterSalesKanban"
-            v-if="
-              permissionStore.hasPermission(PERMISSIONS.AFTER_SALES_KANBAN) &&
-              !permissionStore.hasPermission(PERMISSIONS.DEALS_KANBAN)
-            "
-            style="padding: 0.5rem 2rem"
-          >
-            {{ t("sidebar-nav-item-after-sales-kanban") }}
-          </button>
-          <button
-            class="btn text-white me-2 fs-7 btnKanban btn-hover"
-            @click="openEMRKanban"
-            v-if="
-              permissionStore.hasPermission(PERMISSIONS.EMRKANBAN) &&
-              !permissionStore.hasPermission(PERMISSIONS.DEALS_KANBAN)
-            "
-            style="padding: 0.5rem 2rem"
-          >
-            {{ t("sidebar-nav-item-emr-kanban") }}
-          </button>
-          <button
-            class="btn text-white me-2 fs-7 btnKanban btn-hover"
-            @click="openCrmTasks"
-            v-if="permissionStore.hasPermission(PERMISSIONS.TASKS_KANBAN)"
-            style="padding: 0.5rem 2rem"
-          >
-            {{ t("header-subnav-item-kanban-tasks") }}
-          </button>
-          <router-link
-            class="btn text-white me-2 fs-7 btnKanban btn-hover"
-            style="padding: 0.6rem 1.2rem"
-            to="/crmlist"
-            v-if="
-              permissionStore.hasPermission(PERMISSIONS.DEALS_LIST) &&
-              user_role == 'sales'
-            "
-          >
-            {{ t("sidebar-nav-item-crmlist") }}
-          </router-link>
-          <button
-            class="btn rounded-2 fs-7 ms-2 btn-whatsapp me-2"
-            @click="openWhatsappModal"
-          >
-            <i class="fa-brands fa-whatsapp fs-5"></i>
-            <span class="textAddKanban ms-2">Whatsapp</span>
-          </button>
-          <button
-            class="btn btn-header px-0 px-lg-2 text-white ms-3"
-            ref="notifiButton"
-            @click="toggleMenu('notifications', $refs.notifiButton)"
-          >
-            <i class="fa-solid fa-bell fs-6 text-white"></i>
-            <transition name="fade">
-              <notifications-head
-                v-if="activeMenu === 'notifications'"
-                :style="listNotifiStyle"
-              />
-            </transition>
-            <span class="ms-2">Notifications</span>
-          </button>
-        </div>
-
-        <!-- Search Form -->
-        <div class="btn-group ms-2">
-          <div
-            class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0 rounded-start"
-            style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-            v-if="
-              permissionStore.hasPermission(
-                PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
-              )
-            "
-          >
-            <span class="me-2 text-white">Salary</span>
-            <span class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
-              >$$$$</span
+            <div
+              class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
+              v-if="
+                permissionStore.hasPermission(
+                  PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
+                )
+              "
             >
-          </div>
-          <div
-            class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
-            style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-            v-if="
-              permissionStore.hasPermission(
-                PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
-              )
-            "
-          >
-            <span class="me-2 text-white">Bonus</span>
-            <span class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
-              >$$$</span
+              <span class="me-2 text-white">Bonus</span>
+              <span
+                class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
+                >$$$</span
+              >
+            </div>
+            <div
+              class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
+              v-if="
+                permissionStore.hasPermission(
+                  PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
+                )
+              "
             >
-          </div>
-          <div
-            class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
-            style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-            v-if="
-              permissionStore.hasPermission(
-                PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
-              )
-            "
-          >
-            <span class="me-2 text-white">Deductions</span>
-            <span class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
-              >$$$</span
+              <span class="me-2 text-white">Deductions</span>
+              <span
+                class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
+                >$$$</span
+              >
+            </div>
+            <div
+              class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
+              v-if="
+                permissionStore.hasPermission(
+                  PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
+                )
+              "
             >
-          </div>
-          <div
-            class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
-            style="padding-top: 0.4rem; padding-bottom: 0.4rem"
-            v-if="
-              permissionStore.hasPermission(
-                PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
-              )
-            "
-          >
-            <span class="me-2 text-white">Total</span>
-            <span class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
-              >$$$$</span
+              <span class="me-2 text-white">Total</span>
+              <span
+                class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
+                >$$$$</span
+              >
+            </div>
+            <button
+              class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
             >
+              <i class="fa-solid fa-eye fs-7 text-white"></i>
+            </button>
           </div>
-          <button class="btn btn-header px-0 px-lg-2 d-flex align-items-center">
-            <i class="fa-solid fa-eye fs-7 text-white"></i>
-          </button>
         </div>
       </div>
     </nav>
@@ -272,14 +101,12 @@ import FilterModal from "@/components/modals/CrmDealKanbanViewTopHeaderFilterMod
 import { Modal } from "bootstrap";
 import CreateDealModal from "@/components/kanban/CrmKanbanTopHeaderCreateDealModal.vue";
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
-import { useI18n } from "vue-i18n";
 import WhatsAppModal from "@/components/modals/CrmDealKanbanTopHeaderWhatsAppModal.vue";
 import SearchModalIpad from "@/components/headers/CrmKanbanTopHeaderSearchModalIpad.vue";
 import { getconversations } from "@/plugins/services/whatsappService";
-import { fetchTasksCountByStageName } from "@/plugins/services/stageService";
 import Cookies from "js-cookie";
-import NotificationsHead from "@/components/headers/sub-menu/TheTopHeaderNotificationsHeader.vue";
 import KanbanTopHeaderTaskCounterComp from "./KanbanTopHeaderTaskCounterComp.vue";
+import KanbanTopHeaderButtonGroupComp from "./KanbanTopHeaderButtonGroupComp.vue";
 
 export default {
   name: "CrmDealKanbanTopHeader",
@@ -288,8 +115,8 @@ export default {
     CreateDealModal,
     WhatsAppModal,
     SearchModalIpad,
-    NotificationsHead,
     KanbanTopHeaderTaskCounterComp,
+    KanbanTopHeaderButtonGroupComp,
   },
   props: {
     initialFilters: {
@@ -335,40 +162,13 @@ export default {
   },
   emits: ["filter-applied", "reset-filter"],
   setup(props, { emit }) {
-    const computed_overdue_count = computed(() =>
-      overdue_count.value > 99 ? "99+" : overdue_count.value
-    );
-    const computed_today_count = computed(() =>
-      today_count.value > 99 ? "99+" : today_count.value
-    );
-    const computed_tomorrow_count = computed(() =>
-      tomorrow_count.value > 99 ? "99+" : tomorrow_count.value
-    );
-    const computed_unassign_count = computed(() =>
-      unassign_count.value > 99 ? "99+" : unassign_count.value
-    );
-    const computed_checking_out_count = computed(() =>
-      checking_out_count.value > 99 ? "99+" : checking_out_count.value
-    );
-    const computed_overdue_after_sales_count = computed(() =>
-      overdue_after_sales_count.value > 99
-        ? "99+"
-        : overdue_after_sales_count.value
-    );
     const conversation = ref(null);
     const local_new_message = ref(null);
     const local_update_message = ref(null);
     const headerFilterData = ref({ ...props.initialFilters });
     const headerSelectedStatuses = ref([]);
     const permissionStore = usePermissionStore();
-    const { t } = useI18n();
-    const overdue_count = ref(0);
-    const today_count = ref(0);
-    const tomorrow_count = ref(0);
-    const unassign_count = ref(0);
     const searchText = ref("");
-    const checking_out_count = ref(0);
-    const overdue_after_sales_count = ref(0);
     const route = useRoute();
     const showSearchInput = computed(() => {
       return route.name !== "CrmListView";
@@ -438,7 +238,6 @@ export default {
     };
     onMounted(() => {
       window.addEventListener("resize", handleResize);
-      fetchTasksCounter();
     });
 
     onUnmounted(() => {
@@ -461,54 +260,6 @@ export default {
     const setNewMessage = (data) => {
       local_new_message.value = data;
     };
-    const fetchTasksCounter = async () => {
-      // Simulate fetching data from an API
-      try {
-        if (
-          permissionStore.hasPermission(
-            PERMISSIONS.READ_OVERDUE_AFTER_SALES_TASK_STAGE
-          )
-        ) {
-          const overdueAfterSalesResponse = await fetchTasksCountByStageName(
-            "overdue-after-sales"
-          );
-          overdue_after_sales_count.value =
-            overdueAfterSalesResponse?.data?.data || 0;
-        } else if (
-          permissionStore.hasPermission(PERMISSIONS.READ_OVERDUE_TASK_STAGE)
-        ) {
-          const overdueResponse = await fetchTasksCountByStageName("Overdue");
-          overdue_count.value = overdueResponse?.data?.data || 0;
-        } else if (
-          permissionStore.hasPermission(
-            PERMISSIONS.READ_CHECKING_OUT_TASK_STAGE
-          )
-        ) {
-          const checkingOutResponse = await fetchTasksCountByStageName(
-            "checking-out"
-          );
-          checking_out_count.value = checkingOutResponse?.data?.data || 0;
-        }
-        if (
-          permissionStore.hasPermission(
-            PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
-          )
-        ) {
-          const unassignSoonResponse = await fetchTasksCountByStageName(
-            "unassign-soon"
-          );
-          unassign_count.value = unassignSoonResponse?.data?.data || 0;
-        }
-        const todayResponse = await fetchTasksCountByStageName("Due Today");
-        today_count.value = todayResponse?.data?.data || 0;
-        const tomorrowResponse = await fetchTasksCountByStageName(
-          "Due Tomorrow"
-        );
-        tomorrow_count.value = tomorrowResponse?.data?.data || 0;
-      } catch (error) {
-        console.error("Error fetching task counts:", error);
-      }
-    };
     const handleSearch = () => {
       const search = searchText.value.trim();
       emit("search-deals", search);
@@ -529,7 +280,6 @@ export default {
       openCrmKanban,
       permissionStore,
       PERMISSIONS,
-      t,
       openWhatsappModal,
       openSearchModalIpad,
       lgIpadClass,
@@ -538,24 +288,13 @@ export default {
       setNewMessage,
       local_new_message,
       local_update_message,
-      overdue_count,
-      today_count,
-      tomorrow_count,
-      unassign_count,
-      fetchTasksCounter,
       handleSearch,
       searchText,
       updateMessage,
       user_role,
-      computed_overdue_count,
-      computed_today_count,
-      computed_tomorrow_count,
-      computed_unassign_count,
       showSearchInput,
       headerSelectedStatuses,
       openAfterSalesKanban,
-      computed_checking_out_count,
-      computed_overdue_after_sales_count,
     };
   },
 
@@ -593,19 +332,11 @@ input:focus {
   }
 }
 .btn {
-  font-size: 14px;
+  font-size: 0.9rem;
 }
 .btn-header {
   /* background-color: rgba(128, 128, 128, 0.8) !important; */
   background-color: #55555551 !important;
-}
-.btn-hover {
-  /* background-color: rgba(128, 128, 128, 0.8) !important; */
-  background-color: #55555551 !important;
-}
-.btn-hover:hover {
-  background-color: #ffffff !important;
-  color: #333333 !important;
 }
 .btn-whatsapp {
   background-color: #25d365cc;

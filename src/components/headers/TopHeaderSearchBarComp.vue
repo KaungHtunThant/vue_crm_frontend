@@ -16,28 +16,31 @@
       @search="handleSearch"
     />
     <span
-      class="btn-header text-light px-2 rounded-5 position-absolute top-50 start-100 translate-middle ms-neg-8"
-      >{{ currentTime }}</span
+      class="btn-header text-light px-2 rounded-5 position-absolute top-50 start-100 translate-middle ms-neg-8 justify-content-center"
+      ><i class="fa fa-clock me-1"></i>{{ currentTime }}</span
     >
     <button
       class="btn btn-link position-absolute ms-neg-4 top-50 start-100 translate-middle px-0"
+      @click="openFilterModal"
     >
       <i class="fa-solid fa-filter text-secondary text-hover-dark"></i>
     </button>
   </div>
 </template>
 <script>
-import { ref, onMounted, onUnmounted, computed, watch } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDealStore } from "@/stores/DealStore";
+import { Modal } from "bootstrap";
 
 export default {
   name: "SearchbarComp",
-  setup() {
+  setup(props, { emit }) {
     const dealStore = useDealStore();
     const storeSearchVal = computed(() => dealStore.search_val);
     const { t } = useI18n();
     const searchVal = ref("");
+    const MAX_LEN = 53;
     const placeholderTexts = [
       t("top-header-search-placeholder-1"),
       t("top-header-search-placeholder-2"),
@@ -45,59 +48,69 @@ export default {
       t("top-header-search-placeholder-4"),
     ];
     const currentPlaceHolder = ref("");
-    let typingInterval = null;
-    let timeInterval = null;
+    function* typewriter(text) {
+      for (let char of text) yield char;
+    }
+    const getVisibleText = (text) => {
+      if (text.length <= MAX_LEN) return text;
+      return "..." + text.slice(text.length - (MAX_LEN - 3));
+    };
     const loopPlaceholders = () => {
       let index = 0;
-      setInterval(() => {
-        clearInterval(typingInterval);
-        index = (index + 1) % placeholderTexts.length;
-        const placeholder = t(placeholderTexts[index]);
-        let i = 0;
+      const nextPlaceholder = () => {
+        const gen = typewriter(t(placeholderTexts[index]));
         currentPlaceHolder.value = "";
-        typingInterval = setInterval(() => {
-          if (i < placeholder.length) {
-            if (currentPlaceHolder.value.length >= 53) {
-              currentPlaceHolder.value = currentPlaceHolder.value.slice(4);
-              currentPlaceHolder.value = "..." + currentPlaceHolder.value;
-            }
-            currentPlaceHolder.value += placeholder.charAt(i);
-            i++;
+        const step = () => {
+          const { value, done } = gen.next();
+          if (!done) {
+            currentPlaceHolder.value = getVisibleText(
+              currentPlaceHolder.value + value
+            );
+            setTimeout(step, 30);
           } else {
-            clearInterval(typingInterval);
+            index = (index + 1) % placeholderTexts.length;
+            setTimeout(nextPlaceholder, 5000);
           }
-        }, 50);
-      }, 5000);
+        };
+        step();
+      };
+      nextPlaceholder();
     };
     const currentTime = ref("");
     const updateTime = () => {
-      timeInterval = setInterval(() => {
-        const now = new Date();
-        currentTime.value = now.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: true,
-        });
-      }, 1000);
+      const now = new Date();
+      currentTime.value = now.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+      const msToNextMinute =
+        (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+      setTimeout(() => {
+        updateTime();
+      }, msToNextMinute);
     };
     const handleSearch = () => {
-      if (searchVal.value !== storeSearchVal.value)
+      if (searchVal.value !== storeSearchVal.value) {
         dealStore.setSearchVal(searchVal.value);
+        const search = searchVal.value.trim();
+        emit("search-deals", search);
+      }
     };
     watch(searchVal, (newVal) => {
       if ((newVal === "" || newVal === null) && newVal !== storeSearchVal.value)
         dealStore.setSearchVal("");
     });
+    const openFilterModal = () => {
+      const modal = new Modal(document.getElementById("filterModal"));
+      modal.show();
+    };
     onMounted(() => {
       loopPlaceholders();
       updateTime();
     });
-    onUnmounted(() => {
-      clearInterval(typingInterval);
-      clearInterval(timeInterval);
-    });
     return {
+      openFilterModal,
       handleSearch,
       searchVal,
       currentPlaceHolder,
