@@ -3,77 +3,15 @@
     <nav class="container-fluid p-0">
       <div class="row">
         <div class="col-md-3">
-          <kanban-top-header-task-counter-comp />
+          <task-counter-comp />
         </div>
         <div
           class="col-md-6 d-flex gap-2 justify-content-center align-items-center"
         >
-          <kanban-top-header-button-group-comp />
+          <button-group-comp />
         </div>
         <div class="col-md-3 d-flex justify-content-end">
-          <div class="btn-group">
-            <div
-              class="btn btn-header px-0 px-lg-2 d-flex align-items-center rounded-0 rounded-start"
-              v-if="
-                permissionStore.hasPermission(
-                  PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
-                )
-              "
-            >
-              <span class="me-2 text-white">Salary</span>
-              <span
-                class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
-                >$$$$</span
-              >
-            </div>
-            <div
-              class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
-              v-if="
-                permissionStore.hasPermission(
-                  PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
-                )
-              "
-            >
-              <span class="me-2 text-white">Bonus</span>
-              <span
-                class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
-                >$$$</span
-              >
-            </div>
-            <div
-              class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
-              v-if="
-                permissionStore.hasPermission(
-                  PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
-                )
-              "
-            >
-              <span class="me-2 text-white">Deductions</span>
-              <span
-                class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
-                >$$$</span
-              >
-            </div>
-            <div
-              class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
-              v-if="
-                permissionStore.hasPermission(
-                  PERMISSIONS.READ_UNASSIGN_SOON_TASK_STAGE
-                )
-              "
-            >
-              <span class="me-2 text-white">Total</span>
-              <span
-                class="badge bg-secondary-subtle text-secondary fw-bold fs-6"
-                >$$$$</span
-              >
-            </div>
-            <button
-              class="btn btn-header px-0 px-lg-2 d-flex align-items-center"
-            >
-              <i class="fa-solid fa-eye fs-7 text-white"></i>
-            </button>
-          </div>
+          <salary-widget-comp />
         </div>
       </div>
     </nav>
@@ -103,10 +41,10 @@ import CreateDealModal from "@/components/kanban/CrmKanbanTopHeaderCreateDealMod
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
 import WhatsAppModal from "@/components/modals/CrmDealKanbanTopHeaderWhatsAppModal.vue";
 import SearchModalIpad from "@/components/headers/CrmKanbanTopHeaderSearchModalIpad.vue";
-import { getconversations } from "@/plugins/services/whatsappService";
 import Cookies from "js-cookie";
-import KanbanTopHeaderTaskCounterComp from "./KanbanTopHeaderTaskCounterComp.vue";
-import KanbanTopHeaderButtonGroupComp from "./KanbanTopHeaderButtonGroupComp.vue";
+import TaskCounterComp from "./KanbanTopHeaderTaskCounterComp.vue";
+import ButtonGroupComp from "./KanbanTopHeaderButtonGroupComp.vue";
+import SalaryWidgetComp from "./KanbanTopHeaderSalaryWidgetComp.vue";
 
 export default {
   name: "CrmDealKanbanTopHeader",
@@ -115,8 +53,9 @@ export default {
     CreateDealModal,
     WhatsAppModal,
     SearchModalIpad,
-    KanbanTopHeaderTaskCounterComp,
-    KanbanTopHeaderButtonGroupComp,
+    TaskCounterComp,
+    ButtonGroupComp,
+    SalaryWidgetComp,
   },
   props: {
     initialFilters: {
@@ -174,19 +113,6 @@ export default {
       return route.name !== "CrmListView";
     });
     const user_role = ref(Cookies.get("user_role"));
-
-    const openWhatsappModal = async () => {
-      try {
-        const response = await getconversations();
-        const conversations = response.data.data;
-        emit("load-conversations", conversations);
-
-        const modal = new Modal(document.getElementById("whatsappModal"));
-        modal.show();
-      } catch (error) {
-        console.error("Error opening WhatsApp modal:", error);
-      }
-    };
     watch(
       () => props.initialFilters,
       (newFilters) => {
@@ -280,7 +206,6 @@ export default {
       openCrmKanban,
       permissionStore,
       PERMISSIONS,
-      openWhatsappModal,
       openSearchModalIpad,
       lgIpadClass,
       conversation,

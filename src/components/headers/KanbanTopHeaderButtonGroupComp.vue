@@ -1,8 +1,4 @@
 <template>
-  <router-link to="/documents" class="btn btn-hover text-white fs-cus-1">
-    <i class="fa-regular fa-folder-open"></i>
-    {{ $t("sidebar-nav-item-documents") }}
-  </router-link>
   <router-link
     to="/crm-kanban"
     class="btn btn-hover text-white fs-cus-1"
@@ -58,6 +54,10 @@
     <i class="fa-brands fa-whatsapp fs-cus-2"></i>
     {{ $t("kanban-modal-edit-whatsapp") }}
   </a>
+  <router-link to="/documents" class="btn btn-hover text-white fs-cus-1">
+    <i class="fa-regular fa-folder-open"></i>
+    {{ $t("sidebar-nav-item-documents") }}
+  </router-link>
   <a
     class="btn btn-hover text-white fs-cus-1 align-items-center d-flex gap-1"
     ref="notifiButton"
@@ -69,19 +69,29 @@
 <script>
 import { ref, onMounted } from "vue";
 import { usePermissionStore, PERMISSIONS } from "@/stores/PermissionStore";
+import { Modal } from "bootstrap";
+import { getconversations } from "@/plugins/services/whatsappService";
 
 export default {
-  name: "KanbanTopHeaderButtonGroupComp",
-  setup() {
+  name: "ButtonGroupComp",
+  setup(props, { emit }) {
     const permissionStore = usePermissionStore();
     const user_role = ref("");
     onMounted(() => {
       user_role.value = localStorage.getItem("user_role") || "";
     });
     const notifiButton = ref(null);
-    const openWhatsappModal = () => {
-      const event = new CustomEvent("open-whatsapp-modal");
-      window.dispatchEvent(event);
+    const openWhatsappModal = async () => {
+      try {
+        const response = await getconversations();
+        const conversations = response.data.data;
+        emit("load-conversations", conversations);
+
+        const modal = new Modal(document.getElementById("whatsappModal"));
+        modal.show();
+      } catch (error) {
+        console.error("Error opening WhatsApp modal:", error);
+      }
     };
     return {
       permissionStore,
