@@ -167,8 +167,6 @@ import Column from "primevue/column";
 import ShowData from "@/components/modals/CrmListViewShowDataModal.vue";
 import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
 
 import { updateApproval } from "@/plugins/services/approvalService";
@@ -195,15 +193,14 @@ export default {
     const notificationStore = useNotificationStore();
     const permissionStore = usePermissionStore();
     const { t } = useI18n();
-    // const toast = useToast();
     const approvalStore = useApprovalStore();
-    const approvals = computed(() =>
-      approvalStore.getApprovals("deal_reassign_approval")
-    );
+    const approvals = computed(() => approvalStore.getApprovals);
     const searchInput = ref("");
-    const rowsPerPage = computed(() => approvalStore.getPerPage);
-    const currentPage = computed(() => approvalStore.getCurrentPage);
-    const totalRows = computed(() => approvalStore.getTotal);
+    const rowsPerPage = ref(10);
+    const currentPage = ref(1);
+    const totalRows = computed(() =>
+      approvalStore.getTotalWithType("deal_reassign_approval")
+    );
     // Table state
     const rows = ref([]);
     const loading = ref(false);
@@ -241,9 +238,9 @@ export default {
 
     // Handle page change event
     const onPageChange = (event) => {
-      currentPage.value = event.page;
+      currentPage.value = event.page + 1;
       rowsPerPage.value = event.rows;
-      fetchData(currentPage.value, rowsPerPage.value);
+      fetchData();
     };
 
     const handleShowDealModal = async (dealId) => {
@@ -365,7 +362,6 @@ export default {
     };
 
     onMounted(async () => {
-      await fetchData();
       fetchUsers();
       const modalElements = document.querySelectorAll(".modal");
       modalElements.forEach((element) => {

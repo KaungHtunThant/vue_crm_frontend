@@ -11,8 +11,9 @@
           role="tab"
           aria-controls="deal_reassignment"
           aria-selected="true"
+          @click="fetchData('deal_reassign_approval')"
         >
-          {{ t("approvals-tab-label-deal-reassignment") }}
+          {{ $t("approvals-tab-label-deal-reassignment") }}
         </button>
       </li>
       <li class="nav-item" role="presentation">
@@ -24,8 +25,9 @@
           type="button"
           role="tab"
           aria-controls="idle_deal_assignment"
+          @click="fetchData('idle_deal_assign_approval')"
         >
-          {{ t("approvals-tab-label-idle-deal-assignment") }}
+          {{ $t("approvals-tab-label-idle-deal-assignment") }}
         </button>
       </li>
       <li class="nav-item" role="presentation">
@@ -37,8 +39,9 @@
           type="button"
           role="tab"
           aria-controls="new_deal_creation"
+          @click="fetchData('new_deal_create_approval')"
         >
-          {{ t("approvals-tab-label-new-deal-creation") }}
+          {{ $t("approvals-tab-label-new-deal-creation") }}
         </button>
       </li>
       <li class="nav-item" role="presentation">
@@ -50,8 +53,9 @@
           type="button"
           role="tab"
           aria-controls="suggest_user"
+          @click="fetchData('suggest_user_approval')"
         >
-          {{ t("approvals-tab-label-suggest-user") }}
+          {{ $t("approvals-tab-label-suggest-user") }}
         </button>
       </li>
     </ul>
@@ -64,7 +68,7 @@
       >
         <approval-deal-reassignment-table />
       </div>
-      <div
+      <!-- <div
         class="tab-pane fade"
         id="idle_deal_assignment"
         role="tabpanel"
@@ -79,7 +83,7 @@
         aria-labelledby="new_deal_creation_tab"
       >
         <approval-new-deal-creation-table />
-      </div>
+      </div> -->
       <div
         class="tab-pane fade"
         id="suggest_user"
@@ -101,43 +105,50 @@
   />
 </template>
 <script>
-import { useI18n } from "vue-i18n";
 import ApprovalDealReassignmentTable from "@/components/ApprovalDealReassignmentTable.vue";
-import ApprovalIdleDealAssignTable from "@/components/ApprovalIdleDealAssignTable.vue";
-import ApprovalNewDealCreationTable from "@/components/ApprovalNewDealCreationTable.vue";
+// import ApprovalIdleDealAssignTable from "@/components/ApprovalIdleDealAssignTable.vue";
+// import ApprovalNewDealCreationTable from "@/components/ApprovalNewDealCreationTable.vue";
 import ApprovalSuggestUserTable from "@/components/ApprovalSuggestUserTable.vue";
 import DealDataCard from "@/components/modals/CrmDealKanbanDealDataModal.vue";
 import { useApprovalStore } from "@/stores/ApprovalStore";
 import { onMounted } from "vue";
 import { useSourceStore } from "@/stores/SourceStore";
+import { useNotificationStore } from "@/stores/notificationStore";
+import { useUserStore } from "@/stores/UserStore";
+import { useStageStore } from "@/stores/StageStore";
 export default {
   name: "ApprovalsView",
   components: {
     ApprovalDealReassignmentTable,
-    ApprovalIdleDealAssignTable,
-    ApprovalNewDealCreationTable,
+    // ApprovalIdleDealAssignTable,
+    // ApprovalNewDealCreationTable,
     ApprovalSuggestUserTable,
     DealDataCard,
   },
   setup() {
-    const { t } = useI18n();
     const approvalStore = useApprovalStore();
     const sourceStore = useSourceStore();
-    const fetchApprovals = async () => {
+    const notificationStore = useNotificationStore();
+    const userStore = useUserStore();
+    const stageStore = useStageStore();
+    const fetchData = async (type = "deal_reassign_approval") => {
       try {
-        await approvalStore.fetchApprovals("", 1, 10);
+        approvalStore.fetchApprovals(null, 1, 10, type);
       } catch (error) {
-        console.error("Error fetching approvals:", error);
+        console.error(error);
+        notificationStore.error(error.message);
       }
     };
 
     onMounted(() => {
-      fetchApprovals();
+      userStore.fetchUsers();
+      stageStore.fetchStages();
+      fetchData();
+      approvalStore.fetchTotals();
       sourceStore.fetchSources();
     });
     return {
-      t,
-      fetchApprovals,
+      fetchData,
     };
   },
 };

@@ -28,3 +28,7 @@ export const updateApproval = async (approvalId, status) => {
   formData.append("status", status);
   return await axios.patch(`/approvals/${approvalId}`, formData);
 };
+
+export const getTotals = async () => {
+  return await axios.get("/approvals/get-totals");
+};

@@ -47,17 +47,11 @@
         :lazy="true"
         :loading="loading"
         @page="onPageChange"
-        v-model:selection="selectedRows"
-        :selectionMode="
-          permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)
-            ? 'multiple'
-            : null
-        "
         responsive="true"
         scrollable
         scrollHeight="calc(90vh - 110px)"
       >
-        <Column
+        <!-- <Column
           :selectionMode="
             permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)
               ? 'multiple'
@@ -65,10 +59,10 @@
           "
           headerStyle="width: 3rem;"
           v-if="permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)"
-        ></Column>
+        ></Column> -->
         <Column :header="'#'">
           <template #body="slotProps">
-            {{ slotProps.index + 1 + currentPage * rowsPerPage }}
+            {{ slotProps.index + 1 + (currentPage - 1) * rowsPerPage }}
           </template>
         </Column>
         <Column
@@ -98,7 +92,11 @@
           field="created_at"
           :header="t('approvals-table-header-createdat')"
           v-if="permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)"
-        ></Column>
+        >
+          <template #body="slotProps">
+            {{ new Date(slotProps.data.created_at).toLocaleString() }}
+          </template>
+        </Column>
         <Column
           class="d-lg-table-cell"
           field="status_changed_at"
@@ -157,22 +155,17 @@ import Column from "primevue/column";
 import ShowData from "@/components/modals/CrmListViewShowDataModal.vue";
 import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
-// import { useToast } from "vue-toastification";
-// import { showSuccess, showError } from "@/plugins/services/toastService";
 import { useNotificationStore } from "@/stores/notificationStore";
-
-import { updateApproval } from "@/plugins/services/approvalService";
-import { showDeal, updateDealStage } from "@/plugins/services/dealService";
-import { getAllUsers } from "@/plugins/services/userService";
-import { getAvailableStages } from "@/plugins/services/stageService";
+import { showDeal } from "@/plugins/services/dealService";
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Swal from "sweetalert2";
 import { ref, onMounted, onUnmounted, nextTick, computed } from "vue";
 import { useApprovalStore } from "@/stores/ApprovalStore";
 import { useSourceStore } from "@/stores/SourceStore";
+import { useUserStore } from "@/stores/UserStore";
 
 export default {
-  name: "ApprovalNewDealCreationTable",
+  name: "ApprovalSuggestUserTable",
   components: {
     DataTable,
     Column,
@@ -184,24 +177,21 @@ export default {
     const permissionStore = usePermissionStore();
     const { t } = useI18n();
     const notificationStore = useNotificationStore();
-    // const toast = useToast();
     const approvalStore = useApprovalStore();
-    const approvals = computed(() =>
-      approvalStore.getApprovals("suggest_user_approval")
-    );
+    const userStore = useUserStore();
+    const approvals = computed(() => approvalStore.getApprovals);
     const searchInput = ref("");
-    const rowsPerPage = computed(() => approvalStore.getPerPage);
-    const currentPage = computed(() => approvalStore.getCurrentPage);
-    const totalRows = computed(() => approvalStore.getTotal);
+    const rowsPerPage = ref(10);
+    const currentPage = ref(1);
+    const totalRows = computed(() =>
+      approvalStore.getTotalWithType("suggest_user_approval")
+    );
     // Table state
-    const rows = ref([]);
     const loading = ref(false);
-    const selectedRows = ref([]);
     const selectedStatuses = ref([]);
     const sourceStore = useSourceStore();
     const sources = computed(() => sourceStore.sources);
-    const stages = ref([]);
-    const users = ref([]);
+    const users = computed(() => userStore.getAllUsers);
     const dealData = ref(null);
     const showDataModal = ref(null);
     const selectedDeal = ref(null);
@@ -230,8 +220,9 @@ export default {
 
     // Handle page change event
     const onPageChange = (event) => {
-      currentPage.value = event.page;
+      currentPage.value = event.page + 1;
       rowsPerPage.value = event.rows;
+      fetchData();
     };
 
     const handleShowDealModal = async (dealId) => {
@@ -276,60 +267,17 @@ export default {
       });
     };
 
-    const fetchStages = async () => {
-      try {
-        if (stages.value.length === 0) {
-          const stageRes = await getAvailableStages();
-
-          stages.value = stageRes.data.data.map((stage) => ({
-            value: stage.id,
-            name: stage.name,
-          }));
-        }
-      } catch (error) {
-        console.error(error);
-        notificationStore.error(error.message);
-      }
-    };
-
-    const fetchUsers = async () => {
-      try {
-        const response = await getAllUsers();
-        if (response.status === 200) {
-          users.value = response.data.data.map((user) => ({
-            id: user.id,
-            name: user.name,
-            role: user.role,
-          }));
-        }
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
     const openWhatsappModal = (conversation) => {
       selected_conversation.value = conversation;
     };
 
-    const changeDealStage = async (dealId, newStageId) => {
-      try {
-        const response = await updateDealStage(dealId, newStageId);
-        if (response.status === 200) {
-          notificationStore.success(response.data.message, { timeout: 3000 });
-          fetchData();
-        } else {
-          throw new Error(response.data.message);
-        }
-      } catch (error) {
-        console.error(error);
-        notificationStore.error(error.message, { timeout: 3000 });
-      }
-    };
-
     const handleApprove = async (id, approval) => {
+      const message = approval
+        ? "approvals-confirmation-title-approve"
+        : "approvals-confirmation-title-reject";
       const result = await Swal.fire({
-        title: t("approval-confirmation-title"),
-        text: t("approval-confirmation-description"),
+        title: t(message),
+        text: t("approvals-confirmation-description"),
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -340,19 +288,17 @@ export default {
       });
 
       if (result.isConfirmed) {
-        const response = await updateApproval(id, approval);
-        if (response.status === 204 || response.status === 200) {
+        const response = await approvalStore.updateApproval(id, approval);
+        if (response.success) {
           fetchData();
-          notificationStore.success(response.data.message, { timeout: 3000 });
+          notificationStore.success(response.message, { timeout: 3000 });
         } else {
-          throw new Error(response.data.message || t("error-default"));
+          notificationStore.error(response.message, { timeout: 3000 });
         }
       }
     };
 
     onMounted(async () => {
-      await fetchData();
-      fetchUsers();
       const modalElements = document.querySelectorAll(".modal");
       modalElements.forEach((element) => {
         new Modal(element, {
@@ -374,16 +320,12 @@ export default {
       logo,
       permissionStore,
       t,
-      // toast,
-      rows,
       loading,
       totalRows,
       currentPage,
       rowsPerPage,
-      selectedRows,
       selectedStatuses,
       sources,
-      stages,
       users,
       dealData,
       showDataModal,
@@ -396,18 +338,9 @@ export default {
       fetchData,
       onPageChange,
       handleShowDealModal,
-      handleRightClick,
-      fetchStages,
-      fetchUsers,
       openWhatsappModal,
-      changeDealStage,
       handleApprove,
-      getAvailableStages,
-      getAllUsers,
-      updateDealStage,
-      updateApproval,
       PERMISSIONS,
-      approvalStore,
       approvals,
       searchInput,
     };

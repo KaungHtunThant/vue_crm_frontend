@@ -1,35 +1,31 @@
 import {
   getApprovals,
   updateApproval,
+  getTotals,
 } from "@/plugins/services/approvalService";
 import { defineStore } from "pinia";
 
 export const useApprovalStore = defineStore("approval", {
   state: () => ({
     approvals: [],
-    total: 0,
+    totals: [],
     perPage: 10,
     page: 1,
     search: "",
   }),
   getters: {
-    getApprovals: (state) => (type) => {
-      return state.approvals
-        .filter((approval) => {
-          return approval.type === type;
-        })
-        .map((approval) => {
-          return {
-            ...approval,
-            created_at: new Date(approval.created_at).toLocaleDateString(),
-            status_changed_at: approval.updated_at
-              ? new Date(approval.updated_at).toLocaleDateString()
-              : "N/A",
-          };
-        });
+    getApprovals: (state) => {
+      return state.approvals;
+    },
+    getTotalWithType: (state) => (type) => {
+      return state.totals[type] || 0;
     },
     getTotal: (state) => {
-      return state.total;
+      let total = 0;
+      for (const key in state.totals) {
+        total += state.totals[key];
+      }
+      return total;
     },
     getPerPage: (state) => {
       return state.perPage;
@@ -57,13 +53,48 @@ export const useApprovalStore = defineStore("approval", {
         this.perPage = response.data.meta.per_page;
       });
     },
-    async updateApproval(approval) {
-      await updateApproval(approval).then((response) => {
-        const index = this.approvals.findIndex((a) => a.id === approval.id);
-        if (index !== -1) {
-          this.approvals[index] = response.data;
-        }
-      });
+    async fetchTotals() {
+      try {
+        await getTotals().then((response) => {
+          if (response.status === 200) {
+            this.totals = response.data.data;
+            return {
+              success: true,
+              message: response.data.message,
+            };
+          } else {
+            throw new Error(response.data.message);
+          }
+        });
+      } catch (error) {
+        return {
+          success: false,
+          message: error.message,
+        };
+      }
+    },
+    async updateApproval(id, status) {
+      try {
+        return await updateApproval(id, status).then((response) => {
+          if (response.status === 200 || response.status === 204) {
+            const index = this.approvals.findIndex((a) => a.id === id);
+            if (index !== -1) {
+              this.approvals[index] = response.data;
+            }
+            return {
+              success: true,
+              message: response.data.message,
+            };
+          } else {
+            throw new Error(response.data.message);
+          }
+        });
+      } catch (error) {
+        return {
+          success: false,
+          message: error.message,
+        };
+      }
     },
   },
 });
