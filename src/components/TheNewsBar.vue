@@ -114,7 +114,9 @@ export default {
           important: item.important,
         }));
         repeatedNewsList.value = [...newsList.value, ...newsList.value];
-      } catch (error) {}
+      } catch (error) {
+        // Error handled silently
+      }
     };
 
     onMounted(() => {

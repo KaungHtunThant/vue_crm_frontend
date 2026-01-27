@@ -128,7 +128,6 @@ export default {
         document.querySelector(".modal-backdrop")?.remove();
         document.body.classList.remove("modal-open");
         password.value = { old: "", new: "", confirm: "" };
-      } else {
       }
     };
 

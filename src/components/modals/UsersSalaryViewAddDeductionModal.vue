@@ -134,7 +134,9 @@ export default {
       try {
         const response = await deductiontypes();
         deductionTypes.value = response.data.data || [];
-      } catch (error) {}
+      } catch (error) {
+        // Error handled silently
+      }
     };
 
     return {

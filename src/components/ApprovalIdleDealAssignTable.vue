@@ -260,7 +260,9 @@ export default {
             { once: true }
           );
         }, 300);
-      } catch (error) {}
+      } catch (error) {
+        // Error handled silently
+      }
     };
 
     const handleRightClick = (event) => {
@@ -300,7 +302,9 @@ export default {
             role: user.role,
           }));
         }
-      } catch (error) {}
+      } catch (error) {
+        // Error handled silently
+      }
     };
 
     const openWhatsappModal = (conversation) => {

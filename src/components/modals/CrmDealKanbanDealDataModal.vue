@@ -2393,7 +2393,6 @@ export default {
         if (modalElement) {
           const modal = new Modal(modalElement);
           modal.show();
-        } else {
         }
         // emit("open-whatsapp-modal", selected_conversation.value);
         emit(
@@ -2910,7 +2909,6 @@ export default {
           } else if (duedateStr >= twoWeeksStr) {
             name = name + "due-later";
             color = "#12a193";
-          } else {
           }
         }
       }

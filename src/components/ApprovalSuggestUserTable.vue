@@ -248,7 +248,9 @@ export default {
             { once: true }
           );
         }, 300);
-      } catch (error) {}
+      } catch (error) {
+        // Error handled silently
+      }
     };
 
     const handleRightClick = (event) => {

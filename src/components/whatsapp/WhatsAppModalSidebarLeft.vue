@@ -403,7 +403,6 @@ export default {
       if (modalElement) {
         const modal = new Modal(modalElement);
         modal.show();
-      } else {
       }
     },
     async handleScroll() {

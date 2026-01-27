@@ -275,8 +275,7 @@ export default {
           this.isLoading = false;
         }
       } catch (error) {
-        if (error.response?.status === 404) {
-        }
+        // Ignore specific error status
       }
     },
 
@@ -305,13 +304,14 @@ export default {
         } else if (response.data.status === "initializing") {
           this.isLoading = true;
         }
-      } catch (error) {}
+      } catch (error) {
+        // Error handled silently
+      }
     },
 
     loadConversations(conversations) {
       if (this.$refs.leftSidebar) {
         this.$refs.leftSidebar.chats = conversations;
-      } else {
       }
     },
     handleNewMessage(newMessage) {
@@ -359,7 +359,6 @@ export default {
           ...this.selectedChat.messages,
         ];
         this.isFetching = false;
-      } else {
       }
     },
 
@@ -458,7 +457,6 @@ export default {
           fileMimeType: new_message.file ? new_message.file.mime_type : null,
           status: new_message.status,
         });
-      } else {
       }
     },
 

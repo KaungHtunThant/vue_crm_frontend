@@ -340,6 +340,7 @@ const confirmChangeStage = async () => {
     closeModal("changeStageModal");
     newStage.value = "";
   } catch (error) {
+    // Error handled silently
   } finally {
     isLoading.value = false;
   }
@@ -352,6 +353,7 @@ const confirmAssignUser = async () => {
     closeModal("assignUser");
     newUser.value = "";
   } catch (error) {
+    // Error handled silently
   } finally {
     isLoading.value = false;
   }
@@ -364,6 +366,7 @@ const confirmChangeSource = async () => {
     closeModal("changeSourceModal");
     newSource.value = "";
   } catch (error) {
+    // Error handled silently
   } finally {
     isLoading.value = false;
   }

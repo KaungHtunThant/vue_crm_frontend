@@ -439,23 +439,19 @@ export default {
     });
 
     const fetchChildStages = async (parentId) => {
-      try {
-        const formattedFilters = formatFilters();
-        const response = await getStagesChildren(
-          parentId,
-          10,
-          0,
-          formattedFilters
-        );
+      const formattedFilters = formatFilters();
+      const response = await getStagesChildren(
+        parentId,
+        10,
+        0,
+        formattedFilters
+      );
 
-        if (response.data && response.data.data) {
-          const childStages = response.data.data;
-          return childStages;
-        } else {
-          throw new Error(response.message);
-        }
-      } catch (error) {
-        throw error;
+      if (response.data && response.data.data) {
+        const childStages = response.data.data;
+        return childStages;
+      } else {
+        throw new Error(response.message);
       }
     };
     const formatFilters = () => {
@@ -1452,7 +1448,9 @@ export default {
               handleWhatsappEvent(event);
             });
         }
-      } catch (error) {}
+      } catch (error) {
+        // Error handled silently
+      }
 
       props.stages.forEach((stage) => {
         hiddenStages.value[stage.id] = false;
@@ -1597,7 +1595,6 @@ export default {
             )?.id;
           } else if (duedateStr >= twoWeeksStr) {
             stage_id = props.stages.find((s) => s.name_key === "Due Later")?.id;
-          } else {
           }
         }
       }
