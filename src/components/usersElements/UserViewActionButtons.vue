@@ -41,14 +41,12 @@ export default {
   methods: {
     async getsalary() {
       await this.userStore.fetchSelectedUser(this.item.id);
-      const selectedUser = this.userStore.getSelectedUser;
       router.push({
         name: "UsersSalaryView",
         params: {
           userId: this.item.id,
         },
       });
-      this.$emit("getsalary", selectedUser);
     },
     removeItem() {
       this.$emit("remove", this.item.id);

@@ -130,7 +130,6 @@
             @edit="editItem"
             @remove="confirmRemoveUser"
             @showLoginDetails="handleShowLoginDetails"
-            @getsalary="getUserSalary"
           />
         </template>
       </Column>
@@ -450,18 +449,18 @@ export default {
 .userEmail {
   font-size: 14px;
 }
-::deep(.p-datatable) {
+:deep(.p-datatable) {
   font-size: 14px;
 }
-::deep(.p-datatable th),
-::deep(.p-datatable td) {
+:deep(.p-datatable th),
+:deep(.p-datatable td) {
   padding: 8px;
 }
-::deep(.p-datatable thead th) {
+:deep(.p-datatable thead th) {
   font-weight: bold;
   text-align: center;
 }
-::deep(.p-datatable tbody td) {
+:deep(.p-datatable tbody td) {
   text-align: left;
 }
 .loading-logo {
