@@ -421,6 +421,7 @@ export default {
         calculatedCommission: 0,
         totalSalary: 0,
         totalDeductions: 0,
+        totalbonuses: 0,
       },
       showSalary: false,
     };
@@ -593,11 +594,19 @@ export default {
       const commission = await calculatecommission(userId);
       if (commission && commission.status === 200) {
         const salaryData = commission?.data?.data?.original?.data;
+        const basicPay = Number(salaryData?.basic_pay) || 0;
+        const deductions = Number(salaryData?.deductions) || 0;
+        const calculated_commission =
+          Number(salaryData?.calculated_commission) || 0;
+        const bonuses = Number(salaryData?.bonuses) || 0;
+        const finalBasicPay = basicPay - deductions;
+        const calculatedCommission = calculated_commission + bonuses;
         return {
-          finalBasicPay: salaryData?.basic_pay || 0,
-          calculatedCommission: salaryData?.calculated_commission || 0,
+          finalBasicPay: finalBasicPay || 0,
+          calculatedCommission: calculatedCommission || 0,
           totalSalary: salaryData?.total_salary || 0,
-          totalDeductions: salaryData?.total_deductions || 0,
+          totalDeductions: salaryData?.deductions || 0,
+          totalBonuses: salaryData?.bonuses || 0,
         };
       } else {
         return {
@@ -605,6 +614,7 @@ export default {
           calculatedCommission: 0,
           totalSalary: 0,
           totalDeductions: 0,
+          totalBonuses: 0,
         };
       }
     },

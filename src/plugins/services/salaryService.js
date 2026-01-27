@@ -13,4 +13,6 @@ export const saveDeduction = (data) => axios.post(`/deductions`, data);
 export const deleteDeduction = (id) => axios.delete(`/deductions/${id}`);
 export const calculatecommission = (id) =>
   axios.get(`/deductions/getsalary/${id}`, id);
-export const addbalance = (data) => axios.post(`/deductions/add-balance`, data);
+export const saveBonus = (data) => axios.post(`bonus/`, data);
+export const getUserBonuses = (id) => axios.get(`bonus/${id}`);
+export const deleteBonus = (id) => axios.delete(`bonus/${id}`);

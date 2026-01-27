@@ -120,9 +120,6 @@ export const getAfterSalesKanban = async (params = {}) => {
 export const moveToSalesEndStage = async (deal_id) => {
   return await axios.patch(`/deals/sales-end-stage/${deal_id}`);
 };
-export const updateHospitalPackage = async (data) => {
-  return await axios.put(`/deals/updateHospitalPackage`, data);
-};
 export const distributeInactiveDeals = async () => {
   return await axios.post(`/deals/force-roll`);
 };

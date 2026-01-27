@@ -1,6 +1,6 @@
 <template>
   <div
-    class="modal fade"
+    class="modal fade Second-modal"
     id="payPackageModal"
     tabindex="-1"
     aria-labelledby="addBalanceModalLabel"
@@ -21,6 +21,37 @@
         </div>
         <div class="modal-body">
           <form @submit.prevent="submitAddBalance">
+            <div class="mb-3">
+              <label for="paymentType" class="form-label">
+                {{ t("kanban-modal-add-balance-label-payment-type") }}
+                <span class="text-danger">*</span>
+              </label>
+              <select
+                id="paymentType"
+                class="form-select"
+                v-model="selectedPaymentType"
+                required
+              >
+                <option
+                  v-for="type in PaymentTypes"
+                  :key="type.id"
+                  :value="type.id"
+                >
+                  {{ type.name }}
+                </option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="referenceNumber">
+                {{ t("kanban-modal-add-balance-reference-number") }}
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="referenceNumber"
+                v-model="referenceNumber"
+              />
+            </div>
             <div class="mb-3">
               <label for="balanceAmount" class="form-label">{{
                 t("kanban-modal-add-balance-label-amount")
@@ -54,11 +85,12 @@
   </div>
 </template>
 <script>
-import { ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { Modal } from "bootstrap";
-import { updateHospitalPackage } from "@/plugins/services/dealService";
+import { updateHospitalPackage } from "@/plugins/services/paymentService";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { usePaymentTypesStore } from "@/stores/PaymentsStore";
 export default {
   name: "PayPackageModal",
   props: {
@@ -75,6 +107,12 @@ export default {
     const { t } = useI18n();
     const balanceAmount = ref(0);
     const payPackageModal = ref(null);
+    const selectedPaymentType = ref(null);
+    const referenceNumber = ref("");
+    const payment_distribution = ref(null);
+    const balance_added = ref(null);
+    const total_packages_updated = ref(null);
+    const paymentTypesStore = usePaymentTypesStore();
     const notificationStore = useNotificationStore();
     const showModal = () => {
       if (!payPackageModal.value) {
@@ -92,8 +130,6 @@ export default {
     const submitAddBalance = async () => {
       const pkg = props.package_id;
       const dealId = props.deal_id;
-      console.log("Submitting balance for package ID:", pkg);
-      console.log("dealId:", dealId);
       if (!pkg) return;
       try {
         const response = await updateHospitalPackage({
@@ -101,12 +137,29 @@ export default {
           deal_id: dealId,
           amount: balanceAmount.value,
           paid_on: new Date().toISOString().slice(0, 19).replace("T", " "),
+          payment_type_id: selectedPaymentType.value,
+          reference_number: referenceNumber.value,
         });
         if (response.status === 200) {
-          notificationStore.success(response.data.message, {
-            timeout: 3000,
+          const responseData = response.data;
+          const distributionCount =
+            responseData.payment_distribution?.length || 0;
+          const balanceAdded = responseData.balance_added || 0;
+          let message = responseData.message;
+          if (distributionCount > 1) {
+            message += ` (${distributionCount} packages updated)`;
+          }
+          if (balanceAdded > 0) {
+            message += ` | Balance added: ${balanceAdded}`;
+          }
+          notificationStore.success(message, {
+            timeout: 5000,
           });
-          emit("package-paid", response.data);
+          emit("package-paid", {
+            payment_distribution: responseData.payment_distribution || [],
+            balance_added: responseData.balance_added || 0,
+            total_packages_updated: responseData.total_packages_updated || 0,
+          });
           const modalElement = document.getElementById("payPackageModal");
           const bsModal =
             Modal.getInstance(modalElement) || payPackageModal.value;
@@ -136,6 +189,12 @@ export default {
         );
       }
     };
+    const PaymentTypes = computed(() => paymentTypesStore.paymentTypes);
+    onMounted(async () => {
+      paymentTypesStore.fetchPaymentTypes().catch((error) => {
+        console.error("Error fetching payment types:", error);
+      });
+    });
 
     return {
       t,
@@ -143,6 +202,12 @@ export default {
       showModal,
       submitAddBalance,
       hideModal,
+      referenceNumber,
+      selectedPaymentType,
+      PaymentTypes,
+      payment_distribution,
+      balance_added,
+      total_packages_updated,
     };
   },
 };

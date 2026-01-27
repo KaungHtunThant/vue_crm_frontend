@@ -1,11 +1,10 @@
 <template>
   <div
-    class="modal fade"
+    class="modal fade Second-modal"
     id="addBalanceModal"
     aria-labelledby="addBalanceModalLabel"
     ref="addBalanceModalRef"
     aria-hidden="true"
-    data-bs-keyboard="false"
     data-bs-backdrop="static"
   >
     <div
@@ -25,6 +24,37 @@
         </div>
         <div class="modal-body">
           <form @submit.prevent="submitBalance">
+            <div class="mb-3">
+              <label for="paymentType" class="form-label">
+                {{ t("kanban-modal-add-balance-label-payment-type") }}
+                <span class="text-danger">*</span>
+              </label>
+              <select
+                id="paymentType"
+                class="form-select"
+                v-model="selectedPaymentType"
+                required
+              >
+                <option
+                  v-for="type in PaymentTypes"
+                  :key="type.id"
+                  :value="type.id"
+                >
+                  {{ type.name }}
+                </option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="referenceNumber">
+                {{ t("kanban-modal-add-balance-reference-number") }}
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="referenceNumber"
+                v-model="referenceNumber"
+              />
+            </div>
             <div class="mb-3">
               <label for="balanceAmount" class="form-label">
                 {{ t("kanban-modal-add-balance-label-amount") }}
@@ -71,10 +101,11 @@
   </div>
 </template>
 <script>
-import { ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { addbalance } from "@/plugins/services/salaryService";
+import { addbalance } from "@/plugins/services/paymentService";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { usePaymentTypesStore } from "@/stores/PaymentsStore";
 import { Modal } from "bootstrap";
 export default {
   name: "AddBalance",
@@ -88,9 +119,12 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
     const balanceAmount = ref(0);
+    const selectedPaymentType = ref(null);
+    const referenceNumber = ref(null);
     const notificationStore = useNotificationStore();
     const addBalanceModalRef = ref(null);
     const isSubmitting = ref(false);
+    const paymentTypesStore = usePaymentTypesStore();
     const submitBalance = async () => {
       if (!balanceAmount.value || balanceAmount.value <= 0) {
         notificationStore.error(
@@ -106,6 +140,8 @@ export default {
         const response = await addbalance({
           deal_id: props.deal_id,
           amount: balanceAmount.value,
+          payment_type_id: selectedPaymentType.value,
+          referenceNumber: referenceNumber.value,
         });
         if (response.status === 200) {
           notificationStore.success(response.data.message, {
@@ -133,13 +169,21 @@ export default {
         isSubmitting.value = false;
       }
     };
-
+    const PaymentTypes = computed(() => paymentTypesStore.paymentTypes);
+    onMounted(async () => {
+      paymentTypesStore.fetchPaymentTypes().catch((error) => {
+        console.error("Error fetching payment types:", error);
+      });
+    });
     return {
       t,
       balanceAmount,
       submitBalance,
       isSubmitting,
       addBalanceModalRef,
+      PaymentTypes,
+      selectedPaymentType,
+      referenceNumber,
     };
   },
 };

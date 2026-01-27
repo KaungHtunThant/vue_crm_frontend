@@ -3212,17 +3212,38 @@ export default {
       const paid_amount = parseFloat(pkg.paid_amount) || 0;
       return Math.max(0, total_price - paid_amount);
     };
-    const handlePackagePaid = (packagePayment) => {
-      console.log("Handling package payment:", packagePayment);
-      const pkgId = packagePayment.package_id;
-      const pkg = customerData.hospital_packages.find(
-        (p) => p.package_id === pkgId
-      );
-      if (!pkg) return;
-      const paid_amount = parseFloat(packagePayment.paid_amount) || 0;
-      pkg.paid_amount = paid_amount;
-      // customerData.balance =
-      //   Number(customerData.balance) + Number(packagePayment.paid_amount);
+    const handlePackagePaid = (paymentData) => {
+      console.log("Handling cascading payment:", paymentData);
+
+      const { payment_distribution, balance_added } = paymentData;
+      if (payment_distribution && payment_distribution.length > 0) {
+        payment_distribution.forEach((distribution) => {
+          const pkg = customerData.hospital_packages.find(
+            (p) =>
+              p.id === distribution.package_id ||
+              p.package_id === distribution.package_id
+          );
+
+          if (pkg) {
+            pkg.paid_amount = parseFloat(distribution.new_paid) || 0;
+            console.log(
+              `Package ${distribution.package_id} updated: ${distribution.previous_paid} → ${distribution.new_paid}`
+            );
+          }
+        });
+      }
+
+      if (balance_added > 0) {
+        const currentBalance = parseFloat(customerData.balance) || 0;
+        customerData.balance = currentBalance + parseFloat(balance_added);
+      }
+
+      if (payment_distribution.length > 1) {
+        notificationStore.info(
+          `Payment distributed across ${payment_distribution.length} packages`,
+          { timeout: 3000 }
+        );
+      }
     };
     const agreement_total_cost = computed(() => {
       const filtered_packages = customerData.hospital_packages.filter(
