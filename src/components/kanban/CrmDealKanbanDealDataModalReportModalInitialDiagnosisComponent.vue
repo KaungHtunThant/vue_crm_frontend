@@ -99,7 +99,6 @@ export default {
       try {
         local_data.value.diagnoses.splice(index, 1);
       } catch (error) {
-        console.error("Error removing patient problem:", error);
         notification_store.error(error.message, {
           timeout: 3000,
         });

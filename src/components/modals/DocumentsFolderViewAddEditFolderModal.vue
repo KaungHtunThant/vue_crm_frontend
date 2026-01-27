@@ -106,7 +106,6 @@ export default {
       try {
         emit("submit", folderData.value);
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, { timeout: 3000 });
       } finally {
         isSubmitting.value = false;

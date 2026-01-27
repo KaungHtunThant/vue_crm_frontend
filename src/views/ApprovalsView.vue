@@ -135,7 +135,6 @@ export default {
       try {
         approvalStore.fetchApprovals(null, 1, 10, type);
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message);
       }
     };

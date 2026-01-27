@@ -310,7 +310,6 @@ const fetchStages = async () => {
       }));
     }
   } catch (error) {
-    console.error("Error fetching stages:", error);
     notificationStore.error(error.message, {
       timeout: 3000,
     });
@@ -341,7 +340,6 @@ const confirmChangeStage = async () => {
     closeModal("changeStageModal");
     newStage.value = "";
   } catch (error) {
-    console.error("Error changing stage:", error);
   } finally {
     isLoading.value = false;
   }
@@ -354,7 +352,6 @@ const confirmAssignUser = async () => {
     closeModal("assignUser");
     newUser.value = "";
   } catch (error) {
-    console.error("Error assigning representative:", error);
   } finally {
     isLoading.value = false;
   }
@@ -367,7 +364,6 @@ const confirmChangeSource = async () => {
     closeModal("changeSourceModal");
     newSource.value = "";
   } catch (error) {
-    console.error("Error changing source:", error);
   } finally {
     isLoading.value = false;
   }
@@ -386,7 +382,6 @@ const confirmMultiAction = async () => {
     newUser.value = "";
     newSource.value = "";
   } catch (error) {
-    console.error(error.message);
     notificationStore.error(error.message, {
       timeout: 3000,
     });

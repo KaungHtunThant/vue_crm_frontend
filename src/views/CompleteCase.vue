@@ -384,7 +384,6 @@ export default {
     if (this.dealId) {
       await this.fetchDealData(this.dealId);
     } else {
-      console.error("No deal ID found in query params");
       this.error = "Deal ID not found";
     }
   },
@@ -396,8 +395,6 @@ export default {
         this.deal = response.data.data;
         this.loading = false;
       } catch (error) {
-        console.error("Error message:", error.message);
-        console.error("Error stack:", error.stack);
         this.error = "Failed to fetch deal data: " + error.message;
         this.loading = false;
       }

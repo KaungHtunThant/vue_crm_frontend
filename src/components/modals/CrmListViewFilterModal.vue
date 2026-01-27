@@ -107,7 +107,6 @@ export default {
           }
         }
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, { timeout: 3000 });
       }
     };
@@ -123,7 +122,6 @@ export default {
         notificationStore.success("Filters applied", { timeout: 3000 });
         closeFilterModal();
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, { timeout: 3000 });
       }
     };
@@ -157,7 +155,6 @@ export default {
         notificationStore.success("Filters reset", { timeout: 3000 });
         closeFilterModal();
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, { timeout: 3000 });
       }
     };

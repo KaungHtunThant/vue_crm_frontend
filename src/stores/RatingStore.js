@@ -14,7 +14,6 @@ export const useRatingStore = defineStore("rating", {
         const response = await getAllRatings();
         this.ratings = response.data.data;
       } catch (error) {
-        console.error("Error fetching ratings:", error);
       }
     },
   },

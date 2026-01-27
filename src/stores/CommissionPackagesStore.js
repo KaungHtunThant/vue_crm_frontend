@@ -14,7 +14,6 @@ export const usePackageStore = defineStore("package", {
         const response = await payingLevels();
         this.packages = response.data.data;
       } catch (error) {
-        console.error("Error fetching packages:", error);
       }
     },
   },

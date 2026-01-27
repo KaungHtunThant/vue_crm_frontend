@@ -74,7 +74,6 @@ export const useRoleStore = defineStore("roleStore", {
           this.filters = params.filters || {};
         }
       } catch (error) {
-        console.error(error.message);
       }
     },
     async fetchRoleById(roleId) {
@@ -84,7 +83,6 @@ export const useRoleStore = defineStore("roleStore", {
           this.currentRow = response.data.data;
         }
       } catch (error) {
-        console.error(error.message);
       }
     },
     async createRole(roleData) {
@@ -94,7 +92,6 @@ export const useRoleStore = defineStore("roleStore", {
           this.all.push(response.data.data);
         }
       } catch (error) {
-        console.error(error.message);
       }
     },
     async updateRole(roleId, roleData) {
@@ -107,7 +104,6 @@ export const useRoleStore = defineStore("roleStore", {
           }
         }
       } catch (error) {
-        console.error(error.message);
       }
     },
     async deleteRole(roleId) {
@@ -117,7 +113,6 @@ export const useRoleStore = defineStore("roleStore", {
           this.all = this.all.filter((role) => role.id !== roleId);
         }
       } catch (error) {
-        console.error(error.message);
       }
     },
   },

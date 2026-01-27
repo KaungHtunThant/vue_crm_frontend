@@ -139,7 +139,6 @@ export default {
           document.body.style.backgroundAttachment = "fixed";
         }
       } catch (error) {
-        console.error(error);
         this.notificationStore.error(error.message);
       }
     },
@@ -170,6 +169,13 @@ export default {
   mounted() {
     this.loadSavedBackground();
     this.checkAuthStatus();
+  },
+
+  beforeUnmount() {
+    // Cleanup event listeners to prevent memory leaks
+    if (!this.permissionStore.hasPermission(PERMISSIONS.STAY_IDLE)) {
+      this.settingStore.removeUserActivityListeners();
+    }
   },
 
   watch: {

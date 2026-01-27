@@ -91,7 +91,6 @@ export default {
           this.closeFilterModal();
         }, 1000);
       } catch (error) {
-        console.error(error);
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -122,7 +121,6 @@ export default {
           this.closeFilterModal();
         }, 1000);
       } catch (error) {
-        console.error(error);
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -142,7 +140,6 @@ export default {
         });
         this.closeFilterModal();
       } catch (error) {
-        console.error(error);
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -156,7 +153,6 @@ export default {
         }
         this.roles = response.data.data;
       } catch (error) {
-        console.error(error);
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });

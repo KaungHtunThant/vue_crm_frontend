@@ -74,7 +74,7 @@ export default {
 
     const initializeAndStartAnimation = () => {
       if (!marquee.value) {
-        console.warn("Marquee element not found for animation.");
+        
         return;
       }
 
@@ -116,7 +116,7 @@ export default {
         }));
         repeatedNewsList.value = [...newsList.value, ...newsList.value];
       } catch (error) {
-        console.error("Error fetching broadcasts:", error);
+        
       }
     };
 

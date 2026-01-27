@@ -253,7 +253,6 @@ export default {
         const response = await getUser();
         this.users = response.data.data || [];
       } catch (error) {
-        console.error(error);
         this.users = [];
       }
     },
@@ -290,7 +289,6 @@ export default {
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });
-        console.error("Error submitting form:", error);
       }
     },
     addPackage() {
@@ -310,7 +308,6 @@ export default {
           id: Date.now(),
         });
       } catch (error) {
-        console.error(error);
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -323,7 +320,6 @@ export default {
           timeout: 3000,
         });
       } catch (error) {
-        console.error(error);
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });

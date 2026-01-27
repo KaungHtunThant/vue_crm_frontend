@@ -9,7 +9,7 @@ export const createDocuments = async (formData) => {
     const response = await axios.post("/documents", formData);
     return response;
   } catch (error) {
-    console.error("❌ خطأ أثناء إنشاء المجلد:", error);
+    
     throw error;
   }
 };

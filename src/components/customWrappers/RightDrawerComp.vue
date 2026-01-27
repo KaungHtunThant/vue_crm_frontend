@@ -20,7 +20,6 @@ export default {
     onMounted(() => {
       window.addEventListener("contextmenu", () => {
         if (isOpen.value && !deal_modal_open.value) {
-          console.log("Closing Right Drawer from context menu", {
             isOpen: isOpen.value,
             deal_modal_open: deal_modal_open.value,
           });

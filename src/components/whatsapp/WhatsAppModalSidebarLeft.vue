@@ -270,7 +270,6 @@ export default {
           }));
         }
       } catch (error) {
-        console.error("Error fetching messages:", error);
         chatObj.messages = [];
       }
     },
@@ -292,7 +291,6 @@ export default {
           });
         }
       } catch (error) {
-        console.error("Error opening chat:", error);
       }
     },
     markAsUnread(chat) {
@@ -405,7 +403,6 @@ export default {
         const modal = new Modal(modalElement);
         modal.show();
       } else {
-        console.error("Modal element not found in DOM.");
       }
     },
     async handleScroll() {

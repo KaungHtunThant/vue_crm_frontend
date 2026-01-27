@@ -129,7 +129,6 @@ export default {
         document.body.classList.remove("modal-open");
         password.value = { old: "", new: "", confirm: "" };
       } else {
-        console.error("Modal instance not found.");
       }
     };
 
@@ -177,7 +176,6 @@ export default {
           throw new Error(result.message);
         }
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message);
       } finally {
         loading.value = false;

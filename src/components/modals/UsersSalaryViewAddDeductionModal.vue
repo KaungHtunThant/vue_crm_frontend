@@ -135,7 +135,6 @@ export default {
         const response = await deductiontypes();
         deductionTypes.value = response.data.data || [];
       } catch (error) {
-        console.error("Failed to fetch deduction types:", error);
       }
     };
 

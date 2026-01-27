@@ -58,7 +58,6 @@ export default {
           this.countryCode = null;
         }
       } catch (error) {
-        console.error("Error parsing phone number:", error);
         this.countryCode = null;
       }
     },

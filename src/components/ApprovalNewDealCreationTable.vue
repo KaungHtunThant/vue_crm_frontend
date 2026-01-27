@@ -213,7 +213,7 @@ export default {
           "new_deal_create_approval"
         );
       } catch (error) {
-        console.error(error);
+        
         notificationStore.error(error.message);
       } finally {
         loading.value = false;
@@ -251,7 +251,7 @@ export default {
           );
         }, 300);
       } catch (error) {
-        console.error("Error fetching deal data:", error);
+        
       }
     };
 
@@ -294,7 +294,7 @@ export default {
           }));
         }
       } catch (error) {
-        console.error("Error fetching users:", error);
+        
       }
     };
 
@@ -312,7 +312,7 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error(error);
+        
         notificationStore.error(error.message, {
           timeout: 3000,
         });

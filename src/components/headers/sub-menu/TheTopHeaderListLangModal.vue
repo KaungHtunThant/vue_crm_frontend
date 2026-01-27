@@ -64,7 +64,7 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error("Error changing language:", error);
+        
         this.notificationStore.error(error.message, { timeout: 3000 });
       } finally {
         this.loadingStore.stopLoading();

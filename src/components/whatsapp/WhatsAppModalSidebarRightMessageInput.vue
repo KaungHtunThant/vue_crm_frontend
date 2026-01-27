@@ -410,7 +410,6 @@ export default {
           this.removeFile();
           this.$emit("scroll-to-bottom");
         } catch (error) {
-          console.error("Error preparing message:", error);
         }
       }
     },
@@ -515,7 +514,6 @@ export default {
       let audioChunks = [];
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        console.error("Audio recording is not supported in this browser.");
         return;
       }
 
@@ -547,7 +545,6 @@ export default {
           this.mediaRecorder.start();
         })
         .catch((error) => {
-          console.error("Error accessing microphone:", error);
         });
     },
     stopRecordingVoice() {
@@ -582,7 +579,6 @@ export default {
 
         return oggBlob;
       } catch (error) {
-        console.error("Conversion error:", error);
         throw error;
       }
     },

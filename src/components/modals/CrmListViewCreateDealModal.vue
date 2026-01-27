@@ -112,7 +112,6 @@ export default {
             timeout: 3000,
           }
         );
-        console.error("Error:", error);
       }
     },
     clearForm() {

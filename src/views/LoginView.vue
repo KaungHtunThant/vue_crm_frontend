@@ -152,7 +152,6 @@ export default {
         if (otp_code_input) {
           otp_code_input.focus();
         } else {
-          console.error("OTP input field not found");
         }
       });
     },
@@ -218,7 +217,6 @@ export default {
           this.errors.message = response.message;
         }
       } catch (error) {
-        console.error("Login failed:", error);
         this.errors.message = error.message;
         this.otp_code = "";
         this.otp_phase = false;

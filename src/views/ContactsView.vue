@@ -209,7 +209,6 @@ export default {
         rows.value = data.data;
         totalRows.value = data.meta.total;
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message);
         rows.value = [];
         totalRows.value = 0;

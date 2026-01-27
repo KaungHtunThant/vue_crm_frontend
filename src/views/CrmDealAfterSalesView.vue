@@ -103,7 +103,6 @@ export default {
           notificationStore.error(response.data.message);
         }
       } catch (error) {
-        console.error("Error fetching stages:", error);
         notificationStore.error(error.message);
       }
       searching.value = false;
@@ -191,7 +190,6 @@ export default {
 
         notificationStore.success(t("success.applyFilters"), { timeout: 3000 });
       } catch (error) {
-        console.error("Filter Error:", error);
         notificationStore.error(error.message, { timeout: 3000 });
         stages.value = [];
       }
@@ -221,7 +219,6 @@ export default {
           timeout: 3000,
         });
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -275,10 +272,8 @@ export default {
           stages.value[newStageIndex].deal_count += 1;
           notificationStore.success(t("success.dealMoved"));
         } else {
-          console.error("Deal not found in the old stage");
         }
       } catch (error) {
-        console.error("Error updating deal stage:", error.response?.data);
       }
     };
 
@@ -288,7 +283,6 @@ export default {
         await fetchStages();
         window.addEventListener("contextmenu", handleRightClick);
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });

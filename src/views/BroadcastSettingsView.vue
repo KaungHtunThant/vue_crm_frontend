@@ -228,7 +228,6 @@ export default {
     const OpenCreateModal = () => {
       const item = document.getElementById("broadcastMessageCreateModal");
       if (!item) {
-        console.error("Modal element not found");
         return;
       }
       const modal = new Modal(item);
@@ -238,14 +237,12 @@ export default {
     const closeCreateModal = () => {
       const item = document.getElementById("broadcastMessageCreateModal");
       if (!item) {
-        console.error("Modal element not found");
         return;
       }
       try {
         const modal = Modal.getInstance(item) || new Modal(item);
         modal.hide();
       } catch (error) {
-        console.error("Failed to close modal:", error);
       }
     };
 

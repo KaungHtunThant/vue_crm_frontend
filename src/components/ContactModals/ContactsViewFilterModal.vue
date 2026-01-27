@@ -97,7 +97,6 @@ export default {
         emit("apply-filters", filters);
         modalInstance.value.hide();
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message);
       }
     };
@@ -112,7 +111,6 @@ export default {
         modalInstance.value.hide();
         notificationStore.success("Filters reset.");
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message);
       }
     };

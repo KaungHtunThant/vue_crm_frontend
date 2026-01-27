@@ -117,7 +117,6 @@ export default {
         document.querySelectorAll(".modal-backdrop").forEach((b) => b.remove());
         document.body.classList.remove("modal-open");
       } catch (error) {
-        console.error(error);
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -134,7 +133,6 @@ export default {
             ? this.userData.image_url
             : require("@/assets/default-avatar-profile.webp");
       } catch (error) {
-        console.error(error);
         this.notificationStore.error(error.message, { timeout: 3000 });
       }
     },
@@ -175,7 +173,6 @@ export default {
         });
         this.closeEditProfile();
       } catch (error) {
-        console.error(error);
         this.notificationStore.error(
           error.message || this.t("errors.updateFailed")
         );

@@ -102,7 +102,6 @@ export default {
         document.querySelector(".modal-backdrop")?.remove();
         document.body.classList.remove("modal-open");
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, { timeout: 3000 });
       }
     };
@@ -119,7 +118,6 @@ export default {
         emit("update:modelValue", { ...headerFilterData.value });
         closeFilterModal();
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, { timeout: 3000 });
       } finally {
         isApplyingFilters.value = false;
@@ -156,7 +154,6 @@ export default {
         emit("update:modelValue", emptyFilters);
         closeFilterModal();
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message);
       } finally {
         isResettingFilters.value = false;

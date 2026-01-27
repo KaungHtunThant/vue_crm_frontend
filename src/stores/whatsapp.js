@@ -20,7 +20,6 @@ export const useWhatsAppStore = defineStore("whatsapp", {
         this.Status = response.data.status;
         return response.data;
       } catch (error) {
-        console.error("Failed to check connection status:", error);
         this.isConnected = false;
         this.connectedUser = null;
       } finally {

@@ -86,7 +86,6 @@ export default {
         const response = await getStagesTasks();
         this.stages = response.data.data;
       } catch (error) {
-        console.error("Error fetching stages:", error);
       }
     },
     resetFilter() {

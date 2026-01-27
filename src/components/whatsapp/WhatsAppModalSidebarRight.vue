@@ -270,7 +270,6 @@ export default {
         }
         return response.data;
       } catch (error) {
-        console.error("Failed to check WhatsApp status:", error);
         this.isConnected = false;
         this.connectedUser = null;
       }
@@ -291,7 +290,6 @@ export default {
           };
 
           if (!messageToSend.conversation_id) {
-            console.error("Conversation ID is missing.");
             return;
           }
 
@@ -329,7 +327,6 @@ export default {
           this.$emit("new-message", newMessage);
           this.scrollToBottom();
         } catch (error) {
-          console.error("Error sending message:", error);
           alert("Failed to send message. Please try again.");
         }
       }
@@ -364,7 +361,6 @@ export default {
             this.scrollToBottom();
           })
           .catch((error) => {
-            console.error("Error sending init message:", error);
           });
       }
     },
@@ -399,7 +395,6 @@ export default {
             this.scrollToBottom();
           })
           .catch((error) => {
-            console.error("Error sending init message:", error);
           });
       }
     },

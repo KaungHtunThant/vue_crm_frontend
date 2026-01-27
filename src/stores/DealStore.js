@@ -271,7 +271,6 @@ export const useDealStore = defineStore("deal", {
     },
     setSearchVal(search_val) {
       this.search_val = search_val;
-      console.log("Search Value Set To:", this.search_val);
     },
   },
 });

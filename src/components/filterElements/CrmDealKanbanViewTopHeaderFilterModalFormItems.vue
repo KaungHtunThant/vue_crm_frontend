@@ -557,7 +557,6 @@ export default {
         const response = await getAvailableStages();
         stages.value = response.data.data || response;
       } catch (e) {
-        console.error(e);
         stages.value = [];
       }
     }

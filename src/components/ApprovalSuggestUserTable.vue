@@ -211,7 +211,7 @@ export default {
           "suggest_user_approval"
         );
       } catch (error) {
-        console.error(error);
+        
         notificationStore.error(error.message);
       } finally {
         loading.value = false;
@@ -250,7 +250,7 @@ export default {
           );
         }, 300);
       } catch (error) {
-        console.error("Error fetching deal data:", error);
+        
       }
     };
 

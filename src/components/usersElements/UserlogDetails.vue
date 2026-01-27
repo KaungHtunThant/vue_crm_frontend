@@ -175,7 +175,6 @@ export default {
       } catch (error) {
         this.errorMessage =
           error.response?.data?.message || this.t("errors.fetchFailed");
-        console.error("Error fetching login logs:", error);
       } finally {
         this.loading = false;
       }

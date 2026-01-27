@@ -99,13 +99,11 @@ export const useTaskStore = defineStore("task", {
                 this.overdue_after_sales_count = res.data.data || 0;
                 break;
               default:
-                console.warn(`Unknown stage: ${stage}`);
                 break;
             }
           });
         }
       } catch (error) {
-        console.error("Error fetching task counts:", error);
         throw error;
       }
     },
@@ -124,7 +122,6 @@ export const useTaskStore = defineStore("task", {
           this.overdue_count += 1;
           break;
         default:
-          console.warn(`Unknown stage name: ${stage_name}`);
           break;
       }
     },
@@ -143,7 +140,6 @@ export const useTaskStore = defineStore("task", {
           this.overdue_count -= 1;
           break;
         default:
-          console.warn(`Unknown stage name: ${stage_name}`);
           break;
       }
     },
@@ -156,7 +152,6 @@ export const useTaskStore = defineStore("task", {
           this.tasks = res.data.data || [];
         });
       } catch (error) {
-        console.error("Error fetching current tasks:", error);
         throw error;
       }
     },
@@ -210,7 +205,6 @@ export const useTaskStore = defineStore("task", {
     removeTaskFromCurrentTasks(task_id) {
       const index = this.tasks.findIndex((task) => task.id === task_id);
       if (index === -1) {
-        console.warn(`Task with ID ${task_id} not found in current tasks`);
         return;
       }
       const removedTask = this.tasks[index];
@@ -219,7 +213,6 @@ export const useTaskStore = defineStore("task", {
       if (duedate_stage) {
         this.removeCount(duedate_stage);
       } else {
-        console.warn("Invalid due date for removed task");
       }
     },
     updateTaskInCurrentTasks(task_id, duedate, duetime, description, status) {
@@ -236,7 +229,6 @@ export const useTaskStore = defineStore("task", {
         duetime: duetime ?? backup_task.duetime,
       };
       if (index === -1) {
-        console.warn(`Task with ID ${task_id} not found in current tasks`);
         return;
       }
       this.tasks[index] = { ...backup_task, ...optimisticTask };

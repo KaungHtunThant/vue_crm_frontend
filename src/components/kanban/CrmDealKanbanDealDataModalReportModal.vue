@@ -130,13 +130,11 @@ export default {
           };
         });
       } else {
-        console.error(response.data.message);
         this.notificationStore.error(response.data.message);
       }
     },
     async submitForm() {
       try {
-        console.log("Submitting form...");
         let formData = [];
         this.questions.forEach((question) => {
           const questionAnswers = this.getFormDataByQuestion(question);
@@ -163,7 +161,6 @@ export default {
           throw new Error(response_1.data.message);
         }
       } catch (error) {
-        console.log("Error submitting form:", error);
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });

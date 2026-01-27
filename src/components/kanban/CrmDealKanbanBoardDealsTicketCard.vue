@@ -388,7 +388,6 @@ export default {
         await navigator.clipboard.writeText(props.deal.phone);
         notificationStore.success(t("phone-copied"));
       } catch (err) {
-        console.error(err);
         notificationStore.error(err.message);
       }
     };

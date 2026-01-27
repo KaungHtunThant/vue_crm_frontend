@@ -164,7 +164,6 @@ export default {
 
         this.showStatus("WhatsApp logged out successfully!", "success");
       } catch (error) {
-        console.error("Error logging out WhatsApp:", error);
         this.showStatus("Failed to logout WhatsApp", "error");
       }
     },
@@ -183,7 +182,6 @@ export default {
           this.startStatusCheck();
         }, 5000);
       } catch (error) {
-        console.error("Error starting WhatsApp:", error);
         this.showStatus("Failed to start WhatsApp client", "error");
         this.isLoading = false;
       }
@@ -228,12 +226,11 @@ export default {
             this.qrCode
           )}`;
           this.isLoading = false;
-          console.info("QR Code retrieved successfully");
+          
         }
       } catch (error) {
-        console.error("Error fetching QR code:", error);
         if (error.response?.status === 404) {
-          console.info("QR code not yet available, retrying...");
+          
         }
       }
     },
@@ -260,13 +257,12 @@ export default {
           }
 
           this.showStatus("WhatsApp connected successfully!", "success");
-          console.info("WhatsApp connected successfully!");
+          
         } else if (response.data.status === "initializing") {
           this.isLoading = true;
-          console.info("WhatsApp is still initializing...");
+          
         }
       } catch (error) {
-        console.error("Error checking WhatsApp status:", error);
       }
     },
 
@@ -294,7 +290,6 @@ export default {
           this.message = ""; // Clear message after sending
         }
       } catch (error) {
-        console.error("Error sending message:", error);
         this.showStatus("Failed to send message", "error");
       }
     },
