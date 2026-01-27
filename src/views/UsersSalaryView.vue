@@ -125,14 +125,12 @@ export default {
       try {
         const res = await getUserDeductions(userId.value);
         if (!res || !res.data || !res.data.data) {
-          console.warn("No deduction data in response");
           deductions.value = [];
           return;
         }
 
         const rawData = res.data.data;
         if (!Array.isArray(rawData)) {
-          console.warn("Deduction data is not an array");
           deductions.value = [];
           return;
         }
@@ -151,7 +149,6 @@ export default {
             };
           });
       } catch (error) {
-        console.error("Error fetching deductions:", error);
         deductions.value = [];
       }
     };

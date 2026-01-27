@@ -410,7 +410,7 @@ export default {
           this.removeFile();
           this.$emit("scroll-to-bottom");
         } catch (error) {
-          console.error("Error preparing message:", error);
+          // Error handled silently
         }
       }
     },
@@ -515,7 +515,6 @@ export default {
       let audioChunks = [];
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        console.error("Audio recording is not supported in this browser.");
         return;
       }
 
@@ -532,22 +531,35 @@ export default {
           };
 
           this.mediaRecorder.onstop = async () => {
-            const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-            const formattedAudio = await this.formatAudio(audioBlob);
-            this.attachedFile = formattedAudio;
-            this.attachedFilePreview = URL.createObjectURL(formattedAudio);
-            this.attachedFileType = "file";
-            const timestamp = new Date().toISOString().replace(/[-:.]/g, "");
-            this.attachedFileName = `voice_message_${timestamp}.ogg`;
-            this.isModalOpen = true;
-            audioChunks = [];
-            this.isProcessing = false;
+            try {
+              const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+              const formattedAudio = await this.formatAudio(audioBlob);
+              this.attachedFile = formattedAudio;
+              this.attachedFilePreview = URL.createObjectURL(formattedAudio);
+              this.attachedFileType = "file";
+              const timestamp = new Date().toISOString().replace(/[-:.]/g, "");
+              this.attachedFileName = `voice_message_${timestamp}.ogg`;
+              this.isModalOpen = true;
+              audioChunks = [];
+            } catch (error) {
+              // Audio formatting failed, use original webm format
+              const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+              this.attachedFile = audioBlob;
+              this.attachedFilePreview = URL.createObjectURL(audioBlob);
+              this.attachedFileType = "file";
+              const timestamp = new Date().toISOString().replace(/[-:.]/g, "");
+              this.attachedFileName = `voice_message_${timestamp}.webm`;
+              this.isModalOpen = true;
+              audioChunks = [];
+            } finally {
+              this.isProcessing = false;
+            }
           };
 
           this.mediaRecorder.start();
         })
-        .catch((error) => {
-          console.error("Error accessing microphone:", error);
+        .catch(() => {
+          // Error handled silently
         });
     },
     stopRecordingVoice() {
@@ -560,31 +572,26 @@ export default {
       }
     },
     async formatAudio(blob) {
-      try {
-        const ffmpeg = new FFmpeg({
-          log: true,
-        });
-        await ffmpeg.load();
-        const arrayBuffer = await blob.arrayBuffer();
-        const uint8Array = new Uint8Array(arrayBuffer);
-        await ffmpeg.writeFile("input.webm", uint8Array);
-        await ffmpeg.exec([
-          "-i",
-          "input.webm",
-          "-c:a",
-          "libopus",
-          "-b:a",
-          "64k",
-          "output.ogg",
-        ]);
-        const data = await ffmpeg.readFile("output.ogg");
-        const oggBlob = new Blob([data.buffer], { type: "audio/ogg" });
+      const ffmpeg = new FFmpeg({
+        log: true,
+      });
+      await ffmpeg.load();
+      const arrayBuffer = await blob.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+      await ffmpeg.writeFile("input.webm", uint8Array);
+      await ffmpeg.exec([
+        "-i",
+        "input.webm",
+        "-c:a",
+        "libopus",
+        "-b:a",
+        "64k",
+        "output.ogg",
+      ]);
+      const data = await ffmpeg.readFile("output.ogg");
+      const oggBlob = new Blob([data.buffer], { type: "audio/ogg" });
 
-        return oggBlob;
-      } catch (error) {
-        console.error("Conversion error:", error);
-        throw error;
-      }
+      return oggBlob;
     },
     formatDuration(duration) {
       const minutes = Math.floor(duration / 60);

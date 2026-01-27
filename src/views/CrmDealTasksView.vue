@@ -157,12 +157,11 @@ export default {
             timeout: 3000,
           });
         } catch (error) {
-          console.error("Filter Error:", error);
           notificationStore.error(error.message, { timeout: 3000 });
           stages.value = [];
         }
       } catch (error) {
-        console.error("Error applying filters:", error);
+        // Error handled silently
       }
     };
 
@@ -212,7 +211,6 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message);
       }
     };
@@ -253,11 +251,9 @@ export default {
           stages.value[oldStageIndex].deal_count -= 1;
           stages.value[newStageIndex].deal_count += 1;
           notificationStore.success(t("success.dealMoved"));
-        } else {
-          console.error("Deal not found in the old stage");
         }
       } catch (error) {
-        console.error("Error updating deal stage:", error.response?.data);
+        // Error handled silently
       }
     };
 

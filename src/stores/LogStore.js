@@ -14,7 +14,7 @@ export const useLogStore = defineStore("log", () => {
         logs.value = response.data.data;
       }
     } catch (error) {
-      console.error("Error fetching logs:", error);
+      // Error handled silently
     }
   };
 
@@ -23,7 +23,7 @@ export const useLogStore = defineStore("log", () => {
       const response = await getAllUsers();
       users.value = response.data.data;
     } catch (error) {
-      console.error("Error fetching users:", error);
+      // Error handled silently
     }
   };
 

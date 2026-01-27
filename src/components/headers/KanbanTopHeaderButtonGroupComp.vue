@@ -90,7 +90,7 @@ export default {
         const modal = new Modal(document.getElementById("whatsappModal"));
         modal.show();
       } catch (error) {
-        console.error("Error opening WhatsApp modal:", error);
+        // Error handled silently
       }
     };
     return {

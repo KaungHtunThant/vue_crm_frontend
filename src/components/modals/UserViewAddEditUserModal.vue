@@ -317,7 +317,6 @@ export default {
         notificationStore.error(error.message, {
           timeout: 3000,
         });
-        console.error("Error:", error);
       } finally {
         loading.value = false;
       }

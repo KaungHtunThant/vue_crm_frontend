@@ -85,7 +85,6 @@ export default {
 
         exportFormat.value = "";
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });

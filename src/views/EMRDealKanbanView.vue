@@ -141,7 +141,7 @@ export default {
       try {
         filters.value = { ...newFilters };
       } catch (error) {
-        console.error("Error applying filters:", error);
+        // Error handled silently
       }
     };
     const resetFilter = async () => {
@@ -196,11 +196,9 @@ export default {
           stages.value[oldStageIndex].deal_count -= 1;
           stages.value[newStageIndex].deal_count += 1;
           notificationStore.success(t("success.dealMoved"));
-        } else {
-          console.error("Deal not found in the old stage");
         }
       } catch (error) {
-        console.error("Error updating deal stage:", error.response?.data);
+        // Error handled silently
       }
     };
     function formatCalendarTitle(title) {
@@ -270,7 +268,7 @@ export default {
           });
         }
       } catch (error) {
-        console.error("Error fetching stages:", error);
+        // Error handled silently
       }
     };
     watch(

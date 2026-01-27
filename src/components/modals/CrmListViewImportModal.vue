@@ -65,11 +65,9 @@ export default {
           modalInstance.show();
         }
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
-        console.error("Error opening modal:", error);
       }
     };
 
@@ -80,11 +78,9 @@ export default {
           modalInstance.hide();
         }
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
-        console.error("Error closing modal:", error);
       }
     };
 
@@ -114,7 +110,6 @@ export default {
         }
         closeImportModal();
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message || "Import modal error", {
           timeout: 3000,
         });

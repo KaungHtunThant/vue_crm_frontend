@@ -214,7 +214,6 @@ export default {
             reachedBottom.value = false;
           })
           .catch((error) => {
-            console.error("Error fetching deals:", error);
             notificationStore.error(error.message);
             reachedBottom.value = false;
           });

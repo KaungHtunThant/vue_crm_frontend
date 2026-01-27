@@ -301,7 +301,6 @@ export default {
         }
         modal.value?.hide();
       } catch (error) {
-        console.error("Error saving role:", error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -332,7 +331,6 @@ export default {
           }
         }
       } catch (error) {
-        console.error("Error deleting role:", error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });

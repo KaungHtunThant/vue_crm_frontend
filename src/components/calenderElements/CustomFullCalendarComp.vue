@@ -198,7 +198,6 @@ export default {
         if (response.success) {
           notificationStore.success(response.message);
         } else {
-          console.error(response.message);
           notificationStore.error(response.message);
           info.revert();
         }
@@ -336,7 +335,6 @@ export default {
           });
         }
       } catch (error) {
-        console.error("Error adding task:", error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -366,7 +364,6 @@ export default {
           notificationStore.error(response.message);
         }
       } catch (error) {
-        console.error("Error completing task:", error);
         notificationStore.error("An error occurred while completing the task.");
       }
     };

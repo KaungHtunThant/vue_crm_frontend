@@ -49,7 +49,6 @@ export default {
         await dealStore.updateDeal(props.dealId, { rating: index });
         notificationStore.success("Rating updated successfully");
       } catch (error) {
-        console.error(error);
         emit("update:modelValue", tmp_rating.value); // Revert on error
         notificationStore.error(error.message);
       }

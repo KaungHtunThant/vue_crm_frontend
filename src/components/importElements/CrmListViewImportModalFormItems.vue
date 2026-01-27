@@ -236,7 +236,6 @@ export default {
           fileError.value = "";
           isFileValid.value = true;
         } catch (error) {
-          console.error("Error reading file headers:", error);
           fileError.value = "Error reading file headers";
           isFileValid.value = false;
         }

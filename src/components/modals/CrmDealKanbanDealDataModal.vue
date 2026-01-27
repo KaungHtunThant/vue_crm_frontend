@@ -1798,7 +1798,6 @@ export default {
         notificationStore.success(response.message);
         taskStore.toggleStatusChangeTrigger(true);
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message);
       } finally {
         setTasksProcessingLoading.value = false;
@@ -1813,7 +1812,6 @@ export default {
         notificationStore.success(response.message);
         taskStore.toggleStatusChangeTrigger(true);
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message);
       }
     };
@@ -2079,7 +2077,6 @@ export default {
         modalBackdrop.style.zIndex = "9999";
         document.body.appendChild(modalBackdrop);
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2099,7 +2096,6 @@ export default {
         modalBackdrop.style.zIndex = "9999";
         document.body.appendChild(modalBackdrop);
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2116,9 +2112,9 @@ export default {
     const playSound = () => {
       const moveSound = new Audio(moveCardSound);
       moveSound.currentTime = 0;
-      moveSound
-        .play()
-        .catch((error) => console.error("Failed to play sound:", error));
+      moveSound.play().catch(() => {
+        // Ignore autoplay errors
+      });
     };
 
     const changeStage = async (stageId) => {
@@ -2139,7 +2135,6 @@ export default {
         playSound();
       } catch (error) {
         currentStageIdLocal.value = old_stage_id;
-        console.log("Reverting stage to old stage due to error:", old_stage_id);
         const old_stageIndex = (props.stages || []).findIndex(
           (s) => s.id === old_stage_id
         );
@@ -2152,8 +2147,6 @@ export default {
             stageColors[stage.id] = "";
           }
         });
-        console.log("Reverted stage colors:", stageColors);
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2264,7 +2257,6 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error("Error saving changes:", error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2279,7 +2271,6 @@ export default {
       try {
         rating.value = newRating;
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2307,7 +2298,6 @@ export default {
       try {
         customerData.hospital_packages.splice(index, 1);
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2334,7 +2324,6 @@ export default {
           });
         }
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2360,7 +2349,6 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2380,7 +2368,6 @@ export default {
         });
         modal.show();
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2406,8 +2393,6 @@ export default {
         if (modalElement) {
           const modal = new Modal(modalElement);
           modal.show();
-        } else {
-          console.warn("Modal element not found in DOM.");
         }
         // emit("open-whatsapp-modal", selected_conversation.value);
         emit(
@@ -2424,7 +2409,6 @@ export default {
           id
         );
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2501,7 +2485,6 @@ export default {
         }
         removeBlur();
       } catch (error) {
-        console.error("Error adding comment:", error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2523,7 +2506,6 @@ export default {
     const handleAddTask = async () => {
       try {
         const role = Cookies.get("user_role");
-        console.log("role:", role);
         let type = "sales";
         if (route.path === "/crm-after-sales" || role === "after-sales") {
           type = "after-sales";
@@ -2582,7 +2564,6 @@ export default {
           });
         }
       } catch (error) {
-        console.error("Error adding task:", error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2716,7 +2697,6 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message);
       }
     };
@@ -2739,7 +2719,6 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error(error);
         comment.isPinned = !comment.isPinned;
         notificationStore.error(error.message, {
           timeout: 3000,
@@ -2847,7 +2826,6 @@ export default {
         duetime !== "" &&
         duetime !== null
       ) {
-        console.error("Invalid time format. Expected HH:MM.");
         const [hours, minutes] = duetime.split(":");
         duetime = `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
       }
@@ -2877,7 +2855,6 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -2932,8 +2909,6 @@ export default {
           } else if (duedateStr >= twoWeeksStr) {
             name = name + "due-later";
             color = "#12a193";
-          } else {
-            console.error("No matching stage found for due date");
           }
         }
       }
@@ -2983,7 +2958,6 @@ export default {
           }, 5000);
         };
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, {
           timeout: 3000,
         });

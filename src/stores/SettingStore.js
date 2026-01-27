@@ -53,6 +53,12 @@ export const useSettingStore = defineStore("setting", {
         window.addEventListener(event, this.startIdleTimer);
       });
     },
+    removeUserActivityListeners() {
+      ["mousemove", "keydown", "mousedown", "touchstart"].forEach((event) => {
+        window.removeEventListener(event, this.startIdleTimer);
+      });
+      this.clearIdleTimer();
+    },
     startIdleTimer() {
       this.clearIdleTimer();
       this.idleTimer = setTimeout(() => {

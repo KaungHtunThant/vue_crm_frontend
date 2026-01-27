@@ -439,25 +439,19 @@ export default {
     });
 
     const fetchChildStages = async (parentId) => {
-      try {
-        const formattedFilters = formatFilters();
-        const response = await getStagesChildren(
-          parentId,
-          10,
-          0,
-          formattedFilters
-        );
+      const formattedFilters = formatFilters();
+      const response = await getStagesChildren(
+        parentId,
+        10,
+        0,
+        formattedFilters
+      );
 
-        if (response.data && response.data.data) {
-          const childStages = response.data.data;
-          return childStages;
-        } else {
-          console.error(response.message);
-          throw new Error(response.message);
-        }
-      } catch (error) {
-        console.error(error.message, parentId, error);
-        throw error;
+      if (response.data && response.data.data) {
+        const childStages = response.data.data;
+        return childStages;
+      } else {
+        throw new Error(response.message);
       }
     };
     const formatFilters = () => {
@@ -562,7 +556,6 @@ export default {
             displayStages.value[stageIndex].deals = parentStageDeals.data.data;
           }
         } catch (error) {
-          console.error(error);
           notificationStore.error(error.message);
         }
       } else {
@@ -580,7 +573,6 @@ export default {
           }
         } catch (error) {
           expandedStages.value[parentStage.id] = false;
-          console.error(error);
           notificationStore.error(error.message);
         }
       }
@@ -615,7 +607,6 @@ export default {
           }
           const request = await updateDealStage(deal.id, newStageId);
           if (request.status !== 200) {
-            console.error("Error updating deal stage:", request.data.message);
             notificationStore.error(request.data.message);
             const newStageInDisplay = displayStages.value.find(
               (s) => s.id === newStageId
@@ -704,7 +695,6 @@ export default {
               }
             }
           }
-          console.error(error);
           notificationStore.error(error.message);
         }
       }
@@ -712,9 +702,9 @@ export default {
 
     const playSound = () => {
       moveSound.currentTime = 0;
-      moveSound
-        .play()
-        .catch((error) => console.error("Failed to play sound:", error));
+      moveSound.play().catch(() => {
+        // Ignore autoplay errors
+      });
     };
 
     const openDealDataCard = async (dealId) => {
@@ -754,7 +744,6 @@ export default {
           { once: true }
         );
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message);
       }
     };
@@ -1179,7 +1168,6 @@ export default {
         if (props.viewType == "task" && is_trash) {
           const response = await updateDealStage(dealId, newStageId);
           if (response.status !== 200) {
-            console.error("Error updating deal stage:", response.data.message);
             notificationStore.error(response.data.message);
             return;
           }
@@ -1212,13 +1200,11 @@ export default {
             }
           }
           if (!deal) {
-            console.error("Deal not found in any stage:", dealId);
             notificationStore.error("Deal not found.");
             return;
           }
           const response = await updateDealStage(dealId, newStageId);
           if (response.status !== 200) {
-            console.error("Error updating deal stage:", response.data.message);
             notificationStore.error(response.data.message);
             return;
           } else {
@@ -1239,8 +1225,6 @@ export default {
           }
         }
       } catch (error) {
-        console.error("Error updating deal stage:", error);
-
         const oldStage = props.stages.find((s) => s.id === oldStageId);
         if (oldStage) {
           const currentStage = props.stages.find((s) => s.id === newStageId);
@@ -1312,7 +1296,6 @@ export default {
 
     const disconnectWebSocket = () => {
       window.Echo.disconnect();
-      console.info("WebSocket disconnected due to inactivity");
     };
 
     const reconnectWebSocket = () => {
@@ -1337,7 +1320,6 @@ export default {
         );
       }
 
-      console.info("WebSocket reconnected on user activity");
       kanbanStore.setHasNewChanges(true);
     };
 
@@ -1385,7 +1367,6 @@ export default {
           filteredDeals.value[stageId] = filtered;
         }
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message);
       }
     };
@@ -1406,7 +1387,6 @@ export default {
           notificationStore.error(response.data.message);
         }
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message);
       }
     };
@@ -1469,7 +1449,7 @@ export default {
             });
         }
       } catch (error) {
-        console.error("Error mounting component:", error);
+        // Error handled silently
       }
 
       props.stages.forEach((stage) => {
@@ -1564,7 +1544,6 @@ export default {
         }
         notificationStore.success(response.data.message);
       } catch (error) {
-        console.error("Error pulling deals from old system:", error.message);
         notificationStore.error(error.message);
       }
     };
@@ -1616,8 +1595,6 @@ export default {
             )?.id;
           } else if (duedateStr >= twoWeeksStr) {
             stage_id = props.stages.find((s) => s.name_key === "Due Later")?.id;
-          } else {
-            console.error("No matching stage found for due date");
           }
         }
       }

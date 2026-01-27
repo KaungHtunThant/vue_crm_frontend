@@ -211,7 +211,6 @@ export default {
 
         this.showStatus("WhatsApp logged out successfully!", "success");
       } catch (error) {
-        console.error("Error logging out WhatsApp:", error);
         this.showStatus("Failed to logout WhatsApp", "error");
       }
     },
@@ -230,7 +229,6 @@ export default {
           this.startStatusCheck();
         }, 2000);
       } catch (error) {
-        console.error("Error starting WhatsApp:", error);
         this.showStatus("Failed to start WhatsApp client", "error");
         this.isLoading = false;
       }
@@ -277,10 +275,7 @@ export default {
           this.isLoading = false;
         }
       } catch (error) {
-        console.error("Error fetching QR code:", error);
-        if (error.response?.status === 404) {
-          console.info("QR code not yet available, retrying...");
-        }
+        // Ignore specific error status
       }
     },
 
@@ -306,21 +301,17 @@ export default {
           }
 
           this.showStatus("WhatsApp connected successfully!", "success");
-          console.info("WhatsApp connected successfully!");
         } else if (response.data.status === "initializing") {
           this.isLoading = true;
-          console.info("WhatsApp is still initializing...");
         }
       } catch (error) {
-        console.error("Error checking WhatsApp status:", error);
+        // Error handled silently
       }
     },
 
     loadConversations(conversations) {
       if (this.$refs.leftSidebar) {
         this.$refs.leftSidebar.chats = conversations;
-      } else {
-        console.warn("LeftSidebar ref not found");
       }
     },
     handleNewMessage(newMessage) {
@@ -337,7 +328,6 @@ export default {
         this.offset = 0;
         const chatId = chat.id || chat.conversation_id;
         if (!chatId) {
-          console.error("No chat ID found!");
           return;
         }
         this.selectedChat = chat;
@@ -355,7 +345,6 @@ export default {
           this.isFetching = false;
         });
       } catch (error) {
-        console.error("Error fetching messages:", error);
         this.selectedChat = chat;
       }
     },
@@ -370,8 +359,6 @@ export default {
           ...this.selectedChat.messages,
         ];
         this.isFetching = false;
-      } else {
-        console.info("Already fetching messages");
       }
     },
 
@@ -470,8 +457,6 @@ export default {
           fileMimeType: new_message.file ? new_message.file.mime_type : null,
           status: new_message.status,
         });
-      } else {
-        console.error("chat not opened", this.selectedChat, new_message);
       }
     },
 

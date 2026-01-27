@@ -413,7 +413,6 @@ export default {
         emit("save", packageData.value);
         closeModal();
       } catch (error) {
-        console.error("Error saving package:", error);
         notificationStore.error(
           error.response?.data?.message || "Failed to save package"
         );

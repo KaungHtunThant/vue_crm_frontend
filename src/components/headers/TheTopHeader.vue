@@ -404,7 +404,6 @@ export default {
           throw new Error(response.message);
         }
       } catch (error) {
-        console.error(error);
         notificationStore.error(error.message, { timeout: 3000 });
       }
     };
@@ -496,7 +495,6 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
-        console.error("Error changing language:", error);
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });

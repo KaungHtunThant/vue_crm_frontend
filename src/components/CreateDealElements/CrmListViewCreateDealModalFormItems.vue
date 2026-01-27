@@ -214,7 +214,7 @@ export default {
           }));
         }
       } catch (error) {
-        console.error("Error fetching stages:", error);
+        // Error handled silently
       }
     };
     const togglePhone2 = () => {
