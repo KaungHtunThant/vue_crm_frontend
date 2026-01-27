@@ -34,7 +34,6 @@ async function loadTranslationsFromAPI(locale) {
       return translations;
     }
   } catch (error) {
-    
     return null;
   }
 }
@@ -55,7 +54,7 @@ export async function changeLanguage(locale) {
       window.location.reload();
     });
   } catch (error) {
-    
+    // Error handled silently
   }
 }
 

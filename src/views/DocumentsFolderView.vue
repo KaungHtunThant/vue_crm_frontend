@@ -242,9 +242,8 @@ export default {
       }
     };
 
-    const downloadFolder = async (folderId) => {
+    const downloadFolder = async () => {
       try {
-        
         await new Promise((resolve) => setTimeout(resolve, 1000));
         notificationStore.success(t("success.downloadStarted"), {
           timeout: 3000,

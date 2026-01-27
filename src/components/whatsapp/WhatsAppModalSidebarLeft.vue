@@ -291,6 +291,7 @@ export default {
           });
         }
       } catch (error) {
+        // Error handled silently
       }
     },
     markAsUnread(chat) {

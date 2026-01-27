@@ -226,12 +226,9 @@ export default {
             this.qrCode
           )}`;
           this.isLoading = false;
-          
         }
       } catch (error) {
-        if (error.response?.status === 404) {
-          
-        }
+        // Error handled silently
       }
     },
 
@@ -257,12 +254,11 @@ export default {
           }
 
           this.showStatus("WhatsApp connected successfully!", "success");
-          
         } else if (response.data.status === "initializing") {
           this.isLoading = true;
-          
         }
       } catch (error) {
+        // Error handled silently
       }
     },
 

@@ -360,7 +360,8 @@ export default {
             this.$emit("new-message", newMessage);
             this.scrollToBottom();
           })
-          .catch((error) => {
+          .catch(() => {
+            // Error handled silently
           });
       }
     },
@@ -394,7 +395,8 @@ export default {
             this.$emit("new-message", newMessage);
             this.scrollToBottom();
           })
-          .catch((error) => {
+          .catch(() => {
+            // Error handled silently
           });
       }
     },

@@ -243,6 +243,7 @@ export default {
         const modal = Modal.getInstance(item) || new Modal(item);
         modal.hide();
       } catch (error) {
+        // Error handled silently
       }
     };
 

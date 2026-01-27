@@ -74,7 +74,6 @@ export default {
 
     const initializeAndStartAnimation = () => {
       if (!marquee.value) {
-        
         return;
       }
 
@@ -115,9 +114,7 @@ export default {
           important: item.important,
         }));
         repeatedNewsList.value = [...newsList.value, ...newsList.value];
-      } catch (error) {
-        
-      }
+      } catch (error) {}
     };
 
     onMounted(() => {

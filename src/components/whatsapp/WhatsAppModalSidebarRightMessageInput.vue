@@ -410,6 +410,7 @@ export default {
           this.removeFile();
           this.$emit("scroll-to-bottom");
         } catch (error) {
+          // Error handled silently
         }
       }
     },
@@ -544,7 +545,8 @@ export default {
 
           this.mediaRecorder.start();
         })
-        .catch((error) => {
+        .catch(() => {
+          // Error handled silently
         });
     },
     stopRecordingVoice() {
@@ -557,30 +559,26 @@ export default {
       }
     },
     async formatAudio(blob) {
-      try {
-        const ffmpeg = new FFmpeg({
-          log: true,
-        });
-        await ffmpeg.load();
-        const arrayBuffer = await blob.arrayBuffer();
-        const uint8Array = new Uint8Array(arrayBuffer);
-        await ffmpeg.writeFile("input.webm", uint8Array);
-        await ffmpeg.exec([
-          "-i",
-          "input.webm",
-          "-c:a",
-          "libopus",
-          "-b:a",
-          "64k",
-          "output.ogg",
-        ]);
-        const data = await ffmpeg.readFile("output.ogg");
-        const oggBlob = new Blob([data.buffer], { type: "audio/ogg" });
+      const ffmpeg = new FFmpeg({
+        log: true,
+      });
+      await ffmpeg.load();
+      const arrayBuffer = await blob.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+      await ffmpeg.writeFile("input.webm", uint8Array);
+      await ffmpeg.exec([
+        "-i",
+        "input.webm",
+        "-c:a",
+        "libopus",
+        "-b:a",
+        "64k",
+        "output.ogg",
+      ]);
+      const data = await ffmpeg.readFile("output.ogg");
+      const oggBlob = new Blob([data.buffer], { type: "audio/ogg" });
 
-        return oggBlob;
-      } catch (error) {
-        throw error;
-      }
+      return oggBlob;
     },
     formatDuration(duration) {
       const minutes = Math.floor(duration / 60);

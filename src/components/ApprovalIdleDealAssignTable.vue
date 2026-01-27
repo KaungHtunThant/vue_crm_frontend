@@ -224,7 +224,6 @@ export default {
           "idle_deal_assign_approval"
         );
       } catch (error) {
-        
         notificationStore.error(error.message);
       } finally {
         loading.value = false;
@@ -261,9 +260,7 @@ export default {
             { once: true }
           );
         }, 300);
-      } catch (error) {
-        
-      }
+      } catch (error) {}
     };
 
     const handleRightClick = (event) => {
@@ -289,7 +286,6 @@ export default {
           }));
         }
       } catch (error) {
-        
         notificationStore.error(error.message);
       }
     };
@@ -304,9 +300,7 @@ export default {
             role: user.role,
           }));
         }
-      } catch (error) {
-        
-      }
+      } catch (error) {}
     };
 
     const openWhatsappModal = (conversation) => {
@@ -323,7 +317,6 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
-        
         notificationStore.error(error.message, { timeout: 3000 });
       }
     };

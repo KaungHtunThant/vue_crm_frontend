@@ -14,6 +14,7 @@ export const useLogStore = defineStore("log", () => {
         logs.value = response.data.data;
       }
     } catch (error) {
+      // Error handled silently
     }
   };
 
@@ -22,6 +23,7 @@ export const useLogStore = defineStore("log", () => {
       const response = await getAllUsers();
       users.value = response.data.data;
     } catch (error) {
+      // Error handled silently
     }
   };
 

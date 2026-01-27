@@ -89,8 +89,7 @@ export default {
 
         const modal = new Modal(document.getElementById("whatsappModal"));
         modal.show();
-      } catch (error) {
-      }
+      } catch (error) {}
     };
     return {
       permissionStore,

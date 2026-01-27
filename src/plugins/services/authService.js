@@ -259,7 +259,7 @@ export const logout = () => {
 //     const response = await axios.post("/documents", formData);
 //     return response;
 //   } catch (error) {
-//     
+//
 //     throw error;
 //   }
 // };

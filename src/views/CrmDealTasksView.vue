@@ -161,6 +161,7 @@ export default {
           stages.value = [];
         }
       } catch (error) {
+        // Error handled silently
       }
     };
 
@@ -250,9 +251,9 @@ export default {
           stages.value[oldStageIndex].deal_count -= 1;
           stages.value[newStageIndex].deal_count += 1;
           notificationStore.success(t("success.dealMoved"));
-        } else {
         }
       } catch (error) {
+        // Error handled silently
       }
     };
 

@@ -61,50 +61,46 @@ export const useTaskStore = defineStore("task", {
   },
   actions: {
     async fetchTaskCounts() {
-      try {
-        const task_stages = [
-          "Overdue",
-          "Due Today",
-          "Due Tomorrow",
-          "Idle",
-          "unassign-soon",
-          "checking-out",
-          "overdue-after-sales",
-        ];
-        for (const stage of task_stages) {
-          await fetchTasksCountByStageName(stage).then((res) => {
-            if (res.status !== 200) {
-              throw new Error(res.data.message);
-            }
-            switch (stage) {
-              case "Due Today":
-                this.today_count = res.data.data || 0;
-                break;
-              case "Due Tomorrow":
-                this.tomorrow_count = res.data.data || 0;
-                break;
-              case "Idle":
-                this.idle_count = res.data.data || 0;
-                break;
-              case "Overdue":
-                this.overdue_count = res.data.data || 0;
-                break;
-              case "unassign-soon":
-                this.unassign_count = res.data.data || 0;
-                break;
-              case "checking-out":
-                this.checking_out_count = res.data.data || 0;
-                break;
-              case "overdue-after-sales":
-                this.overdue_after_sales_count = res.data.data || 0;
-                break;
-              default:
-                break;
-            }
-          });
-        }
-      } catch (error) {
-        throw error;
+      const task_stages = [
+        "Overdue",
+        "Due Today",
+        "Due Tomorrow",
+        "Idle",
+        "unassign-soon",
+        "checking-out",
+        "overdue-after-sales",
+      ];
+      for (const stage of task_stages) {
+        await fetchTasksCountByStageName(stage).then((res) => {
+          if (res.status !== 200) {
+            throw new Error(res.data.message);
+          }
+          switch (stage) {
+            case "Due Today":
+              this.today_count = res.data.data || 0;
+              break;
+            case "Due Tomorrow":
+              this.tomorrow_count = res.data.data || 0;
+              break;
+            case "Idle":
+              this.idle_count = res.data.data || 0;
+              break;
+            case "Overdue":
+              this.overdue_count = res.data.data || 0;
+              break;
+            case "unassign-soon":
+              this.unassign_count = res.data.data || 0;
+              break;
+            case "checking-out":
+              this.checking_out_count = res.data.data || 0;
+              break;
+            case "overdue-after-sales":
+              this.overdue_after_sales_count = res.data.data || 0;
+              break;
+            default:
+              break;
+          }
+        });
       }
     },
     addCount(stage_name) {
@@ -144,16 +140,12 @@ export const useTaskStore = defineStore("task", {
       }
     },
     async fetchCurrentTasks(deal_id) {
-      try {
-        await getTasksByDealId(deal_id).then((res) => {
-          if (res.status !== 200) {
-            throw new Error(res.data.message);
-          }
-          this.tasks = res.data.data || [];
-        });
-      } catch (error) {
-        throw error;
-      }
+      await getTasksByDealId(deal_id).then((res) => {
+        if (res.status !== 200) {
+          throw new Error(res.data.message);
+        }
+        this.tasks = res.data.data || [];
+      });
     },
     async addTaskToCurrentTasks(
       description,
@@ -212,7 +204,6 @@ export const useTaskStore = defineStore("task", {
       const duedate_stage = this._determineDuedate(removedTask.duedate);
       if (duedate_stage) {
         this.removeCount(duedate_stage);
-      } else {
       }
     },
     updateTaskInCurrentTasks(task_id, duedate, duetime, description, status) {

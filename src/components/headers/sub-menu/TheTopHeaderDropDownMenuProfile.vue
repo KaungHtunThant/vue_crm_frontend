@@ -145,7 +145,6 @@ export default {
           notificationStore.info("Notifications disabled");
         }
       } catch (err) {
-        
         notificationStore.error(err.message);
       }
     };
@@ -196,7 +195,6 @@ export default {
       try {
         this.authStore.initLogout();
       } catch (error) {
-        
         this.notificationStore.error(error.message, {
           timeout: 3000,
         });

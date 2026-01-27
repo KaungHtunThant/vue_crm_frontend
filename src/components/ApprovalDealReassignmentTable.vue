@@ -229,7 +229,6 @@ export default {
           "deal_reassign_approval"
         );
       } catch (error) {
-        
         notificationStore.error(error.message);
       } finally {
         loading.value = false;
@@ -268,7 +267,7 @@ export default {
           );
         }, 300);
       } catch (error) {
-        
+        notificationStore.error(error.message || "Failed to show deal details");
       }
     };
 
@@ -296,7 +295,6 @@ export default {
           }));
         }
       } catch (error) {
-        
         notificationStore.error(error.message);
       }
     };
@@ -312,7 +310,7 @@ export default {
           }));
         }
       } catch (error) {
-        
+        notificationStore.error(error.message || "Failed to fetch users");
       }
     };
 
@@ -330,7 +328,6 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
-        
         notificationStore.error(error.message, {
           timeout: 3000,
         });

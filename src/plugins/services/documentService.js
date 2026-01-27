@@ -5,13 +5,8 @@ export const getDocuments = async () => {
 };
 
 export const createDocuments = async (formData) => {
-  try {
-    const response = await axios.post("/documents", formData);
-    return response;
-  } catch (error) {
-    
-    throw error;
-  }
+  const response = await axios.post("/documents", formData);
+  return response;
 };
 
 export const updateDocuments = (documentsId, formData) =>

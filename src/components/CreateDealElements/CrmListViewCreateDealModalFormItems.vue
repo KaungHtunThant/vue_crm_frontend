@@ -213,8 +213,7 @@ export default {
             name: stage.name,
           }));
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     };
     const togglePhone2 = () => {
       showPhone2.value = !showPhone2.value;

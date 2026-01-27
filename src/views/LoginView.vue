@@ -151,7 +151,6 @@ export default {
       this.$nextTick(() => {
         if (otp_code_input) {
           otp_code_input.focus();
-        } else {
         }
       });
     },

@@ -706,9 +706,9 @@ export default {
 
     const playSound = () => {
       moveSound.currentTime = 0;
-      moveSound
-        .play()
-        .catch((error) => );
+      moveSound.play().catch(() => {
+        // Ignore autoplay errors
+      });
     };
 
     const openDealDataCard = async (dealId) => {
@@ -1229,7 +1229,6 @@ export default {
           }
         }
       } catch (error) {
-
         const oldStage = props.stages.find((s) => s.id === oldStageId);
         if (oldStage) {
           const currentStage = props.stages.find((s) => s.id === newStageId);
@@ -1301,7 +1300,6 @@ export default {
 
     const disconnectWebSocket = () => {
       window.Echo.disconnect();
-      
     };
 
     const reconnectWebSocket = () => {
@@ -1326,7 +1324,6 @@ export default {
         );
       }
 
-      
       kanbanStore.setHasNewChanges(true);
     };
 
@@ -1455,8 +1452,7 @@ export default {
               handleWhatsappEvent(event);
             });
         }
-      } catch (error) {
-      }
+      } catch (error) {}
 
       props.stages.forEach((stage) => {
         hiddenStages.value[stage.id] = false;

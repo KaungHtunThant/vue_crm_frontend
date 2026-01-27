@@ -211,7 +211,6 @@ export default {
           "suggest_user_approval"
         );
       } catch (error) {
-        
         notificationStore.error(error.message);
       } finally {
         loading.value = false;
@@ -249,9 +248,7 @@ export default {
             { once: true }
           );
         }, 300);
-      } catch (error) {
-        
-      }
+      } catch (error) {}
     };
 
     const handleRightClick = (event) => {

@@ -86,6 +86,7 @@ export default {
         const response = await getStagesTasks();
         this.stages = response.data.data;
       } catch (error) {
+        // Error handled silently
       }
     },
     resetFilter() {

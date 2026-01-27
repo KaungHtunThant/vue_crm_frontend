@@ -276,7 +276,6 @@ export default {
         }
       } catch (error) {
         if (error.response?.status === 404) {
-          
         }
       }
     },
@@ -303,13 +302,10 @@ export default {
           }
 
           this.showStatus("WhatsApp connected successfully!", "success");
-          
         } else if (response.data.status === "initializing") {
           this.isLoading = true;
-          
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     },
 
     loadConversations(conversations) {
@@ -364,7 +360,6 @@ export default {
         ];
         this.isFetching = false;
       } else {
-        
       }
     },
 

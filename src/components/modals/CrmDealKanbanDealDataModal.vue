@@ -2112,9 +2112,9 @@ export default {
     const playSound = () => {
       const moveSound = new Audio(moveCardSound);
       moveSound.currentTime = 0;
-      moveSound
-        .play()
-        .catch((error) => );
+      moveSound.play().catch(() => {
+        // Ignore autoplay errors
+      });
     };
 
     const changeStage = async (stageId) => {

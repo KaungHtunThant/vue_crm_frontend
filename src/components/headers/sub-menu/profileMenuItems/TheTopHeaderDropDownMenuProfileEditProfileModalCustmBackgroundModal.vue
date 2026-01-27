@@ -95,7 +95,6 @@ export default {
         const response = await getBackgroundImages();
         images.value = [...response.data.data]; // Ensure reactivity by spreading the array
       } catch (error) {
-        
         notificationStore.error(error.message, {
           timeout: 3000,
         });
@@ -132,7 +131,6 @@ export default {
           throw new Error(response.data.message);
         }
       } catch (error) {
-        
         notificationStore.error(error.message, {
           timeout: 3000,
         });
