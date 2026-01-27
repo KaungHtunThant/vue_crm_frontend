@@ -531,16 +531,29 @@ export default {
           };
 
           this.mediaRecorder.onstop = async () => {
-            const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-            const formattedAudio = await this.formatAudio(audioBlob);
-            this.attachedFile = formattedAudio;
-            this.attachedFilePreview = URL.createObjectURL(formattedAudio);
-            this.attachedFileType = "file";
-            const timestamp = new Date().toISOString().replace(/[-:.]/g, "");
-            this.attachedFileName = `voice_message_${timestamp}.ogg`;
-            this.isModalOpen = true;
-            audioChunks = [];
-            this.isProcessing = false;
+            try {
+              const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+              const formattedAudio = await this.formatAudio(audioBlob);
+              this.attachedFile = formattedAudio;
+              this.attachedFilePreview = URL.createObjectURL(formattedAudio);
+              this.attachedFileType = "file";
+              const timestamp = new Date().toISOString().replace(/[-:.]/g, "");
+              this.attachedFileName = `voice_message_${timestamp}.ogg`;
+              this.isModalOpen = true;
+              audioChunks = [];
+            } catch (error) {
+              // Audio formatting failed, use original webm format
+              const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+              this.attachedFile = audioBlob;
+              this.attachedFilePreview = URL.createObjectURL(audioBlob);
+              this.attachedFileType = "file";
+              const timestamp = new Date().toISOString().replace(/[-:.]/g, "");
+              this.attachedFileName = `voice_message_${timestamp}.webm`;
+              this.isModalOpen = true;
+              audioChunks = [];
+            } finally {
+              this.isProcessing = false;
+            }
           };
 
           this.mediaRecorder.start();
