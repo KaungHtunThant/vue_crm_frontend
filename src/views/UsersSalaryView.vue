@@ -394,7 +394,7 @@ export default {
         if (fullItem) {
           const editData = {
             id: fullItem.id,
-            bonus_type_id: fullItem.bonus_type_id,
+            notes: fullItem.notes,
             amount: parseFloat(fullItem.amount),
             emp_id: userId.value,
           };

@@ -17,12 +17,18 @@
           <div class="row">
             <div class="col-12">
               <div class="mb-3">
+                <label for="amount" class="form-label">
+                  {{ t("users-bonus-add-modal-notes-label") }}
+                </label>
                 <input type="text" class="form-control" v-model="bonus.notes" />
               </div>
             </div>
           </div>
           <div class="row">
             <div class="mb-3">
+              <label for="amount" class="form-label">
+                {{ t("users-bonus-add-modal-amount-label") }}
+              </label>
               <input
                 type="number"
                 class="form-control"
