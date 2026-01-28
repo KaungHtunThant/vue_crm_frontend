@@ -46,7 +46,7 @@
           <button class="btn btn-link m-0 p-0" @click.stop="handleHighlight">
             <i
               class="fa-solid fa-bookmark position-absolute"
-              :class="deal.highlighted ? 'text-white' : 'text-warning'"
+              :class="deal.highlighted ? 'text-dark' : 'text-warning'"
               style="right: 8px; top: 1px; font-size: 18px"
             ></i>
           </button>
@@ -83,7 +83,7 @@
           </span>
           <template v-for="index in 7" :key="index">
             <i
-              class="fa-solid fa-star"
+              class="fa-solid fa-star text-stroked"
               :class="
                 index <= (deal.rating || 0) ? 'text-gold' : 'text-secondary'
               "
@@ -555,5 +555,9 @@ export default {
 
 .bg-secondary-50 {
   background-color: #f3f3f3;
+}
+
+.text-stroked {
+  -webkit-text-stroke: 0.75px black;
 }
 </style>
