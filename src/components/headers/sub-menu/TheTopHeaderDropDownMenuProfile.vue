@@ -183,6 +183,7 @@ export default {
       userImage,
       appVersion,
       backendAppVersion,
+      settingStore,
     };
   },
   data() {
@@ -216,7 +217,7 @@ export default {
       this.$refs.changeLangModal.openChangeLang();
     },
     openCalenderModal() {
-      this.$refs.CalenderModal.openCalenderModal();
+      this.settingStore.toggleEmrCalendarDrawer();
     },
     reloadPage() {
       location.reload();
