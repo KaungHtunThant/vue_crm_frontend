@@ -17,6 +17,7 @@
             class="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
+            @click="hideModal"
           ></button>
         </div>
         <div class="modal-body">
@@ -74,6 +75,7 @@
                 type="button"
                 class="btn btn-danger text-white"
                 data-bs-dismiss="modal"
+                @click="hideModal"
               >
                 {{ t("kanban-modal-add-balance-button-cancel") }}
               </button>
@@ -126,6 +128,10 @@ export default {
       if (payPackageModal.value) {
         payPackageModal.value.hide();
       }
+      const backdrop = document.querySelector(".modal-backdrop");
+      if (backdrop) {
+        backdrop.style.zIndex = "";
+      }
     };
     const submitAddBalance = async () => {
       const pkg = props.package_id;
@@ -166,6 +172,7 @@ export default {
 
           if (bsModal) {
             bsModal.hide();
+            hideModal();
           }
 
           modalElement.addEventListener(

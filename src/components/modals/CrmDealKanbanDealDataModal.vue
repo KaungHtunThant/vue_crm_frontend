@@ -2420,8 +2420,18 @@ export default {
       try {
         selectedPackageId.value = packageId;
         await nextTick();
-        const payPackageModal = new Modal(
-          document.getElementById("payPackageModal")
+        const payPackageModalElement =
+          document.getElementById("payPackageModal");
+        const payPackageModal = new Modal(payPackageModalElement);
+        payPackageModalElement.addEventListener(
+          "shown.bs.modal",
+          () => {
+            const backdrop = document.querySelector(".modal-backdrop");
+            if (backdrop) {
+              backdrop.style.zIndex = "1055";
+            }
+          },
+          { once: true }
         );
         payPackageModal.show();
         // const pkg = customerData.hospital_packages.find((p) => p.id === pkgId);
@@ -2505,6 +2515,16 @@ export default {
         backdrop: true,
         focus: true,
       });
+      modalbalance.addEventListener(
+        "shown.bs.modal",
+        () => {
+          const backdrop = document.querySelector(".modal-backdrop");
+          if (backdrop) {
+            backdrop.style.zIndex = "1055";
+          }
+        },
+        { once: true }
+      );
       modal.show();
     };
     const toggleEditMode = () => {

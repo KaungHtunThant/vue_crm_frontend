@@ -20,6 +20,7 @@
             class="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
+            @click="close"
           ></button>
         </div>
         <div class="modal-body">
@@ -90,6 +91,7 @@
                 class="btn btn-danger text-white"
                 data-bs-dismiss="modal"
                 :disabled="isSubmitting"
+                @click="close"
               >
                 {{ t("kanban-modal-add-balance-button-cancel") }}
               </button>
@@ -151,6 +153,7 @@ export default {
           const modal = Modal.getInstance(addBalanceModalRef.value);
           if (modal) {
             modal.hide();
+            close();
           }
           setTimeout(() => {
             balanceAmount.value = 0;
@@ -169,6 +172,12 @@ export default {
         isSubmitting.value = false;
       }
     };
+    const close = () => {
+      const backdrop = document.querySelector(".modal-backdrop");
+      if (backdrop) {
+        backdrop.style.zIndex = "";
+      }
+    };
     const PaymentTypes = computed(() => paymentTypesStore.paymentTypes);
     onMounted(async () => {
       paymentTypesStore.fetchPaymentTypes().catch((error) => {
@@ -184,6 +193,7 @@ export default {
       PaymentTypes,
       selectedPaymentType,
       referenceNumber,
+      close,
     };
   },
 };
