@@ -1,5 +1,5 @@
 <template>
-  <div class="position-relative w-100">
+  <div class="position-relative w-100" v-show="show_comp">
     <button
       class="btn btn-link position-absolute ms-4 top-50 start-0 translate-middle"
       @click="handleSearch"
@@ -32,7 +32,7 @@ import { ref, onMounted, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDealStore } from "@/stores/DealStore";
 import { Modal } from "bootstrap";
-
+import { useRoute } from "vue-router";
 export default {
   name: "SearchbarComp",
   setup(props, { emit }) {
@@ -47,6 +47,15 @@ export default {
       t("top-header-search-placeholder-3"),
       t("top-header-search-placeholder-4"),
     ];
+    const available_paths = [
+      "/crm-kanban",
+      "/crm-after-sales",
+      "/emr-kanban",
+      "/crm-tasks",
+    ];
+    // Inside setup function:
+    const route = useRoute();
+    const current_path = computed(() => route.path);
     const currentPlaceHolder = ref("");
     function* typewriter(text) {
       for (let char of text) yield char;
@@ -97,6 +106,10 @@ export default {
         emit("search-deals", search);
       }
     };
+    const show_comp = computed(() => {
+      console.log("current path:", current_path.value);
+      return available_paths.includes(current_path.value);
+    });
     watch(searchVal, (newVal) => {
       if ((newVal === "" || newVal === null) && newVal !== storeSearchVal.value)
         dealStore.setSearchVal("");
@@ -110,6 +123,7 @@ export default {
       updateTime();
     });
     return {
+      show_comp,
       openFilterModal,
       handleSearch,
       searchVal,
