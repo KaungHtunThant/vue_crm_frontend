@@ -2433,6 +2433,16 @@ export default {
           },
           { once: true }
         );
+        payPackageModalElement.addEventListener(
+          "hidden.bs.modal",
+          () => {
+            const backdrops = document.querySelectorAll(".modal-backdrop");
+            backdrops.forEach((backdrop) => {
+              backdrop.remove();
+            });
+          },
+          { once: true }
+        );
         payPackageModal.show();
         // const pkg = customerData.hospital_packages.find((p) => p.id === pkgId);
         // if (!pkg) return;
@@ -2522,6 +2532,16 @@ export default {
           if (backdrop) {
             backdrop.style.zIndex = "1055";
           }
+        },
+        { once: true }
+      );
+      modalbalance.addEventListener(
+        "hidden.bs.modal",
+        () => {
+          const backdrops = document.querySelectorAll(".modal-backdrop");
+          backdrops.forEach((backdrop) => {
+            backdrop.remove();
+          });
         },
         { once: true }
       );
