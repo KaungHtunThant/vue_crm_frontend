@@ -559,10 +559,6 @@ export default {
   background-color: #f3f3f3;
 }
 
-.text-stroked {
-  -webkit-text-stroke: 0.75px black;
-}
-
 .text-shadow {
   text-shadow: 1px 1px 4px black;
 }
