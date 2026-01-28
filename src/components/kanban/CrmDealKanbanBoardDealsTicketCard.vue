@@ -184,16 +184,20 @@
       <span
         class="text-dark fs-7 bg-secondary-50 rounded px-1"
         v-show="can_view_created_at"
+        :title="$t('kanban-deals-info-created-at')"
         ><i class="ms-1 mt-1 fa-solid fa-square-plus fs-6"></i>
         {{ formatDate(deal.created_at) }}</span
       >
       <span
         class="text-dark fs-7 bg-secondary-50 rounded px-1"
         v-show="!can_view_created_at"
+        :title="$t('kanban-deals-info-last-assigned-at')"
         ><i class="ms-1 mt-1 fa-solid fa-user fs-6"></i>
         {{ formatDate(deal.last_assigned_at) }}</span
       >
-      <span class="text-dark fs-7 bg-secondary-50 rounded px-1"
+      <span
+        class="text-dark fs-7 bg-secondary-50 rounded px-1"
+        :title="$t('kanban-deals-info-updated-at')"
         ><i class="ms-1 mt-1 fa-solid fa-square-pen fs-6"></i>
         {{ formatDate(deal.updated_at) }}</span
       >

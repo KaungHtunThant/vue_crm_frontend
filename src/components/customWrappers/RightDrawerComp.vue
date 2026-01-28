@@ -37,7 +37,7 @@ export default {
   position: fixed;
   bottom: 0;
   right: 0;
-  height: calc(100vh - 107px);
+  height: calc(100vh - 98px);
   background-color: #fff;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
   overflow-y: auto;
