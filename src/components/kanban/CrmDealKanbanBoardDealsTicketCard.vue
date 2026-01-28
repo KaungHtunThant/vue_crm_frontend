@@ -83,9 +83,11 @@
           </span>
           <template v-for="index in 7" :key="index">
             <i
-              class="fa-solid fa-star text-stroked"
+              class="fa-solid fa-star"
               :class="
-                index <= (deal.rating || 0) ? 'text-gold' : 'text-secondary'
+                index <= (deal.rating || 0)
+                  ? 'text-gold text-shadow'
+                  : 'text-secondary'
               "
             ></i>
           </template>
@@ -559,5 +561,9 @@ export default {
 
 .text-stroked {
   -webkit-text-stroke: 0.75px black;
+}
+
+.text-shadow {
+  text-shadow: 1px 1px 4px black;
 }
 </style>
