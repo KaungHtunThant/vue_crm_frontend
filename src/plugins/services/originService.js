@@ -1,25 +1,33 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/utils/errorLogger";
 
-export const getIndex = async () => {
+const _getIndex = async () => {
   return await axios.get("/origins");
 };
 
-export const getAll = async () => {
+const _getAll = async () => {
   return await axios.get("/origins/all");
 };
 
-export const getById = async (id) => {
+const _getById = async (id) => {
   return await axios.get(`/origins/${id}`);
 };
 
-export const create = async (data) => {
+const _create = async (data) => {
   return await axios.post("/origins", data);
 };
 
-export const update = async (id, data) => {
+const _update = async (id, data) => {
   return await axios.put(`/origins/${id}`, data);
 };
 
-export const remove = async (id) => {
+const _remove = async (id) => {
   return await axios.delete(`/origins/${id}`);
 };
+
+export const getIndex = withErrorLogging(_getIndex, "originService/getIndex");
+export const getAll = withErrorLogging(_getAll, "originService/getAll");
+export const getById = withErrorLogging(_getById, "originService/getById");
+export const create = withErrorLogging(_create, "originService/create");
+export const update = withErrorLogging(_update, "originService/update");
+export const remove = withErrorLogging(_remove, "originService/remove");

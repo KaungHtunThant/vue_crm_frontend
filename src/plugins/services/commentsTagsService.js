@@ -1,2 +1,6 @@
 import axios from "@/plugins/axios";
-export const getcommentstags = () => axios.get("/commentstags");
+import { withErrorLogging } from "@/utils/errorLogger";
+
+const _getcommentstags = () => axios.get("/commentstags");
+
+export const getcommentstags = withErrorLogging(_getcommentstags, "commentsTagsService/getcommentstags");
