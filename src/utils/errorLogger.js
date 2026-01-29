@@ -23,8 +23,18 @@ function getErrorLogKey() {
 
 /**
  * Clean up error logs older than 2 days
+ * Throttled to run at most once per hour to avoid performance issues
  */
-export function cleanupOldErrorLogs() {
+let lastCleanupTime = 0;
+const CLEANUP_THROTTLE_MS = 60 * 60 * 1000; // 1 hour
+
+export function cleanupOldErrorLogs(force = false) {
+  const now = Date.now();
+  if (!force && now - lastCleanupTime < CLEANUP_THROTTLE_MS) {
+    return; // Skip cleanup if we cleaned up recently
+  }
+  lastCleanupTime = now;
+
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Normalize to start of day
   const twoDaysAgo = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
@@ -52,9 +62,11 @@ export function cleanupOldErrorLogs() {
  * @param {string} errorMessage - The error message
  * @param {string|number} errorCode - The error code
  */
+const MAX_LOGS_PER_DAY = 100; // Limit to prevent localStorage exhaustion
+
 export function saveErrorLog(path, errorMessage, errorCode) {
   try {
-    // Clean up old logs first
+    // Clean up old logs first (throttled)
     cleanupOldErrorLogs();
 
     const key = getErrorLogKey();
@@ -66,8 +78,17 @@ export function saveErrorLog(path, errorMessage, errorCode) {
       try {
         logs = JSON.parse(existingLogs);
       } catch (e) {
+        console.warn("Error logs corrupted, resetting for today:", e);
         logs = [];
       }
+    }
+
+    // Enforce maximum logs per day to prevent storage exhaustion
+    if (logs.length >= MAX_LOGS_PER_DAY) {
+      console.warn(
+        `Maximum error logs (${MAX_LOGS_PER_DAY}) reached for today. Oldest log will be removed.`
+      );
+      logs.shift(); // Remove oldest log
     }
 
     // Add new error log

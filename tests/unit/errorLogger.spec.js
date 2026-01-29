@@ -100,15 +100,29 @@ describe("errorLogger", () => {
 
   describe("cleanupOldErrorLogs", () => {
     it("should remove logs older than 2 days", () => {
-      // Manually set dates to ensure clear difference
-      const oldKey = "error_logs_2026-01-20"; // 9 days ago from 2026-01-29
-      const recentKey = "error_logs_2026-01-29"; // today
+      // Use dynamic dates relative to today
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      const todayDateStr = `${year}-${month}-${day}`;
+
+      // Create a date 10 days in the past (definitely older than 2 days)
+      const oldDate = new Date(today);
+      oldDate.setDate(oldDate.getDate() - 10);
+      const oldYear = oldDate.getFullYear();
+      const oldMonth = String(oldDate.getMonth() + 1).padStart(2, "0");
+      const oldDay = String(oldDate.getDate()).padStart(2, "0");
+      const oldDateStr = `${oldYear}-${oldMonth}-${oldDay}`;
+
+      const oldKey = `error_logs_${oldDateStr}`;
+      const recentKey = `error_logs_${todayDateStr}`;
 
       localStorage.setItem(
         oldKey,
         JSON.stringify([
           {
-            timestamp: "2026-01-20T00:00:00.000Z",
+            timestamp: oldDate.toISOString(),
             path: "old/service",
             message: "Old error",
             code: 500,
@@ -120,7 +134,7 @@ describe("errorLogger", () => {
         recentKey,
         JSON.stringify([
           {
-            timestamp: "2026-01-29T00:00:00.000Z",
+            timestamp: today.toISOString(),
             path: "new/service",
             message: "New error",
             code: 404,
@@ -128,7 +142,8 @@ describe("errorLogger", () => {
         ])
       );
 
-      cleanupOldErrorLogs();
+      // Force cleanup to bypass throttling in tests
+      cleanupOldErrorLogs(true);
 
       expect(localStorage.getItem(oldKey)).toBeNull();
       expect(localStorage.getItem(recentKey)).not.toBeNull();
