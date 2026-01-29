@@ -39,14 +39,14 @@ describe("errorLogger", () => {
     expect(Cookies.set).toHaveBeenCalled();
     const setCalls = Cookies.set.mock.calls;
     expect(setCalls[0][0]).toBe(expectedCookieName);
-    
+
     const loggedData = JSON.parse(setCalls[0][1]);
     expect(loggedData).toHaveLength(1);
     expect(loggedData[0].path).toBe("testService.testFunction");
     expect(loggedData[0].errorMessage).toBe("Test error");
     expect(loggedData[0].errorCode).toBe(404);
     expect(loggedData[0].timestamp).toBeDefined();
-    
+
     expect(setCalls[0][2]).toEqual({ expires: 2 });
   });
 
