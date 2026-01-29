@@ -1,16 +1,17 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/utils/errorLogger";
 
-export const getBroadcasts = async () => {
+const _getBroadcasts = async () => {
   return await axios.get("/settings/broadcasts");
 };
 
-export const createBroadcast = async (description) => {
+const _createBroadcast = async (description) => {
   return await axios.post("/settings/broadcasts", {
     description: description,
   });
 };
 
-export const updateBroadcast = async (id, description, status, important) => {
+const _updateBroadcast = async (id, description, status, important) => {
   return await axios.patch(`/settings/broadcasts/${id}`, {
     description: description,
     status: status,
@@ -18,10 +19,31 @@ export const updateBroadcast = async (id, description, status, important) => {
   });
 };
 
-export const updateBroadcastPosition = async (id, direction) => {
+const _updateBroadcastPosition = async (id, direction) => {
   return await axios.patch(`/settings/broadcasts/position/${id}/${direction}`);
 };
 
-export const deleteBroadcast = async (id) => {
+const _deleteBroadcast = async (id) => {
   return await axios.delete(`/settings/broadcasts/${id}`);
 };
+
+export const getBroadcasts = withErrorLogging(
+  _getBroadcasts,
+  "broadcastService/getBroadcasts"
+);
+export const createBroadcast = withErrorLogging(
+  _createBroadcast,
+  "broadcastService/createBroadcast"
+);
+export const updateBroadcast = withErrorLogging(
+  _updateBroadcast,
+  "broadcastService/updateBroadcast"
+);
+export const updateBroadcastPosition = withErrorLogging(
+  _updateBroadcastPosition,
+  "broadcastService/updateBroadcastPosition"
+);
+export const deleteBroadcast = withErrorLogging(
+  _deleteBroadcast,
+  "broadcastService/deleteBroadcast"
+);
