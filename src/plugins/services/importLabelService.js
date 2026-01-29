@@ -29,4 +29,7 @@ export const update = withErrorLogging(updateFn, "importLabelService.update");
 const destroyFn = (import_label_id) => {
   return axios.delete(`/import-labels/${import_label_id}`);
 };
-export const destroy = withErrorLogging(destroyFn, "importLabelService.destroy");
+export const destroy = withErrorLogging(
+  destroyFn,
+  "importLabelService.destroy"
+);

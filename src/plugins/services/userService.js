@@ -29,7 +29,10 @@ const getUserByIdFn = (userId) => {
     },
   });
 };
-export const getUserById = withErrorLogging(getUserByIdFn, "userService.getUserById");
+export const getUserById = withErrorLogging(
+  getUserByIdFn,
+  "userService.getUserById"
+);
 
 // Create New User //
 const createUserFn = (formData) => {
@@ -39,7 +42,10 @@ const createUserFn = (formData) => {
     },
   });
 };
-export const createUser = withErrorLogging(createUserFn, "userService.createUser");
+export const createUser = withErrorLogging(
+  createUserFn,
+  "userService.createUser"
+);
 
 // Update User
 const updateUserFn = (userId, userData) => {
@@ -58,7 +64,10 @@ const updateUserFn = (userId, userData) => {
     }
   );
 };
-export const updateUser = withErrorLogging(updateUserFn, "userService.updateUser");
+export const updateUser = withErrorLogging(
+  updateUserFn,
+  "userService.updateUser"
+);
 
 // Delete User
 const deleteUserFn = (userId) => {
@@ -69,24 +78,36 @@ const deleteUserFn = (userId) => {
     },
   });
 };
-export const deleteUser = withErrorLogging(deleteUserFn, "userService.deleteUser");
+export const deleteUser = withErrorLogging(
+  deleteUserFn,
+  "userService.deleteUser"
+);
 
 const getAllUsersFn = async () => {
   return await axios.get("/users/all");
 };
-export const getAllUsers = withErrorLogging(getAllUsersFn, "userService.getAllUsers");
+export const getAllUsers = withErrorLogging(
+  getAllUsersFn,
+  "userService.getAllUsers"
+);
 
 const updateUserRatingFn = async (userId, ratingId) => {
   return await axios.patch(`/users/${userId}/rating`, { rating_id: ratingId });
 };
-export const updateUserRating = withErrorLogging(updateUserRatingFn, "userService.updateUserRating");
+export const updateUserRating = withErrorLogging(
+  updateUserRatingFn,
+  "userService.updateUserRating"
+);
 
 const updateUserPackageFn = async (user_id, package_id) => {
   return await axios.patch(`/users/${user_id}/package`, {
     package_id: package_id,
   });
 };
-export const updateUserPackage = withErrorLogging(updateUserPackageFn, "userService.updateUserPackage");
+export const updateUserPackage = withErrorLogging(
+  updateUserPackageFn,
+  "userService.updateUserPackage"
+);
 
 // Get All Roles
 const getRolesFn = () => axios.get("/roles");
@@ -100,4 +121,7 @@ const getUserLoginLogsFn = (userId) => {
     },
   });
 };
-export const getUserLoginLogs = withErrorLogging(getUserLoginLogsFn, "userService.getUserLoginLogs");
+export const getUserLoginLogs = withErrorLogging(
+  getUserLoginLogsFn,
+  "userService.getUserLoginLogs"
+);

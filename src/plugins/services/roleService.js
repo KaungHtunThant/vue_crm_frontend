@@ -14,19 +14,31 @@ export const getAll = withErrorLogging(getAllFn, "roleService.getAll");
 const getRoleByIdFn = async (id) => {
   return await axios.get(`/roles/${id}`);
 };
-export const getRoleById = withErrorLogging(getRoleByIdFn, "roleService.getRoleById");
+export const getRoleById = withErrorLogging(
+  getRoleByIdFn,
+  "roleService.getRoleById"
+);
 
 const createRoleFn = async (data) => {
   return await axios.post("/roles", data);
 };
-export const createRole = withErrorLogging(createRoleFn, "roleService.createRole");
+export const createRole = withErrorLogging(
+  createRoleFn,
+  "roleService.createRole"
+);
 
 const updateRoleFn = async (id, data) => {
   return await axios.put(`/roles/${id}`, data);
 };
-export const updateRole = withErrorLogging(updateRoleFn, "roleService.updateRole");
+export const updateRole = withErrorLogging(
+  updateRoleFn,
+  "roleService.updateRole"
+);
 
 const deleteRoleFn = async (id) => {
   return await axios.delete(`/roles/${id}`);
 };
-export const deleteRole = withErrorLogging(deleteRoleFn, "roleService.deleteRole");
+export const deleteRole = withErrorLogging(
+  deleteRoleFn,
+  "roleService.deleteRole"
+);

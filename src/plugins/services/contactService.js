@@ -17,22 +17,36 @@ const getContactsFn = async (params = {}) => {
     },
   });
 };
-export const getContacts = withErrorLogging(getContactsFn, "contactService.getContacts");
+export const getContacts = withErrorLogging(
+  getContactsFn,
+  "contactService.getContacts"
+);
 
 const createContactFn = (formData) => {
   return axios.post("/contacts", formData);
 };
-export const createContact = withErrorLogging(createContactFn, "contactService.createContact");
+export const createContact = withErrorLogging(
+  createContactFn,
+  "contactService.createContact"
+);
 
 const updateContactFn = (contactId, formData) =>
   axios.put(`/contacts/${contactId}`, formData);
-export const updateContact = withErrorLogging(updateContactFn, "contactService.updateContact");
+export const updateContact = withErrorLogging(
+  updateContactFn,
+  "contactService.updateContact"
+);
 
-const deleteContactFn = (contactId) =>
-  axios.delete(`/contacts/${contactId}`);
-export const deleteContact = withErrorLogging(deleteContactFn, "contactService.deleteContact");
+const deleteContactFn = (contactId) => axios.delete(`/contacts/${contactId}`);
+export const deleteContact = withErrorLogging(
+  deleteContactFn,
+  "contactService.deleteContact"
+);
 
 const showContactFn = async (id) => {
   return await axios.get(`/contacts/${id}`);
 };
-export const showContact = withErrorLogging(showContactFn, "contactService.showContact");
+export const showContact = withErrorLogging(
+  showContactFn,
+  "contactService.showContact"
+);

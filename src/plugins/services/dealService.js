@@ -39,7 +39,10 @@ const fetchAdditionalDealsByStageIdFn = (
     },
   });
 };
-export const fetchAdditionalDealsByStageId = withErrorLogging(fetchAdditionalDealsByStageIdFn, "dealService.fetchAdditionalDealsByStageId");
+export const fetchAdditionalDealsByStageId = withErrorLogging(
+  fetchAdditionalDealsByStageIdFn,
+  "dealService.fetchAdditionalDealsByStageId"
+);
 
 // Show Deal id //
 const showDealFn = (dealId) => axios.get(`/deals/${dealId}`);
@@ -48,7 +51,10 @@ export const showDeal = withErrorLogging(showDealFn, "dealService.showDeal");
 const createDealFn = (formData) => {
   return axios.post("/deals", formData);
 };
-export const createDeal = withErrorLogging(createDealFn, "dealService.createDeal");
+export const createDeal = withErrorLogging(
+  createDealFn,
+  "dealService.createDeal"
+);
 
 const bulkUpdateDealsFn = async (ids, key, value) => {
   return await axios.patch("/deals/bulk-update", {
@@ -57,31 +63,46 @@ const bulkUpdateDealsFn = async (ids, key, value) => {
     value: value,
   });
 };
-export const bulkUpdateDeals = withErrorLogging(bulkUpdateDealsFn, "dealService.bulkUpdateDeals");
+export const bulkUpdateDeals = withErrorLogging(
+  bulkUpdateDealsFn,
+  "dealService.bulkUpdateDeals"
+);
 
 const bulkDeleteDealsFn = async (ids) => {
   return await axios.delete("/deals/bulk-delete", {
     data: { ids },
   });
 };
-export const bulkDeleteDeals = withErrorLogging(bulkDeleteDealsFn, "dealService.bulkDeleteDeals");
+export const bulkDeleteDeals = withErrorLogging(
+  bulkDeleteDealsFn,
+  "dealService.bulkDeleteDeals"
+);
 
 const deleteDealsFn = (ids) => axios.delete(`/deals/${ids}`);
-export const deleteDeals = withErrorLogging(deleteDealsFn, "dealService.deleteDeals");
+export const deleteDeals = withErrorLogging(
+  deleteDealsFn,
+  "dealService.deleteDeals"
+);
 
 const updateDealStageFn = (dealId, stageId) => {
   return axios.patch(`/deals/${dealId}`, {
     stage_id: stageId,
   });
 };
-export const updateDealStage = withErrorLogging(updateDealStageFn, "dealService.updateDealStage");
+export const updateDealStage = withErrorLogging(
+  updateDealStageFn,
+  "dealService.updateDealStage"
+);
 
 const addTagToDealFn = (dealId, tags) => {
   return axios.post(`/deals/${dealId}/add-tags`, {
     tags: tags,
   });
 };
-export const addTagToDeal = withErrorLogging(addTagToDealFn, "dealService.addTagToDeal");
+export const addTagToDeal = withErrorLogging(
+  addTagToDealFn,
+  "dealService.addTagToDeal"
+);
 
 const updateDealFn = (dealId, formData) => {
   const data = {
@@ -94,7 +115,10 @@ const updateDealFn = (dealId, formData) => {
     },
   });
 };
-export const updateDeal = withErrorLogging(updateDealFn, "dealService.updateDeal");
+export const updateDeal = withErrorLogging(
+  updateDealFn,
+  "dealService.updateDeal"
+);
 
 const importDealsFn = (formData) => {
   return axios.post("/deals/import", formData, {
@@ -103,53 +127,83 @@ const importDealsFn = (formData) => {
     },
   });
 };
-export const importDeals = withErrorLogging(importDealsFn, "dealService.importDeals");
+export const importDeals = withErrorLogging(
+  importDealsFn,
+  "dealService.importDeals"
+);
 
 const addViewCountFn = (dealId) => {
   return axios.post(`/deals/add-view-count/${dealId}`);
 };
-export const addViewCount = withErrorLogging(addViewCountFn, "dealService.addViewCount");
+export const addViewCount = withErrorLogging(
+  addViewCountFn,
+  "dealService.addViewCount"
+);
 
 const toggleHighlightFn = async (dealId) => {
   return await axios.post(`/deals/highlight/${dealId}`);
 };
-export const toggleHighlight = withErrorLogging(toggleHighlightFn, "dealService.toggleHighlight");
+export const toggleHighlight = withErrorLogging(
+  toggleHighlightFn,
+  "dealService.toggleHighlight"
+);
 
 const pullDealsFromOldSystemFn = async () => {
   return await axios.get("/deals/pull-random");
 };
-export const pullDealsFromOldSystem = withErrorLogging(pullDealsFromOldSystemFn, "dealService.pullDealsFromOldSystem");
+export const pullDealsFromOldSystem = withErrorLogging(
+  pullDealsFromOldSystemFn,
+  "dealService.pullDealsFromOldSystem"
+);
 
 const mergeDealsFn = async (ids) => {
   return await axios.post("/deals/merge", {
     ids: ids,
   });
 };
-export const mergeDeals = withErrorLogging(mergeDealsFn, "dealService.mergeDeals");
+export const mergeDeals = withErrorLogging(
+  mergeDealsFn,
+  "dealService.mergeDeals"
+);
 
 const getAfterSalesKanbanFn = async (params = {}) => {
   return axios.get("/kanban/after-sales", {
     params,
   });
 };
-export const getAfterSalesKanban = withErrorLogging(getAfterSalesKanbanFn, "dealService.getAfterSalesKanban");
+export const getAfterSalesKanban = withErrorLogging(
+  getAfterSalesKanbanFn,
+  "dealService.getAfterSalesKanban"
+);
 
 const moveToSalesEndStageFn = async (deal_id) => {
   return await axios.patch(`/deals/sales-end-stage/${deal_id}`);
 };
-export const moveToSalesEndStage = withErrorLogging(moveToSalesEndStageFn, "dealService.moveToSalesEndStage");
+export const moveToSalesEndStage = withErrorLogging(
+  moveToSalesEndStageFn,
+  "dealService.moveToSalesEndStage"
+);
 
 const updateHospitalPackageFn = async (data) => {
   return await axios.put(`/deals/updateHospitalPackage`, data);
 };
-export const updateHospitalPackage = withErrorLogging(updateHospitalPackageFn, "dealService.updateHospitalPackage");
+export const updateHospitalPackage = withErrorLogging(
+  updateHospitalPackageFn,
+  "dealService.updateHospitalPackage"
+);
 
 const distributeInactiveDealsFn = async () => {
   return await axios.post(`/deals/force-roll`);
 };
-export const distributeInactiveDeals = withErrorLogging(distributeInactiveDealsFn, "dealService.distributeInactiveDeals");
+export const distributeInactiveDeals = withErrorLogging(
+  distributeInactiveDealsFn,
+  "dealService.distributeInactiveDeals"
+);
 
 const getRecontactCountsFn = async () => {
   return await axios.get(`/deals/recontact-counts`);
 };
-export const getRecontactCounts = withErrorLogging(getRecontactCountsFn, "dealService.getRecontactCounts");
+export const getRecontactCounts = withErrorLogging(
+  getRecontactCountsFn,
+  "dealService.getRecontactCounts"
+);

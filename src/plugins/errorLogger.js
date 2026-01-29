@@ -26,7 +26,7 @@ const getErrorLogCookieName = () => {
  */
 const saveErrorToCookie = (path, errorMessage, errorCode) => {
   const cookieName = getErrorLogCookieName();
-  
+
   // Get existing logs from cookie
   let existingLogs = [];
   try {

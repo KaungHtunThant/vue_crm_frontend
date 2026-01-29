@@ -10,7 +10,10 @@ const getTranslationsFn = (locale) => {
     },
   });
 };
-export const getTranslations = withErrorLogging(getTranslationsFn, "languageService.getTranslations");
+export const getTranslations = withErrorLogging(
+  getTranslationsFn,
+  "languageService.getTranslations"
+);
 
 const saveUserLanguageFn = async (locale) => {
   const token = Cookies.get("authToken");
@@ -20,4 +23,7 @@ const saveUserLanguageFn = async (locale) => {
     },
   });
 };
-export const saveUserLanguage = withErrorLogging(saveUserLanguageFn, "languageService.saveUserLanguage");
+export const saveUserLanguage = withErrorLogging(
+  saveUserLanguageFn,
+  "languageService.saveUserLanguage"
+);
