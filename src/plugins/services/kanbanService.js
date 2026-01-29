@@ -27,11 +27,23 @@ const getKanbanQuestionsBase = async (deal_id) => {
   return await axios.get(`/kanban/qa/${deal_id}`);
 };
 
-export const getDealsKanban = withErrorLogging(getDealsKanbanBase, "getDealsKanban");
-export const getTasksKanban = withErrorLogging(getTasksKanbanBase, "getTasksKanban");
+export const getDealsKanban = withErrorLogging(
+  getDealsKanbanBase,
+  "getDealsKanban"
+);
+export const getTasksKanban = withErrorLogging(
+  getTasksKanbanBase,
+  "getTasksKanban"
+);
 export const getEmrKanban = withErrorLogging(getEmrKanbanBase, "getEmrKanban");
-export const getKanbanBroadcasts = withErrorLogging(getKanbanBroadcastsBase, "getKanbanBroadcasts");
-export const getKanbanQuestions = withErrorLogging(getKanbanQuestionsBase, "getKanbanQuestions");
+export const getKanbanBroadcasts = withErrorLogging(
+  getKanbanBroadcastsBase,
+  "getKanbanBroadcasts"
+);
+export const getKanbanQuestions = withErrorLogging(
+  getKanbanQuestionsBase,
+  "getKanbanQuestions"
+);
 
 // export const getAfterSalesKanban = async (params = {}) => {
 //   return axios.get("/kanban/after-sales", {

@@ -10,4 +10,7 @@ const getAllRatingsBase = async () => {
 };
 
 export const getRatings = withErrorLogging(getRatingsBase, "getRatings");
-export const getAllRatings = withErrorLogging(getAllRatingsBase, "getAllRatings");
+export const getAllRatings = withErrorLogging(
+  getAllRatingsBase,
+  "getAllRatings"
+);

@@ -16,7 +16,7 @@ const MAX_LOGS = 100; // Maximum number of error logs to store
 export const logError = (errorInfo) => {
   try {
     const { serviceName, error, args } = errorInfo;
-    
+
     const errorLog = {
       timestamp: new Date().toISOString(),
       serviceName,
@@ -27,13 +27,13 @@ export const logError = (errorInfo) => {
 
     // Get existing logs
     const logs = getErrorLogs();
-    
+
     // Add new log at the beginning
     logs.unshift(errorLog);
-    
+
     // Keep only the last MAX_LOGS entries
     const trimmedLogs = logs.slice(0, MAX_LOGS);
-    
+
     // Save to localStorage
     localStorage.setItem(ERROR_LOG_KEY, JSON.stringify(trimmedLogs));
   } catch (storageError) {
@@ -85,7 +85,7 @@ export const withErrorLogging = (serviceFunction, serviceName) => {
         error,
         args,
       });
-      
+
       // Re-throw the error so the calling code can handle it
       throw error;
     }

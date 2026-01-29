@@ -3,4 +3,7 @@ import { withErrorLogging } from "@/utils/errorLogger";
 
 const getTaskEventsBase = () => axios.get("/taskevents");
 
-export const getTaskEvents = withErrorLogging(getTaskEventsBase, "getTaskEvents");
+export const getTaskEvents = withErrorLogging(
+  getTaskEventsBase,
+  "getTaskEvents"
+);

@@ -5,4 +5,7 @@ const updateAnswersByDealIdBase = async (deal_id, formData) => {
   return await axios.put(`/answers/${deal_id}`, { answers: formData });
 };
 
-export const updateAnswersByDealId = withErrorLogging(updateAnswersByDealIdBase, "updateAnswersByDealId");
+export const updateAnswersByDealId = withErrorLogging(
+  updateAnswersByDealIdBase,
+  "updateAnswersByDealId"
+);

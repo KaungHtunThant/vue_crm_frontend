@@ -35,10 +35,22 @@ const uploadFilesBase = async (formData) => {
 };
 
 export const getDocuments = withErrorLogging(getDocumentsBase, "getDocuments");
-export const createDocuments = withErrorLogging(createDocumentsBase, "createDocuments");
-export const updateDocuments = withErrorLogging(updateDocumentsBase, "updateDocuments");
-export const deleteDocuments = withErrorLogging(deleteDocumentsBase, "deleteDocuments");
+export const createDocuments = withErrorLogging(
+  createDocumentsBase,
+  "createDocuments"
+);
+export const updateDocuments = withErrorLogging(
+  updateDocumentsBase,
+  "updateDocuments"
+);
+export const deleteDocuments = withErrorLogging(
+  deleteDocumentsBase,
+  "deleteDocuments"
+);
 export const updateFiles = withErrorLogging(updateFilesBase, "updateFiles");
 export const deleteFiles = withErrorLogging(deleteFilesBase, "deleteFiles");
-export const showDocuments = withErrorLogging(showDocumentsBase, "showDocuments");
+export const showDocuments = withErrorLogging(
+  showDocumentsBase,
+  "showDocuments"
+);
 export const uploadFiles = withErrorLogging(uploadFilesBase, "uploadFiles");

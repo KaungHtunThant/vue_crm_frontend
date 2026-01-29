@@ -34,7 +34,19 @@ const setTasksProcessingBase = async (id) => {
 
 export const createTask = withErrorLogging(createTaskBase, "createTask");
 export const updateTask = withErrorLogging(updateTaskBase, "updateTask");
-export const getTasksByDealId = withErrorLogging(getTasksByDealIdBase, "getTasksByDealId");
-export const getTasksByDate = withErrorLogging(getTasksByDateBase, "getTasksByDate");
-export const bulkDeleteTasks = withErrorLogging(bulkDeleteTasksBase, "bulkDeleteTasks");
-export const setTasksProcessing = withErrorLogging(setTasksProcessingBase, "setTasksProcessing");
+export const getTasksByDealId = withErrorLogging(
+  getTasksByDealIdBase,
+  "getTasksByDealId"
+);
+export const getTasksByDate = withErrorLogging(
+  getTasksByDateBase,
+  "getTasksByDate"
+);
+export const bulkDeleteTasks = withErrorLogging(
+  bulkDeleteTasksBase,
+  "bulkDeleteTasks"
+);
+export const setTasksProcessing = withErrorLogging(
+  setTasksProcessingBase,
+  "setTasksProcessing"
+);

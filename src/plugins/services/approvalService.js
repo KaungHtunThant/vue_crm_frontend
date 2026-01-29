@@ -31,5 +31,11 @@ const updateApprovalBase = async (approvalId, status) => {
 };
 
 export const getApprovals = withErrorLogging(getApprovalsBase, "getApprovals");
-export const createApproval = withErrorLogging(createApprovalBase, "createApproval");
-export const updateApproval = withErrorLogging(updateApprovalBase, "updateApproval");
+export const createApproval = withErrorLogging(
+  createApprovalBase,
+  "createApproval"
+);
+export const updateApproval = withErrorLogging(
+  updateApprovalBase,
+  "updateApproval"
+);

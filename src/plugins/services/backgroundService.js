@@ -13,6 +13,15 @@ const getBackgroundIdBase = async (id) => {
   return await axios.get(`/bg-images/${id}`);
 };
 
-export const getBackgroundImages = withErrorLogging(getBackgroundImagesBase, "getBackgroundImages");
-export const saveBackgroundId = withErrorLogging(saveBackgroundIdBase, "saveBackgroundId");
-export const getBackgroundId = withErrorLogging(getBackgroundIdBase, "getBackgroundId");
+export const getBackgroundImages = withErrorLogging(
+  getBackgroundImagesBase,
+  "getBackgroundImages"
+);
+export const saveBackgroundId = withErrorLogging(
+  saveBackgroundIdBase,
+  "saveBackgroundId"
+);
+export const getBackgroundId = withErrorLogging(
+  getBackgroundIdBase,
+  "getBackgroundId"
+);

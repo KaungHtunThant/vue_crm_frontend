@@ -98,7 +98,16 @@ export const createUser = withErrorLogging(createUserBase, "createUser");
 export const updateUser = withErrorLogging(updateUserBase, "updateUser");
 export const deleteUser = withErrorLogging(deleteUserBase, "deleteUser");
 export const getAllUsers = withErrorLogging(getAllUsersBase, "getAllUsers");
-export const updateUserRating = withErrorLogging(updateUserRatingBase, "updateUserRating");
-export const updateUserPackage = withErrorLogging(updateUserPackageBase, "updateUserPackage");
+export const updateUserRating = withErrorLogging(
+  updateUserRatingBase,
+  "updateUserRating"
+);
+export const updateUserPackage = withErrorLogging(
+  updateUserPackageBase,
+  "updateUserPackage"
+);
 export const getRoles = withErrorLogging(getRolesBase, "getRoles");
-export const getUserLoginLogs = withErrorLogging(getUserLoginLogsBase, "getUserLoginLogs");
+export const getUserLoginLogs = withErrorLogging(
+  getUserLoginLogsBase,
+  "getUserLoginLogs"
+);

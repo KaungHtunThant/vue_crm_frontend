@@ -23,8 +23,7 @@ const getStagesChildrenBase = (parentId, limit, offset, filters = {}) =>
 
 const getTrashStagesBase = () => axios.get("/stages/trash");
 
-const getAvailableAfterSalesStagesBase = () =>
-  axios.get("/stages/after-sales");
+const getAvailableAfterSalesStagesBase = () => axios.get("/stages/after-sales");
 
 const getStageTimersBase = async () => {
   return await axios.get("/settings/stages/timers");
@@ -61,14 +60,38 @@ const getStagesByBoardIdBase = (board_id) => {
 
 export const getStages = withErrorLogging(getStagesBase, "getStages");
 export const getAllStages = withErrorLogging(getAllStagesBase, "getAllStages");
-export const getAvailableStages = withErrorLogging(getAvailableStagesBase, "getAvailableStages");
-export const getStagesChildren = withErrorLogging(getStagesChildrenBase, "getStagesChildren");
-export const getTrashStages = withErrorLogging(getTrashStagesBase, "getTrashStages");
-export const getAvailableAfterSalesStages = withErrorLogging(getAvailableAfterSalesStagesBase, "getAvailableAfterSalesStages");
-export const getStageTimers = withErrorLogging(getStageTimersBase, "getStageTimers");
+export const getAvailableStages = withErrorLogging(
+  getAvailableStagesBase,
+  "getAvailableStages"
+);
+export const getStagesChildren = withErrorLogging(
+  getStagesChildrenBase,
+  "getStagesChildren"
+);
+export const getTrashStages = withErrorLogging(
+  getTrashStagesBase,
+  "getTrashStages"
+);
+export const getAvailableAfterSalesStages = withErrorLogging(
+  getAvailableAfterSalesStagesBase,
+  "getAvailableAfterSalesStages"
+);
+export const getStageTimers = withErrorLogging(
+  getStageTimersBase,
+  "getStageTimers"
+);
 export const updateStage = withErrorLogging(updateStageBase, "updateStage");
 export const createStage = withErrorLogging(createStageBase, "createStage");
 export const deleteStage = withErrorLogging(deleteStageBase, "deleteStage");
-export const getStagesTasks = withErrorLogging(getStagesTasksBase, "getStagesTasks");
-export const fetchTasksCountByStageName = withErrorLogging(fetchTasksCountByStageNameBase, "fetchTasksCountByStageName");
-export const getStagesByBoardId = withErrorLogging(getStagesByBoardIdBase, "getStagesByBoardId");
+export const getStagesTasks = withErrorLogging(
+  getStagesTasksBase,
+  "getStagesTasks"
+);
+export const fetchTasksCountByStageName = withErrorLogging(
+  fetchTasksCountByStageNameBase,
+  "fetchTasksCountByStageName"
+);
+export const getStagesByBoardId = withErrorLogging(
+  getStagesByBoardIdBase,
+  "getStagesByBoardId"
+);

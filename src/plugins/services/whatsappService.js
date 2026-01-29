@@ -114,18 +114,48 @@ const getActiveClientsBase = async () => {
   );
 };
 
-export const getconversations = withErrorLogging(getconversationsBase, "getconversations");
-export const fetchConversationByDealId = withErrorLogging(fetchConversationByDealIdBase, "fetchConversationByDealId");
-export const createConversation = withErrorLogging(createConversationBase, "createConversation");
-export const getMessageConv = withErrorLogging(getMessageConvBase, "getMessageConv");
+export const getconversations = withErrorLogging(
+  getconversationsBase,
+  "getconversations"
+);
+export const fetchConversationByDealId = withErrorLogging(
+  fetchConversationByDealIdBase,
+  "fetchConversationByDealId"
+);
+export const createConversation = withErrorLogging(
+  createConversationBase,
+  "createConversation"
+);
+export const getMessageConv = withErrorLogging(
+  getMessageConvBase,
+  "getMessageConv"
+);
 export const sendMessage = withErrorLogging(sendMessageBase, "sendMessage");
-export const sendInitMessage = withErrorLogging(sendInitMessageBase, "sendInitMessage");
-export const sendGreetingMessage = withErrorLogging(sendGreetingMessageBase, "sendGreetingMessage");
-export const getInitMessages = withErrorLogging(getInitMessagesBase, "getInitMessages");
-export const changePinStatus = withErrorLogging(changePinStatusBase, "changePinStatus");
-export const getMoreConversations = withErrorLogging(getMoreConversationsBase, "getMoreConversations");
+export const sendInitMessage = withErrorLogging(
+  sendInitMessageBase,
+  "sendInitMessage"
+);
+export const sendGreetingMessage = withErrorLogging(
+  sendGreetingMessageBase,
+  "sendGreetingMessage"
+);
+export const getInitMessages = withErrorLogging(
+  getInitMessagesBase,
+  "getInitMessages"
+);
+export const changePinStatus = withErrorLogging(
+  changePinStatusBase,
+  "changePinStatus"
+);
+export const getMoreConversations = withErrorLogging(
+  getMoreConversationsBase,
+  "getMoreConversations"
+);
 export const webstart = withErrorLogging(webstartBase, "webstart");
 export const webqrcode = withErrorLogging(webqrcodeBase, "webqrcode");
 export const checkstatus = withErrorLogging(checkstatusBase, "checkstatus");
 export const weblogout = withErrorLogging(weblogoutBase, "weblogout");
-export const getActiveClients = withErrorLogging(getActiveClientsBase, "getActiveClients");
+export const getActiveClients = withErrorLogging(
+  getActiveClientsBase,
+  "getActiveClients"
+);

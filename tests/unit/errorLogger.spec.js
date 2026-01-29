@@ -1,8 +1,8 @@
-import { 
-  logError, 
-  getErrorLogs, 
-  clearErrorLogs, 
-  withErrorLogging 
+import {
+  logError,
+  getErrorLogs,
+  clearErrorLogs,
+  withErrorLogging,
 } from "@/utils/errorLogger";
 
 // Mock localStorage

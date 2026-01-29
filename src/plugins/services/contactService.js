@@ -25,15 +25,23 @@ const createContactBase = (formData) => {
 const updateContactBase = (contactId, formData) =>
   axios.put(`/contacts/${contactId}`, formData);
 
-const deleteContactBase = (contactId) =>
-  axios.delete(`/contacts/${contactId}`);
+const deleteContactBase = (contactId) => axios.delete(`/contacts/${contactId}`);
 
 const showContactBase = async (id) => {
   return await axios.get(`/contacts/${id}`);
 };
 
 export const getContacts = withErrorLogging(getContactsBase, "getContacts");
-export const createContact = withErrorLogging(createContactBase, "createContact");
-export const updateContact = withErrorLogging(updateContactBase, "updateContact");
-export const deleteContact = withErrorLogging(deleteContactBase, "deleteContact");
+export const createContact = withErrorLogging(
+  createContactBase,
+  "createContact"
+);
+export const updateContact = withErrorLogging(
+  updateContactBase,
+  "updateContact"
+);
+export const deleteContact = withErrorLogging(
+  deleteContactBase,
+  "deleteContact"
+);
 export const showContact = withErrorLogging(showContactBase, "showContact");

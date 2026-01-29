@@ -20,5 +20,11 @@ const saveUserLanguageBase = async (locale) => {
   });
 };
 
-export const getTranslations = withErrorLogging(getTranslationsBase, "getTranslations");
-export const saveUserLanguage = withErrorLogging(saveUserLanguageBase, "saveUserLanguage");
+export const getTranslations = withErrorLogging(
+  getTranslationsBase,
+  "getTranslations"
+);
+export const saveUserLanguage = withErrorLogging(
+  saveUserLanguageBase,
+  "saveUserLanguage"
+);

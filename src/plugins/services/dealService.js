@@ -135,22 +135,55 @@ const getRecontactCountsBase = async () => {
 };
 
 export const getDeals = withErrorLogging(getDealsBase, "getDeals");
-export const fetchAdditionalDealsByStageId = withErrorLogging(fetchAdditionalDealsByStageIdBase, "fetchAdditionalDealsByStageId");
+export const fetchAdditionalDealsByStageId = withErrorLogging(
+  fetchAdditionalDealsByStageIdBase,
+  "fetchAdditionalDealsByStageId"
+);
 export const showDeal = withErrorLogging(showDealBase, "showDeal");
 export const createDeal = withErrorLogging(createDealBase, "createDeal");
-export const bulkUpdateDeals = withErrorLogging(bulkUpdateDealsBase, "bulkUpdateDeals");
-export const bulkDeleteDeals = withErrorLogging(bulkDeleteDealsBase, "bulkDeleteDeals");
+export const bulkUpdateDeals = withErrorLogging(
+  bulkUpdateDealsBase,
+  "bulkUpdateDeals"
+);
+export const bulkDeleteDeals = withErrorLogging(
+  bulkDeleteDealsBase,
+  "bulkDeleteDeals"
+);
 export const deleteDeals = withErrorLogging(deleteDealsBase, "deleteDeals");
-export const updateDealStage = withErrorLogging(updateDealStageBase, "updateDealStage");
+export const updateDealStage = withErrorLogging(
+  updateDealStageBase,
+  "updateDealStage"
+);
 export const addTagToDeal = withErrorLogging(addTagToDealBase, "addTagToDeal");
 export const updateDeal = withErrorLogging(updateDealBase, "updateDeal");
 export const importDeals = withErrorLogging(importDealsBase, "importDeals");
 export const addViewCount = withErrorLogging(addViewCountBase, "addViewCount");
-export const toggleHighlight = withErrorLogging(toggleHighlightBase, "toggleHighlight");
-export const pullDealsFromOldSystem = withErrorLogging(pullDealsFromOldSystemBase, "pullDealsFromOldSystem");
+export const toggleHighlight = withErrorLogging(
+  toggleHighlightBase,
+  "toggleHighlight"
+);
+export const pullDealsFromOldSystem = withErrorLogging(
+  pullDealsFromOldSystemBase,
+  "pullDealsFromOldSystem"
+);
 export const mergeDeals = withErrorLogging(mergeDealsBase, "mergeDeals");
-export const getAfterSalesKanban = withErrorLogging(getAfterSalesKanbanBase, "getAfterSalesKanban");
-export const moveToSalesEndStage = withErrorLogging(moveToSalesEndStageBase, "moveToSalesEndStage");
-export const updateHospitalPackage = withErrorLogging(updateHospitalPackageBase, "updateHospitalPackage");
-export const distributeInactiveDeals = withErrorLogging(distributeInactiveDealsBase, "distributeInactiveDeals");
-export const getRecontactCounts = withErrorLogging(getRecontactCountsBase, "getRecontactCounts");
+export const getAfterSalesKanban = withErrorLogging(
+  getAfterSalesKanbanBase,
+  "getAfterSalesKanban"
+);
+export const moveToSalesEndStage = withErrorLogging(
+  moveToSalesEndStageBase,
+  "moveToSalesEndStage"
+);
+export const updateHospitalPackage = withErrorLogging(
+  updateHospitalPackageBase,
+  "updateHospitalPackage"
+);
+export const distributeInactiveDeals = withErrorLogging(
+  distributeInactiveDealsBase,
+  "distributeInactiveDeals"
+);
+export const getRecontactCounts = withErrorLogging(
+  getRecontactCountsBase,
+  "getRecontactCounts"
+);

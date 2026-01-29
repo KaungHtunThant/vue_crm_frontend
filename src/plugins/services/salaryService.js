@@ -17,11 +17,35 @@ const calculatecommissionBase = (id) =>
 
 export const payingLevels = withErrorLogging(payingLevelsBase, "payingLevels");
 export const payingLevel = withErrorLogging(payingLevelBase, "payingLevel");
-export const createCommissionPackage = withErrorLogging(createCommissionPackageBase, "createCommissionPackage");
-export const updateCommissionPackage = withErrorLogging(updateCommissionPackageBase, "updateCommissionPackage");
-export const deletePackage = withErrorLogging(deletePackageBase, "deletePackage");
-export const deductiontypes = withErrorLogging(deductiontypesBase, "deductiontypes");
-export const getUserDeductions = withErrorLogging(getUserDeductionsBase, "getUserDeductions");
-export const saveDeduction = withErrorLogging(saveDeductionBase, "saveDeduction");
-export const deleteDeduction = withErrorLogging(deleteDeductionBase, "deleteDeduction");
-export const calculatecommission = withErrorLogging(calculatecommissionBase, "calculatecommission");
+export const createCommissionPackage = withErrorLogging(
+  createCommissionPackageBase,
+  "createCommissionPackage"
+);
+export const updateCommissionPackage = withErrorLogging(
+  updateCommissionPackageBase,
+  "updateCommissionPackage"
+);
+export const deletePackage = withErrorLogging(
+  deletePackageBase,
+  "deletePackage"
+);
+export const deductiontypes = withErrorLogging(
+  deductiontypesBase,
+  "deductiontypes"
+);
+export const getUserDeductions = withErrorLogging(
+  getUserDeductionsBase,
+  "getUserDeductions"
+);
+export const saveDeduction = withErrorLogging(
+  saveDeductionBase,
+  "saveDeduction"
+);
+export const deleteDeduction = withErrorLogging(
+  deleteDeductionBase,
+  "deleteDeduction"
+);
+export const calculatecommission = withErrorLogging(
+  calculatecommissionBase,
+  "calculatecommission"
+);

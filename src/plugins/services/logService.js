@@ -5,4 +5,7 @@ const getLogsByDealIdBase = async (dealId) => {
   return await axios.get(`/logs/deal/${dealId}`);
 };
 
-export const getLogsByDealId = withErrorLogging(getLogsByDealIdBase, "getLogsByDealId");
+export const getLogsByDealId = withErrorLogging(
+  getLogsByDealIdBase,
+  "getLogsByDealId"
+);

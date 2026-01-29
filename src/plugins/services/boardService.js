@@ -10,4 +10,7 @@ const getBoardIndexBase = () => {
 };
 
 export const getAllBoards = withErrorLogging(getAllBoardsBase, "getAllBoards");
-export const getBoardIndex = withErrorLogging(getBoardIndexBase, "getBoardIndex");
+export const getBoardIndex = withErrorLogging(
+  getBoardIndexBase,
+  "getBoardIndex"
+);

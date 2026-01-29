@@ -10,5 +10,11 @@ const getCustomTaskBase = () => {
 };
 
 export const generateOTP = withErrorLogging(generateOTPBase, "generateOTP");
-export const getServerVersion = withErrorLogging(getServerVersionBase, "getServerVersion");
-export const getCustomTask = withErrorLogging(getCustomTaskBase, "getCustomTask");
+export const getServerVersion = withErrorLogging(
+  getServerVersionBase,
+  "getServerVersion"
+);
+export const getCustomTask = withErrorLogging(
+  getCustomTaskBase,
+  "getCustomTask"
+);
