@@ -45,7 +45,8 @@ describe("Error Logger", () => {
       expect(logs).toHaveLength(1);
       expect(logs[0].serviceName).toBe("testService");
       expect(logs[0].message).toBe("Test error");
-      expect(logs[0].args).toBe(JSON.stringify([1, 2, 3]));
+      // Args should be sanitized to just show count
+      expect(logs[0].args).toBe("[3 argument(s)]");
     });
 
     it("should add new logs at the beginning", () => {
@@ -83,6 +84,20 @@ describe("Error Logger", () => {
       expect(logs[0].serviceName).toBe("service100");
       // The oldest log should be service1 (service0 should be removed)
       expect(logs[99].serviceName).toBe("service1");
+    });
+
+    it("should sanitize stack traces to only include first line", () => {
+      const error = new Error("Test error");
+      error.stack = "Error: Test error\n    at Function1\n    at Function2";
+
+      logError({
+        serviceName: "testService",
+        error,
+        args: [],
+      });
+
+      const logs = getErrorLogs();
+      expect(logs[0].stack).toBe("Error: Test error");
     });
   });
 
@@ -126,7 +141,7 @@ describe("Error Logger", () => {
   });
 
   describe("withErrorLogging", () => {
-    it("should call the original function and return its result", async () => {
+    it("should call the original async function and return its result", async () => {
       const mockFn = jest.fn().mockResolvedValue("success");
       const wrappedFn = withErrorLogging(mockFn, "testService");
 
@@ -136,7 +151,7 @@ describe("Error Logger", () => {
       expect(mockFn).toHaveBeenCalledWith(1, 2, 3);
     });
 
-    it("should log errors and re-throw them", async () => {
+    it("should log async errors and re-throw them", async () => {
       const testError = new Error("Test error");
       const mockFn = jest.fn().mockRejectedValue(testError);
       const wrappedFn = withErrorLogging(mockFn, "testService");
@@ -149,18 +164,29 @@ describe("Error Logger", () => {
       expect(logs[0].message).toBe("Test error");
     });
 
-    it("should work with synchronous functions that throw", async () => {
+    it("should preserve synchronous behavior for sync functions", () => {
+      const mockFn = jest.fn().mockReturnValue("sync result");
+      const wrappedFn = withErrorLogging(mockFn, "testService");
+
+      const result = wrappedFn(1, 2);
+
+      expect(result).toBe("sync result");
+      expect(mockFn).toHaveBeenCalledWith(1, 2);
+    });
+
+    it("should log synchronous errors and re-throw them", () => {
       const testError = new Error("Sync error");
       const mockFn = jest.fn(() => {
         throw testError;
       });
       const wrappedFn = withErrorLogging(mockFn, "testService");
 
-      await expect(wrappedFn()).rejects.toThrow("Sync error");
+      expect(() => wrappedFn()).toThrow("Sync error");
 
       const logs = getErrorLogs();
       expect(logs).toHaveLength(1);
       expect(logs[0].serviceName).toBe("testService");
+      expect(logs[0].message).toBe("Sync error");
     });
   });
 });
