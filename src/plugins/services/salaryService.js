@@ -13,7 +13,7 @@ const getUserDeductionsBase = (id) => axios.get(`/deductions/${id}`);
 const saveDeductionBase = (data) => axios.post(`/deductions`, data);
 const deleteDeductionBase = (id) => axios.delete(`/deductions/${id}`);
 const calculatecommissionBase = (id) =>
-  axios.get(`/deductions/getsalary/${id}`, id);
+  axios.get(`/deductions/getsalary/${id}`);
 
 export const payingLevels = withErrorLogging(payingLevelsBase, "payingLevels");
 export const payingLevel = withErrorLogging(payingLevelBase, "payingLevel");

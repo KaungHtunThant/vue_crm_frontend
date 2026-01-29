@@ -13,11 +13,15 @@ const getTranslationsBase = (locale) => {
 
 const saveUserLanguageBase = async (locale) => {
   const token = Cookies.get("authToken");
-  return await axios.patch(`/translations/locale/${locale}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  return await axios.patch(
+    `/translations/locale/${locale}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
 
 export const getTranslations = withErrorLogging(

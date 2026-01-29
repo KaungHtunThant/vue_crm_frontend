@@ -47,7 +47,7 @@ export const logError = (errorInfo) => {
     // Add new log at the beginning
     logs.unshift(errorLog);
 
-    // Keep only the last MAX_LOGS entries
+    // Keep only the most recent MAX_LOGS entries
     const trimmedLogs = logs.slice(0, MAX_LOGS);
 
     // Save to localStorage with size check

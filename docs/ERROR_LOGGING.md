@@ -129,6 +129,26 @@ const getUserByIdBase = (userId) => {
 export const getUserById = withErrorLogging(getUserByIdBase, "getUserById");
 ```
 
+## Security and Privacy Considerations
+
+### localStorage Privacy
+Error logs are stored in browser localStorage, which persists across sessions. Consider the following:
+
+- **Shared Computers**: Error logs remain in localStorage even after logout. Users on shared or public computers should clear browser data after use.
+- **Sensitive Endpoints**: While arguments are sanitized, error messages may still reveal API endpoint names being called.
+- **Manual Cleanup**: Provide users with a way to manually clear error logs:
+  ```javascript
+  import { clearErrorLogs } from '@/utils/errorLogger';
+  clearErrorLogs(); // Clear all error logs
+  ```
+
+### Data Sanitization
+The implementation includes several security measures:
+- Arguments are not logged - only the count is stored
+- Stack traces are limited to the first line only
+- Size limits prevent localStorage quota issues
+- No sensitive data like tokens or passwords are stored
+
 ## Future Enhancements
 
 Potential improvements that could be made:

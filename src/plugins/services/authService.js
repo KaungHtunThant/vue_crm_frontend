@@ -10,7 +10,7 @@ const loginBase = (credentials) => {
 // logout
 const logoutBase = () => {
   const token = Cookies.get("authToken");
-  axios.post("/logout", {
+  return axios.post("/logout", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
