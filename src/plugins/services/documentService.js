@@ -10,13 +10,8 @@ export const getDocuments = withErrorLogging(
 );
 
 const createDocumentsFn = async (formData) => {
-  try {
-    const response = await axios.post("/documents", formData);
-    return response;
-  } catch (error) {
-    console.error("❌ خطأ أثناء إنشاء المجلد:", error);
-    throw error;
-  }
+  const response = await axios.post("/documents", formData);
+  return response;
 };
 export const createDocuments = withErrorLogging(
   createDocumentsFn,

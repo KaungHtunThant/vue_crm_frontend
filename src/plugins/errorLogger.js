@@ -67,8 +67,13 @@ export const withErrorLogging = (fn, functionPath) => {
       const errorMessage = error.message || "Unknown error";
       const errorCode = error.response?.status || error.code || "UNKNOWN";
 
-      // Log error to cookie
-      saveErrorToCookie(functionPath, errorMessage, errorCode);
+      // Log error to cookie (wrapped in try-catch to not mask original error)
+      try {
+        saveErrorToCookie(functionPath, errorMessage, errorCode);
+      } catch (loggingError) {
+        // Silently ignore logging errors to ensure original error is thrown
+        console.warn("Failed to log error to cookie:", loggingError);
+      }
 
       // Re-throw the error to maintain original behavior
       throw error;

@@ -57,8 +57,7 @@ export const deleteDeduction = withErrorLogging(
   "salaryService.deleteDeduction"
 );
 
-const calculatecommissionFn = (id) =>
-  axios.get(`/deductions/getsalary/${id}`, id);
+const calculatecommissionFn = (id) => axios.get(`/deductions/getsalary/${id}`);
 export const calculatecommission = withErrorLogging(
   calculatecommissionFn,
   "salaryService.calculatecommission"

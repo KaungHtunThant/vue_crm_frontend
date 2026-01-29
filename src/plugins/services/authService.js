@@ -11,7 +11,7 @@ export const login = withErrorLogging(loginFn, "authService.login");
 // logout
 const logoutFn = () => {
   const token = Cookies.get("authToken");
-  axios.post("/logout", {
+  return axios.post("/logout", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
