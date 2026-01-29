@@ -5,4 +5,7 @@ const _getTrashTags = async () => {
   return await axios.get("/tags/trash");
 };
 
-export const getTrashTags = withErrorLogging(_getTrashTags, "tagService/getTrashTags");
+export const getTrashTags = withErrorLogging(
+  _getTrashTags,
+  "tagService/getTrashTags"
+);

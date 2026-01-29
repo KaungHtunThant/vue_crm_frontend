@@ -9,5 +9,11 @@ const _getAllPackageCategories = async () => {
   return await axios.get("/package-categories/all");
 };
 
-export const getAllPackages = withErrorLogging(_getAllPackages, "packageService/getAllPackages");
-export const getAllPackageCategories = withErrorLogging(_getAllPackageCategories, "packageService/getAllPackageCategories");
+export const getAllPackages = withErrorLogging(
+  _getAllPackages,
+  "packageService/getAllPackages"
+);
+export const getAllPackageCategories = withErrorLogging(
+  _getAllPackageCategories,
+  "packageService/getAllPackageCategories"
+);

@@ -32,9 +32,27 @@ const _setTasksProcessing = async (id) => {
   return await axios.post(`/tasks/set-processing/${id}`);
 };
 
-export const createTask = withErrorLogging(_createTask, "taskService/createTask");
-export const updateTask = withErrorLogging(_updateTask, "taskService/updateTask");
-export const getTasksByDealId = withErrorLogging(_getTasksByDealId, "taskService/getTasksByDealId");
-export const getTasksByDate = withErrorLogging(_getTasksByDate, "taskService/getTasksByDate");
-export const bulkDeleteTasks = withErrorLogging(_bulkDeleteTasks, "taskService/bulkDeleteTasks");
-export const setTasksProcessing = withErrorLogging(_setTasksProcessing, "taskService/setTasksProcessing");
+export const createTask = withErrorLogging(
+  _createTask,
+  "taskService/createTask"
+);
+export const updateTask = withErrorLogging(
+  _updateTask,
+  "taskService/updateTask"
+);
+export const getTasksByDealId = withErrorLogging(
+  _getTasksByDealId,
+  "taskService/getTasksByDealId"
+);
+export const getTasksByDate = withErrorLogging(
+  _getTasksByDate,
+  "taskService/getTasksByDate"
+);
+export const bulkDeleteTasks = withErrorLogging(
+  _bulkDeleteTasks,
+  "taskService/bulkDeleteTasks"
+);
+export const setTasksProcessing = withErrorLogging(
+  _setTasksProcessing,
+  "taskService/setTasksProcessing"
+);

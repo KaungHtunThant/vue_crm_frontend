@@ -34,7 +34,19 @@ const _getTotals = async () => {
   return await axios.get("/approvals/get-totals");
 };
 
-export const getApprovals = withErrorLogging(_getApprovals, "approvalService/getApprovals");
-export const createApproval = withErrorLogging(_createApproval, "approvalService/createApproval");
-export const updateApproval = withErrorLogging(_updateApproval, "approvalService/updateApproval");
-export const getTotals = withErrorLogging(_getTotals, "approvalService/getTotals");
+export const getApprovals = withErrorLogging(
+  _getApprovals,
+  "approvalService/getApprovals"
+);
+export const createApproval = withErrorLogging(
+  _createApproval,
+  "approvalService/createApproval"
+);
+export const updateApproval = withErrorLogging(
+  _updateApproval,
+  "approvalService/updateApproval"
+);
+export const getTotals = withErrorLogging(
+  _getTotals,
+  "approvalService/getTotals"
+);

@@ -9,5 +9,11 @@ const _getBoardIndex = () => {
   return axios.get("/boards");
 };
 
-export const getAllBoards = withErrorLogging(_getAllBoards, "boardService/getAllBoards");
-export const getBoardIndex = withErrorLogging(_getBoardIndex, "boardService/getBoardIndex");
+export const getAllBoards = withErrorLogging(
+  _getAllBoards,
+  "boardService/getAllBoards"
+);
+export const getBoardIndex = withErrorLogging(
+  _getBoardIndex,
+  "boardService/getBoardIndex"
+);

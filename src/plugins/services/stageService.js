@@ -6,8 +6,7 @@ const _getStages = () => axios.get("/stages");
 const _getAllStages = () => {
   return axios.get("/stages/all");
 };
-const _getAvailableStages = (stage = "deals") =>
-  axios.get("/stages/" + stage);
+const _getAvailableStages = (stage = "deals") => axios.get("/stages/" + stage);
 
 const _getStagesChildren = (parentId, limit, offset, filters = {}) =>
   axios.get(`/kanban/deals/${parentId}/children`, {
@@ -20,8 +19,7 @@ const _getStagesChildren = (parentId, limit, offset, filters = {}) =>
   });
 
 const _getTrashStages = () => axios.get("/stages/trash");
-const _getAvailableAfterSalesStages = () =>
-  axios.get("/stages/after-sales");
+const _getAvailableAfterSalesStages = () => axios.get("/stages/after-sales");
 
 const _getStageTimers = async () => {
   return await axios.get("/settings/stages/timers");
@@ -53,15 +51,51 @@ const _getStagesByBoardId = (board_id) => {
 };
 
 export const getStages = withErrorLogging(_getStages, "stageService/getStages");
-export const getAllStages = withErrorLogging(_getAllStages, "stageService/getAllStages");
-export const getAvailableStages = withErrorLogging(_getAvailableStages, "stageService/getAvailableStages");
-export const getStagesChildren = withErrorLogging(_getStagesChildren, "stageService/getStagesChildren");
-export const getTrashStages = withErrorLogging(_getTrashStages, "stageService/getTrashStages");
-export const getAvailableAfterSalesStages = withErrorLogging(_getAvailableAfterSalesStages, "stageService/getAvailableAfterSalesStages");
-export const getStageTimers = withErrorLogging(_getStageTimers, "stageService/getStageTimers");
-export const updateStage = withErrorLogging(_updateStage, "stageService/updateStage");
-export const createStage = withErrorLogging(_createStage, "stageService/createStage");
-export const deleteStage = withErrorLogging(_deleteStage, "stageService/deleteStage");
-export const getStagesTasks = withErrorLogging(_getStagesTasks, "stageService/getStagesTasks");
-export const fetchTasksCountByStageName = withErrorLogging(_fetchTasksCountByStageName, "stageService/fetchTasksCountByStageName");
-export const getStagesByBoardId = withErrorLogging(_getStagesByBoardId, "stageService/getStagesByBoardId");
+export const getAllStages = withErrorLogging(
+  _getAllStages,
+  "stageService/getAllStages"
+);
+export const getAvailableStages = withErrorLogging(
+  _getAvailableStages,
+  "stageService/getAvailableStages"
+);
+export const getStagesChildren = withErrorLogging(
+  _getStagesChildren,
+  "stageService/getStagesChildren"
+);
+export const getTrashStages = withErrorLogging(
+  _getTrashStages,
+  "stageService/getTrashStages"
+);
+export const getAvailableAfterSalesStages = withErrorLogging(
+  _getAvailableAfterSalesStages,
+  "stageService/getAvailableAfterSalesStages"
+);
+export const getStageTimers = withErrorLogging(
+  _getStageTimers,
+  "stageService/getStageTimers"
+);
+export const updateStage = withErrorLogging(
+  _updateStage,
+  "stageService/updateStage"
+);
+export const createStage = withErrorLogging(
+  _createStage,
+  "stageService/createStage"
+);
+export const deleteStage = withErrorLogging(
+  _deleteStage,
+  "stageService/deleteStage"
+);
+export const getStagesTasks = withErrorLogging(
+  _getStagesTasks,
+  "stageService/getStagesTasks"
+);
+export const fetchTasksCountByStageName = withErrorLogging(
+  _fetchTasksCountByStageName,
+  "stageService/fetchTasksCountByStageName"
+);
+export const getStagesByBoardId = withErrorLogging(
+  _getStagesByBoardId,
+  "stageService/getStagesByBoardId"
+);

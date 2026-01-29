@@ -13,6 +13,15 @@ const _toggleCommentPin = async (id) => {
   return await axios.post(`/comments/${id}/toggle-pin`);
 };
 
-export const createComment = withErrorLogging(_createComment, "commentService/createComment");
-export const updateComments = withErrorLogging(_updateComments, "commentService/updateComments");
-export const toggleCommentPin = withErrorLogging(_toggleCommentPin, "commentService/toggleCommentPin");
+export const createComment = withErrorLogging(
+  _createComment,
+  "commentService/createComment"
+);
+export const updateComments = withErrorLogging(
+  _updateComments,
+  "commentService/updateComments"
+);
+export const toggleCommentPin = withErrorLogging(
+  _toggleCommentPin,
+  "commentService/toggleCommentPin"
+);

@@ -114,18 +114,60 @@ const _getActiveClients = async () => {
   );
 };
 
-export const getconversations = withErrorLogging(_getconversations, "whatsappService/getconversations");
-export const fetchConversationByDealId = withErrorLogging(_fetchConversationByDealId, "whatsappService/fetchConversationByDealId");
-export const createConversation = withErrorLogging(_createConversation, "whatsappService/createConversation");
-export const getMessageConv = withErrorLogging(_getMessageConv, "whatsappService/getMessageConv");
-export const sendMessage = withErrorLogging(_sendMessage, "whatsappService/sendMessage");
-export const sendInitMessage = withErrorLogging(_sendInitMessage, "whatsappService/sendInitMessage");
-export const sendGreetingMessage = withErrorLogging(_sendGreetingMessage, "whatsappService/sendGreetingMessage");
-export const getInitMessages = withErrorLogging(_getInitMessages, "whatsappService/getInitMessages");
-export const changePinStatus = withErrorLogging(_changePinStatus, "whatsappService/changePinStatus");
-export const getMoreConversations = withErrorLogging(_getMoreConversations, "whatsappService/getMoreConversations");
+export const getconversations = withErrorLogging(
+  _getconversations,
+  "whatsappService/getconversations"
+);
+export const fetchConversationByDealId = withErrorLogging(
+  _fetchConversationByDealId,
+  "whatsappService/fetchConversationByDealId"
+);
+export const createConversation = withErrorLogging(
+  _createConversation,
+  "whatsappService/createConversation"
+);
+export const getMessageConv = withErrorLogging(
+  _getMessageConv,
+  "whatsappService/getMessageConv"
+);
+export const sendMessage = withErrorLogging(
+  _sendMessage,
+  "whatsappService/sendMessage"
+);
+export const sendInitMessage = withErrorLogging(
+  _sendInitMessage,
+  "whatsappService/sendInitMessage"
+);
+export const sendGreetingMessage = withErrorLogging(
+  _sendGreetingMessage,
+  "whatsappService/sendGreetingMessage"
+);
+export const getInitMessages = withErrorLogging(
+  _getInitMessages,
+  "whatsappService/getInitMessages"
+);
+export const changePinStatus = withErrorLogging(
+  _changePinStatus,
+  "whatsappService/changePinStatus"
+);
+export const getMoreConversations = withErrorLogging(
+  _getMoreConversations,
+  "whatsappService/getMoreConversations"
+);
 export const webstart = withErrorLogging(_webstart, "whatsappService/webstart");
-export const webqrcode = withErrorLogging(_webqrcode, "whatsappService/webqrcode");
-export const checkstatus = withErrorLogging(_checkstatus, "whatsappService/checkstatus");
-export const weblogout = withErrorLogging(_weblogout, "whatsappService/weblogout");
-export const getActiveClients = withErrorLogging(_getActiveClients, "whatsappService/getActiveClients");
+export const webqrcode = withErrorLogging(
+  _webqrcode,
+  "whatsappService/webqrcode"
+);
+export const checkstatus = withErrorLogging(
+  _checkstatus,
+  "whatsappService/checkstatus"
+);
+export const weblogout = withErrorLogging(
+  _weblogout,
+  "whatsappService/weblogout"
+);
+export const getActiveClients = withErrorLogging(
+  _getActiveClients,
+  "whatsappService/getActiveClients"
+);

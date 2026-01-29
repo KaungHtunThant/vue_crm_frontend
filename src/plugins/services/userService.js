@@ -93,12 +93,36 @@ const _getUserLoginLogs = (userId) => {
 };
 
 export const getUser = withErrorLogging(_getUser, "userService/getUser");
-export const getUserById = withErrorLogging(_getUserById, "userService/getUserById");
-export const createUser = withErrorLogging(_createUser, "userService/createUser");
-export const updateUser = withErrorLogging(_updateUser, "userService/updateUser");
-export const deleteUser = withErrorLogging(_deleteUser, "userService/deleteUser");
-export const getAllUsers = withErrorLogging(_getAllUsers, "userService/getAllUsers");
-export const updateUserRating = withErrorLogging(_updateUserRating, "userService/updateUserRating");
-export const updateUserPackage = withErrorLogging(_updateUserPackage, "userService/updateUserPackage");
+export const getUserById = withErrorLogging(
+  _getUserById,
+  "userService/getUserById"
+);
+export const createUser = withErrorLogging(
+  _createUser,
+  "userService/createUser"
+);
+export const updateUser = withErrorLogging(
+  _updateUser,
+  "userService/updateUser"
+);
+export const deleteUser = withErrorLogging(
+  _deleteUser,
+  "userService/deleteUser"
+);
+export const getAllUsers = withErrorLogging(
+  _getAllUsers,
+  "userService/getAllUsers"
+);
+export const updateUserRating = withErrorLogging(
+  _updateUserRating,
+  "userService/updateUserRating"
+);
+export const updateUserPackage = withErrorLogging(
+  _updateUserPackage,
+  "userService/updateUserPackage"
+);
 export const getRoles = withErrorLogging(_getRoles, "userService/getRoles");
-export const getUserLoginLogs = withErrorLogging(_getUserLoginLogs, "userService/getUserLoginLogs");
+export const getUserLoginLogs = withErrorLogging(
+  _getUserLoginLogs,
+  "userService/getUserLoginLogs"
+);

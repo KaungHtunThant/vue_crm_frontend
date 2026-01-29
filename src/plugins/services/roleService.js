@@ -27,7 +27,19 @@ const _deleteRole = async (id) => {
 
 export const getIndex = withErrorLogging(_getIndex, "roleService/getIndex");
 export const getAll = withErrorLogging(_getAll, "roleService/getAll");
-export const getRoleById = withErrorLogging(_getRoleById, "roleService/getRoleById");
-export const createRole = withErrorLogging(_createRole, "roleService/createRole");
-export const updateRole = withErrorLogging(_updateRole, "roleService/updateRole");
-export const deleteRole = withErrorLogging(_deleteRole, "roleService/deleteRole");
+export const getRoleById = withErrorLogging(
+  _getRoleById,
+  "roleService/getRoleById"
+);
+export const createRole = withErrorLogging(
+  _createRole,
+  "roleService/createRole"
+);
+export const updateRole = withErrorLogging(
+  _updateRole,
+  "roleService/updateRole"
+);
+export const deleteRole = withErrorLogging(
+  _deleteRole,
+  "roleService/deleteRole"
+);

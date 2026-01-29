@@ -135,22 +135,76 @@ const _getRecontactCounts = async () => {
 };
 
 export const getDeals = withErrorLogging(_getDeals, "dealService/getDeals");
-export const fetchAdditionalDealsByStageId = withErrorLogging(_fetchAdditionalDealsByStageId, "dealService/fetchAdditionalDealsByStageId");
+export const fetchAdditionalDealsByStageId = withErrorLogging(
+  _fetchAdditionalDealsByStageId,
+  "dealService/fetchAdditionalDealsByStageId"
+);
 export const showDeal = withErrorLogging(_showDeal, "dealService/showDeal");
-export const createDeal = withErrorLogging(_createDeal, "dealService/createDeal");
-export const bulkUpdateDeals = withErrorLogging(_bulkUpdateDeals, "dealService/bulkUpdateDeals");
-export const bulkDeleteDeals = withErrorLogging(_bulkDeleteDeals, "dealService/bulkDeleteDeals");
-export const deleteDeals = withErrorLogging(_deleteDeals, "dealService/deleteDeals");
-export const updateDealStage = withErrorLogging(_updateDealStage, "dealService/updateDealStage");
-export const addTagToDeal = withErrorLogging(_addTagToDeal, "dealService/addTagToDeal");
-export const updateDeal = withErrorLogging(_updateDeal, "dealService/updateDeal");
-export const importDeals = withErrorLogging(_importDeals, "dealService/importDeals");
-export const addViewCount = withErrorLogging(_addViewCount, "dealService/addViewCount");
-export const toggleHighlight = withErrorLogging(_toggleHighlight, "dealService/toggleHighlight");
-export const pullDealsFromOldSystem = withErrorLogging(_pullDealsFromOldSystem, "dealService/pullDealsFromOldSystem");
-export const mergeDeals = withErrorLogging(_mergeDeals, "dealService/mergeDeals");
-export const getAfterSalesKanban = withErrorLogging(_getAfterSalesKanban, "dealService/getAfterSalesKanban");
-export const moveToSalesEndStage = withErrorLogging(_moveToSalesEndStage, "dealService/moveToSalesEndStage");
-export const updateHospitalPackage = withErrorLogging(_updateHospitalPackage, "dealService/updateHospitalPackage");
-export const distributeInactiveDeals = withErrorLogging(_distributeInactiveDeals, "dealService/distributeInactiveDeals");
-export const getRecontactCounts = withErrorLogging(_getRecontactCounts, "dealService/getRecontactCounts");
+export const createDeal = withErrorLogging(
+  _createDeal,
+  "dealService/createDeal"
+);
+export const bulkUpdateDeals = withErrorLogging(
+  _bulkUpdateDeals,
+  "dealService/bulkUpdateDeals"
+);
+export const bulkDeleteDeals = withErrorLogging(
+  _bulkDeleteDeals,
+  "dealService/bulkDeleteDeals"
+);
+export const deleteDeals = withErrorLogging(
+  _deleteDeals,
+  "dealService/deleteDeals"
+);
+export const updateDealStage = withErrorLogging(
+  _updateDealStage,
+  "dealService/updateDealStage"
+);
+export const addTagToDeal = withErrorLogging(
+  _addTagToDeal,
+  "dealService/addTagToDeal"
+);
+export const updateDeal = withErrorLogging(
+  _updateDeal,
+  "dealService/updateDeal"
+);
+export const importDeals = withErrorLogging(
+  _importDeals,
+  "dealService/importDeals"
+);
+export const addViewCount = withErrorLogging(
+  _addViewCount,
+  "dealService/addViewCount"
+);
+export const toggleHighlight = withErrorLogging(
+  _toggleHighlight,
+  "dealService/toggleHighlight"
+);
+export const pullDealsFromOldSystem = withErrorLogging(
+  _pullDealsFromOldSystem,
+  "dealService/pullDealsFromOldSystem"
+);
+export const mergeDeals = withErrorLogging(
+  _mergeDeals,
+  "dealService/mergeDeals"
+);
+export const getAfterSalesKanban = withErrorLogging(
+  _getAfterSalesKanban,
+  "dealService/getAfterSalesKanban"
+);
+export const moveToSalesEndStage = withErrorLogging(
+  _moveToSalesEndStage,
+  "dealService/moveToSalesEndStage"
+);
+export const updateHospitalPackage = withErrorLogging(
+  _updateHospitalPackage,
+  "dealService/updateHospitalPackage"
+);
+export const distributeInactiveDeals = withErrorLogging(
+  _distributeInactiveDeals,
+  "dealService/distributeInactiveDeals"
+);
+export const getRecontactCounts = withErrorLogging(
+  _getRecontactCounts,
+  "dealService/getRecontactCounts"
+);

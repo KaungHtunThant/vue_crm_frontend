@@ -2,7 +2,7 @@ import {
   saveErrorLog,
   cleanupOldErrorLogs,
   withErrorLogging,
-  getErrorLogs
+  getErrorLogs,
 } from "@/utils/errorLogger";
 
 // Mock localStorage
@@ -28,19 +28,19 @@ const localStorageMock = (() => {
       return keys[index] || null;
     },
     // Add a method to get all keys for testing
-    _getStore: () => store
+    _getStore: () => store,
   };
 })();
 
 // Override Object.keys for localStorage to make it work with cleanupOldErrorLogs
-Object.defineProperty(window, 'localStorage', {
+Object.defineProperty(window, "localStorage", {
   value: localStorageMock,
-  writable: true
+  writable: true,
 });
 
 // Patch Object.keys to work with our mock
 const originalObjectKeys = Object.keys;
-Object.keys = function(obj) {
+Object.keys = function (obj) {
   if (obj === localStorage) {
     return originalObjectKeys(localStorageMock._getStore());
   }
@@ -52,7 +52,7 @@ describe("errorLogger", () => {
     // Clear localStorage before each test
     localStorage.clear();
     // Mock console.error to avoid cluttering test output
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -69,8 +69,8 @@ describe("errorLogger", () => {
 
       const today = new Date();
       const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
       const dateStr = `${year}-${month}-${day}`;
       const key = `error_logs_${dateStr}`;
 
@@ -88,8 +88,8 @@ describe("errorLogger", () => {
 
       const today = new Date();
       const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
       const dateStr = `${year}-${month}-${day}`;
       const key = `error_logs_${dateStr}`;
 
@@ -103,20 +103,30 @@ describe("errorLogger", () => {
       // Manually set dates to ensure clear difference
       const oldKey = "error_logs_2026-01-20"; // 9 days ago from 2026-01-29
       const recentKey = "error_logs_2026-01-29"; // today
-      
-      localStorage.setItem(oldKey, JSON.stringify([{
-        timestamp: "2026-01-20T00:00:00.000Z",
-        path: "old/service",
-        message: "Old error",
-        code: 500
-      }]));
 
-      localStorage.setItem(recentKey, JSON.stringify([{
-        timestamp: "2026-01-29T00:00:00.000Z",
-        path: "new/service",
-        message: "New error",
-        code: 404
-      }]));
+      localStorage.setItem(
+        oldKey,
+        JSON.stringify([
+          {
+            timestamp: "2026-01-20T00:00:00.000Z",
+            path: "old/service",
+            message: "Old error",
+            code: 500,
+          },
+        ])
+      );
+
+      localStorage.setItem(
+        recentKey,
+        JSON.stringify([
+          {
+            timestamp: "2026-01-29T00:00:00.000Z",
+            path: "new/service",
+            message: "New error",
+            code: 404,
+          },
+        ])
+      );
 
       cleanupOldErrorLogs();
 
@@ -146,12 +156,14 @@ describe("errorLogger", () => {
     it("should retrieve error logs for a specific date", () => {
       const specificDate = "2024-01-15";
       const key = `error_logs_${specificDate}`;
-      const testLog = [{
-        timestamp: "2024-01-15T10:00:00.000Z",
-        path: "test/service",
-        message: "Test error",
-        code: 404
-      }];
+      const testLog = [
+        {
+          timestamp: "2024-01-15T10:00:00.000Z",
+          path: "test/service",
+          message: "Test error",
+          code: 404,
+        },
+      ];
       localStorage.setItem(key, JSON.stringify(testLog));
 
       const logs = getErrorLogs(specificDate);
@@ -193,7 +205,7 @@ describe("errorLogger", () => {
       const result = await wrappedFunction();
 
       expect(result).toEqual({ data: "success" });
-      
+
       const logs = getErrorLogs();
       expect(logs).toHaveLength(0);
     });
@@ -218,7 +230,7 @@ describe("errorLogger", () => {
     it("should pass arguments to the wrapped function", async () => {
       const servicePath = "testService/withArgs";
       let receivedArgs;
-      
+
       const testFunction = async (...args) => {
         receivedArgs = args;
         return { success: true };

@@ -9,5 +9,11 @@ const _getAllRatings = async () => {
   return await axios.get("/ratings/all");
 };
 
-export const getRatings = withErrorLogging(_getRatings, "ratingService/getRatings");
-export const getAllRatings = withErrorLogging(_getAllRatings, "ratingService/getAllRatings");
+export const getRatings = withErrorLogging(
+  _getRatings,
+  "ratingService/getRatings"
+);
+export const getAllRatings = withErrorLogging(
+  _getAllRatings,
+  "ratingService/getAllRatings"
+);

@@ -27,8 +27,23 @@ const _deleteBroadcast = async (id) => {
   return await axios.delete(`/settings/broadcasts/${id}`);
 };
 
-export const getBroadcasts = withErrorLogging(_getBroadcasts, "broadcastService/getBroadcasts");
-export const createBroadcast = withErrorLogging(_createBroadcast, "broadcastService/createBroadcast");
-export const updateBroadcast = withErrorLogging(_updateBroadcast, "broadcastService/updateBroadcast");
-export const updateBroadcastPosition = withErrorLogging(_updateBroadcastPosition, "broadcastService/updateBroadcastPosition");
-export const deleteBroadcast = withErrorLogging(_deleteBroadcast, "broadcastService/deleteBroadcast");
+export const getBroadcasts = withErrorLogging(
+  _getBroadcasts,
+  "broadcastService/getBroadcasts"
+);
+export const createBroadcast = withErrorLogging(
+  _createBroadcast,
+  "broadcastService/createBroadcast"
+);
+export const updateBroadcast = withErrorLogging(
+  _updateBroadcast,
+  "broadcastService/updateBroadcast"
+);
+export const updateBroadcastPosition = withErrorLogging(
+  _updateBroadcastPosition,
+  "broadcastService/updateBroadcastPosition"
+);
+export const deleteBroadcast = withErrorLogging(
+  _deleteBroadcast,
+  "broadcastService/deleteBroadcast"
+);
