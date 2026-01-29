@@ -1,14 +1,20 @@
 import axios from "@/plugins/axios";
 import Cookies from "js-cookie";
+import { withErrorLogging } from "@/plugins/errorLogger";
 
-export const getStages = () => axios.get("/stages");
-export const getAllStages = () => {
+const getStagesFn = () => axios.get("/stages");
+export const getStages = withErrorLogging(getStagesFn, "stageService.getStages");
+
+const getAllStagesFn = () => {
   return axios.get("/stages/all");
 };
-export const getAvailableStages = (stage = "deals") =>
-  axios.get("/stages/" + stage);
+export const getAllStages = withErrorLogging(getAllStagesFn, "stageService.getAllStages");
 
-export const getStagesChildren = (parentId, limit, offset, filters = {}) =>
+const getAvailableStagesFn = (stage = "deals") =>
+  axios.get("/stages/" + stage);
+export const getAvailableStages = withErrorLogging(getAvailableStagesFn, "stageService.getAvailableStages");
+
+const getStagesChildrenFn = (parentId, limit, offset, filters = {}) =>
   axios.get(`/kanban/deals/${parentId}/children`, {
     params: {
       parentId: parentId,
@@ -17,28 +23,41 @@ export const getStagesChildren = (parentId, limit, offset, filters = {}) =>
       ...filters,
     },
   });
+export const getStagesChildren = withErrorLogging(getStagesChildrenFn, "stageService.getStagesChildren");
 
-export const getTrashStages = () => axios.get("/stages/trash");
-export const getAvailableAfterSalesStages = () =>
+const getTrashStagesFn = () => axios.get("/stages/trash");
+export const getTrashStages = withErrorLogging(getTrashStagesFn, "stageService.getTrashStages");
+
+const getAvailableAfterSalesStagesFn = () =>
   axios.get("/stages/after-sales");
+export const getAvailableAfterSalesStages = withErrorLogging(getAvailableAfterSalesStagesFn, "stageService.getAvailableAfterSalesStages");
 
-export const getStageTimers = async () => {
+const getStageTimersFn = async () => {
   return await axios.get("/settings/stages/timers");
 };
-export const updateStage = async (id, params) => {
+export const getStageTimers = withErrorLogging(getStageTimersFn, "stageService.getStageTimers");
+
+const updateStageFn = async (id, params) => {
   return await axios.patch(`/stages/${id}`, params);
 };
-export const createStage = async (params) => {
+export const updateStage = withErrorLogging(updateStageFn, "stageService.updateStage");
+
+const createStageFn = async (params) => {
   return await axios.post("/stages", params);
 };
-export const deleteStage = async (id) => {
+export const createStage = withErrorLogging(createStageFn, "stageService.createStage");
+
+const deleteStageFn = async (id) => {
   return await axios.delete(`/stages/${id}`);
 };
-export const getStagesTasks = async () => {
+export const deleteStage = withErrorLogging(deleteStageFn, "stageService.deleteStage");
+
+const getStagesTasksFn = async () => {
   return await axios.get("/stages/tasks");
 };
+export const getStagesTasks = withErrorLogging(getStagesTasksFn, "stageService.getStagesTasks");
 
-export const fetchTasksCountByStageName = (stageName) => {
+const fetchTasksCountByStageNameFn = (stageName) => {
   const token = Cookies.get("authToken");
   return axios.get(`/tasks/count/${stageName}`, {
     headers: {
@@ -46,7 +65,9 @@ export const fetchTasksCountByStageName = (stageName) => {
     },
   });
 };
+export const fetchTasksCountByStageName = withErrorLogging(fetchTasksCountByStageNameFn, "stageService.fetchTasksCountByStageName");
 
-export const getStagesByBoardId = (board_id) => {
+const getStagesByBoardIdFn = (board_id) => {
   return axios.get(`/stages/board/${board_id}`);
 };
+export const getStagesByBoardId = withErrorLogging(getStagesByBoardIdFn, "stageService.getStagesByBoardId");

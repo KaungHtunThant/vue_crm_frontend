@@ -1,8 +1,9 @@
 import axios from "@/plugins/axios";
 import Cookies from "js-cookie";
+import { withErrorLogging } from "@/plugins/errorLogger";
 
 // get All users
-export const getUser = async (params = {}) => {
+const getUserFn = async (params = {}) => {
   const token = Cookies.get("authToken");
   return axios.get("/users", {
     params: {
@@ -17,9 +18,10 @@ export const getUser = async (params = {}) => {
     },
   });
 };
+export const getUser = withErrorLogging(getUserFn, "userService.getUser");
 
 // Get User by ID
-export const getUserById = (userId) => {
+const getUserByIdFn = (userId) => {
   const token = Cookies.get("authToken");
   return axios.get(`/users/${userId}`, {
     headers: {
@@ -27,18 +29,20 @@ export const getUserById = (userId) => {
     },
   });
 };
+export const getUserById = withErrorLogging(getUserByIdFn, "userService.getUserById");
 
 // Create New User //
-export const createUser = (formData) => {
+const createUserFn = (formData) => {
   return axios.post("/users", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
 };
+export const createUser = withErrorLogging(createUserFn, "userService.createUser");
 
 // Update User
-export const updateUser = (userId, userData) => {
+const updateUserFn = (userId, userData) => {
   const token = Cookies.get("authToken");
   return axios.post(
     `/users/${userId}`,
@@ -54,9 +58,10 @@ export const updateUser = (userId, userData) => {
     }
   );
 };
+export const updateUser = withErrorLogging(updateUserFn, "userService.updateUser");
 
 // Delete User
-export const deleteUser = (userId) => {
+const deleteUserFn = (userId) => {
   const token = Cookies.get("authToken");
   return axios.delete(`/users/${userId}`, {
     headers: {
@@ -64,24 +69,30 @@ export const deleteUser = (userId) => {
     },
   });
 };
+export const deleteUser = withErrorLogging(deleteUserFn, "userService.deleteUser");
 
-export const getAllUsers = async () => {
+const getAllUsersFn = async () => {
   return await axios.get("/users/all");
 };
+export const getAllUsers = withErrorLogging(getAllUsersFn, "userService.getAllUsers");
 
-export const updateUserRating = async (userId, ratingId) => {
+const updateUserRatingFn = async (userId, ratingId) => {
   return await axios.patch(`/users/${userId}/rating`, { rating_id: ratingId });
 };
-export const updateUserPackage = async (user_id, package_id) => {
+export const updateUserRating = withErrorLogging(updateUserRatingFn, "userService.updateUserRating");
+
+const updateUserPackageFn = async (user_id, package_id) => {
   return await axios.patch(`/users/${user_id}/package`, {
     package_id: package_id,
   });
 };
+export const updateUserPackage = withErrorLogging(updateUserPackageFn, "userService.updateUserPackage");
 
 // Get All Roles
-export const getRoles = () => axios.get("/roles");
+const getRolesFn = () => axios.get("/roles");
+export const getRoles = withErrorLogging(getRolesFn, "userService.getRoles");
 
-export const getUserLoginLogs = (userId) => {
+const getUserLoginLogsFn = (userId) => {
   const token = Cookies.get("authToken");
   return axios.get(`/logs/login-logs/${userId}`, {
     headers: {
@@ -89,3 +100,4 @@ export const getUserLoginLogs = (userId) => {
     },
   });
 };
+export const getUserLoginLogs = withErrorLogging(getUserLoginLogsFn, "userService.getUserLoginLogs");

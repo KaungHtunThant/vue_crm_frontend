@@ -1,9 +1,13 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/plugins/errorLogger";
 
-export const generateOTP = () => axios.get("/settings/otp/generate");
+const generateOTPFn = () => axios.get("/settings/otp/generate");
+export const generateOTP = withErrorLogging(generateOTPFn, "settingService.generateOTP");
 
-export const getServerVersion = () => axios.get("/settings/version");
+const getServerVersionFn = () => axios.get("/settings/version");
+export const getServerVersion = withErrorLogging(getServerVersionFn, "settingService.getServerVersion");
 
-export const getCustomTask = () => {
+const getCustomTaskFn = () => {
   return axios.get("/settings/customTask");
 };
+export const getCustomTask = withErrorLogging(getCustomTaskFn, "settingService.getCustomTask");

@@ -1,9 +1,12 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/plugins/errorLogger";
 
-export const getRatings = async () => {
+const getRatingsFn = async () => {
   return await axios.get("/ratings");
 };
+export const getRatings = withErrorLogging(getRatingsFn, "ratingService.getRatings");
 
-export const getAllRatings = async () => {
+const getAllRatingsFn = async () => {
   return await axios.get("/ratings/all");
 };
+export const getAllRatings = withErrorLogging(getAllRatingsFn, "ratingService.getAllRatings");

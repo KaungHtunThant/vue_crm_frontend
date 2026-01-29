@@ -1,5 +1,7 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/plugins/errorLogger";
 
-export const getLogsByDealId = async (dealId) => {
+const getLogsByDealIdFn = async (dealId) => {
   return await axios.get(`/logs/deal/${dealId}`);
 };
+export const getLogsByDealId = withErrorLogging(getLogsByDealIdFn, "logService.getLogsByDealId");

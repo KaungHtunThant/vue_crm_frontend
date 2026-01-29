@@ -1,18 +1,22 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/plugins/errorLogger";
 
-export const createTask = (formData) => {
+const createTaskFn = (formData) => {
   return axios.post("/tasks", formData);
 };
+export const createTask = withErrorLogging(createTaskFn, "taskService.createTask");
 
-export const updateTask = async (id, formData) => {
+const updateTaskFn = async (id, formData) => {
   return await axios.patch(`/tasks/${id}`, formData);
 };
+export const updateTask = withErrorLogging(updateTaskFn, "taskService.updateTask");
 
-export const getTasksByDealId = async (dealId) => {
+const getTasksByDealIdFn = async (dealId) => {
   return await axios.get(`/tasks/${dealId}`);
 };
+export const getTasksByDealId = withErrorLogging(getTasksByDealIdFn, "taskService.getTasksByDealId");
 
-export const getTasksByDate = async (start_date, end_date) => {
+const getTasksByDateFn = async (start_date, end_date) => {
   return await axios.get("/tasks/calendar", {
     params: {
       start_date: start_date,
@@ -20,13 +24,16 @@ export const getTasksByDate = async (start_date, end_date) => {
     },
   });
 };
+export const getTasksByDate = withErrorLogging(getTasksByDateFn, "taskService.getTasksByDate");
 
-export const bulkDeleteTasks = async (ids) => {
+const bulkDeleteTasksFn = async (ids) => {
   return await axios.post("/tasks/bulk-delete", {
     ids: ids,
   });
 };
+export const bulkDeleteTasks = withErrorLogging(bulkDeleteTasksFn, "taskService.bulkDeleteTasks");
 
-export const setTasksProcessing = async (id) => {
+const setTasksProcessingFn = async (id) => {
   return await axios.post(`/tasks/set-processing/${id}`);
 };
+export const setTasksProcessing = withErrorLogging(setTasksProcessingFn, "taskService.setTasksProcessing");

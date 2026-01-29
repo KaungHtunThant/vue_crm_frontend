@@ -1,2 +1,5 @@
 import axios from "@/plugins/axios";
-export const getTaskEvents = () => axios.get("/taskevents");
+import { withErrorLogging } from "@/plugins/errorLogger";
+
+const getTaskEventsFn = () => axios.get("/taskevents");
+export const getTaskEvents = withErrorLogging(getTaskEventsFn, "taskEventService.getTaskEvents");

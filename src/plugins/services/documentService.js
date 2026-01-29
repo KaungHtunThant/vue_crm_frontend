@@ -1,10 +1,12 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/plugins/errorLogger";
 
-export const getDocuments = async () => {
+const getDocumentsFn = async () => {
   return await axios.get("/documents");
 };
+export const getDocuments = withErrorLogging(getDocumentsFn, "documentService.getDocuments");
 
-export const createDocuments = async (formData) => {
+const createDocumentsFn = async (formData) => {
   try {
     const response = await axios.post("/documents", formData);
     return response;
@@ -13,27 +15,34 @@ export const createDocuments = async (formData) => {
     throw error;
   }
 };
+export const createDocuments = withErrorLogging(createDocumentsFn, "documentService.createDocuments");
 
-export const updateDocuments = (documentsId, formData) =>
+const updateDocumentsFn = (documentsId, formData) =>
   axios.patch(`/documents/${documentsId}`, formData);
+export const updateDocuments = withErrorLogging(updateDocumentsFn, "documentService.updateDocuments");
 
-export const deleteDocuments = (documentsId) =>
+const deleteDocumentsFn = (documentsId) =>
   axios.delete(`/documents/${documentsId}`);
+export const deleteDocuments = withErrorLogging(deleteDocumentsFn, "documentService.deleteDocuments");
 
-export const updateFiles = (filesId, formData) =>
+const updateFilesFn = (filesId, formData) =>
   axios.put(`/documents/files/${filesId}`, formData);
+export const updateFiles = withErrorLogging(updateFilesFn, "documentService.updateFiles");
 
-export const deleteFiles = (filesId) =>
+const deleteFilesFn = (filesId) =>
   axios.delete(`/documents/files/${filesId}`);
+export const deleteFiles = withErrorLogging(deleteFilesFn, "documentService.deleteFiles");
 
-export const showDocuments = async (folderName) => {
+const showDocumentsFn = async (folderName) => {
   return await axios.get(`/documents/${folderName}`);
 };
+export const showDocuments = withErrorLogging(showDocumentsFn, "documentService.showDocuments");
 
-export const uploadFiles = async (formData) => {
+const uploadFilesFn = async (formData) => {
   return await axios.post("/documents", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
 };
+export const uploadFiles = withErrorLogging(uploadFilesFn, "documentService.uploadFiles");

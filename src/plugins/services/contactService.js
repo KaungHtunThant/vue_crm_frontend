@@ -1,7 +1,8 @@
 import axios from "@/plugins/axios";
 import Cookies from "js-cookie";
+import { withErrorLogging } from "@/plugins/errorLogger";
 
-export const getContacts = async (params = {}) => {
+const getContactsFn = async (params = {}) => {
   const token = Cookies.get("authToken");
   return axios.get("/contacts", {
     params: {
@@ -16,17 +17,22 @@ export const getContacts = async (params = {}) => {
     },
   });
 };
+export const getContacts = withErrorLogging(getContactsFn, "contactService.getContacts");
 
-export const createContact = (formData) => {
+const createContactFn = (formData) => {
   return axios.post("/contacts", formData);
 };
+export const createContact = withErrorLogging(createContactFn, "contactService.createContact");
 
-export const updateContact = (contactId, formData) =>
+const updateContactFn = (contactId, formData) =>
   axios.put(`/contacts/${contactId}`, formData);
+export const updateContact = withErrorLogging(updateContactFn, "contactService.updateContact");
 
-export const deleteContact = (contactId) =>
+const deleteContactFn = (contactId) =>
   axios.delete(`/contacts/${contactId}`);
+export const deleteContact = withErrorLogging(deleteContactFn, "contactService.deleteContact");
 
-export const showContact = async (id) => {
+const showContactFn = async (id) => {
   return await axios.get(`/contacts/${id}`);
 };
+export const showContact = withErrorLogging(showContactFn, "contactService.showContact");

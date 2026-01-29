@@ -1,25 +1,32 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/plugins/errorLogger";
 
-export const index = () => {
+const indexFn = () => {
   return axios.get("/hospitals");
 };
+export const index = withErrorLogging(indexFn, "hospitalService.index");
 
-export const all = () => {
+const allFn = () => {
   return axios.get("/hospitals/all");
 };
+export const all = withErrorLogging(allFn, "hospitalService.all");
 
-export const show = (hospitalId) => {
+const showFn = (hospitalId) => {
   return axios.get(`/hospitals/${hospitalId}`);
 };
+export const show = withErrorLogging(showFn, "hospitalService.show");
 
-export const create = (formData) => {
+const createFn = (formData) => {
   return axios.post("/hospitals", formData);
 };
+export const create = withErrorLogging(createFn, "hospitalService.create");
 
-export const update = (hospitalId, formData) => {
+const updateFn = (hospitalId, formData) => {
   return axios.put(`/hospitals/${hospitalId}`, formData);
 };
+export const update = withErrorLogging(updateFn, "hospitalService.update");
 
-export const destroy = (hospitalId) => {
+const destroyFn = (hospitalId) => {
   return axios.delete(`/hospitals/${hospitalId}`);
 };
+export const destroy = withErrorLogging(destroyFn, "hospitalService.destroy");

@@ -1,8 +1,9 @@
 import axios from "@/plugins/axios";
 import Cookies from "js-cookie";
+import { withErrorLogging } from "@/plugins/errorLogger";
 
 // Get All Deals
-export const getDeals = async (params = {}) => {
+const getDealsFn = async (params = {}) => {
   const token = Cookies.get("authToken");
 
   const { filters, ...restParams } = params;
@@ -21,8 +22,9 @@ export const getDeals = async (params = {}) => {
     },
   });
 };
+export const getDeals = withErrorLogging(getDealsFn, "dealService.getDeals");
 
-export const fetchAdditionalDealsByStageId = (
+const fetchAdditionalDealsByStageIdFn = (
   stageId,
   limit,
   offset,
@@ -37,43 +39,51 @@ export const fetchAdditionalDealsByStageId = (
     },
   });
 };
+export const fetchAdditionalDealsByStageId = withErrorLogging(fetchAdditionalDealsByStageIdFn, "dealService.fetchAdditionalDealsByStageId");
 
 // Show Deal id //
-export const showDeal = (dealId) => axios.get(`/deals/${dealId}`);
+const showDealFn = (dealId) => axios.get(`/deals/${dealId}`);
+export const showDeal = withErrorLogging(showDealFn, "dealService.showDeal");
 
-export const createDeal = (formData) => {
+const createDealFn = (formData) => {
   return axios.post("/deals", formData);
 };
+export const createDeal = withErrorLogging(createDealFn, "dealService.createDeal");
 
-export const bulkUpdateDeals = async (ids, key, value) => {
+const bulkUpdateDealsFn = async (ids, key, value) => {
   return await axios.patch("/deals/bulk-update", {
     ids,
     key: String(key),
     value: value,
   });
 };
+export const bulkUpdateDeals = withErrorLogging(bulkUpdateDealsFn, "dealService.bulkUpdateDeals");
 
-export const bulkDeleteDeals = async (ids) => {
+const bulkDeleteDealsFn = async (ids) => {
   return await axios.delete("/deals/bulk-delete", {
     data: { ids },
   });
 };
+export const bulkDeleteDeals = withErrorLogging(bulkDeleteDealsFn, "dealService.bulkDeleteDeals");
 
-export const deleteDeals = (ids) => axios.delete(`/deals/${ids}`);
+const deleteDealsFn = (ids) => axios.delete(`/deals/${ids}`);
+export const deleteDeals = withErrorLogging(deleteDealsFn, "dealService.deleteDeals");
 
-export const updateDealStage = (dealId, stageId) => {
+const updateDealStageFn = (dealId, stageId) => {
   return axios.patch(`/deals/${dealId}`, {
     stage_id: stageId,
   });
 };
+export const updateDealStage = withErrorLogging(updateDealStageFn, "dealService.updateDealStage");
 
-export const addTagToDeal = (dealId, tags) => {
+const addTagToDealFn = (dealId, tags) => {
   return axios.post(`/deals/${dealId}/add-tags`, {
     tags: tags,
   });
 };
+export const addTagToDeal = withErrorLogging(addTagToDealFn, "dealService.addTagToDeal");
 
-export const updateDeal = (dealId, formData) => {
+const updateDealFn = (dealId, formData) => {
   const data = {
     ...formData,
     _method: "PUT",
@@ -84,48 +94,62 @@ export const updateDeal = (dealId, formData) => {
     },
   });
 };
+export const updateDeal = withErrorLogging(updateDealFn, "dealService.updateDeal");
 
-export const importDeals = (formData) => {
+const importDealsFn = (formData) => {
   return axios.post("/deals/import", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
 };
+export const importDeals = withErrorLogging(importDealsFn, "dealService.importDeals");
 
-export const addViewCount = (dealId) => {
+const addViewCountFn = (dealId) => {
   return axios.post(`/deals/add-view-count/${dealId}`);
 };
+export const addViewCount = withErrorLogging(addViewCountFn, "dealService.addViewCount");
 
-export const toggleHighlight = async (dealId) => {
+const toggleHighlightFn = async (dealId) => {
   return await axios.post(`/deals/highlight/${dealId}`);
 };
+export const toggleHighlight = withErrorLogging(toggleHighlightFn, "dealService.toggleHighlight");
 
-export const pullDealsFromOldSystem = async () => {
+const pullDealsFromOldSystemFn = async () => {
   return await axios.get("/deals/pull-random");
 };
+export const pullDealsFromOldSystem = withErrorLogging(pullDealsFromOldSystemFn, "dealService.pullDealsFromOldSystem");
 
-export const mergeDeals = async (ids) => {
+const mergeDealsFn = async (ids) => {
   return await axios.post("/deals/merge", {
     ids: ids,
   });
 };
+export const mergeDeals = withErrorLogging(mergeDealsFn, "dealService.mergeDeals");
 
-export const getAfterSalesKanban = async (params = {}) => {
+const getAfterSalesKanbanFn = async (params = {}) => {
   return axios.get("/kanban/after-sales", {
     params,
   });
 };
+export const getAfterSalesKanban = withErrorLogging(getAfterSalesKanbanFn, "dealService.getAfterSalesKanban");
 
-export const moveToSalesEndStage = async (deal_id) => {
+const moveToSalesEndStageFn = async (deal_id) => {
   return await axios.patch(`/deals/sales-end-stage/${deal_id}`);
 };
-export const updateHospitalPackage = async (data) => {
+export const moveToSalesEndStage = withErrorLogging(moveToSalesEndStageFn, "dealService.moveToSalesEndStage");
+
+const updateHospitalPackageFn = async (data) => {
   return await axios.put(`/deals/updateHospitalPackage`, data);
 };
-export const distributeInactiveDeals = async () => {
+export const updateHospitalPackage = withErrorLogging(updateHospitalPackageFn, "dealService.updateHospitalPackage");
+
+const distributeInactiveDealsFn = async () => {
   return await axios.post(`/deals/force-roll`);
 };
-export const getRecontactCounts = async () => {
+export const distributeInactiveDeals = withErrorLogging(distributeInactiveDealsFn, "dealService.distributeInactiveDeals");
+
+const getRecontactCountsFn = async () => {
   return await axios.get(`/deals/recontact-counts`);
 };
+export const getRecontactCounts = withErrorLogging(getRecontactCountsFn, "dealService.getRecontactCounts");

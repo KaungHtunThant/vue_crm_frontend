@@ -1,9 +1,12 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/plugins/errorLogger";
 
-export const getAllBoards = () => {
+const getAllBoardsFn = () => {
   return axios.get("/boards/all");
 };
+export const getAllBoards = withErrorLogging(getAllBoardsFn, "boardService.getAllBoards");
 
-export const getBoardIndex = () => {
+const getBoardIndexFn = () => {
   return axios.get("/boards");
 };
+export const getBoardIndex = withErrorLogging(getBoardIndexFn, "boardService.getBoardIndex");

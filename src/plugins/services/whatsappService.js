@@ -1,31 +1,38 @@
 import axios from "@/plugins/axios";
 import expressApi from "@/plugins/expressApi";
 import Cookies from "js-cookie";
+import { withErrorLogging } from "@/plugins/errorLogger";
 
-export const getUserId = () => {
+const getUserIdFn = () => {
   return Cookies.get("user_id") || "default_user";
 };
-export const getconversations = (search, rating, stage) =>
+export const getUserId = withErrorLogging(getUserIdFn, "whatsappService.getUserId");
+
+const getconversationsFn = (search, rating, stage) =>
   axios.get("/whatsapp", {
     params: { search: search, filters: { rating: rating, stage: stage } },
   });
+export const getconversations = withErrorLogging(getconversationsFn, "whatsappService.getconversations");
 
-export const fetchConversationByDealId = (id) =>
+const fetchConversationByDealIdFn = (id) =>
   axios.get(`/whatsapp/conversation/${id}`);
+export const fetchConversationByDealId = withErrorLogging(fetchConversationByDealIdFn, "whatsappService.fetchConversationByDealId");
 
-export const createConversation = (deal_id) => {
+const createConversationFn = (deal_id) => {
   return axios.post("/whatsapp/conversation", {
     deal_id: deal_id,
   });
 };
+export const createConversation = withErrorLogging(createConversationFn, "whatsappService.createConversation");
 
-export const getMessageConv = async (id, params) => {
+const getMessageConvFn = async (id, params) => {
   return await axios.get(`/whatsapp/${id}`, {
     params: params,
   });
 };
+export const getMessageConv = withErrorLogging(getMessageConvFn, "whatsappService.getMessageConv");
 
-export const sendMessage = (messageData) => {
+const sendMessageFn = (messageData) => {
   const formData = new FormData();
   if (messageData.text_body) {
     formData.append("text_body", messageData.text_body);
@@ -43,31 +50,36 @@ export const sendMessage = (messageData) => {
     },
   });
 };
+export const sendMessage = withErrorLogging(sendMessageFn, "whatsappService.sendMessage");
 
-export const sendInitMessage = (deal_id, conversation_id, init_message_id) => {
+const sendInitMessageFn = (deal_id, conversation_id, init_message_id) => {
   return axios.post("/whatsapp/send-init", {
     deal_id: deal_id,
     conversation_id: conversation_id,
     init_message_id: init_message_id,
   });
 };
+export const sendInitMessage = withErrorLogging(sendInitMessageFn, "whatsappService.sendInitMessage");
 
-export const sendGreetingMessage = (deal_id, conversation_id) => {
+const sendGreetingMessageFn = (deal_id, conversation_id) => {
   return axios.post("/whatsapp/send-greeting", {
     deal_id: deal_id,
     conversation_id: conversation_id,
   });
 };
+export const sendGreetingMessage = withErrorLogging(sendGreetingMessageFn, "whatsappService.sendGreetingMessage");
 
-export const getInitMessages = (type = "marketing") => {
+const getInitMessagesFn = (type = "marketing") => {
   return axios.get(`/whatsapp/init-messages/${type}`);
 };
+export const getInitMessages = withErrorLogging(getInitMessagesFn, "whatsappService.getInitMessages");
 
-export const changePinStatus = (id) => {
+const changePinStatusFn = (id) => {
   return axios.post(`/whatsapp/conversation/pin/${id}`);
 };
+export const changePinStatus = withErrorLogging(changePinStatusFn, "whatsappService.changePinStatus");
 
-export const getMoreConversations = (offset, limit, filters, search) => {
+const getMoreConversationsFn = (offset, limit, filters, search) => {
   return axios.get("/whatsapp/conversations/more", {
     params: {
       offset: offset,
@@ -77,37 +89,43 @@ export const getMoreConversations = (offset, limit, filters, search) => {
     },
   });
 };
+export const getMoreConversations = withErrorLogging(getMoreConversationsFn, "whatsappService.getMoreConversations");
 
-export const webstart = async () => {
+const webstartFn = async () => {
   const userId = getUserId();
   return await expressApi.post(
     `${process.env.VUE_APP_EXPRESS_URL}/start-client`,
     { userId }
   );
 };
+export const webstart = withErrorLogging(webstartFn, "whatsappService.webstart");
 
-export const webqrcode = async () => {
+const webqrcodeFn = async () => {
   const userId = getUserId();
   return await axios.get(`/webwhatsapp/qr/${userId}`);
 };
+export const webqrcode = withErrorLogging(webqrcodeFn, "whatsappService.webqrcode");
 
-export const checkstatus = async () => {
+const checkstatusFn = async () => {
   const userId = getUserId();
   return await expressApi.get(
     `${process.env.VUE_APP_EXPRESS_URL}/is-connected/${userId}`
   );
 };
+export const checkstatus = withErrorLogging(checkstatusFn, "whatsappService.checkstatus");
 
-export const weblogout = async () => {
+const weblogoutFn = async () => {
   const userId = getUserId();
   return await expressApi.post(
     `${process.env.VUE_APP_EXPRESS_URL}/stop-client/`,
     { userId }
   );
 };
+export const weblogout = withErrorLogging(weblogoutFn, "whatsappService.weblogout");
 
-export const getActiveClients = async () => {
+const getActiveClientsFn = async () => {
   return await expressApi.get(
     `${process.env.VUE_APP_EXPRESS_URL}/active-clients`
   );
 };
+export const getActiveClients = withErrorLogging(getActiveClientsFn, "whatsappService.getActiveClients");

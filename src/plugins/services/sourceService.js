@@ -1,3 +1,5 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/plugins/errorLogger";
 
-export const getSources = () => axios.get("/sources");
+const getSourcesFn = () => axios.get("/sources");
+export const getSources = withErrorLogging(getSourcesFn, "sourceService.getSources");

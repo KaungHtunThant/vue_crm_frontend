@@ -1,9 +1,12 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/plugins/errorLogger";
 
-export const getAllPackages = async () => {
+const getAllPackagesFn = async () => {
   return await axios.get("/packages/all");
 };
+export const getAllPackages = withErrorLogging(getAllPackagesFn, "packageService.getAllPackages");
 
-export const getAllPackageCategories = async () => {
+const getAllPackageCategoriesFn = async () => {
   return await axios.get("/package-categories/all");
 };
+export const getAllPackageCategories = withErrorLogging(getAllPackageCategoriesFn, "packageService.getAllPackageCategories");
