@@ -26,6 +26,7 @@ function getErrorLogKey() {
  */
 export function cleanupOldErrorLogs() {
   const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalize to start of day
   const twoDaysAgo = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
   
   // Get all localStorage keys
@@ -35,6 +36,7 @@ export function cleanupOldErrorLogs() {
     if (key.startsWith('error_logs_')) {
       const dateStr = key.replace('error_logs_', '');
       const logDate = new Date(dateStr);
+      logDate.setHours(0, 0, 0, 0); // Normalize to start of day for comparison
       
       // Remove logs older than 2 days
       if (logDate < twoDaysAgo) {
