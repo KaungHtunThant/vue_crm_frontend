@@ -1,19 +1,23 @@
 import axios from "@/plugins/axios";
 import Cookies from "js-cookie";
+import { withErrorLogging } from "@/plugins/errorLogger";
 // import expressApi from "@/plugins/expressApi";
 // login
-export const login = (credentials) => {
+const loginFn = (credentials) => {
   return axios.post("/login", credentials);
 };
+export const login = withErrorLogging(loginFn, "authService.login");
+
 // logout
-export const logout = () => {
+const logoutFn = () => {
   const token = Cookies.get("authToken");
-  axios.post("/logout", {
+  return axios.post("/logout", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 };
+export const logout = withErrorLogging(logoutFn, "authService.logout");
 // get All users //
 // export const getUser = async (params = {}) => {
 //   const token = Cookies.get("authToken");
