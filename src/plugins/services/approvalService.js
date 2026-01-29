@@ -1,7 +1,8 @@
 import axios from "@/plugins/axios";
 import Cookies from "js-cookie";
+import { withErrorLogging } from "@/utils/errorLogger";
 
-export const getApprovals = async (params = {}) => {
+const getApprovalsBase = async (params = {}) => {
   const token = Cookies.get("authToken");
   return axios.get("/approvals", {
     params: {
@@ -19,12 +20,16 @@ export const getApprovals = async (params = {}) => {
   });
 };
 
-export const createApproval = async (phone, user_id = null) => {
+const createApprovalBase = async (phone, user_id = null) => {
   return await axios.post("/approvals", { phone: phone, user_id: user_id });
 };
 
-export const updateApproval = async (approvalId, status) => {
+const updateApprovalBase = async (approvalId, status) => {
   const formData = new FormData();
   formData.append("status", status);
   return await axios.patch(`/approvals/${approvalId}`, formData);
 };
+
+export const getApprovals = withErrorLogging(getApprovalsBase, "getApprovals");
+export const createApproval = withErrorLogging(createApprovalBase, "createApproval");
+export const updateApproval = withErrorLogging(updateApprovalBase, "updateApproval");

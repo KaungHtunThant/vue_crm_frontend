@@ -1,25 +1,33 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/utils/errorLogger";
 
-export const index = () => {
+const indexBase = () => {
   return axios.get("/hospitals");
 };
 
-export const all = () => {
+const allBase = () => {
   return axios.get("/hospitals/all");
 };
 
-export const show = (hospitalId) => {
+const showBase = (hospitalId) => {
   return axios.get(`/hospitals/${hospitalId}`);
 };
 
-export const create = (formData) => {
+const createBase = (formData) => {
   return axios.post("/hospitals", formData);
 };
 
-export const update = (hospitalId, formData) => {
+const updateBase = (hospitalId, formData) => {
   return axios.put(`/hospitals/${hospitalId}`, formData);
 };
 
-export const destroy = (hospitalId) => {
+const destroyBase = (hospitalId) => {
   return axios.delete(`/hospitals/${hospitalId}`);
 };
+
+export const index = withErrorLogging(indexBase, "index");
+export const all = withErrorLogging(allBase, "all");
+export const show = withErrorLogging(showBase, "show");
+export const create = withErrorLogging(createBase, "create");
+export const update = withErrorLogging(updateBase, "update");
+export const destroy = withErrorLogging(destroyBase, "destroy");

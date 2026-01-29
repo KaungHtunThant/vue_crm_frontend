@@ -1,39 +1,44 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/utils/errorLogger";
 
-export const getDocuments = async () => {
+const getDocumentsBase = async () => {
   return await axios.get("/documents");
 };
 
-export const createDocuments = async (formData) => {
-  try {
-    const response = await axios.post("/documents", formData);
-    return response;
-  } catch (error) {
-    console.error("❌ خطأ أثناء إنشاء المجلد:", error);
-    throw error;
-  }
+const createDocumentsBase = async (formData) => {
+  const response = await axios.post("/documents", formData);
+  return response;
 };
 
-export const updateDocuments = (documentsId, formData) =>
+const updateDocumentsBase = (documentsId, formData) =>
   axios.patch(`/documents/${documentsId}`, formData);
 
-export const deleteDocuments = (documentsId) =>
+const deleteDocumentsBase = (documentsId) =>
   axios.delete(`/documents/${documentsId}`);
 
-export const updateFiles = (filesId, formData) =>
+const updateFilesBase = (filesId, formData) =>
   axios.put(`/documents/files/${filesId}`, formData);
 
-export const deleteFiles = (filesId) =>
+const deleteFilesBase = (filesId) =>
   axios.delete(`/documents/files/${filesId}`);
 
-export const showDocuments = async (folderName) => {
+const showDocumentsBase = async (folderName) => {
   return await axios.get(`/documents/${folderName}`);
 };
 
-export const uploadFiles = async (formData) => {
+const uploadFilesBase = async (formData) => {
   return await axios.post("/documents", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
 };
+
+export const getDocuments = withErrorLogging(getDocumentsBase, "getDocuments");
+export const createDocuments = withErrorLogging(createDocumentsBase, "createDocuments");
+export const updateDocuments = withErrorLogging(updateDocumentsBase, "updateDocuments");
+export const deleteDocuments = withErrorLogging(deleteDocumentsBase, "deleteDocuments");
+export const updateFiles = withErrorLogging(updateFilesBase, "updateFiles");
+export const deleteFiles = withErrorLogging(deleteFilesBase, "deleteFiles");
+export const showDocuments = withErrorLogging(showDocumentsBase, "showDocuments");
+export const uploadFiles = withErrorLogging(uploadFilesBase, "uploadFiles");

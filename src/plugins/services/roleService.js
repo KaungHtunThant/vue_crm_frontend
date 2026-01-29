@@ -1,19 +1,33 @@
 import axios from "@/plugins/axios";
-export const getIndex = async () => {
+import { withErrorLogging } from "@/utils/errorLogger";
+
+const getIndexBase = async () => {
   return await axios.get("/roles");
 };
-export const getAll = async () => {
+
+const getAllBase = async () => {
   return await axios.get("/roles/all");
 };
-export const getRoleById = async (id) => {
+
+const getRoleByIdBase = async (id) => {
   return await axios.get(`/roles/${id}`);
 };
-export const createRole = async (data) => {
+
+const createRoleBase = async (data) => {
   return await axios.post("/roles", data);
 };
-export const updateRole = async (id, data) => {
+
+const updateRoleBase = async (id, data) => {
   return await axios.put(`/roles/${id}`, data);
 };
-export const deleteRole = async (id) => {
+
+const deleteRoleBase = async (id) => {
   return await axios.delete(`/roles/${id}`);
 };
+
+export const getIndex = withErrorLogging(getIndexBase, "getIndex");
+export const getAll = withErrorLogging(getAllBase, "getAll");
+export const getRoleById = withErrorLogging(getRoleByIdBase, "getRoleById");
+export const createRole = withErrorLogging(createRoleBase, "createRole");
+export const updateRole = withErrorLogging(updateRoleBase, "updateRole");
+export const deleteRole = withErrorLogging(deleteRoleBase, "deleteRole");

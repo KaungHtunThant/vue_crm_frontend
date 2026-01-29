@@ -1,13 +1,18 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/utils/errorLogger";
 
-export const createComment = (formData) => {
+const createCommentBase = (formData) => {
   return axios.post("/comments", formData);
 };
 
-export const updateComments = async (id, formData) => {
+const updateCommentsBase = async (id, formData) => {
   return await axios.patch(`/comments/${id}`, formData);
 };
 
-export const toggleCommentPin = async (id) => {
+const toggleCommentPinBase = async (id) => {
   return await axios.post(`/comments/${id}/toggle-pin`);
 };
+
+export const createComment = withErrorLogging(createCommentBase, "createComment");
+export const updateComments = withErrorLogging(updateCommentsBase, "updateComments");
+export const toggleCommentPin = withErrorLogging(toggleCommentPinBase, "toggleCommentPin");

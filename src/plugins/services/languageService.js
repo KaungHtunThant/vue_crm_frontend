@@ -1,7 +1,8 @@
 import axios from "@/plugins/axios";
 import Cookies from "js-cookie";
+import { withErrorLogging } from "@/utils/errorLogger";
 
-export const getTranslations = (locale) => {
+const getTranslationsBase = (locale) => {
   const token = Cookies.get("authToken");
   return axios.get(`/translations/all?locale=${locale}`, {
     headers: {
@@ -10,7 +11,7 @@ export const getTranslations = (locale) => {
   });
 };
 
-export const saveUserLanguage = async (locale) => {
+const saveUserLanguageBase = async (locale) => {
   const token = Cookies.get("authToken");
   return await axios.patch(`/translations/locale/${locale}`, {
     headers: {
@@ -18,3 +19,6 @@ export const saveUserLanguage = async (locale) => {
     },
   });
 };
+
+export const getTranslations = withErrorLogging(getTranslationsBase, "getTranslations");
+export const saveUserLanguage = withErrorLogging(saveUserLanguageBase, "saveUserLanguage");

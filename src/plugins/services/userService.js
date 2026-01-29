@@ -1,8 +1,9 @@
 import axios from "@/plugins/axios";
 import Cookies from "js-cookie";
+import { withErrorLogging } from "@/utils/errorLogger";
 
 // get All users
-export const getUser = async (params = {}) => {
+const getUserBase = async (params = {}) => {
   const token = Cookies.get("authToken");
   return axios.get("/users", {
     params: {
@@ -19,7 +20,7 @@ export const getUser = async (params = {}) => {
 };
 
 // Get User by ID
-export const getUserById = (userId) => {
+const getUserByIdBase = (userId) => {
   const token = Cookies.get("authToken");
   return axios.get(`/users/${userId}`, {
     headers: {
@@ -29,7 +30,7 @@ export const getUserById = (userId) => {
 };
 
 // Create New User //
-export const createUser = (formData) => {
+const createUserBase = (formData) => {
   return axios.post("/users", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
@@ -38,7 +39,7 @@ export const createUser = (formData) => {
 };
 
 // Update User
-export const updateUser = (userId, userData) => {
+const updateUserBase = (userId, userData) => {
   const token = Cookies.get("authToken");
   return axios.post(
     `/users/${userId}`,
@@ -56,7 +57,7 @@ export const updateUser = (userId, userData) => {
 };
 
 // Delete User
-export const deleteUser = (userId) => {
+const deleteUserBase = (userId) => {
   const token = Cookies.get("authToken");
   return axios.delete(`/users/${userId}`, {
     headers: {
@@ -65,23 +66,24 @@ export const deleteUser = (userId) => {
   });
 };
 
-export const getAllUsers = async () => {
+const getAllUsersBase = async () => {
   return await axios.get("/users/all");
 };
 
-export const updateUserRating = async (userId, ratingId) => {
+const updateUserRatingBase = async (userId, ratingId) => {
   return await axios.patch(`/users/${userId}/rating`, { rating_id: ratingId });
 };
-export const updateUserPackage = async (user_id, package_id) => {
+
+const updateUserPackageBase = async (user_id, package_id) => {
   return await axios.patch(`/users/${user_id}/package`, {
     package_id: package_id,
   });
 };
 
 // Get All Roles
-export const getRoles = () => axios.get("/roles");
+const getRolesBase = () => axios.get("/roles");
 
-export const getUserLoginLogs = (userId) => {
+const getUserLoginLogsBase = (userId) => {
   const token = Cookies.get("authToken");
   return axios.get(`/logs/login-logs/${userId}`, {
     headers: {
@@ -89,3 +91,14 @@ export const getUserLoginLogs = (userId) => {
     },
   });
 };
+
+export const getUser = withErrorLogging(getUserBase, "getUser");
+export const getUserById = withErrorLogging(getUserByIdBase, "getUserById");
+export const createUser = withErrorLogging(createUserBase, "createUser");
+export const updateUser = withErrorLogging(updateUserBase, "updateUser");
+export const deleteUser = withErrorLogging(deleteUserBase, "deleteUser");
+export const getAllUsers = withErrorLogging(getAllUsersBase, "getAllUsers");
+export const updateUserRating = withErrorLogging(updateUserRatingBase, "updateUserRating");
+export const updateUserPackage = withErrorLogging(updateUserPackageBase, "updateUserPackage");
+export const getRoles = withErrorLogging(getRolesBase, "getRoles");
+export const getUserLoginLogs = withErrorLogging(getUserLoginLogsBase, "getUserLoginLogs");

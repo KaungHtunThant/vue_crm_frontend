@@ -1,12 +1,14 @@
 import axios from "@/plugins/axios";
 import Cookies from "js-cookie";
-// import expressApi from "@/plugins/expressApi";
+import { withErrorLogging } from "@/utils/errorLogger";
+
 // login
-export const login = (credentials) => {
+const loginBase = (credentials) => {
   return axios.post("/login", credentials);
 };
+
 // logout
-export const logout = () => {
+const logoutBase = () => {
   const token = Cookies.get("authToken");
   axios.post("/logout", {
     headers: {
@@ -14,6 +16,9 @@ export const logout = () => {
     },
   });
 };
+
+export const login = withErrorLogging(loginBase, "login");
+export const logout = withErrorLogging(logoutBase, "logout");
 // get All users //
 // export const getUser = async (params = {}) => {
 //   const token = Cookies.get("authToken");

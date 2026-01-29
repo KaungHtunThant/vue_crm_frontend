@@ -1,13 +1,18 @@
 import axios from "@/plugins/axios";
+import { withErrorLogging } from "@/utils/errorLogger";
 
-export const getBackgroundImages = async () => {
+const getBackgroundImagesBase = async () => {
   return await axios.get("/bg-images");
 };
 
-export const saveBackgroundId = async (id) => {
+const saveBackgroundIdBase = async (id) => {
   return await axios.patch(`/bg-images/${id}`);
 };
 
-export const getBackgroundId = async (id) => {
+const getBackgroundIdBase = async (id) => {
   return await axios.get(`/bg-images/${id}`);
 };
+
+export const getBackgroundImages = withErrorLogging(getBackgroundImagesBase, "getBackgroundImages");
+export const saveBackgroundId = withErrorLogging(saveBackgroundIdBase, "saveBackgroundId");
+export const getBackgroundId = withErrorLogging(getBackgroundIdBase, "getBackgroundId");
