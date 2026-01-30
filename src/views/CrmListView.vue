@@ -4,7 +4,7 @@
       <div class="controls mb-2">
         <div class="row">
           <div
-            class="col-sm-6 col-m-4 col-lg-4 col-xl-3"
+            class="col-sm-6 col-md-4 col-lg-4 col-xl-3"
             v-if="
               permissionStore.hasPermission(PERMISSIONS.ADD_ASSIGNED_TO_DEAL)
             "
@@ -37,29 +37,8 @@
               </button>
             </div>
           </div>
-          <div class="col">
-            <div class="input-group position-relative h-100">
-              <button
-                :title="t('buttons.filter')"
-                type="button"
-                class="btn btn-header input-group-text"
-                @click="openFilterModal"
-              >
-                <i class="fas fa-filter text-white"></i>
-              </button>
-              <button
-                v-if="isFilterActive"
-                type="button"
-                class="btn btn-warning input-group-text px-1"
-                @click="resetFilter"
-                style="font-size: 14px"
-              >
-                {{ t("crmlist-modal-filter-button-reset") }}
-              </button>
-            </div>
-          </div>
           <div
-            class="col-auto"
+            class="col-12"
             v-if="
               permissionStore.hasPermission(PERMISSIONS.DEALS_KANBAN) &&
               user_role == 'sales'
@@ -72,7 +51,8 @@
             />
           </div>
           <div
-            class="col-auto mt-2 mt-lg-0 text-center d-flex align-items-center justify-content-end gap-2"
+            class="col-sm-6 col-md-8 col-lg-8 col-xl-9 mt-2 mt-lg-0 text-center d-flex align-items-center justify-content-end gap-2"
+            v-else
           >
             <button
               class="btn btn-primary rounded-2 fs-7"
@@ -85,17 +65,6 @@
             >
               <i class="fa-solid fa-dice me-2"></i>
               <span>{{ t("crmlist-button-distribute-inactive-deals") }}</span>
-            </button>
-            <button
-              class="btn btn-header rounded-2 d-flex align-items-center"
-              @click="$router.back()"
-              v-if="
-                permissionStore.hasPermission(PERMISSIONS.DEALS_KANBAN) &&
-                user_role == 'sales'
-              "
-            >
-              <i class="fa-solid fa-arrow-right me-2 text-white pt-1"></i>
-              <span class="text-white">{{ t("crmlist-button-back") }}</span>
             </button>
             <button
               class="btn btn-primary rounded-2 fs-7"
@@ -364,14 +333,6 @@ const comments = ref([]);
 const tasks = ref([]);
 const user_role = ref();
 const selected_conversation = ref(null);
-
-const isFilterActive = computed(() => {
-  return Object.entries(filters.value).some(([key, val]) => {
-    if (key === "sort_by" || key === "sort_order") return false;
-    if (Array.isArray(val)) return val.length > 0;
-    return val !== null && val !== "";
-  });
-});
 
 const totalPages = computed(() => {
   return Math.ceil(totalRows.value / rowsPerPage.value);
@@ -837,12 +798,6 @@ const resetFilter = () => {
   selectedStatuses.value = [];
   searchInput.value = "";
   fetchData();
-};
-
-const openFilterModal = () => {
-  const modalElement = document.getElementById("filterModal");
-  const modal = new Modal(modalElement);
-  modal.show();
 };
 
 const openImportModal = () => {

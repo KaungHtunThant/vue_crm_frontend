@@ -52,6 +52,7 @@ export default {
       "/crm-after-sales",
       "/emr-kanban",
       "/crm-tasks",
+      "/crmlist",
     ];
     // Inside setup function:
     const route = useRoute();
