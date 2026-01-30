@@ -1061,6 +1061,9 @@ watch(
   }
 );
 
+// Sync initial search value from store
+searchInput.value = dealStore.getSearchVal;
+
 onMounted(async () => {
   user_role.value = Cookies.get("user_role");
   await fetchData();
