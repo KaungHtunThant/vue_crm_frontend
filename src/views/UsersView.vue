@@ -177,12 +177,7 @@ import { useUserStore } from "@/stores/UserStore";
 import { useI18n } from "vue-i18n";
 import RatingSelector from "@/views/UserViewRatingSelector.vue";
 import PackageSelector from "@/views/UserCommissionPackageselector.vue";
-import { useRatingStore } from "@/stores/RatingStore";
-import { usePackageStore } from "@/stores/CommissionPackagesStore";
-import {
-  updateUserRating,
-  updateUserPackage,
-} from "@/plugins/services/userService";
+
 export default {
   name: "UsersView",
   components: {
@@ -200,9 +195,6 @@ export default {
   setup() {
     const { t } = useI18n();
     const notificationStore = useNotificationStore();
-    // const toast = useToast();
-    const ratingStore = useRatingStore();
-    const packageStore = usePackageStore();
     const store = useUserStore();
     const logo = require("@/assets/" + process.env.VUE_APP_LOGO_NAME);
     const userLogModalRef = ref(null);
@@ -220,12 +212,6 @@ export default {
       } catch (e) {
         notificationStore.error(e.message);
       }
-    };
-
-    const fetchData = async (page, perPage) => {
-      store.currentPage = page;
-      store.rowsPerPage = perPage;
-      await store.fetchUsers({ page, per_page: perPage });
     };
 
     const updateUserList = (updatedUser) => {
@@ -313,16 +299,12 @@ export default {
     };
 
     // pagination
-    const onPageChange = (event) => {
-      fetchData(event.page, event.rows);
+    const onPageChange = async (event) => {
+      await store.handlePageChange(event);
     };
 
     const handleSearch = async () => {
-      await fetchData(0, store.rowsPerPage);
-    };
-    const resetSearch = async () => {
-      store.search = "";
-      await fetchData(0, store.rowsPerPage);
+      await store.handleSearch();
     };
 
     const handleRightClick = (event) => {
@@ -339,26 +321,13 @@ export default {
     };
 
     const handleRatingChange = async (rating, user_id) => {
-      try {
-        const user = store.rows.find((u) => u.id === user_id);
-        if (user) {
-          user.rating = rating;
-          store.updateUserLocal(user);
-        }
-
-        const response = await updateUserRating(user_id, rating.id);
-        if (response.status === 200) {
-          notificationStore.success(
-            response.data.message || t("success.updateUser"),
-            {
-              timeout: 3000,
-            }
-          );
-        } else {
-          throw new Error(response.data.message);
-        }
-      } catch (error) {
-        notificationStore.error(error.message || t("error.updateFailed"), {
+      const result = await store.updateRating(user_id, rating);
+      if (result.success) {
+        notificationStore.success(result.message || t("success.updateUser"), {
+          timeout: 3000,
+        });
+      } else {
+        notificationStore.error(result.message || t("error.updateFailed"), {
           timeout: 3000,
         });
       }
@@ -369,26 +338,15 @@ export default {
         ? name.trim().charAt(0).toUpperCase() + name.slice(1).replace(/-/g, " ")
         : "";
     };
+
     const handlePackageChange = async (package_id, user_id) => {
-      try {
-        const user = store.rows.find((u) => u.id === user_id);
-        if (user) {
-          user.package = { id: package_id };
-          store.updateUserLocal(user);
-        }
-        const response = await updateUserPackage(user_id, package_id);
-        if (response.status === 200) {
-          notificationStore.success(
-            response.data.message || t("success.updateUser"),
-            {
-              timeout: 3000,
-            }
-          );
-        } else {
-          throw new Error(response.data.message);
-        }
-      } catch (error) {
-        notificationStore.error(error.message || t("error.updateFailed"), {
+      const result = await store.updatePackage(user_id, package_id);
+      if (result.success) {
+        notificationStore.success(result.message || t("success.updateUser"), {
+          timeout: 3000,
+        });
+      } else {
+        notificationStore.error(result.message || t("error.updateFailed"), {
           timeout: 3000,
         });
       }
@@ -398,14 +356,13 @@ export default {
       () => store.search,
       async (newValue) => {
         if (!newValue) {
-          await fetchData(0, store.rowsPerPage);
+          await store.handleSearch();
         }
       }
     );
+
     onMounted(async () => {
-      await fetchData(0, 10);
-      ratingStore.fetchRatings();
-      packageStore.fetchPackages();
+      await store.fetchUsers({ page: 0, per_page: 10 });
       window.addEventListener("contextmenu", handleRightClick);
     });
 
@@ -420,7 +377,6 @@ export default {
       adminModalRef,
       filterModalRef,
       userLogModalRef,
-      fetchData,
       updateUserList,
       onToggleStatus,
       editItem,
@@ -431,7 +387,6 @@ export default {
       resetFilters,
       onPageChange,
       handleSearch,
-      resetSearch,
       t,
       formatRoleName,
       logo,

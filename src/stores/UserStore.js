@@ -6,6 +6,8 @@ import {
   updateUser,
   deleteUser,
   createUser,
+  updateUserRating,
+  updateUserPackage,
 } from "@/plugins/services/userService";
 import Cookies from "js-cookie";
 
@@ -209,6 +211,77 @@ export const useUserStore = defineStore("userStore", {
           success: response.status === 201 || response.status === 200,
           message: response.data.message,
         };
+      } catch (error) {
+        return {
+          success: false,
+          message: error.message,
+        };
+      }
+    },
+
+    // Pagination
+    async handlePageChange(event) {
+      this.currentPage = event.page;
+      this.rowsPerPage = event.rows;
+      await this.fetchUsers({ page: event.page, per_page: event.rows });
+    },
+
+    // Search
+    async handleSearch() {
+      this.currentPage = 0;
+      await this.fetchUsers({ page: 0, per_page: this.rowsPerPage });
+    },
+
+    async resetSearch() {
+      this.search = "";
+      this.currentPage = 0;
+      await this.fetchUsers({ page: 0, per_page: this.rowsPerPage });
+    },
+
+    // Rating change
+    async updateRating(userId, rating) {
+      try {
+        const user = this.rows.find((u) => u.id === userId);
+        if (user) {
+          user.rating = rating;
+          this.updateUserLocal(user);
+        }
+
+        const response = await updateUserRating(userId, rating.id);
+        if (response.status === 200) {
+          return {
+            success: true,
+            message: response.data.message,
+          };
+        } else {
+          throw new Error(response.data.message);
+        }
+      } catch (error) {
+        return {
+          success: false,
+          message: error.message,
+        };
+      }
+    },
+
+    // Package change
+    async updatePackage(userId, packageId) {
+      try {
+        const user = this.rows.find((u) => u.id === userId);
+        if (user) {
+          user.package = { id: packageId };
+          this.updateUserLocal(user);
+        }
+
+        const response = await updateUserPackage(userId, packageId);
+        if (response.status === 200) {
+          return {
+            success: true,
+            message: response.data.message,
+          };
+        } else {
+          throw new Error(response.data.message);
+        }
       } catch (error) {
         return {
           success: false,

@@ -107,6 +107,8 @@ import { initializeTranslations } from "@/i18n";
 import { useLoadingStore } from "@/plugins/loadingStore";
 import { useSettingStore } from "@/stores/SettingStore";
 import { useUserStore } from "@/stores/UserStore";
+import { useRatingStore } from "@/stores/RatingStore";
+import { usePackageStore } from "@/stores/CommissionPackagesStore";
 
 export default {
   name: "LoginView",
@@ -116,6 +118,8 @@ export default {
     const loadingStore = useLoadingStore();
     const settingStore = useSettingStore();
     const userStore = useUserStore();
+    const ratingStore = useRatingStore();
+    const packageStore = usePackageStore();
 
     return {
       PERMISSIONS,
@@ -124,6 +128,8 @@ export default {
       loadingStore,
       settingStore,
       userStore,
+      ratingStore,
+      packageStore,
     };
   },
 
@@ -209,6 +215,11 @@ export default {
           document.body.style.backgroundImage = `url(${imageUrl})`;
           document.body.style.backgroundSize = "cover";
           document.body.style.backgroundPosition = "center";
+
+          // Fetch ratings and packages without await
+          this.ratingStore.fetchRatings();
+          this.packageStore.fetchPackages();
+
           this.$router.replace(defaultRedirect);
           if (!this.permissionStore.hasPermission(PERMISSIONS.STAY_IDLE)) {
             this.settingStore.startIdleTimer();
