@@ -10,6 +10,10 @@ export const usePackageStore = defineStore("package", {
   },
   actions: {
     async fetchPackages() {
+      // Skip if packages are already loaded
+      if (this.packages.length > 0) {
+        return;
+      }
       try {
         const response = await payingLevels();
         this.packages = response.data.data;
