@@ -12,7 +12,7 @@
   />
 </template>
 <script>
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRatingStore } from "@/stores/RatingStore";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -60,6 +60,12 @@ export default {
     );
 
     const ratings = computed(() => ratingStore.getRatings);
+
+    onMounted(() => {
+      if (ratings.value.length === 0) {
+        ratingStore.fetchRatings();
+      }
+    });
 
     return {
       local_rating,

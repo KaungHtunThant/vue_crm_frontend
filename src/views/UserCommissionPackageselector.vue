@@ -17,8 +17,8 @@
   </select>
 </template>
 <script>
-import { ref, watch } from "vue";
-import { usePackageStore } from "@/stores/CommissionPackagesStore";
+import { onMounted, ref, watch } from "vue";
+import { useCommissionPackageStore } from "@/stores/CommissionPackageStore";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 export default {
@@ -38,7 +38,7 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
     const local_package_id = ref(props.package_id || "");
-    const packageStore = usePackageStore();
+    const commissionPackageStore = useCommissionPackageStore();
 
     const onChangePackage = () => {
       emit("package-changed", local_package_id.value, props.user_id);
@@ -54,7 +54,13 @@ export default {
     );
 
     const packages = computed(() => {
-      return packageStore.getPackages;
+      return commissionPackageStore.getPackages;
+    });
+
+    onMounted(() => {
+      if (packages.value.length === 0) {
+        commissionPackageStore.fetchPackages();
+      }
     });
 
     return {

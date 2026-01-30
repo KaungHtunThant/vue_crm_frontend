@@ -1,7 +1,7 @@
 import { payingLevels } from "@/plugins/services/salaryService";
 import { defineStore } from "pinia";
 
-export const usePackageStore = defineStore("package", {
+export const useCommissionPackageStore = defineStore("commissionPackage", {
   state: () => ({
     packages: [],
   }),

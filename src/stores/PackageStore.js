@@ -19,10 +19,10 @@ export const usePackageStore = defineStore("package", {
       return state.packages.filter((pkg) => pkg.category_id === category_id);
     },
     getCategories: (state) => {
-      return state.categories;
+      return state.categories ?? [];
     },
     getAllPackages: (state) => {
-      return state.packages;
+      return state.packages ?? [];
     },
   },
 

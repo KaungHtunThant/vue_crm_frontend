@@ -108,7 +108,7 @@ import { useLoadingStore } from "@/plugins/loadingStore";
 import { useSettingStore } from "@/stores/SettingStore";
 import { useUserStore } from "@/stores/UserStore";
 import { useRatingStore } from "@/stores/RatingStore";
-import { usePackageStore } from "@/stores/CommissionPackagesStore";
+import { useCommissionPackageStore } from "@/stores/CommissionPackageStore";
 
 export default {
   name: "LoginView",
@@ -119,7 +119,7 @@ export default {
     const settingStore = useSettingStore();
     const userStore = useUserStore();
     const ratingStore = useRatingStore();
-    const packageStore = usePackageStore();
+    const commissionPackageStore = useCommissionPackageStore();
 
     return {
       PERMISSIONS,
@@ -129,7 +129,7 @@ export default {
       settingStore,
       userStore,
       ratingStore,
-      packageStore,
+      commissionPackageStore,
     };
   },
 
@@ -218,7 +218,7 @@ export default {
 
           // Fetch ratings and packages without await
           this.ratingStore.fetchRatings();
-          this.packageStore.fetchPackages();
+          this.commissionPackageStore.fetchPackages();
 
           this.$router.replace(defaultRedirect);
           if (!this.permissionStore.hasPermission(PERMISSIONS.STAY_IDLE)) {
