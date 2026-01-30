@@ -39,22 +39,6 @@
           </div>
           <div class="col">
             <div class="input-group position-relative h-100">
-              <input
-                type="search"
-                class="form-control"
-                :placeholder="t('crmlist-placeholder-search')"
-                v-model="searchInput"
-                @search="fetchData"
-                style="padding: 0.5rem 0.5rem"
-              />
-              <!-- <i
-                v-if="searchInput"
-                class="fas fa-times clear-icon p-2 rounded-2"
-                @click="clearSearch"
-                title="Clear Search"
-              >
-                CLR
-              </i> -->
               <button
                 :title="t('buttons.filter')"
                 type="button"
@@ -307,7 +291,7 @@
   />
 </template>
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed, watch } from "vue";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
 import DataTable from "primevue/datatable";
@@ -1067,6 +1051,15 @@ const distributeInactiveDeals = async () => {
     notificationStore.error(error.message, { timeout: 3000 });
   }
 };
+
+// Watch dealStore.getSearchVal for changes
+watch(
+  () => dealStore.getSearchVal,
+  (newVal) => {
+    searchInput.value = newVal;
+    fetchData();
+  }
+);
 
 onMounted(async () => {
   user_role.value = Cookies.get("user_role");
