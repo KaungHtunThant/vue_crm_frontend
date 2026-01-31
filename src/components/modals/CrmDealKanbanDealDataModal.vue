@@ -2358,11 +2358,13 @@ export default {
         };
         const response = await updateDeal(props.deal.id, formData);
         if (response.status === 200) {
+          const updatedDeal = response.data.data;
+          customerData.hospital_packages = updatedDeal.hospital_packages;
           notificationStore.success(response.data.message, {
             timeout: 3000,
           });
           isEditMode.value = false;
-          emit("update-deal", formData);
+          emit("update-deal", updatedDeal || formData);
         } else {
           throw new Error(response.data.message);
         }

@@ -135,6 +135,7 @@ export default {
     };
     const submitAddBalance = async () => {
       const pkg = props.package_id;
+      console.log("package Id:", pkg);
       const dealId = props.deal_id;
       if (!pkg) return;
       try {
