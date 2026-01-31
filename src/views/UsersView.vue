@@ -1,6 +1,6 @@
 <template>
-  <div class="mt-3 pe-2">
-    <div class="row">
+  <div class="mt-3 py-2 cus-table-height bg-light">
+    <div class="row p-2">
       <div class="col-8 col-md-8 col-lg-8">
         <div
           class="mb-3 position-relative inputSearch d-flex align-items-center"
@@ -52,7 +52,7 @@
       @page="onPageChange"
       :loading="store.loading"
       scrollable
-      scrollHeight="calc(90vh - 120px)"
+      scrollHeight="flex"
     >
       <Column :header="'#'">
         <template #body="slotProps">
@@ -421,6 +421,9 @@ export default {
 .loading-logo {
   animation: pulse-and-spin 2s infinite linear;
   z-index: 2;
+}
+.cus-table-height {
+  height: calc(90vh - 120px);
 }
 
 @keyframes pulse-and-spin {
