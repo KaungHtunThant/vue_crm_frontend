@@ -68,6 +68,7 @@ export default {
     const CommissionAndSalary = async () => {
       const userId = Cookies.get("user_id");
       const commission = await calculatecommission(userId);
+      console.log(commission);
       if (commission && commission.status === 200) {
         const salaryData = commission?.data?.data?.original?.data;
         const finalBasicPay = Number(salaryData?.basic_pay) || 0;
@@ -81,7 +82,7 @@ export default {
           salary: finalBasicPay || 0,
           bonus: calculatedCommission || 0,
           total: totalSalary || 0,
-          deductions: salaryData?.deductions || 0,
+          deductions: deductions || 0,
         };
       } else {
         return {
