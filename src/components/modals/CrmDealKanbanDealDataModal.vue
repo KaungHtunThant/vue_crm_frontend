@@ -858,7 +858,8 @@
                     >
                       <div class="row p-0">
                         <div
-                          class="col-4 p-1 px-1"
+                          class="p-1 px-1"
+                          :class="isEditMode ? 'col-2' : 'col-2'"
                           @dblclick="handleDoubleClick"
                         >
                           <select
@@ -889,8 +890,7 @@
                           </select>
                         </div>
                         <div
-                          :class="isEditMode ? 'col-2' : 'col-3'"
-                          class="p-1 px-1"
+                          class="col-2 p-1 px-1"
                           @dblclick="handleDoubleClick"
                         >
                           <select
@@ -950,11 +950,9 @@
                             />
                           </div>
                         </div>
-                        <div class="col-2 p-1 px-0">
+                        <div class="col-2 p-1 px-1">
                           <div class="input-group">
-                            <span class="input-group-text">
-                              <i class="fa-solid fa-money-bill"></i>
-                            </span>
+                            <span class="input-group-text">Total</span>
                             <input
                               type="number"
                               lang="en"
@@ -982,20 +980,66 @@
                             />
                           </div>
                         </div>
-                        <div class="col-1 py-1 px-1">
+                        <div class="col-2 p-1 px-1">
+                          <div class="input-group">
+                            <span class="input-group-text">Paid</span>
+                            <input
+                              type="number"
+                              lang="en"
+                              :class="[
+                                'bg-input',
+                                'bg-input',
+                                'p-2',
+                                'rounded-right-2',
+                                'form-control',
+                              ]"
+                              v-model="pkg.paid_amount"
+                              :placeholder="
+                                t(
+                                  'kanban-modal-edit-placeholder-packages-due-amount'
+                                )
+                              "
+                              readonly
+                              min="0"
+                            />
+                          </div>
+                        </div>
+                        <!-- <div class="col-2 p-1 px-0">
+                          <div class="input-group">
+                            <span class="input-group-text">Due</span>
+                            <input
+                              type="number"
+                              lang="en"
+                              :class="[
+                                'bg-input',
+                                'bg-input',
+                                'p-2',
+                                'rounded-right-2',
+                                'form-control',
+                              ]"
+                              :value="package_due_amount(pkg.package_id)"
+                              :placeholder="
+                                t(
+                                  'kanban-modal-edit-placeholder-packages-due-amount'
+                                )
+                              "
+                              readonly
+                              min="0"
+                            />
+                          </div>
+                        </div> -->
+                        <div class="col-2 py-1">
                           <button
-                            class="btn btn-success"
-                            @click="payHospitalPackage(pkg.id)"
+                            class="btn btn-success me-1"
+                            @click="payHospitalPackage(pkg.package_id)"
                             v-show="
                               permissionStore.hasPermission(
                                 PERMISSIONS.EDIT_HOSPITAL_PACKAGE
-                              ) && !pkg.paid_on
+                              ) && package_due_amount(pkg.package_id) > 0
                             "
                           >
                             <i class="fa-solid fa-money-bill-wave"></i>
                           </button>
-                        </div>
-                        <div class="col-1 py-1 px-1">
                           <button
                             class="btn btn-primary"
                             @click="removeHospitalPackage(index)"
@@ -1030,26 +1074,6 @@
                     </button>
                   </div>
                   <div v-show="customerData.hospital_packages.length > 0">
-                    <div class="input-group mt-2">
-                      <span class="input-group-text">
-                        {{ t("kanban-modal-edit-balance") }}
-                      </span>
-                      <input
-                        type="number"
-                        name="balance"
-                        lang="en"
-                        :readonly="!isEditMode"
-                        :class="[
-                          'bg-input',
-                          'p-2',
-                          'rounded-right-2',
-                          'form-control',
-                        ]"
-                        v-model="customerData.balance"
-                        min="0"
-                        @dblclick="handleDoubleClick"
-                      />
-                    </div>
                     <div class="input-group mt-2">
                       <span class="input-group-text">
                         {{ t("kanban-modal-edit-label-agreement-total-cost") }}
@@ -1088,24 +1112,6 @@
                     </div>
                     <div class="input-group mt-2">
                       <span class="input-group-text">
-                        {{ t("kanban-modal-edit-placeholder-due-payment") }}
-                      </span>
-                      <input
-                        type="number"
-                        name="balance"
-                        lang="en"
-                        readonly
-                        :class="[
-                          'bg-input',
-                          'p-2',
-                          'rounded-right-2',
-                          'form-control',
-                        ]"
-                        v-model="due_payment"
-                      />
-                    </div>
-                    <div class="input-group mt-2">
-                      <span class="input-group-text">
                         {{ t("kanban-modal-edit-label-total-cost") }}
                       </span>
                       <input
@@ -1120,6 +1126,89 @@
                         v-model="total_cost"
                         readonly
                         min="0.00"
+                      />
+                    </div>
+                    <div class="input-group mt-2">
+                      <span class="input-group-text">
+                        {{ t("kanban-modal-edit-balance") }}
+                      </span>
+                      <input
+                        type="number"
+                        name="balance"
+                        lang="en"
+                        readonly
+                        :class="[
+                          'bg-input',
+                          'p-2',
+                          'rounded-right-2',
+                          'form-control',
+                        ]"
+                        v-model="customerData.balance"
+                        min="0"
+                        @dblclick="handleDoubleClick"
+                      />
+                      <button
+                        class="btn btn-success"
+                        @click="addbalance"
+                        v-show="isEditMode"
+                      >
+                        {{ t("kanban-modal-edit-button-add-balance") }}
+                      </button>
+                    </div>
+                    <div class="input-group mt-2">
+                      <span class="input-group-text">
+                        {{
+                          t("kanban-modal-edit-placeholder-unclaimed-balance")
+                        }}
+                      </span>
+                      <input
+                        type="number"
+                        name="unclaimed_balance"
+                        lang="en"
+                        readonly
+                        :class="[
+                          'bg-input',
+                          'p-2',
+                          'rounded-right-2',
+                          'form-control',
+                        ]"
+                        v-model="unclaimed_balance"
+                      />
+                    </div>
+                    <div class="input-group mt-2">
+                      <span class="input-group-text">
+                        {{ t("kanban-modal-edit-placeholder-paid-payment") }}
+                      </span>
+                      <input
+                        type="number"
+                        name="paid_payment"
+                        lang="en"
+                        readonly
+                        :class="[
+                          'bg-input',
+                          'p-2',
+                          'rounded-right-2',
+                          'form-control',
+                        ]"
+                        v-model="paid_total_cost"
+                      />
+                    </div>
+                    <div class="input-group mt-2">
+                      <span class="input-group-text">
+                        {{ t("kanban-modal-edit-placeholder-due-payment") }}
+                      </span>
+                      <input
+                        type="number"
+                        name="balance"
+                        lang="en"
+                        readonly
+                        :class="[
+                          'bg-input',
+                          'p-2',
+                          'rounded-right-2',
+                          'form-control',
+                        ]"
+                        v-model="due_payment"
                       />
                     </div>
                   </div>
@@ -1309,8 +1398,6 @@
                         type="date"
                         lang="en"
                         class="form-control bg-secondary-subtle text-secondary py-2 me-1"
-                        :min="todayDate"
-                        :max="maxDateStr"
                         v-model="task.duedate"
                         :placeholder="t('modals.selectDate')"
                         @mousedown="dateTaskClick"
@@ -1633,6 +1720,17 @@
     </div>
   </div>
   <view-report ref="questionsModalRef" :deal_id="deal?.id" />
+  <add-balance
+    ref="addBalanceModal"
+    :deal_id="deal?.id"
+    @balance-added="handleBalanceAdded"
+  />
+  <pay-package
+    ref="payPackageModal"
+    :package_id="selectedPackageId"
+    :deal_id="deal?.id"
+    @package-paid="handlePackagePaid"
+  />
   <suggest-user-modal
     ref="suggestUserModalRef"
     :users="users"
@@ -1663,6 +1761,8 @@ import "vue-select/dist/vue-select.css";
 import { useRoute, useRouter } from "vue-router";
 import RatingStars from "@/components/CreateDealElements/CrmDealKanbanDealDataModalRatingStars.vue";
 import ViewReport from "@/components/kanban/CrmDealKanbanDealDataModalReportModal.vue";
+import AddBalance from "@/components/kanban/CRMDealKanbanDealDataModalAddBalanceModal.vue";
+import PayPackage from "@/components/kanban/CrmDealKanbanDealDataModalPayPackageModal.vue";
 import { Modal } from "bootstrap";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useI18n } from "vue-i18n";
@@ -1697,7 +1797,7 @@ import { useTaskEventsStore } from "@/stores/TaskEventsStore";
 import { useCommentsTagsStore } from "@/stores/CommentsTagsStore";
 import { useSettingStore } from "@/stores/SettingStore";
 import DatePicker from "primevue/datepicker";
-import { updateHospitalPackage } from "@/plugins/services/dealService";
+// import { updateHospitalPackage } from "@/plugins/services/dealService";
 
 export default {
   name: "CrmDealKanbanDealDataModal",
@@ -1707,6 +1807,8 @@ export default {
     TrashDeal,
     SuggestUserModal,
     DatePicker,
+    AddBalance,
+    PayPackage,
     "v-select": vSelect,
   },
   props: {
@@ -1788,6 +1890,7 @@ export default {
     const setTasksProcessingLoading = ref(false);
     const showInput = ref(false);
     const SettingStore = useSettingStore();
+    const selectedPackageId = ref(null);
     const setTasksProcessing = async (id) => {
       try {
         setTasksProcessingLoading.value = true;
@@ -2313,26 +2416,52 @@ export default {
         });
       }
     };
-    const payHospitalPackage = async (pkgId) => {
+    const payHospitalPackage = async (packageId) => {
       try {
-        const pkg = customerData.hospital_packages.find((p) => p.id === pkgId);
-        if (!pkg) return;
+        selectedPackageId.value = packageId;
+        await nextTick();
+        const payPackageModalElement =
+          document.getElementById("payPackageModal");
+        const payPackageModal = new Modal(payPackageModalElement);
+        payPackageModalElement.addEventListener(
+          "shown.bs.modal",
+          () => {
+            const backdrop = document.querySelector(".modal-backdrop");
+            if (backdrop) {
+              backdrop.style.zIndex = "1055";
+            }
+          },
+          { once: true }
+        );
+        payPackageModalElement.addEventListener(
+          "hidden.bs.modal",
+          () => {
+            const backdrops = document.querySelectorAll(".modal-backdrop");
+            backdrops.forEach((backdrop) => {
+              backdrop.remove();
+            });
+          },
+          { once: true }
+        );
+        payPackageModal.show();
+        // const pkg = customerData.hospital_packages.find((p) => p.id === pkgId);
+        // if (!pkg) return;
 
-        const response = await updateHospitalPackage({
-          deal_id: customerData.id,
-          package_id: pkg.id,
-          paid_on: new Date().toISOString().slice(0, 19).replace("T", " "),
-        });
-        if (response.status === 200) {
-          pkg.paid_on = new Date();
-          notificationStore.success(response.data.message, {
-            timeout: 3000,
-          });
-        } else {
-          notificationStore.error(response.data.message, {
-            timeout: 3000,
-          });
-        }
+        // const response = await updateHospitalPackage({
+        //   deal_id: customerData.id,
+        //   package_id: pkg.id,
+        //   paid_on: new Date().toISOString().slice(0, 19).replace("T", " "),
+        // });
+        // if (response.status === 200) {
+        //   pkg.paid_on = new Date();
+        //   notificationStore.success(response.data.message, {
+        //     timeout: 3000,
+        //   });
+        // } else {
+        //   notificationStore.error(response.data.message, {
+        //     timeout: 3000,
+        //   });
+        // }
       } catch (error) {
         console.error(error);
         notificationStore.error(error.message, {
@@ -2386,7 +2515,38 @@ export default {
         });
       }
     };
-
+    const addbalance = async () => {
+      const modalbalance = document.getElementById("addBalanceModal");
+      const existingInstance = Modal.getInstance(modalbalance);
+      if (existingInstance) {
+        existingInstance.dispose();
+      }
+      const modal = new Modal(modalbalance, {
+        backdrop: true,
+        focus: true,
+      });
+      modalbalance.addEventListener(
+        "shown.bs.modal",
+        () => {
+          const backdrop = document.querySelector(".modal-backdrop");
+          if (backdrop) {
+            backdrop.style.zIndex = "1055";
+          }
+        },
+        { once: true }
+      );
+      modalbalance.addEventListener(
+        "hidden.bs.modal",
+        () => {
+          const backdrops = document.querySelectorAll(".modal-backdrop");
+          backdrops.forEach((backdrop) => {
+            backdrop.remove();
+          });
+        },
+        { once: true }
+      );
+      modal.show();
+    };
     const toggleEditMode = () => {
       isEditMode.value = !isEditMode.value;
     };
@@ -2833,6 +2993,17 @@ export default {
       }
       emit("suggest-user", props.deal.id);
     };
+    const handleBalanceAdded = (balanceData) => {
+      customerData.balance =
+        Number(customerData.balance) + Number(balanceData.data);
+      console.log("Updated balance:", customerData.balance);
+      notificationStore.success(
+        `Balance updated. New balance: ${customerData.balance}`,
+        {
+          timeout: 3000,
+        }
+      );
+    };
     const old_duedate = ref("");
     const old_task_id = ref("");
     const storeOldValue = (task_id, duedate) => {
@@ -3072,41 +3243,89 @@ export default {
       }
       await SettingStore.fetchCustomTaskEventId();
     });
+    const package_due_amount = (pkgId) => {
+      const pkg = customerData.hospital_packages.find(
+        (p) => p.package_id === pkgId
+      );
+      if (!pkg) return 0;
+      const total_price = parseFloat(pkg.total_price) || 0;
+      const paid_amount = parseFloat(pkg.paid_amount) || 0;
+      return Math.max(0, total_price - paid_amount);
+    };
+    const handlePackagePaid = (paymentData) => {
+      console.log("Handling cascading payment:", paymentData);
+
+      const { payment_distribution, balance_added } = paymentData;
+      if (payment_distribution && payment_distribution.length > 0) {
+        payment_distribution.forEach((distribution) => {
+          const pkg = customerData.hospital_packages.find(
+            (p) =>
+              p.id === distribution.package_id ||
+              p.package_id === distribution.package_id
+          );
+
+          if (pkg) {
+            pkg.paid_amount = parseFloat(distribution.new_paid) || 0;
+            console.log(
+              `Package ${distribution.package_id} updated: ${distribution.previous_paid} → ${distribution.new_paid}`
+            );
+          }
+        });
+      }
+
+      if (balance_added > 0) {
+        const currentBalance = parseFloat(customerData.balance) || 0;
+        customerData.balance = currentBalance + parseFloat(balance_added);
+      }
+
+      if (payment_distribution.length > 1) {
+        notificationStore.info(
+          `Payment distributed across ${payment_distribution.length} packages`,
+          { timeout: 3000 }
+        );
+      }
+    };
     const agreement_total_cost = computed(() => {
       const filtered_packages = customerData.hospital_packages.filter(
         (p) => p.user_id === customerData.assigned_to
       );
-      return filtered_packages.reduce((sum, pkg) => {
+      const sum = filtered_packages.reduce((sum, pkg) => {
         const total_price = parseFloat(pkg.total_price) || 0;
         return sum + total_price;
       }, 0);
+      return sum + extra_total_cost.value;
     });
     const extra_total_cost = computed(() => {
       const filtered_packages = customerData.hospital_packages.filter(
         (p) => p.user_id && p.user_id !== customerData.assigned_to
       );
-      return filtered_packages.reduce((sum, pkg) => {
+      const sum = filtered_packages.reduce((sum, pkg) => {
         const total_price = parseFloat(pkg.total_price) || 0;
         return sum + total_price;
       }, 0);
+      return sum / 2;
     });
     const paid_total_cost = computed(() => {
       const filtered_packages = customerData.hospital_packages.filter(
-        (p) => p.paid_on && p.paid_on !== ""
+        (p) => p.paid_amount && p.paid_amount !== ""
       );
       return filtered_packages.reduce((sum, pkg) => {
-        const total_price = parseFloat(pkg.total_price) || 0;
-        return sum + total_price;
+        const paid_amount = parseFloat(pkg.paid_amount) || 0;
+        return sum + paid_amount;
       }, 0);
     });
     const due_payment = computed(() =>
-      Math.max(0, paid_total_cost.value - customerData.balance)
+      Math.max(0, total_cost.value - paid_total_cost.value)
     );
     const total_cost = computed(() => {
       return customerData.hospital_packages.reduce((sum, pkg) => {
         const total_price = parseFloat(pkg.total_price) || 0;
         return sum + total_price;
       }, 0);
+    });
+    const unclaimed_balance = computed(() => {
+      const balance = parseFloat(customerData.balance) || 0;
+      return Math.max(0, balance - paid_total_cost.value);
     });
     const closeModal = () => {
       setTimeout(() => {
@@ -3116,6 +3335,7 @@ export default {
     return {
       total_cost,
       extra_total_cost,
+      paid_total_cost,
       closeModal,
       setTasksProcessing,
       agreement_total_cost,
@@ -3226,6 +3446,12 @@ export default {
       SettingStore,
       moveToSalesEndStage,
       payHospitalPackage,
+      addbalance,
+      handleBalanceAdded,
+      selectedPackageId,
+      package_due_amount,
+      handlePackagePaid,
+      unclaimed_balance,
     };
   },
 };

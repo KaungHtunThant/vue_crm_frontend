@@ -317,7 +317,6 @@ import Cookies from "js-cookie";
 import { changeLanguage } from "@/i18n";
 import { useLoadingStore } from "@/plugins/loadingStore";
 import { useKanbanStore } from "@/stores/KanbanStore";
-import { calculatecommission } from "@/plugins/services/salaryService";
 import ScoureUser from "@/components/headers/ScoureUser.vue";
 import {
   ref,
@@ -351,14 +350,6 @@ export default {
       name: Cookies.get("name") || "User",
       currentLanguage: localStorage.getItem("locale") || "en",
       showDropdown: false,
-      currency: Cookies.get("currency") || "USD",
-      salaryInfo: {
-        finalBasicPay: 0,
-        calculatedCommission: 0,
-        totalSalary: 0,
-        totalDeductions: 0,
-      },
-      showSalary: false,
     };
   },
   setup() {
@@ -410,7 +401,6 @@ export default {
     };
 
     let interval;
-
     const handleRightClick = (event) => {
       event.preventDefault();
       const modalElements = document.querySelectorAll(".modal");
@@ -509,26 +499,6 @@ export default {
         this.activeMenu = menu;
       }
     },
-    async CommissionAndSalary() {
-      const userId = Cookies.get("user_id");
-      const commission = await calculatecommission(userId);
-      if (commission) {
-        const salaryData = commission?.data?.data?.original?.data;
-        return {
-          finalBasicPay: salaryData?.basic_pay || 0,
-          calculatedCommission: salaryData?.calculated_commission || 0,
-          totalSalary: salaryData?.total_salary || 0,
-          totalDeductions: salaryData?.total_deductions || 0,
-        };
-      } else {
-        return {
-          finalBasicPay: 0,
-          calculatedCommission: 0,
-          totalSalary: 0,
-          totalDeductions: 0,
-        };
-      }
-    },
 
     handleClickOutside(event) {
       if (
@@ -573,7 +543,6 @@ export default {
   async mounted() {
     document.addEventListener("click", this.handleClickOutside);
     this.currentLanguage = localStorage.getItem("locale") || "en";
-    this.salaryInfo = await this.CommissionAndSalary();
   },
   beforeUnmount() {
     document.removeEventListener("click", this.handleClickOutside);

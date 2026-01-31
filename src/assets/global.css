@@ -14,3 +14,6 @@
   background-color: #484646 !important;
   border-color: #484646 !important;
 }
+.Second-modal {
+  z-index: 1060 !important;
+}

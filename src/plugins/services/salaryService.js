@@ -14,6 +14,9 @@ const _saveDeduction = (data) => axios.post(`/deductions`, data);
 const _deleteDeduction = (id) => axios.delete(`/deductions/${id}`);
 const _calculatecommission = (id) =>
   axios.get(`/deductions/getsalary/${id}`, id);
+const _saveBonus = (data) => axios.post(`bonus/`, data);
+const _getUserBonuses = (id) => axios.get(`bonus/${id}`);
+const _deleteBonus = (id) => axios.delete(`bonus/${id}`);
 
 export const payingLevels = withErrorLogging(
   _payingLevels,
@@ -54,4 +57,16 @@ export const deleteDeduction = withErrorLogging(
 export const calculatecommission = withErrorLogging(
   _calculatecommission,
   "salaryService/calculatecommission"
+);
+export const saveBonus = withErrorLogging(
+  _saveBonus,
+  "salaryService/saveBonus"
+);
+export const getUserBonuses = withErrorLogging(
+  _getUserBonuses,
+  "salaryService/getUserBonuses"
+);
+export const deleteBonus = withErrorLogging(
+  _deleteBonus,
+  "salaryService/deleteBonus"
 );

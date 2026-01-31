@@ -51,18 +51,54 @@
   </div>
 </template>
 <script>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import Cookies from "js-cookie";
+import { calculatecommission } from "@/plugins/services/salaryService";
 export default {
   name: "SalaryWidgetComp",
   setup() {
     const show = ref(false);
-    const salary = "$5,000";
-    const bonus = "$500";
-    const deductions = "$200";
-    const total = "$5,300";
+    const salary = ref(0);
+    const bonus = ref(0);
+    const deductions = ref(0);
+    const total = ref(0);
     const toggleShow = () => {
       show.value = !show.value;
     };
+    const CommissionAndSalary = async () => {
+      const userId = Cookies.get("user_id");
+      const commission = await calculatecommission(userId);
+      if (commission && commission.status === 200) {
+        const salaryData = commission?.data?.data?.original?.data;
+        const finalBasicPay = Number(salaryData?.basic_pay) || 0;
+        const deductions = Number(salaryData?.deductions) || 0;
+        const calculated_commission =
+          Number(salaryData?.calculated_commission) || 0;
+        const bonuses = Number(salaryData?.bonuses) || 0;
+        const calculatedCommission = calculated_commission + bonuses;
+        const totalSalary = finalBasicPay + calculatedCommission - deductions;
+        return {
+          salary: finalBasicPay || 0,
+          bonus: calculatedCommission || 0,
+          total: totalSalary || 0,
+          deductions: salaryData?.deductions || 0,
+        };
+      } else {
+        return {
+          salary: 0,
+          bonus: 0,
+          total: 0,
+          deductions: 0,
+        };
+      }
+    };
+    onMounted(async () => {
+      const data = await CommissionAndSalary();
+      salary.value = data.salary;
+      bonus.value = data.bonus;
+      total.value = data.total;
+      deductions.value = data.deductions;
+    });
     return {
       show,
       salary,
@@ -70,6 +106,7 @@ export default {
       deductions,
       total,
       toggleShow,
+      CommissionAndSalary,
     };
   },
 };
